@@ -83,7 +83,7 @@ public readonly struct Stain(ExcelPage page, uint offset, uint row)
 	}
 
 	/// <summary>Gets the icon associated with the stain.</summary>
-	public ImageReference? Icon
+	public ImgRef? Icon
 	{
 		get
 		{

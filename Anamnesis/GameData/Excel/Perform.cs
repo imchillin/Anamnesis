@@ -7,6 +7,7 @@ using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
 using Lumina.Excel;
+using System.Runtime.CompilerServices;
 
 /// <summary>Represents a Performance action in the game data.</summary>
 [Sheet("Perform", 0x7BF81FA9)]
@@ -37,7 +38,7 @@ public readonly struct Perform(ExcelPage page, uint offset, uint row)
 	public Mod? Mod => TexToolsService.GetMod(this);
 
 	/// <inheritdoc/>
-	public ImageReference? Icon => null;
+	public ImgRef? Icon => null;
 
 	/// <inheritdoc/>
 	public bool HasSubModel => false;
@@ -93,5 +94,6 @@ public readonly struct Perform(ExcelPage page, uint offset, uint row)
 		new(page, offset, row);
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool FitsInSlot(ItemSlots slot) => slot == ItemSlots.MainHand;
 }

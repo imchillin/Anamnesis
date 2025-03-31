@@ -173,60 +173,56 @@ public static class ClassesExtensions
 		throw new Exception($"No role for class/job: {job}");
 	}
 
-	public static ImageReference GetIcon(this Classes job)
-	{
-		return new ImageReference(job.GetIconId());
-	}
+	public static ImgRef GetIcon(this Classes job) => new(job.GetIconId());
 
 	public static int GetIconId(this Classes job)
 	{
-		switch (job)
+		return job switch
 		{
-			case Classes.Alchemist: return 062014;
-			case Classes.Arcanist: return 062026;
-			case Classes.Archer: return 062005;
-			case Classes.Armorer: return 062010;
-			case Classes.Astrologian: return 062033;
-			case Classes.Bard: return 062023;
-			case Classes.BlackMage: return 062025;
-			case Classes.Blacksmith: return 062009;
-			case Classes.BlueMage: return 062036;
-			case Classes.Botanist: return 062017;
-			case Classes.Carpenter: return 062008;
-			case Classes.Conjurer: return 062006;
-			case Classes.Culinarian: return 062015;
-			case Classes.Dancer: return 062038;
-			case Classes.DarkKnight: return 062032;
-			case Classes.Dragoon: return 062022;
-			case Classes.Fisher: return 062018;
-			case Classes.Gladiator: return 062001;
-			case Classes.Goldsmith: return 062011;
-			case Classes.Gunbreaker: return 062037;
-			case Classes.Lancer: return 062004;
-			case Classes.Leatherworker: return 062012;
-			case Classes.Machinist: return 062031;
-			case Classes.Marauder: return 062003;
-			case Classes.Miner: return 062016;
-			case Classes.Monk: return 062020;
-			case Classes.Ninja: return 062030;
-			case Classes.Paladin: return 062019;
-			case Classes.Pictomancer: return 062042;
-			case Classes.Pugilist: return 062002;
-			case Classes.Reaper: return 062039;
-			case Classes.RedMage: return 062035;
-			case Classes.Rogue: return 062029;
-			case Classes.Sage: return 062040;
-			case Classes.Samurai: return 062034;
-			case Classes.Scholar: return 062028;
-			case Classes.Summoner: return 062027;
-			case Classes.Thaumaturge: return 062007;
-			case Classes.Viper: return 062041;
-			case Classes.Warrior: return 062021;
-			case Classes.Weaver: return 062013;
-			case Classes.WhiteMage: return 062024;
-		}
-
-		throw new Exception($"No icon for class/job: {job}");
+			Classes.Alchemist => 062014,
+			Classes.Arcanist => 062026,
+			Classes.Archer => 062005,
+			Classes.Armorer => 062010,
+			Classes.Astrologian => 062033,
+			Classes.Bard => 062023,
+			Classes.BlackMage => 062025,
+			Classes.Blacksmith => 062009,
+			Classes.BlueMage => 062036,
+			Classes.Botanist => 062017,
+			Classes.Carpenter => 062008,
+			Classes.Conjurer => 062006,
+			Classes.Culinarian => 062015,
+			Classes.Dancer => 062038,
+			Classes.DarkKnight => 062032,
+			Classes.Dragoon => 062022,
+			Classes.Fisher => 062018,
+			Classes.Gladiator => 062001,
+			Classes.Goldsmith => 062011,
+			Classes.Gunbreaker => 062037,
+			Classes.Lancer => 062004,
+			Classes.Leatherworker => 062012,
+			Classes.Machinist => 062031,
+			Classes.Marauder => 062003,
+			Classes.Miner => 062016,
+			Classes.Monk => 062020,
+			Classes.Ninja => 062030,
+			Classes.Paladin => 062019,
+			Classes.Pictomancer => 062042,
+			Classes.Pugilist => 062002,
+			Classes.Reaper => 062039,
+			Classes.RedMage => 062035,
+			Classes.Rogue => 062029,
+			Classes.Sage => 062040,
+			Classes.Samurai => 062034,
+			Classes.Scholar => 062028,
+			Classes.Summoner => 062027,
+			Classes.Thaumaturge => 062007,
+			Classes.Viper => 062041,
+			Classes.Warrior => 062021,
+			Classes.Weaver => 062013,
+			Classes.WhiteMage => 062024,
+			_ => throw new Exception($"No icon for class/job: {job}"),
+		};
 	}
 
 	public static Classes SetFlag(this Classes a, Classes b, bool enabled)
@@ -259,20 +255,19 @@ public static class ClassesExtensions
 
 	public static bool IsClass(this Classes self)
 	{
-		switch (self)
+		return self switch
 		{
-			case Classes.Gladiator: return true;
-			case Classes.Marauder: return true;
-			case Classes.Conjurer: return true;
-			case Classes.Arcanist: return true;
-			case Classes.Archer: return true;
-			case Classes.Lancer: return true;
-			case Classes.Pugilist: return true;
-			case Classes.Rogue: return true;
-			case Classes.Thaumaturge: return true;
-		}
-
-		return false;
+			Classes.Gladiator => true,
+			Classes.Marauder => true,
+			Classes.Conjurer => true,
+			Classes.Arcanist => true,
+			Classes.Archer => true,
+			Classes.Lancer => true,
+			Classes.Pugilist => true,
+			Classes.Rogue => true,
+			Classes.Thaumaturge => true,
+			_ => false,
+		};
 	}
 
 	public static bool IsJob(this Classes self)

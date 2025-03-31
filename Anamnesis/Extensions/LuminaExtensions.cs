@@ -6,6 +6,7 @@ namespace Lumina;
 using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
 using Serilog;
+using System.Runtime.CompilerServices;
 
 public static class LuminaExtensions
 {
@@ -67,6 +68,7 @@ public static class LuminaExtensions
 		}
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool Contains(this Excel.Sheets.EquipSlotCategory self, ItemSlots slot)
 	{
 		return slot switch
@@ -87,5 +89,54 @@ public static class LuminaExtensions
 			ItemSlots.SoulCrystal => self.SoulCrystal == 1,
 			_ => false,
 		};
+	}
+
+	public static ItemSlots GetItemSlots(this Excel.Sheets.EquipSlotCategory self)
+	{
+		ItemSlots result = ItemSlots.None;
+
+		if (self.MainHand == 1)
+			result |= ItemSlots.MainHand;
+
+		if (self.MainHand == 1)
+			result |= ItemSlots.OffHand;
+
+		if (self.Head == 1)
+			result |= ItemSlots.Head;
+
+		if (self.Body == 1)
+			result |= ItemSlots.Body;
+
+		if (self.Gloves == 1)
+			result |= ItemSlots.Hands;
+
+		if (self.Waist == 1)
+			result |= ItemSlots.Waist;
+
+		if (self.Legs == 1)
+			result |= ItemSlots.Legs;
+
+		if (self.Feet == 1)
+			result |= ItemSlots.Feet;
+
+		if (self.Ears == 1)
+			result |= ItemSlots.Ears;
+
+		if (self.Neck == 1)
+			result |= ItemSlots.Neck;
+
+		if (self.Wrists == 1)
+			result |= ItemSlots.Wrists;
+
+		if (self.FingerR == 1)
+			result |= ItemSlots.RightRing;
+
+		if (self.FingerL == 1)
+			result |= ItemSlots.LeftRing;
+
+		if (self.SoulCrystal == 1)
+			result |= ItemSlots.SoulCrystal;
+
+		return result;
 	}
 }

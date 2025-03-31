@@ -21,7 +21,7 @@ public readonly struct ActionTimeline(ExcelPage page, uint offset, uint row)
 
 	public string? Name => this.Key;
 	public ActionTimeline? Timeline => this;
-	public ImageReference? Icon => null;
+	public ImgRef? Icon => null;
 
 	public IAnimation.AnimationPurpose Purpose => IAnimation.AnimationPurpose.Raw;
 

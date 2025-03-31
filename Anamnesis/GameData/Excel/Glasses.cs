@@ -10,8 +10,6 @@ using Lumina.Excel;
 public readonly struct Glasses(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Glasses>
 {
-	private readonly ImageReference icon = new(page.ReadInt32(offset + 28));
-
 	/// <summary>Gets the row ID.</summary>
 	public uint RowId => row;
 
@@ -26,7 +24,7 @@ public readonly struct Glasses(ExcelPage page, uint offset, uint row)
 		: LocalizationService.GetString("Facewear_None_Desc");
 
 	/// <summary>Gets the icon reference for the glasses.</summary>
-	public ImageReference Icon => this.icon;
+	public ImgRef Icon => new(page.ReadInt32(offset + 28));
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the glasses are marked as favorite.

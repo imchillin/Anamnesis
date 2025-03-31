@@ -3,23 +3,22 @@
 
 namespace Anamnesis.Actor;
 
+using Anamnesis.GameData;
 using System;
 using System.Windows.Media.Imaging;
-using Anamnesis.GameData;
 
 public static class ItemSlotsExtensions
 {
 	public static string ToDisplayName(this ItemSlots self)
 	{
-		switch (self)
+		return self switch
 		{
-			case ItemSlots.MainHand: return "Main Hand";
-			case ItemSlots.OffHand: return "Off Hand";
-			case ItemSlots.RightRing: return "Right Ring";
-			case ItemSlots.LeftRing: return "Left Ring";
-		}
-
-		return self.ToString();
+			ItemSlots.MainHand => "Main Hand",
+			ItemSlots.OffHand => "Off Hand",
+			ItemSlots.RightRing => "Right Ring",
+			ItemSlots.LeftRing => "Left Ring",
+			_ => self.ToString(),
+		};
 	}
 
 	public static BitmapImage GetIcon(this ItemSlots self)

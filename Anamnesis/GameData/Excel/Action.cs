@@ -15,7 +15,7 @@ public readonly struct Action(ExcelPage page, uint offset, uint row)
 	public uint RowId => row;
 
 	public readonly string Name => page.ReadString(offset, offset).ToString();
-	public ImageReference? Icon => new(page.ReadUInt16(offset + 8));
+	public ImgRef? Icon => new(page.ReadUInt16(offset + 8));
 	public ActionTimeline? Timeline => this.ActionTimelineHit.RowId >= 0 ? GameDataService.ActionTimelines.GetRow(this.ActionTimelineHit.RowId) : null;
 	public readonly RowRef<ActionTimeline> ActionTimelineHit => new(page.Module, page.ReadUInt16(offset + 12), page.Language);
 	public IAnimation.AnimationPurpose Purpose => IAnimation.AnimationPurpose.Action;

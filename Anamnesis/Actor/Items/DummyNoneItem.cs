@@ -7,18 +7,21 @@ using Anamnesis.GameData;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
+using System.Runtime.CompilerServices;
 
 public class DummyNoneItem : IItem
 {
 	public string Name => LocalizationService.GetString("Item_None");
 	public string Description => LocalizationService.GetString("Item_NoneDesc");
-	public ImageReference? Icon => null;
+	public ImgRef? Icon => null;
+	public ulong Model => 0;
 	public ushort ModelBase => 0;
 	public ushort ModelVariant => 0;
 	public ushort ModelSet => 0;
 	public uint RowId => 0;
 	public bool IsWeapon => true;
 	public bool HasSubModel => false;
+	public ulong SubModel => 0;
 	public ushort SubModelBase => 0;
 	public ushort SubModelVariant => 0;
 	public ushort SubModelSet => 0;
@@ -37,8 +40,6 @@ public class DummyNoneItem : IItem
 
 	public ItemCategories Category => ItemCategories.Standard;
 
-	public bool FitsInSlot(ItemSlots slot)
-	{
-		return true;
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public bool FitsInSlot(ItemSlots slot) => true;
 }

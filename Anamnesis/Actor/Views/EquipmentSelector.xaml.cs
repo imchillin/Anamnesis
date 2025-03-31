@@ -66,8 +66,8 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 	public ItemSlots Slot { get; set; }
 	public bool IsMainHandSlot => this.Slot == ItemSlots.MainHand;
 	public bool IsOffHandSlot => this.Slot == ItemSlots.OffHand;
-	public bool IsWeaponSlot => this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand;
-	public bool IsSmallclothesSlot => this.Slot > ItemSlots.Head && this.Slot <= ItemSlots.OffHand;
+	public bool IsWeaponSlot => (this.Slot & ItemSlots.Weapons) != 0;
+	public bool IsSmallclothesSlot => (this.Slot & (~ItemSlots.Head) & ItemSlots.Armor) != 0;
 
 	public SortModes SortMode
 	{

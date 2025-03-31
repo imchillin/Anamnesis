@@ -20,7 +20,7 @@ public readonly unsafe struct EventNpc(ExcelPage page, uint offset, uint row)
 	public uint ModelCharaRow => this.ModelChara.RowId;
 	public readonly RowRef<ModelChara> ModelChara => new(page.Module, (uint)page.ReadUInt16(offset + 190), page.Language);
 
-	public ImageReference? Icon => null;
+	public ImgRef? Icon => null;
 	public Mod? Mod => null;
 	public bool CanFavorite => true;
 	public bool HasName => GameDataService.GetNpcName(this) != null;

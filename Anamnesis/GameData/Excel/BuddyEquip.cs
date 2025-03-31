@@ -3,9 +3,11 @@
 
 namespace Anamnesis.GameData.Excel;
 
+using Anamnesis.Core.Extensions;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.TexTools;
 using Lumina.Excel;
+using System.Runtime.CompilerServices;
 
 [Sheet("BuddyEquip", 0xB429792A)]
 public readonly struct BuddyEquip(ExcelPage page, uint offset, uint row)
@@ -72,7 +74,7 @@ public readonly struct BuddyEquip(ExcelPage page, uint offset, uint row)
 		public ItemSlots Slot { get; private set; } = slot;
 		public ushort ModelBase { get; private set; } = modelBase;
 		public ushort ModelVariant { get; private set; } = modelVariant;
-		public ImageReference? Icon { get; private set; } = new(icon);
+		public ImgRef? Icon { get; private set; } = new(icon);
 
 		public uint RowId => 0;
 		public string? Description => null;
@@ -93,9 +95,7 @@ public readonly struct BuddyEquip(ExcelPage page, uint offset, uint row)
 		public bool IsOwned { get; set; }
 		public byte EquipLevel => 0;
 
-		public bool FitsInSlot(ItemSlots slot)
-		{
-			return slot == this.Slot;
-		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool FitsInSlot(ItemSlots slot) => this.Slot.HasFlagUnsafe(slot);
 	}
 }

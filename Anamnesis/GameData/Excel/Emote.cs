@@ -18,7 +18,7 @@ public readonly unsafe struct Emote(ExcelPage page, uint offset, uint row)
 	public ActionTimeline? GroundTimeline => this.ActionTimeline[2].Value;
 	public ActionTimeline? ChairTimeline => this.ActionTimeline[3].Value;
 	public ActionTimeline? UpperBodyTimeline => this.ActionTimeline[4].Value;
-	public ImageReference? Icon => new(page.ReadUInt16(offset + 28));
+	public ImgRef? Icon => new(page.ReadUInt16(offset + 28));
 
 	public readonly Collection<RowRef<ActionTimeline>> ActionTimeline => new(page, offset, offset, &ActionTimelineCtor, 7);
 	static Emote IExcelRow<Emote>.Create(ExcelPage page, uint offset, uint row) =>

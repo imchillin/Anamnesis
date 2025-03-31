@@ -6,21 +6,25 @@ using Anamnesis.GameData;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
+using System.Runtime.CompilerServices;
 
 public class NpcBodyItem : IItem
 {
 	public string Name => LocalizationService.GetString("Item_NpcBody");
 	public string Description => LocalizationService.GetString("Item_NpcBodyDesc");
-	public ImageReference? Icon => GameDataService.Items.GetRow(10033).Icon;
+	public ImgRef? Icon => GameDataService.Items.GetRow(10033).Icon;
+
+	public ulong Model => 75439;
+	public ushort ModelSet => 0;
 	public ushort ModelBase => 9903;
 	public ushort ModelVariant => 1;
-	public ushort ModelSet => 0;
 	public uint RowId => 0;
 	public bool IsWeapon => false;
 	public bool HasSubModel => false;
+	public ulong SubModel => 0;
+	public ushort SubModelSet => 0;
 	public ushort SubModelBase => 0;
 	public ushort SubModelVariant => 0;
-	public ushort SubModelSet => 0;
 	public Classes EquipableClasses => Classes.All;
 	public Mod? Mod => TexToolsService.GetMod(this.Name);
 	public byte EquipLevel => 0;
@@ -36,8 +40,6 @@ public class NpcBodyItem : IItem
 
 	public ItemCategories Category => ItemCategories.Standard;
 
-	public bool FitsInSlot(ItemSlots slot)
-	{
-		return slot == ItemSlots.Body || slot == ItemSlots.Feet || slot == ItemSlots.Hands || slot == ItemSlots.Legs;
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public bool FitsInSlot(ItemSlots slot) => (slot & (ItemSlots.Body | ItemSlots.Feet | ItemSlots.Hands | ItemSlots.Legs)) != 0;
 }

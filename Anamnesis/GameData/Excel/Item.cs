@@ -18,18 +18,18 @@ using System.Runtime.CompilerServices;
 public readonly unsafe struct Item(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Item>, IItem
 {
-	private readonly ImageReference icon = new(page.ReadUInt16(offset + 136));
-
 	public uint RowId => row;
 
 	public readonly string Name => page.ReadString(offset + 12, offset).ToString() ?? string.Empty;
 	public string Description => page.ReadString(offset + 8, offset).ToString() ?? string.Empty;
-	public ImageReference Icon => this.icon;
+	public ImgRef Icon => new(page.ReadUInt16(offset + 136));
 	public readonly byte EquipLevel => page.ReadUInt8(offset + 78);
 
+	public ulong Model => page.ReadUInt64(offset + 24);
 	public ushort ModelSet => this.IsWeapon ? page.ReadWeaponSet(offset + 24) : page.ReadSet(offset + 24);
 	public ushort ModelBase => this.IsWeapon ? page.ReadWeaponBase(offset + 24) : page.ReadBase(offset + 24);
 	public ushort ModelVariant => this.IsWeapon ? page.ReadWeaponVariant(offset + 24) : page.ReadVariant(offset + 24);
+	public ulong SubModel => page.ReadUInt64(offset + 32);
 	public ushort SubModelSet => this.IsWeapon ? page.ReadWeaponSet(offset + 32) : page.ReadSet(offset + 32);
 	public ushort SubModelBase => this.IsWeapon ? page.ReadWeaponBase(offset + 32) : page.ReadBase(offset + 32);
 	public ushort SubModelVariant => this.IsWeapon ? page.ReadWeaponVariant(offset + 32) : page.ReadVariant(offset + 32);
@@ -38,7 +38,7 @@ public readonly unsafe struct Item(ExcelPage page, uint offset, uint row)
 	public RowRef<EquipRaceCategory> EquipRestriction => new(page.Module, (uint)page.ReadUInt8(offset + 80), page.Language);
 	public readonly RowRef<ClassJobCategory> ClassJobCategory => new(page.Module, (uint)page.ReadUInt8(offset + 81), page.Language);
 
-	public bool IsWeapon => this.FitsInSlot(ItemSlots.MainHand) || this.FitsInSlot(ItemSlots.OffHand);
+	public bool IsWeapon => (this.GetItemSlots() & ItemSlots.Weapons) != 0;
 	public bool HasSubModel => this.SubModelSet != 0;
 
 	public Mod? Mod => TexToolsService.GetMod(this);
@@ -63,6 +63,9 @@ public readonly unsafe struct Item(ExcelPage page, uint offset, uint row)
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool FitsInSlot(ItemSlots slot) => this.EquipSlotCategory.Value.Contains(slot);
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public ItemSlots GetItemSlots() => this.EquipSlotCategory.Value.GetItemSlots();
 
 	private static Classes ToFlags(ClassJobCategory self)
 	{

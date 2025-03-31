@@ -22,7 +22,7 @@ public interface IAnimation
 	}
 
 	public string? Name { get; }
-	public ImageReference? Icon { get; }
+	public ImgRef? Icon { get; }
 	public ActionTimeline? Timeline { get; }
 	public AnimationPurpose Purpose { get; }
 }

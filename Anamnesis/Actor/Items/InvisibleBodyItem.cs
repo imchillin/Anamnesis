@@ -2,20 +2,25 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Items;
+
 using Anamnesis.GameData;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
+using System.Runtime.CompilerServices;
 
 public class InvisibleBodyItem : IItem
 {
 	public string Name => LocalizationService.GetString("Item_InvisibleBody");
 	public string Description => LocalizationService.GetString("Item_InvisibleBodyDesc");
-	public ImageReference? Icon => GameDataService.Items.GetRow(10033).Icon;
+	public ImgRef? Icon => GameDataService.Items.GetRow(10033).Icon;
+
+	public ulong Model => 16652265;
 	public ushort ModelSet => 0;
 	public ushort ModelBase => 6121;
 	public ushort ModelVariant => 254;
 	public bool HasSubModel => false;
+	public ulong SubModel => 0;
 	public ushort SubModelSet => 0;
 	public ushort SubModelBase => 0;
 	public ushort SubModelVariant => 0;
@@ -36,8 +41,6 @@ public class InvisibleBodyItem : IItem
 
 	public ItemCategories Category => ItemCategories.Standard;
 
-	public bool FitsInSlot(ItemSlots slot)
-	{
-		return slot == ItemSlots.Body;
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public bool FitsInSlot(ItemSlots slot) => slot == ItemSlots.Body;
 }

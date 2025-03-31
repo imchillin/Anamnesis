@@ -7,14 +7,15 @@ using Anamnesis.GameData;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
+using System.Runtime.CompilerServices;
 
 public class EmperorsAccessoryItem : IItem
 {
 	public string Name => LocalizationService.GetString("Item_EmperorsBody");
 	public string Description => LocalizationService.GetString("Item_EmperorsBodyDesc");
-	public ImageReference? Icon => GameDataService.Items.GetRow(10033).Icon;
+	public ImgRef? Icon => GameDataService.Items.GetRow(10033).Icon;
 
-	public ulong Model => ((ulong)this.ModelVariant << 16) | this.ModelBase;
+	public ulong Model => ExcelPageExtensions.ConvertToModel(0, 53, 1);
 	public ushort ModelBase => 53;
 	public ushort ModelVariant => 1;
 	public ushort ModelSet => 0;
@@ -41,8 +42,6 @@ public class EmperorsAccessoryItem : IItem
 
 	public ItemCategories Category => ItemCategories.Standard;
 
-	public bool FitsInSlot(ItemSlots slot)
-	{
-		return slot == ItemSlots.Ears || slot == ItemSlots.Neck || slot == ItemSlots.Wrists || slot == ItemSlots.LeftRing || slot == ItemSlots.RightRing;
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public bool FitsInSlot(ItemSlots slot) => (slot & ItemSlots.Accessories) != 0;
 }

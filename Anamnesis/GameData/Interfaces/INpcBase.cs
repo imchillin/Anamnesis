@@ -16,7 +16,7 @@ public interface INpcBase : IRow
 	uint ModelCharaRow { get; }
 
 	/// <summary>Gets the icon associated with the NPC (if any).</summary>
-	ImageReference? Icon { get; }
+	ImgRef? Icon { get; }
 
 	/// <summary>Gets the TexTools mod associated with the NPC (if any).</summary>
 	Mod? Mod { get; }

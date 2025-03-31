@@ -15,8 +15,6 @@ using Lumina.Excel.Sheets;
 public readonly struct Mount(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Mount>, INpcBase
 {
-	private readonly ImageReference icon = new(page.ReadUInt16(offset + 52));
-
 	public uint RowId => row;
 
 	public readonly int EquipHead => page.ReadInt32(offset + 32);
@@ -31,7 +29,7 @@ public readonly struct Mount(ExcelPage page, uint offset, uint row)
 	public uint MountCustomizeRow => this.MountCustomize.RowId;
 	public readonly RowRef<MountCustomize> MountCustomize => new(page.Module, (uint)page.ReadUInt8(offset + 70), page.Language);
 
-	public ImageReference? Icon => this.icon;
+	public ImgRef? Icon => new(page.ReadUInt16(offset + 52));
 	public Mod? Mod => null;
 	public bool CanFavorite => true;
 	public bool HasName => page.ReadString(offset, offset).ToString() != null;

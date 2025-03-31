@@ -10,8 +10,6 @@ using Lumina.Excel;
 public readonly struct Weather(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Weather>
 {
-	private readonly ImageReference icon = new(page.ReadInt32(offset + 24));
-
 	/// <summary>Gets the row ID.</summary>
 	public uint RowId => row;
 
@@ -22,7 +20,7 @@ public readonly struct Weather(ExcelPage page, uint offset, uint row)
 	public readonly string Description => page.ReadString(offset + 4, offset).ToString() ?? string.Empty;
 
 	/// <summary>Gets the icon reference for the weather.</summary>
-	public ImageReference Icon => this.icon;
+	public ImgRef Icon => new(page.ReadInt32(offset + 24));
 
 	/// <summary>
 	/// Creates a new instance of the <see cref="Weather"/> struct.

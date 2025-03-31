@@ -22,7 +22,16 @@ public interface IItem
 	byte EquipLevel { get; }
 
 	/// <summary>Gets the icon reference of the item.</summary>
-	ImageReference? Icon { get; }
+	ImgRef? Icon { get; }
+
+	/// <summary>Gets the model of the item.</summary>
+	/// <remarks>
+	/// <para>
+	/// Use <see cref="ModelSet"/>, <see cref="ModelBase"/>, and <see cref="ModelVariant"/> to get the individual components.
+	/// </para>
+	/// To improve performance, it is preferable to use this property over the individual components.
+	/// </remarks>
+	ulong Model { get; }
 
 	/// <summary>Gets the model set of the item.</summary>
 	ushort ModelSet { get; }
@@ -35,6 +44,15 @@ public interface IItem
 
 	/// <summary>Gets a value indicating whether the item has a sub-model.</summary>
 	bool HasSubModel { get; }
+
+	/// <summary>Gets the sub-model of the item.</summary>
+	/// <remarks>
+	/// <para>
+	/// Use <see cref="SubModelSet"/>, <see cref="SubModelBase"/>, and <see cref="SubModelVariant"/> to get the individual components.
+	/// </para>
+	/// To improve performance, it is preferable to use this property over the individual components.
+	/// </remarks>
+	ulong SubModel { get; }
 
 	/// <summary>Gets the sub-model set of the item.</summary>
 	ushort SubModelSet { get; }

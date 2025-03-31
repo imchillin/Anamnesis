@@ -62,7 +62,7 @@ public readonly struct Race(ExcelPage page, uint offset, uint row)
 		get
 		{
 			if (!Enum.IsDefined(this.CustomizeRace))
-				return Array.Empty<Tribe>();
+				return [];
 
 			if (GameDataService.Tribes == null)
 				throw new Exception("No tribes found in game data. Verify that Lumina has loaded this excel sheet.");

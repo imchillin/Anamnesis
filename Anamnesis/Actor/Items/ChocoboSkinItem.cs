@@ -2,10 +2,12 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Items;
+
 using Anamnesis.GameData;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
+using System.Runtime.CompilerServices;
 
 public class ChocoboSkinItem : IItem
 {
@@ -19,9 +21,9 @@ public class ChocoboSkinItem : IItem
 
 	public string Name { get; private set; }
 	public string? Description { get; private set; }
-	public ImageReference? Icon { get; private set; }
+	public ImgRef? Icon { get; private set; }
 
-	public ulong Model => ((ulong)this.ModelVariant << 16) | this.ModelBase;
+	public ulong Model => ExcelPageExtensions.ConvertToModel(0, 1, this.ModelVariant);
 	public ushort ModelSet => 0;
 	public ushort ModelBase => 1;
 	public ushort ModelVariant { get; private set; }
@@ -47,8 +49,6 @@ public class ChocoboSkinItem : IItem
 
 	public ItemCategories Category => ItemCategories.Standard;
 
-	public bool FitsInSlot(ItemSlots slot)
-	{
-		return slot == ItemSlots.Legs;
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public bool FitsInSlot(ItemSlots slot) => slot == ItemSlots.Legs;
 }

@@ -11,8 +11,6 @@ using Lumina.Excel;
 public readonly struct CharaMakeCustomize(ExcelPage page, uint offset, uint row)
 	: IExcelRow<CharaMakeCustomize>
 {
-	private readonly ImageReference icon = new(page.ReadUInt32(offset));
-
 	/// <summary>Gets the row ID.</summary>
 	public uint RowId => row;
 
@@ -23,10 +21,10 @@ public readonly struct CharaMakeCustomize(ExcelPage page, uint offset, uint row)
 	public readonly RowRef<Item> HintItem => new(page.Module, page.ReadUInt32(offset + 8), page.Language);
 
 	/// <summary>Gets the icon of the customization option.</summary>
-	public ImageReference? Icon => this.icon;
+	public ImgRef? Icon => new(page.ReadUInt32(offset));
 
 	/// <summary>Gets the icon of the hint item if available.</summary>
-	public ImageReference? ItemIcon => this.HintItem.Value.RowId != 0 ? this.HintItem.Value.Icon : null;
+	public ImgRef? ItemIcon => this.HintItem.Value.RowId != 0 ? this.HintItem.Value.Icon : null;
 
 	/// <summary>Gets the feature ID of the customization option.</summary>
 	public readonly byte FeatureId => page.ReadUInt8(offset + 14);

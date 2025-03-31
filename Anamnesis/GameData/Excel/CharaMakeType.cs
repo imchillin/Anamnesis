@@ -6,7 +6,6 @@ namespace Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Memory;
 using Lumina.Excel;
-using Serilog;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using static Lumina.Excel.Sheets.CharaMakeType;
@@ -28,23 +27,22 @@ public readonly unsafe struct CharaMakeType(ExcelPage page, uint offset, uint ro
 	public readonly Collection<byte> Voices => new(page, offset, offset, &VoiceStructCtor, 12);
 	public readonly Collection<FacialFeatureOptionStruct> FacialFeatureOption => new(page, offset, offset, &FacialFeatureOptionCtor, 8);
 
-	public List<ImageReference> FacialFeatures
+	public List<ImgRef> FacialFeatures
 	{
 		get
 		{
-			Log.Verbose("Facial feature count: {0}", this.FacialFeatureOption.Count);
-			var result = new List<ImageReference>(this.FacialFeatureOption.Count * 7);
+			var result = new List<ImgRef>(this.FacialFeatureOption.Count * 7);
 			foreach (var option in this.FacialFeatureOption)
 			{
 				result.AddRange(
 				[
-					new ImageReference(option.Option1),
-					new ImageReference(option.Option2),
-					new ImageReference(option.Option3),
-					new ImageReference(option.Option4),
-					new ImageReference(option.Option5),
-					new ImageReference(option.Option6),
-					new ImageReference(option.Option7),
+					new ImgRef(option.Option1),
+					new ImgRef(option.Option2),
+					new ImgRef(option.Option3),
+					new ImgRef(option.Option4),
+					new ImgRef(option.Option5),
+					new ImgRef(option.Option6),
+					new ImgRef(option.Option7),
 				]);
 			}
 

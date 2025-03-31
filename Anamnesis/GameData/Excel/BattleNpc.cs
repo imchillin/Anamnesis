@@ -24,7 +24,7 @@ public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
 	public readonly RowRef<BNpcCustomize> BNpcCustomize => new(page.Module, (uint)page.ReadUInt16(offset + 12), page.Language);
 	public readonly RowRef<NpcEquip> NpcEquip => new(page.Module, (uint)page.ReadUInt16(offset + 14), page.Language);
 
-	public ImageReference? Icon => null;
+	public ImgRef? Icon => null;
 	public Mod? Mod => null;
 	public bool CanFavorite => true;
 	public bool HasName => GameDataService.GetNpcName(this) != null;

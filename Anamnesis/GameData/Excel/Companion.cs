@@ -21,7 +21,7 @@ public readonly struct Companion(ExcelPage page, uint offset, uint row)
 	public uint ModelCharaRow => this.Model.RowId;
 	public readonly RowRef<ModelChara> Model => new(page.Module, (uint)page.ReadUInt16(offset + 16), page.Language);
 
-	public ImageReference? Icon => new(page.ReadUInt16(offset + 28));
+	public ImgRef? Icon => new(page.ReadUInt16(offset + 28));
 	public Mod? Mod => null;
 	public bool CanFavorite => true;
 	public bool HasName => page.ReadString(offset, offset).ToString() != null;

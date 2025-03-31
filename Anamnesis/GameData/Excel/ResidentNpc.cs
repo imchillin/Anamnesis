@@ -29,7 +29,7 @@ public readonly struct ResidentNpc(ExcelPage page, uint offset, uint row)
 	public uint ModelCharaRow => this.EventNpc.Value.ModelCharaRow;
 
 	/// <inheritdoc/>
-	public ImageReference? Icon => null;
+	public ImgRef? Icon => null;
 
 	/// <inheritdoc/>
 	public Mod? Mod => null;
@@ -45,7 +45,7 @@ public readonly struct ResidentNpc(ExcelPage page, uint offset, uint row)
 	public bool CanFavorite => true;
 
 	/// <inheritdoc/>
-	public bool HasName => page.ReadString(offset, offset).ToString() != null;
+	public bool HasName => !page.ReadString(offset, offset).IsEmpty;
 
 	/// <inheritdoc/>
 	public string TypeName => "Resident NPC";

@@ -2,18 +2,20 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Items;
+
 using Anamnesis.GameData;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
+using System.Runtime.CompilerServices;
 
 public class InvisibleHeadItem : IItem
 {
 	public string Name => LocalizationService.GetString("Item_InvisibleHead");
 	public string Description => LocalizationService.GetString("Item_InvisibleHeadDesc");
-	public ImageReference? Icon => GameDataService.Items.GetRow(10032).Icon;
+	public ImgRef? Icon => GameDataService.Items.GetRow(10032).Icon;
 
-	public ulong Model => ((ulong)254 << 16) | 6121;
+	public ulong Model => ExcelPageExtensions.ConvertToModel(0, 6121, 254);
 	public ushort ModelSet => 0;
 	public ushort ModelBase => 6121;
 	public ushort ModelVariant => 254;
@@ -39,8 +41,6 @@ public class InvisibleHeadItem : IItem
 
 	public ItemCategories Category => ItemCategories.Standard;
 
-	public bool FitsInSlot(ItemSlots slot)
-	{
-		return slot == ItemSlots.Head;
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public bool FitsInSlot(ItemSlots slot) => slot == ItemSlots.Head;
 }

@@ -9,7 +9,6 @@ using Anamnesis.GameData.Sheets;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
@@ -101,7 +100,7 @@ public partial class FacialFeaturesControl : UserControl
 		if (this.Tribe == 0)
 			return;
 
-		ImageReference[]? facialFeatures = null;
+		ImgRef[]? facialFeatures = null;
 		if (GameDataService.CharacterMakeTypes != null)
 		{
 			foreach (CharaMakeType set in GameDataService.CharacterMakeTypes)
@@ -115,7 +114,7 @@ public partial class FacialFeaturesControl : UserControl
 				if (set.FacialFeatures == null)
 					throw new Exception("Missing facial features");
 
-				facialFeatures = set.FacialFeatures.ToArray();
+				facialFeatures = [.. set.FacialFeatures];
 				break;
 			}
 		}
@@ -146,7 +145,6 @@ public partial class FacialFeaturesControl : UserControl
 
 			Option op = new Option();
 			op.Icon = facialFeatures[id];
-			Log.Verbose($"Facial Feature: {id}");
 			op.Value = this.GetValue(i);
 			op.Index = id;
 			this.features.Add(op);
@@ -197,7 +195,7 @@ public partial class FacialFeaturesControl : UserControl
 	private class Option
 	{
 		public ActorCustomizeMemory.FacialFeature Value { get; set; }
-		public ImageReference? Icon { get; set; }
+		public ImgRef? Icon { get; set; }
 		public int Index { get; set; }
 		public bool Selected { get; set; }
 	}

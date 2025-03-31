@@ -155,23 +155,15 @@ public partial class AnimationSelector : AnimationSelectorDrawer
 		this.FilterItems();
 	}
 
-	public class EmoteEntry : IAnimation
+	public class EmoteEntry(string displayName, ActionTimeline timeline, IAnimation.AnimationPurpose purpose, ImgRef? icon) : IAnimation
 	{
-		public EmoteEntry(string displayName, ActionTimeline timeline, IAnimation.AnimationPurpose purpose, ImageReference? icon)
-		{
-			this.Name = displayName;
-			this.Purpose = purpose;
-			this.Timeline = timeline;
-			this.Icon = icon;
-		}
+		public string Name { get; private set; } = displayName;
 
-		public string Name { get; private set; }
+		public IAnimation.AnimationPurpose Purpose { get; private set; } = purpose;
 
-		public IAnimation.AnimationPurpose Purpose { get; private set; }
+		public ImgRef? Icon { get; private set; } = icon;
 
-		public ImageReference? Icon { get; private set; }
-
-		public ActionTimeline? Timeline { get; private set; }
+		public ActionTimeline? Timeline { get; private set; } = timeline;
 	}
 
 	[AddINotifyPropertyChangedInterface]

@@ -20,7 +20,7 @@ public readonly struct Ornament(ExcelPage page, uint offset, uint row)
 	public uint ModelCharaRow => (uint)page.ReadUInt16(offset + 16);
 	public byte AttachPoint => page.ReadUInt8(offset + 26);
 
-	public ImageReference? Icon => new(page.ReadUInt16(offset + 20));
+	public ImgRef? Icon => new(page.ReadUInt16(offset + 20));
 	public Mod? Mod => null;
 	public bool CanFavorite => true;
 	public bool HasName => page.ReadString(offset, offset).ToString() != null;
