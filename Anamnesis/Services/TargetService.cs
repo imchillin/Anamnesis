@@ -216,7 +216,13 @@ public class TargetService : ServiceBase<TargetService>
 		{
 			try
 			{
-				this.PlayerTarget.Synchronize();
+				var pinnedActor = this.PinnedActors.FirstOrDefault(pinned => pinned.Memory?.Address == this.PlayerTarget.Address);
+
+				// If the player target is pinned, synchronize through the pinned actor class. Otherwise synchronize directly.
+				if (pinnedActor != null)
+					pinnedActor.Tick();
+				else
+					this.PlayerTarget.Synchronize();
 			}
 			catch
 			{
