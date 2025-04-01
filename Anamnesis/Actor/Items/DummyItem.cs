@@ -28,25 +28,11 @@ public class DummyItem : IItem
 	public byte EquipLevel => 0;
 
 	public ulong Model => ExcelPageExtensions.ConvertToModel(this.ModelSet, this.ModelBase, this.ModelVariant);
-	public ushort ModelBase
-	{
-		get;
-		private set;
-	}
+	public ushort ModelBase { get; private set; }
+	public ushort ModelVariant { get; private set; }
+	public ushort ModelSet { get; private set; }
 
-	public ushort ModelVariant
-	{
-		get;
-		private set;
-	}
-
-	public ushort ModelSet
-	{
-		get;
-		private set;
-	}
-
-	public ulong SubModel => (ulong)this.SubModelSet | ((ulong)this.SubModelBase << 16) | ((ulong)this.SubModelVariant << 32);
+	public ulong SubModel => ExcelPageExtensions.ConvertToModel(this.SubModelSet, this.SubModelBase, this.SubModelVariant);
 	public ushort SubModelBase { get; }
 	public ushort SubModelVariant { get; }
 	public ushort SubModelSet { get; }

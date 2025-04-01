@@ -18,6 +18,7 @@ using PropertyChanged;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -42,7 +43,10 @@ public partial class CharacterPage : UserControl
 
 		HotkeyService.RegisterHotkeyHandler("CharacterPage.ClearEquipment", () => this.OnClearClicked());
 
+		Stopwatch stopwatch = Stopwatch.StartNew();
 		this.VoiceEntries = this.GenerateVoiceList();
+		stopwatch.Stop();
+		Log.Verbose($"Voice list generation time: {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public ActorMemory? Actor { get; private set; }

@@ -8,9 +8,7 @@ using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
-using Serilog;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 
 public static class ItemUtility
 {
@@ -35,20 +33,11 @@ public static class ItemUtility
 	/// </summary>
 	public static IItem GetItem(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant, bool isChocobo)
 	{
-		Stopwatch stopwatch = Stopwatch.StartNew();
 		if ((modelBase == 0 || modelBase == 1) && modelVariant == 0)
-		{
-			stopwatch.Stop();
-			Log.Verbose($"GetItem execution time: {stopwatch.ElapsedMilliseconds} ms");
 			return NoneItem;
-		}
 
 		if (modelBase == NpcBodyItem.ModelBase)
-		{
-			stopwatch.Stop();
-			Log.Verbose($"GetItem execution time: {stopwatch.ElapsedMilliseconds} ms");
 			return NpcBodyItem;
-		}
 
 		string lookupKey = $"{slot}_{modelSet}_{modelBase}_{modelVariant}";
 
@@ -56,17 +45,11 @@ public static class ItemUtility
 		if (isChocobo)
 		{
 			item = ChocoboItemLookup.GetOrAdd(lookupKey, _ => ChocoboItemSearch(slot, modelSet, modelBase, modelVariant));
-
-			stopwatch.Stop();
-			Log.Verbose($"GetItem execution time: {stopwatch.ElapsedMilliseconds} ms");
 			return ChocoboItemLookup[lookupKey];
 		}
 		else
 		{
 			item = ItemLookup.GetOrAdd(lookupKey, _ => ItemSearch(slot, modelSet, modelBase, modelVariant));
-
-			stopwatch.Stop();
-			Log.Verbose($"GetItem execution time: {stopwatch.ElapsedMilliseconds} ms");
 			return ItemLookup[lookupKey];
 		}
 	}
@@ -140,7 +123,6 @@ public static class ItemUtility
 			// Big old hack, but we prefer the emperors bracelets to the promise bracelets (even though they are the same model)
 			if (slot == ItemSlots.Wrists && tItem.Name.StartsWith("Promise of"))
 				continue;
-
 
 			if (tItem.Model == model)
 				return tItem;

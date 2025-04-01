@@ -73,39 +73,11 @@ public partial class ItemView : UserControl
 		set => WeaponExModelDp.Set(this, value);
 	}
 
-	public uint ItemKey
-	{
-		get
-		{
-			return this.Item?.RowId ?? 0;
-		}
-		set
-		{
-			IItem? item = GameDataService.Items?.GetRow(value);
-			this.SetItem(item);
-		}
-	}
+	public string SlotName => LocalizationService.GetString("Character_Equipment_" + this.Slot);
 
-	public string SlotName
-	{
-		get => LocalizationService.GetString("Character_Equipment_" + this.Slot);
-	}
+	public bool IsWeapon => (this.Slot & ItemSlots.Weapons) != 0;
 
-	public bool IsWeapon
-	{
-		get
-		{
-			return this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand;
-		}
-	}
-
-	public bool IsHead
-	{
-		get
-		{
-			return this.Slot == ItemSlots.Head;
-		}
-	}
+	public bool IsHead => this.Slot == ItemSlots.Head;
 
 	public bool IsValidWeapon
 	{

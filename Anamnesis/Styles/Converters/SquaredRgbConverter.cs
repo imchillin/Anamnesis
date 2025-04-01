@@ -3,10 +3,11 @@
 
 namespace Anamnesis.Styles.Converters;
 
+using Anamnesis.Memory;
 using System;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Windows.Data;
-using Anamnesis.Memory;
 
 [ValueConversion(typeof(Color), typeof(Color))]
 [ValueConversion(typeof(Color4), typeof(Color4))]
@@ -44,23 +45,9 @@ public class SquaredRgbConverter : IValueConverter
 		}
 	}
 
-	private static float SqrtOrNegative(float val)
-	{
-		if (val > 0)
-		{
-			return MathF.Sqrt(val);
-		}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static float SqrtOrNegative(float val) => (val > 0) ? MathF.Sqrt(val) : val;
 
-		return val;
-	}
-
-	private static float SqrOrNegative(float val)
-	{
-		if (val > 0)
-		{
-			return val * val;
-		}
-
-		return val;
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static float SqrOrNegative(float val) => (val > 0) ? val * val : val;
 }
