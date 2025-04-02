@@ -8,31 +8,34 @@ using Anamnesis.Services;
 using Anamnesis.TexTools;
 using Lumina.Excel;
 
+/// <summary>
+/// Represents a resident non-playable character (NPC) in the game data.
+/// </summary>
 [Sheet("ENpcResident", 0xF74FA88C)]
 public readonly struct ResidentNpc(ExcelPage page, uint offset, uint row)
 	: IExcelRow<ResidentNpc>, INpcBase
 {
 	/// <inheritdoc/>
-	public uint RowId => row;
+	public readonly uint RowId => row;
 
 	/// <summary>Gets a reference to the associated Event NPC.</summary>
-	public RowRef<EventNpc> EventNpc => GameDataService.CreateRef<EventNpc>(this.RowId);
+	public readonly RowRef<EventNpc> EventNpc => GameDataService.CreateRef<EventNpc>(this.RowId);
 
 	/// <summary>Gets the name of the Resident NPC.</summary>
-	public string Name => page.ReadString(offset, offset).ToString() ?? $"{this.TypeName} #{this.RowId}";
+	public readonly string Name => page.ReadString(offset, offset).ToString() ?? $"{this.TypeName} #{this.RowId}";
 
 	/// <summary>Gets the description of the Resident NPC.</summary>
 	/// <remarks>This contains the resident NPC's title.</remarks>
-	public string Description => page.ReadString(offset + 8, offset).ToString() ?? string.Empty;
+	public readonly string Description => page.ReadString(offset + 8, offset).ToString() ?? string.Empty;
 
 	/// <inheritdoc/>
-	public uint ModelCharaRow => this.EventNpc.Value.ModelCharaRow;
+	public readonly uint ModelCharaRow => this.EventNpc.Value.ModelCharaRow;
 
 	/// <inheritdoc/>
-	public ImgRef? Icon => null;
+	public readonly ImgRef? Icon => null;
 
 	/// <inheritdoc/>
-	public Mod? Mod => null;
+	public readonly Mod? Mod => null;
 
 	/// <inheritdoc/>
 	public bool IsFavorite
@@ -42,13 +45,13 @@ public readonly struct ResidentNpc(ExcelPage page, uint offset, uint row)
 	}
 
 	/// <inheritdoc/>
-	public bool CanFavorite => true;
+	public readonly bool CanFavorite => true;
 
 	/// <inheritdoc/>
-	public bool HasName => !page.ReadString(offset, offset).IsEmpty;
+	public readonly bool HasName => !page.ReadString(offset, offset).IsEmpty;
 
 	/// <inheritdoc/>
-	public string TypeName => "Resident NPC";
+	public readonly string TypeName => "Resident NPC";
 
 	/// <inheritdoc/>
 	public byte FacePaintColor => this.EventNpc.Value.FacePaintColor;

@@ -7,8 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-#pragma warning disable SA1649
-
+/// <summary>Represents a role that a class can have.</summary>
 public enum Roles
 {
 	Tanks,
@@ -20,13 +19,18 @@ public enum Roles
 
 public static class RolesExtensions
 {
-	private static Dictionary<Roles, List<Classes>>? classLookup;
+	private static Dictionary<Roles, List<Classes>>? classLookupCache;
 
+	/// <summary>
+	/// Gets all classes that are part of this role.
+	/// </summary>
+	/// <param name="role">The role to get the classes for.</param>
+	/// <returns>A collection of classes that are part of this role.</returns>
 	public static List<Classes> GetClasses(this Roles role)
 	{
-		if (classLookup == null)
+		if (classLookupCache == null)
 		{
-			classLookup = [];
+			classLookupCache = [];
 
 			foreach (Classes? job in Enum.GetValues<Classes>().Select(v => (Classes?)v))
 			{
@@ -38,18 +42,13 @@ public static class RolesExtensions
 				if (classRole == null)
 					continue;
 
-				if (!classLookup.ContainsKey((Roles)classRole))
-					classLookup.Add((Roles)classRole, new List<Classes>());
+				if (!classLookupCache.ContainsKey((Roles)classRole))
+					classLookupCache.Add((Roles)classRole, []);
 
-				classLookup[(Roles)classRole].Add((Classes)job);
+				classLookupCache[(Roles)classRole].Add((Classes)job);
 			}
 		}
 
-		return classLookup[role];
-	}
-
-	public static string GetName(this Roles role)
-	{
-		return role.ToString();
+		return classLookupCache[role];
 	}
 }

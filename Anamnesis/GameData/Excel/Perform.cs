@@ -9,59 +9,61 @@ using Anamnesis.TexTools;
 using Lumina.Excel;
 using System.Runtime.CompilerServices;
 
-/// <summary>Represents a Performance action in the game data.</summary>
+/// <summary>Represents a performance instrument (e.g. bard instruments) in the game data.</summary>
 [Sheet("Perform", 0x7BF81FA9)]
 public readonly struct Perform(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Perform>, IItem
 {
 	/// <inheritdoc/>
-	public uint RowId => row;
+	public readonly uint RowId => row;
 
 	/// <inheritdoc/>
 	public readonly string Name => page.ReadString(offset + 16, offset).ToString() ?? string.Empty;
 
 	/// <inheritdoc/>
-	public string Description => string.Empty;
-
-	public ulong Model => page.ReadUInt64(offset + 8);
+	public readonly string Description => string.Empty;
 
 	/// <inheritdoc/>
-	public ushort ModelSet => page.ReadWeaponSet(offset + 8);
+	public readonly ulong Model => page.ReadUInt64(offset + 8);
 
 	/// <inheritdoc/>
-	public ushort ModelBase => page.ReadWeaponBase(offset + 8);
+	public readonly ushort ModelSet => page.ReadWeaponSet(offset + 8);
 
 	/// <inheritdoc/>
-	public ushort ModelVariant => page.ReadWeaponVariant(offset + 8);
+	public readonly ushort ModelBase => page.ReadWeaponBase(offset + 8);
 
 	/// <inheritdoc/>
-	public Mod? Mod => TexToolsService.GetMod(this);
+	public readonly ushort ModelVariant => page.ReadWeaponVariant(offset + 8);
 
 	/// <inheritdoc/>
-	public ImgRef? Icon => null;
+	public readonly Mod? Mod => TexToolsService.GetMod(this);
 
 	/// <inheritdoc/>
-	public bool HasSubModel => false;
-
-	public ulong SubModel => 0;
+	public readonly ImgRef? Icon => null;
 
 	/// <inheritdoc/>
-	public ushort SubModelSet => 0;
+	public readonly bool HasSubModel => false;
 
 	/// <inheritdoc/>
-	public ushort SubModelBase => 0;
+	public readonly ulong SubModel => 0;
 
 	/// <inheritdoc/>
-	public ushort SubModelVariant => 0;
+	public readonly ushort SubModelSet => 0;
 
 	/// <inheritdoc/>
-	public Classes EquipableClasses => Classes.All;
+	public readonly ushort SubModelBase => 0;
 
 	/// <inheritdoc/>
-	public bool IsWeapon => true;
+	public readonly ushort SubModelVariant => 0;
 
 	/// <inheritdoc/>
-	public byte EquipLevel => 0;
+	public readonly Classes EquipableClasses => Classes.All;
+
+	/// <inheritdoc/>
+	public readonly bool IsWeapon => true;
+
+	/// <inheritdoc/>
+	public readonly byte EquipLevel => 0;
 
 	/// <inheritdoc/>
 	public bool IsFavorite
@@ -71,17 +73,17 @@ public readonly struct Perform(ExcelPage page, uint offset, uint row)
 	}
 
 	/// <inheritdoc/>
-	public bool CanOwn => false;
+	public readonly bool CanOwn => false;
 
 	/// <inheritdoc/>
-	public bool IsOwned
+	public readonly bool IsOwned
 	{
 		get => false;
 		set { } // Interface requires a setter but this is a read-only struct
 	}
 
 	/// <inheritdoc/>
-	public ItemCategories Category => ItemCategories.Performance;
+	public readonly ItemCategories Category => ItemCategories.Performance;
 
 	/// <summary>
 	/// Creates a new instance of the <see cref="Perform"/> struct.

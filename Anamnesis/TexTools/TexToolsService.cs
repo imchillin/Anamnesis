@@ -16,7 +16,7 @@ public class TexToolsService : ServiceBase<TexToolsService>
 
 	public static Mod? GetMod(IItem item)
 	{
-		return GetMod(item.Name.ToString());
+		return GetMod(item.Name);
 	}
 
 	public static Mod? GetMod(string itemName)

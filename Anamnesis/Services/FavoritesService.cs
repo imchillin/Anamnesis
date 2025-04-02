@@ -157,11 +157,11 @@ public class FavoritesService : ServiceBase<FavoritesService>
 	[Serializable]
 	public class Favorites
 	{
-		public List<Item> Items { get; set; } = [];
+		public List<IItem> Items { get; set; } = [];
 		public List<IDye> Dyes { get; set; } = [];
 		public List<Color4> Colors { get; set; } = [];
 		public List<INpcBase> Models { get; set; } = [];
-		public List<Item> Owned { get; set; } = [];
+		public List<IItem> Owned { get; set; } = [];
 		public List<Glasses> Glasses { get; set; } = [];
 	}
 }

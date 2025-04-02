@@ -8,18 +8,38 @@ using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Lumina.Excel;
 
+/// <summary>Represents an executable actor action in the game data.</summary>
 [Sheet("Action", 0xF87A2103)]
 public readonly struct Action(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Action>, IAnimation
 {
-	public uint RowId => row;
+	/// <inheritdoc/>
+	public readonly uint RowId => row;
 
+	/// <inheritdoc/>
 	public readonly string Name => page.ReadString(offset, offset).ToString();
-	public ImgRef? Icon => new(page.ReadUInt16(offset + 8));
+
+	/// <inheritdoc/>
+	public readonly ImgRef? Icon => new(page.ReadUInt16(offset + 8));
+
+	/// <inheritdoc/>
 	public ActionTimeline? Timeline => this.ActionTimelineHit.RowId >= 0 ? GameDataService.ActionTimelines.GetRow(this.ActionTimelineHit.RowId) : null;
+
+	/// <summary>
+	/// Gets a reference to the action timeline associated with the action.
+	/// </summary>
 	public readonly RowRef<ActionTimeline> ActionTimelineHit => new(page.Module, page.ReadUInt16(offset + 12), page.Language);
+
+	/// <inheritdoc/>
 	public IAnimation.AnimationPurpose Purpose => IAnimation.AnimationPurpose.Action;
 
+	/// <summary>
+	/// Creates a new instance of the <see cref="Action"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="Action"/> struct.</returns>
 	static Action IExcelRow<Action>.Create(ExcelPage page, uint offset, uint row) =>
 	   new(page, offset, row);
 }

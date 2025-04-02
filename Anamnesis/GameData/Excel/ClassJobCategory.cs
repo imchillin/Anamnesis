@@ -8,14 +8,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+/// <summary>
+/// Represents the class job category data often associated with items in the game.
+/// </summary>
 [Sheet("ClassJobCategory", 0x65BBDB12)]
 public readonly struct ClassJobCategory(ExcelPage page, uint offset, uint row)
 	: IExcelRow<ClassJobCategory>
 {
+	/// <inheritdoc/>
 	public uint RowId => row;
 
+	/// <summary>
+	/// Gets the singular name of the class job category.
+	/// </summary>
 	public readonly string Name => page.ReadString(offset, offset).ToString();
 
+	/// <summary>
+	/// Gets the class jobs supported by this category.
+	/// </summary>
 	public Dictionary<Classes, bool> ClassJobs { get; } = new Dictionary<Classes, bool>
 	{
 		{ Classes.Gladiator, page.ReadBool(offset + 5) },
@@ -62,9 +72,23 @@ public readonly struct ClassJobCategory(ExcelPage page, uint offset, uint row)
 		{ Classes.Pictomancer, page.ReadBool(offset + 46) },
 	};
 
+	/// <summary>
+	/// Creates a new instance of the <see cref="ClassJobCategory"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="ClassJobCategory"/> struct.</returns>
 	static ClassJobCategory IExcelRow<ClassJobCategory>.Create(ExcelPage page, uint offset, uint row) =>
-		   new(page, offset, row);
+		new(page, offset, row);
 
+	/// <summary>
+	/// Checks if the class job category contains the specified class job.
+	/// </summary>
+	/// <param name="classJob">The class job to check for.</param>
+	/// <returns>
+	/// True if the class job category contains the specified class job, otherwise false.
+	/// </returns>
 	public bool Contains(Classes classJob)
 	{
 		if (this.ClassJobs.TryGetValue(classJob, out bool value))
@@ -73,6 +97,10 @@ public readonly struct ClassJobCategory(ExcelPage page, uint offset, uint row)
 		return false;
 	}
 
+	/// <summary>
+	/// Converts the class job category to a <see cref="Classes"/> enum.
+	/// </summary>
+	/// <returns>The class job category as a <see cref="Classes"/> enum.</returns>
 	public Classes ToFlags()
 	{
 		Classes classes = Classes.None;

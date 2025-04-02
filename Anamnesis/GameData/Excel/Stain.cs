@@ -12,7 +12,7 @@ using System.Windows.Media;
 using MediaColor = System.Windows.Media.Color;
 
 /// <summary>
-/// Represents a Stain in the game data, which includes information about dyes and their associated items.
+/// Represents a stain in the game data, which includes information about dyes and their associated items.
 /// </summary>
 [Sheet("Stain", 0x97C471BD)]
 public readonly struct Stain(ExcelPage page, uint offset, uint row)
@@ -46,28 +46,26 @@ public readonly struct Stain(ExcelPage page, uint offset, uint row)
 		{ 117, 8748 }, { 118, 8749 }, { 119, 8750 }, { 120, 8751 },
 	};
 
-	/// <summary>Gets the row ID.</summary>
-	public uint RowId => row;
+	/// <inheritdoc/>
+	public readonly uint RowId => row;
 
-	/// <summary>Gets the row ID as a byte type.</summary>
-	public byte Id => (byte)this.RowId;
+	/// <inheritdoc/>
+	public readonly byte Id => (byte)this.RowId;
 
 	/// <summary>Gets the stain's name.</summary>
-	public string Name => page.ReadString(offset, offset).ToString() ?? string.Empty;
+	public readonly string Name => page.ReadString(offset, offset).ToString() ?? string.Empty;
 
 	/// <summary>Gets the stain's description.</summary>
 	/// <remarks>
 	/// Stains do not have descriptions. An empty string is returned.
 	/// </remarks>
-	public string Description => string.Empty;
+	public readonly string Description => string.Empty;
 
 	/// <summary>Gets the stain's shade.</summary>
 	public readonly byte Shade => page.ReadUInt8(offset + 12);
 
-	/// <summary>
-	/// Gets the color of the stain as a <see cref="Brush"/>.
-	/// </summary>
-	public Brush? Color
+	/// <inheritdoc/>
+	public readonly Brush? Color
 	{
 		get
 		{
@@ -82,8 +80,8 @@ public readonly struct Stain(ExcelPage page, uint offset, uint row)
 		}
 	}
 
-	/// <summary>Gets the icon associated with the stain.</summary>
-	public ImgRef? Icon
+	/// <inheritdoc/>
+	public readonly ImgRef? Icon
 	{
 		get
 		{
@@ -98,7 +96,7 @@ public readonly struct Stain(ExcelPage page, uint offset, uint row)
 	}
 
 	/// <summary>Gets the item associated with the stain.</summary>
-	public Item? Item
+	public readonly Item? Item
 	{
 		get
 		{
@@ -112,9 +110,7 @@ public readonly struct Stain(ExcelPage page, uint offset, uint row)
 		}
 	}
 
-	/// <summary>
-	/// Gets or sets a value indicating whether the stain is favorited.
-	/// </summary>
+	/// <inheritdoc/>
 	public bool IsFavorite
 	{
 		get => FavoritesService.IsFavorite<IDye>(this);

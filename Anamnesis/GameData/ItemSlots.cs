@@ -2,9 +2,13 @@
 // Licensed under the MIT license.
 
 using System;
+using System.Windows.Media.Imaging;
 
 namespace Anamnesis.GameData;
 
+/// <summary>
+/// Represents the slots that an item can be equipped in.
+/// </summary>
 [Flags]
 public enum ItemSlots
 {
@@ -29,4 +33,48 @@ public enum ItemSlots
 	Armor = Head | Body | Hands | Waist | Legs | Feet,
 	Accessories = Ears | Neck | Wrists | RightRing | LeftRing,
 	All = MainHand | Head | Body | Hands | Waist | Legs | Feet | OffHand | Ears | Neck | Wrists | RightRing | LeftRing | Glasses | SoulCrystal,
+}
+
+public static class ItemSlotsExtensions
+{
+	/// <summary>
+	/// Converts the item slot to a display name.
+	/// </summary>
+	/// <param name="self">The item slot to convert.</param>
+	/// <returns>The display name of the item slot.</returns>
+	public static string ToDisplayName(this ItemSlots self)
+	{
+		return self switch
+		{
+			ItemSlots.MainHand => "Main Hand",
+			ItemSlots.OffHand => "Off Hand",
+			ItemSlots.RightRing => "Right Ring",
+			ItemSlots.LeftRing => "Left Ring",
+			ItemSlots.SoulCrystal => "Soul Crystal",
+			_ => self.ToString(),
+		};
+	}
+
+	/// <summary>
+	/// Gets the icon associated with the given item slot.
+	/// </summary>
+	/// <param name="self">The item slot to get the icon for.</param>
+	/// <returns>The bitmap icon associated with the item slot.</returns>
+	/// <exception cref="Exception">Thrown if the icon could not be loaded.</exception>
+	public static BitmapImage GetIcon(this ItemSlots self)
+	{
+		try
+		{
+			var logo = new BitmapImage();
+			logo.BeginInit();
+			logo.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+			logo.UriSource = new Uri("pack://application:,,,/Anamnesis;component/Assets/Slots/" + self.ToString() + ".png");
+			logo.EndInit();
+			return logo;
+		}
+		catch (Exception ex)
+		{
+			throw new Exception($"Failed to get icon for slot {self}", ex);
+		}
+	}
 }

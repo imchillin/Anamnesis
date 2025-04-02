@@ -5,13 +5,13 @@ using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Lumina.Excel;
 
-/// <summary>Represents a row in the "Glasses" Excel sheet.</summary>
+/// <summary>Represents a glasses object in the game data.</summary>
 [Sheet("Glasses", 0x2FAAC2C1)]
 public readonly struct Glasses(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Glasses>
 {
-	/// <summary>Gets the row ID.</summary>
-	public uint RowId => row;
+	/// <inheritdoc/>
+	public readonly uint RowId => row;
 
 	/// <summary>Gets the name of the glasses.</summary>
 	public readonly string Name => this.RowId != 0

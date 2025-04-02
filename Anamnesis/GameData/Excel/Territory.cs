@@ -7,23 +7,19 @@ using Lumina.Excel;
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 
-/// <summary>Represents a territory type in the game.</summary>
+/// <summary>Represents a territory type in the game data.</summary>
 [Sheet("TerritoryType", 0x77B34BBB)]
 public readonly struct Territory(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Territory>
 {
-	private static readonly HashSet<uint> HousingTerritories;
+	/// <summary>Collection of housing territories.</summary>
+	private static readonly HashSet<uint> HousingTerritories =
+	[
+		282, 283, 284, 342, 343, 344, 345, 346, 347, 384, 385, 386, 608, 609, 610, 649, 650, 651, 652,
+	];
 
-	static Territory()
-	{
-		HousingTerritories =
-		[
-			282, 283, 284, 342, 343, 344, 345, 346, 347, 384, 385, 386, 608, 609, 610, 649, 650, 651, 652,
-		];
-	}
-
-	/// <summary>Gets the row ID.</summary>
-	public uint RowId => row;
+	/// <inheritdoc/>
+	public readonly uint RowId => row;
 
 	/// <summary>Gets the name of the territory.</summary>
 	public readonly string Name => page.ReadString(offset, offset).ToString() ?? string.Empty;

@@ -78,32 +78,40 @@ public static class NpcAppearanceSearch
 		}
 	}
 
-	// TODO: This has no references. Remove/Fix?
 	private static void SearchNames(string name, ref List<RawRow> results)
 	{
-		/* foreach (BattleNpcName battleNpcName in GameDataService.BattleNpcNames)
+		foreach (BattleNpcName battleNpcName in GameDataService.BattleNpcNames)
 		{
-			if (battleNpcName.Name.ToLower() == name.ToLower())
+			if (battleNpcName.Name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase))
 			{
-				results.Add(battleNpcName);
+				if (!GameDataService.TryGetRawRow("BNpcName", battleNpcName.RowId, out RawRow row))
+					continue;
+
+				results.Add(row);
 			}
 		}
 
 		foreach (ResidentNpc residentNpc in GameDataService.ResidentNPCs)
 		{
-			if (residentNpc.Name.ToLower() == name.ToLower())
+			if (residentNpc.Name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase))
 			{
-				results.Add(residentNpc);
+				if (!GameDataService.TryGetRawRow("ENpcResident", residentNpc.RowId, out RawRow row))
+					continue;
+
+				results.Add(row);
 			}
 		}
 
 		foreach (EventNpc eventNpc in GameDataService.EventNPCs)
 		{
-			if (eventNpc.Name.ToLower() == name.ToLower())
+			if (eventNpc.Name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase))
 			{
-				results.Add(eventNpc);
+				if (!GameDataService.TryGetRawRow("ENpcBase", eventNpc.RowId, out RawRow row))
+					continue;
+
+				results.Add(row);
 			}
-		} */
+		}
 	}
 
 	private static void Search(ActorMemory actor, IEnumerable<INpcBase> npcs, ref List<INpcBase> results)

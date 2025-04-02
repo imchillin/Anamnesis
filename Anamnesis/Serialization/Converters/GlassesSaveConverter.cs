@@ -38,8 +38,7 @@ internal class GlassesSaveConverter : JsonConverter<GlassesSave>
 			Log.Error(ex, "Error reading glasses from file.");
 		}
 
-		// TODO: Update GlassesSave to accept a uint
-		return new GlassesSave((ushort)GameDataService.Glasses.GetRow((byte)glassesId).RowId);
+		return new GlassesSave(GameDataService.Glasses.GetRow(glassesId).RowId);
 	}
 
 	public override void Write(Utf8JsonWriter writer, GlassesSave value, JsonSerializerOptions options)

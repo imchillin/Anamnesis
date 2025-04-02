@@ -8,24 +8,150 @@ using Anamnesis.Memory;
 using Lumina.Excel;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 public static class CustomizeSheet
 {
+	/// <summary>
+	/// The excel sheet table length for all hair options.
+	/// </summary>
+	private const uint HairOptionsLength = 130;
+	private const uint FacePaintOptionsLength = 50;
+
+	/// <summary>
+	/// Represents the supported character customization features.
+	/// </summary>
 	public enum Features
 	{
+		/// <summary>Represents the hair feature.</summary>
 		Hair,
+
+		/// <summary>Represents the face paint feature.</summary>
 		FacePaint,
 	}
 
+	/// <summary>
+	/// A lookup table for the start indices for all supported character customization features.
+	/// </summary>
+	private static readonly Dictionary<(Features, ActorCustomizeMemory.Tribes, ActorCustomizeMemory.Genders), uint> FeatureStartIndexMap = new()
+	{
+		// Hyur (Hair)
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Midlander, ActorCustomizeMemory.Genders.Masculine), 0 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Midlander, ActorCustomizeMemory.Genders.Feminine), 130 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Highlander, ActorCustomizeMemory.Genders.Masculine), 260 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Highlander, ActorCustomizeMemory.Genders.Feminine), 390 },
+
+		// Elezen (Hair)
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Wildwood, ActorCustomizeMemory.Genders.Masculine), 520 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Wildwood, ActorCustomizeMemory.Genders.Feminine), 650 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Duskwight, ActorCustomizeMemory.Genders.Masculine), 520 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Duskwight, ActorCustomizeMemory.Genders.Feminine), 650 },
+
+		// Lalafell (Hair)
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Plainsfolk, ActorCustomizeMemory.Genders.Masculine), 780 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Plainsfolk, ActorCustomizeMemory.Genders.Feminine), 910 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Dunesfolk, ActorCustomizeMemory.Genders.Masculine), 780 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Dunesfolk, ActorCustomizeMemory.Genders.Feminine), 910 },
+
+		// Miqo'te (Hair)
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.SeekerOfTheSun, ActorCustomizeMemory.Genders.Masculine), 1040 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.SeekerOfTheSun, ActorCustomizeMemory.Genders.Feminine), 1170 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.KeeperOfTheMoon, ActorCustomizeMemory.Genders.Masculine), 1040 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.KeeperOfTheMoon, ActorCustomizeMemory.Genders.Feminine), 1170 },
+
+		// Roegadyn (Hair)
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.SeaWolf, ActorCustomizeMemory.Genders.Masculine), 1300 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.SeaWolf, ActorCustomizeMemory.Genders.Feminine), 1430 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Hellsguard, ActorCustomizeMemory.Genders.Masculine), 1300 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Hellsguard, ActorCustomizeMemory.Genders.Feminine), 1430 },
+
+		// Au Ra (Hair)
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Raen, ActorCustomizeMemory.Genders.Masculine), 1560 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Raen, ActorCustomizeMemory.Genders.Feminine), 1690 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Xaela, ActorCustomizeMemory.Genders.Masculine), 1560 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Xaela, ActorCustomizeMemory.Genders.Feminine), 1690 },
+
+		// Hrothgar (Hair)
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Helions, ActorCustomizeMemory.Genders.Masculine), 1820 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Helions, ActorCustomizeMemory.Genders.Feminine), 1950 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.TheLost, ActorCustomizeMemory.Genders.Masculine), 1820 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.TheLost, ActorCustomizeMemory.Genders.Feminine), 1950 },
+
+		// Viera (Hair)
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Rava, ActorCustomizeMemory.Genders.Masculine), 2080 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Rava, ActorCustomizeMemory.Genders.Feminine), 2210 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Veena, ActorCustomizeMemory.Genders.Masculine), 2080 },
+		{ (Features.Hair, ActorCustomizeMemory.Tribes.Veena, ActorCustomizeMemory.Genders.Feminine), 2210 },
+
+		// Hyur (Face Paint)
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Midlander, ActorCustomizeMemory.Genders.Masculine), 2400 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Midlander, ActorCustomizeMemory.Genders.Feminine), 2450 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Highlander, ActorCustomizeMemory.Genders.Masculine), 2500 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Highlander, ActorCustomizeMemory.Genders.Feminine), 2550 },
+
+		// Elezen (Face Paint)
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Wildwood, ActorCustomizeMemory.Genders.Masculine), 2600 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Wildwood, ActorCustomizeMemory.Genders.Feminine), 2650 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Duskwight, ActorCustomizeMemory.Genders.Masculine), 2700 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Duskwight, ActorCustomizeMemory.Genders.Feminine), 2750 },
+
+		// Lalafell (Face Paint)
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Plainsfolk, ActorCustomizeMemory.Genders.Masculine), 2800 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Plainsfolk, ActorCustomizeMemory.Genders.Feminine), 2850 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Dunesfolk, ActorCustomizeMemory.Genders.Masculine), 2900 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Dunesfolk, ActorCustomizeMemory.Genders.Feminine), 2950 },
+
+		// Miqo'te (Face Paint)
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.SeekerOfTheSun, ActorCustomizeMemory.Genders.Masculine), 3000 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.SeekerOfTheSun, ActorCustomizeMemory.Genders.Feminine), 3050 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.KeeperOfTheMoon, ActorCustomizeMemory.Genders.Masculine), 3100 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.KeeperOfTheMoon, ActorCustomizeMemory.Genders.Feminine), 3150 },
+
+		// Roegadyn (Face Paint)
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.SeaWolf, ActorCustomizeMemory.Genders.Masculine), 3200 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.SeaWolf, ActorCustomizeMemory.Genders.Feminine), 3250 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Hellsguard, ActorCustomizeMemory.Genders.Masculine), 3300 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Hellsguard, ActorCustomizeMemory.Genders.Feminine), 3350 },
+
+		// Au Ra (Face Paint)
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Raen, ActorCustomizeMemory.Genders.Masculine), 3400 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Raen, ActorCustomizeMemory.Genders.Feminine), 3450 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Xaela, ActorCustomizeMemory.Genders.Masculine), 3500 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Xaela, ActorCustomizeMemory.Genders.Feminine), 3550 },
+
+		// Hrothgar (Face Paint)
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Helions, ActorCustomizeMemory.Genders.Masculine), 3600 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Helions, ActorCustomizeMemory.Genders.Feminine), 3650 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.TheLost, ActorCustomizeMemory.Genders.Masculine), 3700 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.TheLost, ActorCustomizeMemory.Genders.Feminine), 3750 },
+
+		// Viera (Face Paint)
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Rava, ActorCustomizeMemory.Genders.Masculine), 3800 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Rava, ActorCustomizeMemory.Genders.Feminine), 3850 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Veena, ActorCustomizeMemory.Genders.Masculine), 3900 },
+		{ (Features.FacePaint, ActorCustomizeMemory.Tribes.Veena, ActorCustomizeMemory.Genders.Feminine), 3950 },
+	};
+
+	/// <summary>
+	/// Retrieves all feature options for a provided feature type, tribe, and gender.
+	/// </summary>
+	/// <param name="self">The Excel sheet.</param>
+	/// <param name="featureType">The feature type.</param>
+	/// <param name="tribe">The tribe.</param>
+	/// <param name="gender">The gender.</param>
+	/// <returns>The list of feature options.</returns>
+	/// <exception cref="Exception">Thrown if the feature type, tribe, and gender combination is unrecognized.</exception>
 	public static List<CharaMakeCustomize> GetFeatureOptions(this ExcelSheet<CharaMakeCustomize> self, Features featureType, ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
 	{
-		List<CharaMakeCustomize> results = new List<CharaMakeCustomize>();
-		uint fromIndex = (uint)GetFeatureStartIndex(featureType, tribe, gender);
-		int count = GetFeatureLength(featureType);
+		List<CharaMakeCustomize> results = [];
 
-		for (int i = 1; i < 200; i++)
+		if (!FeatureStartIndexMap.TryGetValue((featureType, tribe, gender), out uint startIndex))
+			throw new Exception("Unrecognized feature type, tribe, and gender combination");
+
+		uint count = GetFeatureLength(featureType);
+		for (byte i = (featureType != Features.FacePaint) ? (byte)1 : (byte)0; i < byte.MaxValue; i++)
 		{
-			CharaMakeCustomize? feature = self.FindFeatureById(fromIndex, count, (byte)i);
+			CharaMakeCustomize? feature = self.FindFeatureById(startIndex, count, i);
 
 			if (!feature.HasValue)
 				continue;
@@ -36,84 +162,53 @@ public static class CustomizeSheet
 		return results;
 	}
 
+	/// <summary>
+	/// Finds a feature option by its feature ID, feature type, tribe, and gender.
+	/// </summary>
+	/// <param name="self">The Excel sheet.</param>
+	/// <param name="featureType">The feature type.</param>
+	/// <param name="tribe">The tribe.</param>
+	/// <param name="gender">The gender.</param>
+	/// <param name="featureId">The feature ID.</param>
+	/// <returns>The feature option if found; otherwise, <c>null</c>.</returns>
 	public static CharaMakeCustomize? GetFeature(this ExcelSheet<CharaMakeCustomize> self, Features featureType, ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender, byte featureId)
 	{
-		List<CharaMakeCustomize> hairs = self.GetFeatureOptions(featureType, tribe, gender);
-		foreach (CharaMakeCustomize hair in hairs)
+		List<CharaMakeCustomize> featureOptions = self.GetFeatureOptions(featureType, tribe, gender);
+		foreach (CharaMakeCustomize featureOption in featureOptions)
 		{
-			if (hair.FeatureId == featureId)
-			{
-				return hair;
-			}
+			if (featureOption.FeatureId == featureId)
+				return featureOption;
 		}
 
 		return null;
 	}
 
-	private static int GetFeatureStartIndex(Features featureType, ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
+	/// <summary>
+	/// Retrieves the row length of a feature type.
+	/// </summary>
+	/// <param name="featureType">The feature type.</param>
+	/// <returns>The row length of the feature type.</returns>
+	/// <exception cref="Exception">Thrown if the feature type is unrecognized.</exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static uint GetFeatureLength(Features featureType)
 	{
-		bool isMasc = gender == ActorCustomizeMemory.Genders.Masculine;
-
-		if (featureType == Features.Hair)
+		return featureType switch
 		{
-			switch (tribe)
-			{
-				case ActorCustomizeMemory.Tribes.Midlander: return isMasc ? 0 : 130;
-				case ActorCustomizeMemory.Tribes.Highlander: return isMasc ? 260 : 390;
-				case ActorCustomizeMemory.Tribes.Wildwood: return isMasc ? 520 : 650;
-				case ActorCustomizeMemory.Tribes.Duskwight: return isMasc ? 520 : 650;
-				case ActorCustomizeMemory.Tribes.Plainsfolk: return isMasc ? 780 : 910;
-				case ActorCustomizeMemory.Tribes.Dunesfolk: return isMasc ? 780 : 910;
-				case ActorCustomizeMemory.Tribes.SeekerOfTheSun: return isMasc ? 1040 : 1170;
-				case ActorCustomizeMemory.Tribes.KeeperOfTheMoon: return isMasc ? 1040 : 1170;
-				case ActorCustomizeMemory.Tribes.SeaWolf: return isMasc ? 1300 : 1430;
-				case ActorCustomizeMemory.Tribes.Hellsguard: return isMasc ? 1300 : 1430;
-				case ActorCustomizeMemory.Tribes.Raen: return isMasc ? 1560 : 1690;
-				case ActorCustomizeMemory.Tribes.Xaela: return isMasc ? 1560 : 1690;
-				case ActorCustomizeMemory.Tribes.Helions: return isMasc ? 1820 : 1950;
-				case ActorCustomizeMemory.Tribes.TheLost: return isMasc ? 1820 : 1950;
-				case ActorCustomizeMemory.Tribes.Rava: return isMasc ? 2080 : 2210;
-				case ActorCustomizeMemory.Tribes.Veena: return isMasc ? 2080 : 2210;
-			}
-		}
-		else if (featureType == Features.FacePaint)
-		{
-			switch (tribe)
-			{
-				case ActorCustomizeMemory.Tribes.Midlander: return isMasc ? 2400 : 2450;
-				case ActorCustomizeMemory.Tribes.Highlander: return isMasc ? 2500 : 2550;
-				case ActorCustomizeMemory.Tribes.Wildwood: return isMasc ? 2600 : 2650;
-				case ActorCustomizeMemory.Tribes.Duskwight: return isMasc ? 2700 : 2750;
-				case ActorCustomizeMemory.Tribes.Plainsfolk: return isMasc ? 2800 : 2850;
-				case ActorCustomizeMemory.Tribes.Dunesfolk: return isMasc ? 2900 : 2950;
-				case ActorCustomizeMemory.Tribes.SeekerOfTheSun: return isMasc ? 3000 : 3050;
-				case ActorCustomizeMemory.Tribes.KeeperOfTheMoon: return isMasc ? 3100 : 3150;
-				case ActorCustomizeMemory.Tribes.SeaWolf: return isMasc ? 3200 : 3250;
-				case ActorCustomizeMemory.Tribes.Hellsguard: return isMasc ? 3300 : 3350;
-				case ActorCustomizeMemory.Tribes.Raen: return isMasc ? 3400 : 3450;
-				case ActorCustomizeMemory.Tribes.Xaela: return isMasc ? 3500 : 3550;
-				case ActorCustomizeMemory.Tribes.Helions: return isMasc ? 3600 : 3650;
-				case ActorCustomizeMemory.Tribes.TheLost: return isMasc ? 3700 : 3750;
-				case ActorCustomizeMemory.Tribes.Rava: return isMasc ? 3800 : 3850;
-				case ActorCustomizeMemory.Tribes.Veena: return isMasc ? 3900 : 3950;
-			}
-		}
-
-		throw new Exception("Unrecognized tribe: " + tribe);
+			Features.Hair => HairOptionsLength,
+			Features.FacePaint => FacePaintOptionsLength,
+			_ => throw new Exception("Unrecognized feature: " + featureType),
+		};
 	}
 
-	private static int GetFeatureLength(Features featureType)
-	{
-		switch (featureType)
-		{
-			case Features.Hair: return 100;
-			case Features.FacePaint: return 50;
-		}
-
-		throw new Exception("Unrecognized feature: " + featureType);
-	}
-
-	private static CharaMakeCustomize? FindFeatureById(this ExcelSheet<CharaMakeCustomize> self, uint from, int length, byte value)
+	/// <summary>
+	/// Finds a feature option by its feature ID within a range of rows.
+	/// </summary>
+	/// <param name="self">The Excel sheet.</param>
+	/// <param name="from">The starting row index.</param>
+	/// <param name="length">The row length.</param>
+	/// <param name="featureId">The sub.</param>
+	/// <returns>The feature option if found; otherwise, <c>null</c>.</returns>
+	private static CharaMakeCustomize? FindFeatureById(this ExcelSheet<CharaMakeCustomize> self, uint from, uint length, byte featureId)
 	{
 		for (uint i = from; i < from + length; i++)
 		{
@@ -122,10 +217,8 @@ public static class CustomizeSheet
 			if (feature.Equals(default(CharaMakeCustomize)))
 				continue;
 
-			if (feature.FeatureId == value)
-			{
+			if (feature.FeatureId == featureId)
 				return feature;
-			}
 		}
 
 		return null;

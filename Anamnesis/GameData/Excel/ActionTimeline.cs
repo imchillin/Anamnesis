@@ -8,23 +8,45 @@ using Anamnesis.GameData.Sheets;
 using Anamnesis.Memory;
 using Lumina.Excel;
 
+/// <summary>Represents an action timeline object in the game data.</summary>
 [Sheet("ActionTimeline", 0xD803699F)]
 public readonly struct ActionTimeline(ExcelPage page, uint offset, uint row)
 	: IExcelRow<ActionTimeline>, IAnimation
 {
-	public uint RowId => row;
+	/// <inheritdoc/>
+	public readonly uint RowId => row;
 
+	/// <summary>Gets the in-game path of the action timeline.</summary>
 	public readonly string Key => page.ReadString(offset, offset).ToString();
+
+	/// <summary>Gets the type of the action timeline.</summary>
 	public readonly byte Type => page.ReadUInt8(offset + 9);
+
+	/// <summary>Gets the animation slot of the action timeline.</summary>
 	public readonly AnimationMemory.AnimationSlots Slot => (AnimationMemory.AnimationSlots)page.ReadUInt8(offset + 12);
+
+	/// <summary>Gets a value indicating whether the action timeline is a looping animation.</summary>
 	public readonly bool IsLoop => page.ReadPackedBool(offset + 20, 5);
 
-	public string? Name => this.Key;
-	public ActionTimeline? Timeline => this;
-	public ImgRef? Icon => null;
+	/// <inheritdoc/>
+	public readonly string? Name => this.Key;
 
+	/// <inheritdoc/>
+	public ActionTimeline? Timeline => this;
+
+	/// <inheritdoc/>
+	public readonly ImgRef? Icon => null;
+
+	/// <inheritdoc/>
 	public IAnimation.AnimationPurpose Purpose => IAnimation.AnimationPurpose.Raw;
 
+	/// <summary>
+	/// Creates a new instance of the <see cref="ActionTimeline"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="ActionTimeline"/> struct.</returns>
 	static ActionTimeline IExcelRow<ActionTimeline>.Create(ExcelPage page, uint offset, uint row) =>
 	   new(page, offset, row);
 }

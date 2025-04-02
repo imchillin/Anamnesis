@@ -11,7 +11,7 @@ using PropertyChanged;
 using System.Windows.Controls;
 
 /// <summary>
-/// Interaction logic for HairSelector.xaml.
+/// Interaction logic for CustomizeFeatureSelectorDrawer.xaml.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
 public partial class CustomizeFeatureSelectorDrawer : UserControl, IDrawer
@@ -44,11 +44,7 @@ public partial class CustomizeFeatureSelectorDrawer : UserControl, IDrawer
 
 	public byte Selected
 	{
-		get
-		{
-			return this.selected;
-		}
-
+		get => this.selected;
 		set
 		{
 			this.selected = value;
@@ -64,14 +60,10 @@ public partial class CustomizeFeatureSelectorDrawer : UserControl, IDrawer
 
 	public CharaMakeCustomize? SelectedItem
 	{
-		get
-		{
-			return this.selectedItem;
-		}
-
+		get => this.selectedItem;
 		set
 		{
-			if (!this.selectedItem.HasValue)
+			if (this.selectedItem.HasValue && value.HasValue && this.selectedItem.Value.Equals(value.Value))
 				return;
 
 			this.selectedItem = value;
@@ -90,5 +82,6 @@ public partial class CustomizeFeatureSelectorDrawer : UserControl, IDrawer
 
 	public void OnClosed()
 	{
+		// Do nothing
 	}
 }

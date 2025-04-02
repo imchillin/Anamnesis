@@ -31,16 +31,15 @@ public partial class DeveloperTab : UserControl
 	public GposeService GposeService => GposeService.Instance;
 	public SceneOptionsValues SceneOptions { get; init; } = new();
 
-	// TODO: Fix (And uncomment the relevant code in the XAML file)
 	private void OnNpcNameSearchClicked(object sender, RoutedEventArgs e)
 	{
-		/* GenericSelectorUtil.Show(GameDataService.BattleNpcNames, (v) =>
+		GenericSelectorUtil.Show(GameDataService.BattleNpcNames, (v) =>
 		{
 			if (v.Description == null)
 				return;
 
 			ClipboardUtility.CopyToClipboard(v.Description);
-		}); */
+		});
 	}
 
 	private void OnFindNpcClicked(object sender, RoutedEventArgs e)

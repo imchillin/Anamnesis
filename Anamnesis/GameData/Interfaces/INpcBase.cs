@@ -2,10 +2,16 @@
 // Licensed under the MIT license.
 namespace Anamnesis.GameData;
 
+using Anamnesis.Files;
 using Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Sheets;
+using Anamnesis.Memory;
+using Anamnesis.Services;
 using Anamnesis.TexTools;
 using Lumina.Excel;
+using System;
+using System.Collections.Generic;
+using System.Numerics;
 
 /// <summary>
 /// Interface representing the base properties of an NPC.
@@ -36,7 +42,7 @@ public interface INpcBase : IRow
 	/// <summary>Gets the color of the face paint.</summary>
 	byte FacePaintColor { get; }
 
-	/// <summary>Gets the face paint.</summary>
+	/// <summary>Gets the face paint option of the NPC.</summary>
 	byte FacePaint { get; }
 
 	/// <summary>Gets extra feature 2 or bust size.</summary>
@@ -66,13 +72,13 @@ public interface INpcBase : IRow
 	/// <summary>Gets the hairstyle of the NPC.</summary>
 	byte HairStyle { get; }
 
-	/// <summary>Gets a value indicating whether hair highlight is enabled.</summary>
+	/// <summary>Gets a value indicating whether hair highlights are enabled.</summary>
 	bool EnableHairHighlight { get; }
 
 	/// <summary>Gets the skin color of the NPC.</summary>
 	byte SkinColor { get; }
 
-	/// <summary>Gets the eye heterochromia of the NPC.</summary>
+	/// <summary>Gets the eye heterochromia mode of the NPC.</summary>
 	byte EyeHeterochromia { get; }
 
 	/// <summary>Gets the hair highlight color of the NPC.</summary>
@@ -218,4 +224,206 @@ public interface INpcBase : IRow
 
 	/// <summary>Gets the secondary dye for the right ring item.</summary>
 	RowRef<Stain> Dye2RightRing { get; }
+}
+
+public static class INpcBaseExtensions
+{
+	/// <summary>
+	/// Maps NPC types to a letter for use in string keys.
+	/// </summary>
+	private static readonly Dictionary<Type, char> TypeToCharMap = new()
+	{
+		{ typeof(ResidentNpc), 'R' },
+		{ typeof(BattleNpc), 'B' },
+		{ typeof(EventNpc), 'E' },
+		{ typeof(Companion), 'C' },
+		{ typeof(Mount), 'M' },
+		{ typeof(Ornament), 'O' }
+	};
+
+	/// <summary>
+	/// Maps a letter to a function that retrieves an NPC from the game data service.
+	/// </summary>
+	private static readonly Dictionary<char, Func<uint, INpcBase>> CharToServiceMap = new()
+	{
+		{ 'R', key => GameDataService.ResidentNPCs.GetRow(key) },
+		{ 'B', key => GameDataService.BattleNPCs.GetRow(key) },
+		{ 'E', key => GameDataService.EventNPCs.GetRow(key) },
+		{ 'C', key => GameDataService.Companions.GetRow(key) },
+		{ 'M', key => GameDataService.Mounts.GetRow(key) },
+		{ 'O', key => GameDataService.Ornaments.GetRow(key) }
+	};
+
+	/// <summary>
+	/// Converts an NPC to a string key.
+	/// </summary>
+	/// <param name="npc">The NPC to convert.</param>
+	/// <returns>The string key.</returns>
+	/// <exception cref="Exception">Thrown if the NPC type is unknown.</exception>
+	public static string ToStringKey(this INpcBase npc)
+	{
+		if (!TypeToCharMap.TryGetValue(npc.GetType(), out char t))
+			throw new Exception($"Unknown Npc Type: {npc.GetType()}");
+
+		return $"{t}:{npc.RowId:D7}";
+	}
+
+	/// <summary>
+	/// Converts a string key to an NPC.
+	/// </summary>
+	/// <param name="stringKey">The string key to convert.</param>
+	/// <returns>The NPC.</returns>
+	/// <exception cref="Exception">Thrown if the NPC key is unrecognized.</exception>
+	public static INpcBase FromStringKey(string stringKey)
+	{
+		string[] parts = stringKey.Split(':');
+		if (parts.Length == 1)
+		{
+			uint key = uint.Parse(stringKey);
+			return GameDataService.ResidentNPCs.GetRow(key);
+		}
+		else if (parts.Length == 2 && CharToServiceMap.TryGetValue(parts[0][0], out var getService))
+		{
+			uint key = uint.Parse(parts[1]);
+			return getService(key);
+		}
+		else
+		{
+			throw new Exception($"Unrecognized NPC key: {stringKey}");
+		}
+	}
+
+	/// <summary>
+	/// Converts an NPC to a character file.
+	/// </summary>
+	/// <param name="npc">The NPC to convert.</param>
+	/// <returns>A character file.</returns>
+	public static CharacterFile ToFile(this INpcBase npc)
+	{
+		ArgumentNullException.ThrowIfNull(npc);
+
+		ActorCustomizeMemory.Races? race = npc.Race.Value.CustomizeRace;
+		ActorCustomizeMemory.Tribes? tribe = npc.Tribe.Value.CustomizeTribe;
+
+		race ??= ActorCustomizeMemory.Races.Hyur;
+		tribe ??= ActorCustomizeMemory.Tribes.Midlander;
+
+		CharacterFile file = new()
+		{
+			SaveMode = CharacterFile.SaveModes.All,
+			ModelType = npc.ModelCharaRow,
+			Race = race,
+			Tribe = tribe,
+			Gender = (ActorCustomizeMemory.Genders)npc.Gender,
+			Age = (ActorCustomizeMemory.Ages)npc.BodyType,
+			Height = Math.Min(npc.Height, (byte)100),
+			Head = npc.Face,
+			Hair = npc.HairStyle,
+			EnableHighlights = npc.EnableHairHighlight,
+			Skintone = npc.SkinColor,
+			REyeColor = npc.EyeHeterochromia,
+			LEyeColor = npc.EyeColor,
+			HairTone = npc.HairColor,
+			Highlights = npc.HairHighlightColor,
+			FacialFeatures = (ActorCustomizeMemory.FacialFeature)npc.FacialFeature,
+			LimbalEyes = npc.FacialFeatureColor,
+			Eyebrows = npc.Eyebrows,
+			Eyes = npc.EyeShape,
+			Nose = npc.Nose,
+			Jaw = npc.Jaw,
+			Mouth = npc.Mouth,
+			LipsToneFurPattern = npc.LipColor,
+		};
+
+		// Hyurs and Roegadyn get muscle sliders, while everyone else
+		// Gets custom tails or ears.
+		if (npc.Race.Value.CustomizeRace == ActorCustomizeMemory.Races.Hyur ||
+			npc.Race.Value.CustomizeRace == ActorCustomizeMemory.Races.Roegadyn)
+		{
+			file.Bust = npc.ExtraFeature1;
+			file.EarMuscleTailSize = npc.BustOrTone1;
+		}
+		else
+		{
+			file.EarMuscleTailSize = npc.ExtraFeature1;
+			file.TailEarsType = npc.ExtraFeature2OrBust;
+			file.Bust = npc.BustOrTone1;
+		}
+
+		file.FacePaint = npc.FacePaint;
+		file.FacePaintColor = npc.FacePaintColor;
+
+		file.MainHand = WeaponFromItem(npc.MainHand, npc.DyeMainHand, npc.Dye2MainHand);
+		file.OffHand = WeaponFromItem(npc.OffHand, npc.DyeOffHand, npc.Dye2OffHand, true);
+
+		file.HeadGear = GearFromItem(npc.Head, npc.DyeHead, npc.Dye2Head);
+		file.Body = GearFromItem(npc.Body, npc.DyeBody, npc.Dye2Body);
+		file.Hands = GearFromItem(npc.Hands, npc.DyeHands, npc.Dye2Hands);
+		file.Legs = GearFromItem(npc.Legs, npc.DyeLegs, npc.Dye2Legs);
+		file.Feet = GearFromItem(npc.Feet, npc.DyeFeet, npc.Dye2Feet);
+		file.Ears = GearFromItem(npc.Ears, npc.DyeEars, npc.Dye2Ears);
+		file.Neck = GearFromItem(npc.Neck, npc.DyeNeck, npc.Dye2Neck);
+		file.Wrists = GearFromItem(npc.Wrists, npc.DyeWrists, npc.Dye2Wrists);
+		file.LeftRing = GearFromItem(npc.LeftRing, npc.DyeLeftRing, npc.Dye2LeftRing);
+		file.RightRing = GearFromItem(npc.RightRing, npc.DyeRightRing, npc.Dye2RightRing);
+
+		return file;
+	}
+
+	/// <summary>
+	/// Converts an item to a weapon chracter file save.
+	/// </summary>
+	/// <param name="item">The item to convert.</param>
+	/// <param name="dye">The primary dye to use.</param>
+	/// <param name="dye2">The secondary dye to use.</param>
+	/// <param name="isOffHand">A value indicating whether the item is an off-hand item.</param>
+	/// <returns>A weapon save for a character file.</returns>
+	private static CharacterFile.WeaponSave? WeaponFromItem(IItem? item, RowRef<Stain> dye, RowRef<Stain> dye2, bool isOffHand = false)
+	{
+		if (item == null)
+			return null;
+
+		CharacterFile.WeaponSave save = new()
+		{
+			Color = Color.White,
+			Scale = Vector3.One,
+			ModelSet = item.ModelSet,
+			ModelBase = item.ModelBase,
+			ModelVariant = item.ModelVariant,
+			DyeId = (byte)dye.Value.RowId,
+			DyeId2 = (byte)dye2.Value.RowId,
+		};
+
+		if (isOffHand && item.HasSubModel)
+		{
+			save.ModelSet = item.SubModelSet;
+			save.ModelBase = item.SubModelBase;
+			save.ModelVariant = item.SubModelBase;
+		}
+
+		return save;
+	}
+
+	/// <summary>
+	/// Converts an item to a gear character file save.
+	/// </summary>
+	/// <param name="item">The item to convert.</param>
+	/// <param name="dye">The primary dye to use.</param>
+	/// <param name="dye2">The secondary dye to use.</param>
+	/// <returns>A gear save for a character file.</returns>
+	private static CharacterFile.ItemSave? GearFromItem(IItem? item, RowRef<Stain> dye, RowRef<Stain> dye2)
+	{
+		if (item == null)
+			return null;
+
+		CharacterFile.ItemSave save = new()
+		{
+			ModelBase = item.ModelBase,
+			ModelVariant = (byte)item.ModelVariant,
+			DyeId = (byte)dye.Value.RowId,
+			DyeId2 = (byte)dye2.Value.RowId,
+		};
+
+		return save;
+	}
 }

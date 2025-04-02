@@ -3,7 +3,6 @@
 
 namespace Anamnesis.Services;
 
-using Anamnesis.Actor;
 using Anamnesis.Files;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
@@ -79,6 +78,22 @@ public class GameDataService : ServiceBase<GameDataService>
 		return new(LuminaData.Excel, rowId);
 	}
 
+	public static bool TryGetRow<T>(string sheetName, uint rowId, out T row)
+		where T : struct, IExcelRow<T>
+		=> TryGetRow(sheetName, rowId, null, out row);
+
+	public static bool TryGetRow<T>(string sheetName, uint rowId, Language? language, out T row)
+		where T : struct, IExcelRow<T>
+	{
+		if (LuminaData == null)
+			throw new InvalidOperationException("LuminaData is not initialized.");
+
+		return LuminaData.Excel.GetSheet<T>(language, sheetName).TryGetRow(rowId, out row);
+	}
+
+	public static bool TryGetRawRow(string sheetName, uint rowId, out RawRow rawRow)
+	   => TryGetRow(sheetName, rowId, out rawRow);
+
 	public static byte[] GetFileData(string path)
 	{
 		if (LuminaData == null)
@@ -149,7 +164,7 @@ public class GameDataService : ServiceBase<GameDataService>
 
 		Log.Information($"Found game client region: {Region}");
 
-		// these are json files that we write by hand
+		// These are JSON files that we write by hand
 		try
 		{
 			Equipment = new EquipmentSheet("Data/Equipment.json");

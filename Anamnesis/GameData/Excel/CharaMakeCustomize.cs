@@ -11,7 +11,7 @@ using Lumina.Excel;
 public readonly struct CharaMakeCustomize(ExcelPage page, uint offset, uint row)
 	: IExcelRow<CharaMakeCustomize>
 {
-	/// <summary>Gets the row ID.</summary>
+	/// <inheritdoc/>
 	public uint RowId => row;
 
 	/// <summary>Gets the name of the customization option.</summary>

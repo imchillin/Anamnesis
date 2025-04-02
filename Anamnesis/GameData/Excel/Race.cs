@@ -8,27 +8,33 @@ using Anamnesis.Services;
 using Lumina.Excel;
 using System;
 
-/// <summary>Represents a race in the game data.</summary>
+/// <summary>Represents a playable race in the game data.</summary>
 [Sheet("Race", 0x3403807A)]
 public readonly struct Race(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Race>
 {
-	/// <summary>Gets the row ID.</summary>
-	public uint RowId => row;
+	/// <inheritdoc/>
+	public readonly uint RowId => row;
 
-	/// <summary>Gets the name of the race.</summary>
-	public string Name => this.CustomizeRace.ToString();
+	/// <summary>Gets the full race name.</summary>
+	public readonly string Name => this.CustomizeRace.ToString();
 
 	/// <summary>Gets the display name of the race.</summary>
-	public string DisplayName => this.Masculine;
+	public readonly string DisplayName => this.Masculine;
 
 	/// <summary>Gets the corresponding actor customize race value.</summary>
-	public ActorCustomizeMemory.Races CustomizeRace => (ActorCustomizeMemory.Races)this.RowId;
+	public readonly ActorCustomizeMemory.Races CustomizeRace => (ActorCustomizeMemory.Races)this.RowId;
 
 	/// <summary>Gets the masculine name of the race.</summary>
+	/// <remarks>
+	/// On the English version of the game, the masculine and feminine names are identical.
+	/// </remarks>
 	public readonly string Masculine => page.ReadString(offset, offset).ToString();
 
 	/// <summary>Gets the feminine name of the race.</summary>
+	/// <remarks>
+	/// On the English version of the game, the masculine and feminine names are identical.
+	/// </remarks>
 	public readonly string Feminine => page.ReadString(offset + 4, offset).ToString();
 
 	/// <summary>Gets the race-specific equipment (RSE) for the masculine body.</summary>
@@ -109,7 +115,7 @@ public readonly struct Race(ExcelPage page, uint offset, uint row)
 					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.Rava),
 					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.Veena),
 				],
-				_ => throw new Exception($"Unrecognized race {this.CustomizeRace}"),
+				_ => throw new Exception($"Unrecognized race: {this.CustomizeRace}"),
 			};
 		}
 	}

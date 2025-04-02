@@ -6,12 +6,13 @@ namespace Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Sheets;
 using Lumina.Excel;
 
+/// <summary>Represents a weather type in the game data.</summary>
 [Sheet("Weather", 0x02CF2541)]
 public readonly struct Weather(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Weather>
 {
-	/// <summary>Gets the row ID.</summary>
-	public uint RowId => row;
+	/// <inheritdoc/>
+	public readonly uint RowId => row;
 
 	/// <summary>Gets the name of the weather.</summary>
 	public readonly string Name => page.ReadString(offset, offset).ToString() ?? string.Empty;

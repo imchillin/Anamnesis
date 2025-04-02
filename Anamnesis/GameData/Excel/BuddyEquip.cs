@@ -9,13 +9,20 @@ using Anamnesis.TexTools;
 using Lumina.Excel;
 using System.Runtime.CompilerServices;
 
+/// <summary>
+/// Represents companion equipment (e.g. chocobo bardings) data from the game data.
+/// </summary>
 [Sheet("BuddyEquip", 0xB429792A)]
 public readonly struct BuddyEquip(ExcelPage page, uint offset, uint row)
 	: IExcelRow<BuddyEquip>
 {
-	public uint RowId => row;
+	/// <inheritdoc/>
+	public readonly uint RowId => row;
 
+	/// <summary>Gets the singular name of the equipment object.</summary>
 	public readonly string Name => page.ReadString(offset + 8, offset).ToString();
+
+	/// <summary>Gets the equipment object's head slot item (if any).</summary>
 	public BuddyItem? Head
 	{
 		get
@@ -32,6 +39,7 @@ public readonly struct BuddyEquip(ExcelPage page, uint offset, uint row)
 		}
 	}
 
+	/// <summary>Gets the equipment object's body slot item (if any).</summary>
 	public BuddyItem? Body
 	{
 		get
@@ -48,6 +56,7 @@ public readonly struct BuddyEquip(ExcelPage page, uint offset, uint row)
 		}
 	}
 
+	/// <summary>Gets the equipment object's feet slot item (if any).</summary>
 	public BuddyItem? Feet
 	{
 		get
@@ -64,37 +73,87 @@ public readonly struct BuddyEquip(ExcelPage page, uint offset, uint row)
 		}
 	}
 
+	/// <summary>
+	/// Creates a new instance of the <see cref="BuddyEquip"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="BuddyEquip"/> struct.</returns>
 	static BuddyEquip IExcelRow<BuddyEquip>.Create(ExcelPage page, uint offset, uint row) =>
 		new(page, offset, row);
 
+	/// <summary>Represents a companion equipment item.</summary>
 	public class BuddyItem(string name, ItemSlots slot, ushort modelBase, ushort modelVariant, ushort icon)
 		: IItem
 	{
+		/// <inheritdoc/>
 		public string Name { get; private set; } = name;
+
+		/// <summary>Gets the slot(s) that this item fits in.</summary>
 		public ItemSlots Slot { get; private set; } = slot;
-		public ushort ModelBase { get; private set; } = modelBase;
-		public ushort ModelVariant { get; private set; } = modelVariant;
+
+		/// <inheritdoc/>
 		public ImgRef? Icon { get; private set; } = new(icon);
 
+		/// <inheritdoc/>
 		public uint RowId => 0;
+
+		/// <inheritdoc/>
 		public string? Description => null;
+
+		/// <inheritdoc/>
+		public ulong Model => 0;
+
+		/// <inheritdoc/>
+		public ushort ModelSet => 0;
+
+		/// <inheritdoc/>
+		public ushort ModelBase { get; private set; } = modelBase;
+
+		/// <inheritdoc/>
+		public ushort ModelVariant { get; private set; } = modelVariant;
+
+		/// <inheritdoc/>
 		public bool HasSubModel => false;
 
-		public ulong Model => 0;
-		public ushort ModelSet => 0;
+		/// <inheritdoc/>
 		public ulong SubModel => 0;
+
+		/// <inheritdoc/>
 		public ushort SubModelSet => 0;
+
+		/// <inheritdoc/>
 		public ushort SubModelBase => 0;
+
+		/// <inheritdoc/>
 		public ushort SubModelVariant => 0;
+
+		/// <inheritdoc/>
 		public Classes EquipableClasses => Classes.All;
+
+		/// <inheritdoc/>
 		public bool IsWeapon => false;
+
+		/// <inheritdoc/>
 		public ItemCategories Category => ItemCategories.None;
+
+		/// <inheritdoc/>
 		public Mod? Mod => null;
+
+		/// <inheritdoc/>
 		public bool IsFavorite { get; set; }
+
+		/// <inheritdoc/>
 		public bool CanOwn => false;
+
+		/// <inheritdoc/>
 		public bool IsOwned { get; set; }
+
+		/// <inheritdoc/>
 		public byte EquipLevel => 0;
 
+		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool FitsInSlot(ItemSlots slot) => this.Slot.HasFlagUnsafe(slot);
 	}
