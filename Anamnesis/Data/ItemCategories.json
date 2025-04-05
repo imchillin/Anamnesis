@@ -5365,7 +5365,7 @@
   "13878": "Deprecated",
   // Coven Blade
   "13879": "Deprecated",
-  // Coven Fangs
+  // Coven Maws
   "13880": "Deprecated",
   // Coven Battleaxe
   "13881": "Deprecated",
@@ -8297,8 +8297,164 @@
   "33752": "Premium",
   // Oracle Leggings
   "33753": "Premium",
+  // Radiant's Baghnakhs
+  "35096": "Deprecated",
+  // Radiant's Battleaxe
+  "35097": "Deprecated",
+  // Radiant's Partisan
+  "35098": "Deprecated",
+  // Radiant's Composite Bow
+  "35099": "Deprecated",
+  // Radiant's Sword Breakers
+  "35100": "Deprecated",
+  // Radiant's Greatsword
+  "35101": "Deprecated",
+  // Radiant's Pistol
+  "35102": "Deprecated",
+  // Radiant's Cane
+  "35103": "Deprecated",
+  // Radiant's Scepter
+  "35104": "Deprecated",
+  // Radiant's Grimoire
+  "35105": "Deprecated",
+  // Radiant's Codex
+  "35106": "Deprecated",
+  // Radiant's Torquetum
+  "35107": "Deprecated",
+  // Radiant's Blade
+  "35108": "Deprecated",
+  // Radiant's Rapier
+  "35109": "Deprecated",
+  // Radiant's Bayonet
+  "35110": "Deprecated",
+  // Radiant's Chakrams
+  "35111": "Deprecated",
+  // Radiant's Milpreves
+  "35112": "Deprecated",
+  // Radiant's War Scythe
+  "35113": "Deprecated",
+  // Radiant's Shield
+  "35114": "Deprecated",
+  // Radiant's Helm of Fending
+  "35115": "Deprecated",
+  // Radiant's Scale Mail of Fending
+  "35116": "Deprecated",
+  // Radiant's Gauntlets of Fending
+  "35117": "Deprecated",
+  // Radiant's Cuisses of Fending
+  "35118": "Deprecated",
+  // Radiant's Sabatons of Fending
+  "35119": "Deprecated",
+  // Radiant's Helm of Maiming
+  "35120": "Deprecated",
+  // Radiant's Scale Mail of Maiming
+  "35121": "Deprecated",
+  // Radiant's Gauntlets of Maiming
+  "35122": "Deprecated",
+  // Radiant's Cuisses of Maiming
+  "35123": "Deprecated",
+  // Radiant's Sabatons of Maiming
+  "35124": "Deprecated",
+  // Radiant's Mask of Striking
+  "35125": "Deprecated",
+  // Radiant's Mail of Striking
+  "35126": "Deprecated",
+  // Radiant's Wristgloves of Striking
+  "35127": "Deprecated",
+  // Radiant's Hose of Striking
+  "35128": "Deprecated",
+  // Radiant's Sabatons of Striking
+  "35129": "Deprecated",
+  // Radiant's Mask of Aiming
+  "35130": "Deprecated",
+  // Radiant's Mail of Aiming
+  "35131": "Deprecated",
+  // Radiant's Wristgloves of Aiming
+  "35132": "Deprecated",
+  // Radiant's Hose of Aiming
+  "35133": "Deprecated",
+  // Radiant's Sabatons of Aiming
+  "35134": "Deprecated",
+  // Radiant's Visor of Scouting
+  "35135": "Deprecated",
+  // Radiant's Mail of Scouting
+  "35136": "Deprecated",
+  // Radiant's Gloves of Scouting
+  "35137": "Deprecated",
+  // Radiant's Hose of Scouting
+  "35138": "Deprecated",
+  // Radiant's Greaves of Scouting
+  "35139": "Deprecated",
+  // Radiant's Visor of Healing
+  "35140": "Deprecated",
+  // Radiant's Mail of Healing
+  "35141": "Deprecated",
+  // Radiant's Gloves of Healing
+  "35142": "Deprecated",
+  // Radiant's Hose of Healing
+  "35143": "Deprecated",
+  // Radiant's Greaves of Healing
+  "35144": "Deprecated",
+  // Radiant's Visor of Casting
+  "35145": "Deprecated",
+  // Radiant's Mail of Casting
+  "35146": "Deprecated",
+  // Radiant's Gloves of Casting
+  "35147": "Deprecated",
+  // Radiant's Hose of Casting
+  "35148": "Deprecated",
+  // Radiant's Greaves of Casting
+  "35149": "Deprecated",
+  // Radiant's Earrings of Fending
+  "35150": "Deprecated",
+  // Radiant's Earrings of Slaying
+  "35151": "Deprecated",
+  // Radiant's Earrings of Aiming
+  "35152": "Deprecated",
+  // Radiant's Earrings of Healing
+  "35153": "Deprecated",
+  // Radiant's Earrings of Casting
+  "35154": "Deprecated",
+  // Radiant's Choker of Fending
+  "35155": "Deprecated",
+  // Radiant's Choker of Slaying
+  "35156": "Deprecated",
+  // Radiant's Choker of Aiming
+  "35157": "Deprecated",
+  // Radiant's Choker of Healing
+  "35158": "Deprecated",
+  // Radiant's Choker of Casting
+  "35159": "Deprecated",
+  // Radiant's Bracelet of Fending
+  "35160": "Deprecated",
+  // Radiant's Bracelet of Slaying
+  "35161": "Deprecated",
+  // Radiant's Bracelet of Aiming
+  "35162": "Deprecated",
+  // Radiant's Bracelet of Healing
+  "35163": "Deprecated",
+  // Radiant's Bracelet of Casting
+  "35164": "Deprecated",
+  // Radiant's Ring of Fending
+  "35165": "Deprecated",
+  // Radiant's Ring of Slaying
+  "35166": "Deprecated",
+  // Radiant's Ring of Aiming
+  "35167": "Deprecated",
+  // Radiant's Ring of Healing
+  "35168": "Deprecated",
+  // Radiant's Ring of Casting
+  "35169": "Deprecated",
   // Death Scythe
   "35754": "Limited",
+  // Heavensturn Domaru
+  "35853": "Premium, Limited",
+  // Heavensturn Kote
+  "35854": "Premium, Limited",
+  // Heavensturn Haidate
+  "35855": "Premium, Limited",
+  // Heavensturn Sune-ate
+  "35856": "Premium, Limited",
   // Little Lady's Crown
   "35857": "Limited",
   // Clown's Hat
@@ -8425,6 +8581,156 @@
   "37480": "Limited",
   // Common Makai Harrower's Longboots
   "37481": "Limited",
+  // Lunar Envoy's Longsword
+  "37931": "Deprecated",
+  // Lunar Envoy's Sainti
+  "37932": "Deprecated",
+  // Lunar Envoy's Bardiche
+  "37933": "Deprecated",
+  // Lunar Envoy's Bident
+  "37934": "Deprecated",
+  // Lunar Envoy's Composite Bow
+  "37935": "Deprecated",
+  // Lunar Envoy's Stilettos
+  "37936": "Deprecated",
+  // Lunar Envoy's Greatsword
+  "37937": "Deprecated",
+  // Lunar Envoy's Handgonne
+  "37938": "Deprecated",
+  // Lunar Envoy's Wand
+  "37939": "Deprecated",
+  // Lunar Envoy's Staff
+  "37940": "Deprecated",
+  // Lunar Envoy's Grimoire
+  "37941": "Deprecated",
+  // Lunar Envoy's Codex
+  "37942": "Deprecated",
+  // Lunar Envoy's Astrometer
+  "37943": "Deprecated",
+  // Lunar Envoy's Blade
+  "37944": "Deprecated",
+  // Lunar Envoy's Smallsword
+  "37945": "Deprecated",
+  // Lunar Envoy's Gunblade
+  "37946": "Deprecated",
+  // Lunar Envoy's Tathlums
+  "37947": "Deprecated",
+  // Lunar Envoy's Wings
+  "37948": "Deprecated",
+  // Lunar Envoy's War Sickle
+  "37949": "Deprecated",
+  // Lunar Envoy's Kite Shield
+  "37950": "Deprecated",
+  // Lunar Envoy's Face Guard of Fending
+  "37951": "Deprecated",
+  // Lunar Envoy's Jacket of Fending
+  "37952": "Deprecated",
+  // Lunar Envoy's Gloves of Fending
+  "37953": "Deprecated",
+  // Lunar Envoy's Trousers of Fending
+  "37954": "Deprecated",
+  // Lunar Envoy's Boots of Fending
+  "37955": "Deprecated",
+  // Lunar Envoy's Turban of Maiming
+  "37956": "Deprecated",
+  // Lunar Envoy's Gambison of Maiming
+  "37957": "Deprecated",
+  // Lunar Envoy's Fingerless Gloves of Maiming
+  "37958": "Deprecated",
+  // Lunar Envoy's Trousers of Maiming
+  "37959": "Deprecated",
+  // Lunar Envoy's Thighboots of Maiming
+  "37960": "Deprecated",
+  // Lunar Envoy's Face Guard of Striking
+  "37961": "Deprecated",
+  // Lunar Envoy's Jacket of Striking
+  "37962": "Deprecated",
+  // Lunar Envoy's Gloves of Striking
+  "37963": "Deprecated",
+  // Lunar Envoy's Trousers of Striking
+  "37964": "Deprecated",
+  // Lunar Envoy's Boots of Striking
+  "37965": "Deprecated",
+  // Lunar Envoy's Face Guard of Aiming
+  "37966": "Deprecated",
+  // Lunar Envoy's Gambison of Aiming
+  "37967": "Deprecated",
+  // Lunar Envoy's Fingerless Gloves of Aiming
+  "37968": "Deprecated",
+  // Lunar Envoy's Trousers of Aiming
+  "37969": "Deprecated",
+  // Lunar Envoy's Thighboots of Aiming
+  "37970": "Deprecated",
+  // Lunar Envoy's Turban of Scouting
+  "37971": "Deprecated",
+  // Lunar Envoy's Gambison of Scouting
+  "37972": "Deprecated",
+  // Lunar Envoy's Gloves of Scouting
+  "37973": "Deprecated",
+  // Lunar Envoy's Trousers of Scouting
+  "37974": "Deprecated",
+  // Lunar Envoy's Boots of Scouting
+  "37975": "Deprecated",
+  // Lunar Envoy's Hairpin of Healing
+  "37976": "Deprecated",
+  // Lunar Envoy's Justaucorps of Healing
+  "37977": "Deprecated",
+  // Lunar Envoy's Gloves of Healing
+  "37978": "Deprecated",
+  // Lunar Envoy's Longkilt of Healing
+  "37979": "Deprecated",
+  // Lunar Envoy's Boots of Healing
+  "37980": "Deprecated",
+  // Lunar Envoy's Hairpin of Casting
+  "37981": "Deprecated",
+  // Lunar Envoy's Justaucorps of Casting
+  "37982": "Deprecated",
+  // Lunar Envoy's Gloves of Casting
+  "37983": "Deprecated",
+  // Lunar Envoy's Longkilt of Casting
+  "37984": "Deprecated",
+  // Lunar Envoy's Boots of Casting
+  "37985": "Deprecated",
+  // Lunar Envoy's Earring of Fending
+  "37986": "Deprecated",
+  // Lunar Envoy's Earring of Slaying
+  "37987": "Deprecated",
+  // Lunar Envoy's Earring of Aiming
+  "37988": "Deprecated",
+  // Lunar Envoy's Earring of Healing
+  "37989": "Deprecated",
+  // Lunar Envoy's Earring of Casting
+  "37990": "Deprecated",
+  // Lunar Envoy's Necklace of Fending
+  "37991": "Deprecated",
+  // Lunar Envoy's Necklace of Slaying
+  "37992": "Deprecated",
+  // Lunar Envoy's Necklace of Aiming
+  "37993": "Deprecated",
+  // Lunar Envoy's Necklace of Healing
+  "37994": "Deprecated",
+  // Lunar Envoy's Necklace of Casting
+  "37995": "Deprecated",
+  // Lunar Envoy's Bracelets of Fending
+  "37996": "Deprecated",
+  // Lunar Envoy's Bracelets of Slaying
+  "37997": "Deprecated",
+  // Lunar Envoy's Bracelets of Aiming
+  "37998": "Deprecated",
+  // Lunar Envoy's Bracelets of Healing
+  "37999": "Deprecated",
+  // Lunar Envoy's Bracelets of Casting
+  "38000": "Deprecated",
+  // Lunar Envoy's Ring of Fending
+  "38001": "Deprecated",
+  // Lunar Envoy's Ring of Slaying
+  "38002": "Deprecated",
+  // Lunar Envoy's Ring of Aiming
+  "38003": "Deprecated",
+  // Lunar Envoy's Ring of Healing
+  "38004": "Deprecated",
+  // Lunar Envoy's Ring of Casting
+  "38005": "Deprecated",
   // Wake Doctor's Mask
   "38228": "Premium, Limited",
   // Wake Doctor's White Coat
@@ -8481,6 +8787,8 @@
   "38259": "Premium, Limited",
   // Valentione Emissary's Dress Boots
   "38260": "Premium, Limited",
+  // Brand-new Alisaie's Attire
+  "38688": "Premium",
   // Phoenix Riser Helmet
   "39245": "Premium, Limited",
   // Phoenix Riser Suit
@@ -8499,6 +8807,8 @@
   "39300": "Premium",
   // Educand's Loafers
   "39301": "Premium",
+  // Gaia's Attire
+  "39302": "Premium",
   // Magitek Ear Guards
   "39303": "Premium",
   // Magitek Jacket
@@ -8509,6 +8819,190 @@
   "39306": "Premium",
   // Magitek Shoes
   "39307": "Premium",
+  // Porxie Earrings
+  "39328": "Limited",
+  // False Monarchy Mask
+  "39359": "Limited",
+  // False Monarchy Armor
+  "39360": "Limited",
+  // False Monarchy Gauntlets
+  "39361": "Limited",
+  // False Monarchy Breeches
+  "39362": "Limited",
+  // False Monarchy Sabatons
+  "39363": "Limited",
+  // Obscure Hyposkhesphyra
+  "39621": "Premium",
+  // Black Hyposkhesphyra
+  "39622": "Premium",
+  // Stark Hyposkhesphyra
+  "39623": "Premium",
+  // Shadow Hyposkhesphyra
+  "39624": "Premium",
+  // Umbral Hyposkhesphyra
+  "39625": "Premium",
+  // Ecliptic Hyposkhesphyra
+  "39626": "Premium",
+  // Stygian Hyposkhesphyra
+  "39627": "Premium",
+  // Polaris Point
+  "40015": "Deprecated",
+  // Dragon's Beard Fists
+  "40016": "Deprecated",
+  // Night's Wolf
+  "40018": "Deprecated",
+  // Bluebird's Nest
+  "40019": "Deprecated",
+  // Shinobi Knives
+  "40020": "Deprecated",
+  // Blood Rapture
+  "40021": "Deprecated",
+  // Vitória do Povo
+  "40022": "Deprecated",
+  // Bunny's Crescent
+  "40023": "Deprecated",
+  // Ignis Malus
+  "40024": "Deprecated",
+  // Encounter in Lilies
+  "40025": "Deprecated",
+  // Faerie Fancy
+  "40026": "Deprecated",
+  // Star Gazer
+  "40027": "Deprecated",
+  // Higan Shigan
+  "40028": "Deprecated",
+  // Lamplight Crook
+  "40029": "Deprecated",
+  // Cerberus Fang
+  "40030": "Deprecated",
+  // Twin Moons
+  "40031": "Deprecated",
+  // Isnae Phis
+  "40032": "Deprecated",
+  // Avatar's Scythe
+  "40033": "Deprecated",
+  // Vessel
+  "40034": "Deprecated",
+  // Credendum Circlet of Fending
+  "40035": "Deprecated",
+  // Credendum Cuirass of Fending
+  "40036": "Deprecated",
+  // Credendum Gauntlets of Fending
+  "40037": "Deprecated",
+  // Credendum Breeches of Fending
+  "40038": "Deprecated",
+  // Credendum Sollerets of Fending
+  "40039": "Deprecated",
+  // Credendum Circlet of Maiming
+  "40040": "Deprecated",
+  // Credendum Cuirass of Maiming
+  "40041": "Deprecated",
+  // Credendum Gauntlets of Maiming
+  "40042": "Deprecated",
+  // Credendum Breeches of Maiming
+  "40043": "Deprecated",
+  // Credendum Sollerets of Maiming
+  "40044": "Deprecated",
+  // Credendum Blinder of Striking
+  "40045": "Deprecated",
+  // Credendum Corselet of Striking
+  "40046": "Deprecated",
+  // Credendum Armguards of Striking
+  "40047": "Deprecated",
+  // Credendum Trousers of Striking
+  "40048": "Deprecated",
+  // Credendum Longboots of Striking
+  "40049": "Deprecated",
+  // Credendum Hat of Aiming
+  "40050": "Deprecated",
+  // Credendum Mail of Aiming
+  "40051": "Deprecated",
+  // Credendum Halfgloves of Aiming
+  "40052": "Deprecated",
+  // Credendum Hose of Aiming
+  "40053": "Deprecated",
+  // Credendum Shoes of Aiming
+  "40054": "Deprecated",
+  // Credendum Blinder of Scouting
+  "40055": "Deprecated",
+  // Credendum Corselet of Scouting
+  "40056": "Deprecated",
+  // Credendum Armguards of Scouting
+  "40057": "Deprecated",
+  // Credendum Trousers of Scouting
+  "40058": "Deprecated",
+  // Credendum Longboots of Scouting
+  "40059": "Deprecated",
+  // Credendum Circlet of Healing
+  "40060": "Deprecated",
+  // Credendum Surcoat of Healing
+  "40061": "Deprecated",
+  // Credendum Gauntlets of Healing
+  "40062": "Deprecated",
+  // Credendum Hose of Healing
+  "40063": "Deprecated",
+  // Credendum Sollerets of Healing
+  "40064": "Deprecated",
+  // Credendum Circlet of Casting
+  "40065": "Deprecated",
+  // Credendum Surcoat of Casting
+  "40066": "Deprecated",
+  // Credendum Gauntlets of Casting
+  "40067": "Deprecated",
+  // Credendum Hose of Casting
+  "40068": "Deprecated",
+  // Credendum Sollerets of Casting
+  "40069": "Deprecated",
+  // Credendum Earrings of Fending
+  "40070": "Deprecated",
+  // Credendum Earrings of Slaying
+  "40071": "Deprecated",
+  // Credendum Earrings of Aiming
+  "40072": "Deprecated",
+  // Credendum Earrings of Healing
+  "40073": "Deprecated",
+  // Credendum Earrings of Casting
+  "40074": "Deprecated",
+  // Credendum Necklace of Fending
+  "40075": "Deprecated",
+  // Credendum Necklace of Slaying
+  "40076": "Deprecated",
+  // Credendum Necklace of Aiming
+  "40077": "Deprecated",
+  // Credendum Necklace of Healing
+  "40078": "Deprecated",
+  // Credendum Necklace of Casting
+  "40079": "Deprecated",
+  // Credendum Bracelets of Fending
+  "40080": "Deprecated",
+  // Credendum Bracelets of Slaying
+  "40081": "Deprecated",
+  // Credendum Bracelets of Aiming
+  "40082": "Deprecated",
+  // Credendum Bracelets of Healing
+  "40083": "Deprecated",
+  // Credendum Bracelets of Casting
+  "40084": "Deprecated",
+  // Credendum Ring of Fending
+  "40085": "Deprecated",
+  // Credendum Ring of Slaying
+  "40086": "Deprecated",
+  // Credendum Ring of Aiming
+  "40087": "Deprecated",
+  // Credendum Ring of Healing
+  "40088": "Deprecated",
+  // Credendum Ring of Casting
+  "40089": "Deprecated",
+  // Unorthodox Saint's Cap
+  "40416": "Limited",
+  // Unorthodox Saint's Halfrobe
+  "40417": "Limited",
+  // Unorthodox Saint's Gloves
+  "40418": "Limited",
+  // Unorthodox Saint's Bottoms
+  "40419": "Limited",
+  // Unorthodox Saint's Longboots
+  "40420": "Limited",
   // Seigneur's Beret
   "40421": "Premium",
   // Seigneur's Jerkin
@@ -8527,6 +9021,42 @@
   "40450": "Premium",
   // Iceheart Thighboots
   "40451": "Premium",
+  // Azeyma's Earrings
+  "41081": "Premium",
+  // Donut Earring
+  "41503": "Limited",
+  // Fierce Tyrant's Helm
+  "41518": "Limited",
+  // Fierce Tyrant's Cuirass
+  "41519": "Limited",
+  // Fierce Tyrant's Gauntlets
+  "41520": "Limited",
+  // Fierce Tyrant's Hose
+  "41521": "Limited",
+  // Fierce Tyrant's Sollerets
+  "41522": "Limited",
+  // Metian Vest
+  "41555": "Limited",
+  // Metian Gauntlets
+  "41556": "Limited",
+  // Metian Chausses
+  "41557": "Limited",
+  // Metian Sollerets
+  "41558": "Limited",
+  // Gentlebean Knit Cap
+  "41560": "Limited",
+  // Gentlebean Parka
+  "41561": "Limited",
+  // Gentlebean Bottoms
+  "41562": "Limited",
+  // Gentlebean Shoes
+  "41563": "Limited",
+  // Matte Winner's Crown
+  "41564": "Limited",
+  // Imp Head
+  "41565": "Limited",
+  // Imp Suit
+  "41566": "Limited",
   // Woodland Warden's Top
   "41567": "Premium",
   // Woodland Warden's Fingerstalls
@@ -8545,4 +9075,84 @@
   "41574": "Premium",
   // Crystarium Prodigy's Thighboots
   "41575": "Premium",
+  // Chocobo Brush
+  "41678": "Premium",
+  // Glossy Winner's Crown
+  "41796": "Limited",
+  // Night of Devilry Horns
+  "43471": "Limited",
+  // Night of Devilry Shirt
+  "43472": "Limited",
+  // Night of Devilry Fingerless Gloves
+  "43473": "Limited",
+  // Night of Devilry Trousers
+  "43474": "Limited",
+  // Night of Devilry Boots
+  "43475": "Limited",
+  // Loose Fit Cap
+  "44640": "Limited",
+  // Loose Fit Overshirt
+  "44641": "Limited",
+  // Loose Fit Wristguards
+  "44642": "Limited",
+  // Loose Fit Cargo Trousers
+  "44643": "Limited",
+  // Loose Fit Shoes
+  "44644": "Limited",
+  // Seneschal Prince's Headset
+  "44645": "Limited",
+  // Seneschal Prince's Jacket
+  "44646": "Limited",
+  // Seneschal Prince's Gloves
+  "44647": "Limited",
+  // Seneschal Prince's Trousers
+  "44648": "Limited",
+  // Seneschal Prince's Longboots
+  "44649": "Limited",
+  // Leisurewear Knit Cap
+  "44661": "Premium",
+  // Leisurewear High-cut Shirt
+  "44662": "Premium",
+  // Leisurewear Sweatpants
+  "44664": "Premium",
+  // Leisurewear Shoes
+  "44665": "Premium",
+  // Leisurewear High-cut Knit Top
+  "44666": "Premium",
+  // Ex-arch's Jacket
+  "44676": "Premium",
+  // Ex-arch's Bracers
+  "44677": "Premium",
+  // Ex-arch's Halfslops
+  "44678": "Premium",
+  // Ex-arch's Boots
+  "44679": "Premium",
+  // Zero's Order Chapeau
+  "44680": "Premium",
+  // Zero's Order Cuirass
+  "44681": "Premium",
+  // Zero's Order Flanchard
+  "44682": "Premium",
+  // Zero's Order Earring
+  "44683": "Premium",
+  // King of Leonis Mail
+  "44684": "Premium",
+  // King of Leonis Armguards
+  "44685": "Premium",
+  // King of Leonis Brais
+  "44686": "Premium",
+  // King of Leonis Boots
+  "44687": "Premium",
+  // Queen of Hourne Bliaud
+  "44688": "Premium",
+  // Queen of Hourne Tights
+  "44690": "Premium",
+  // Queen of Hourne Boots
+  "44691": "Premium",
+  // Ex-arch's Cane
+  "44973": "Premium",
+  // Ex-arch's Rod
+  "44974": "Premium",
+  // Zero's Order Death Scythe
+  "44975": "Premium",
 }
