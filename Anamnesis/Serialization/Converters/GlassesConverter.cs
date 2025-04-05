@@ -3,12 +3,10 @@
 
 namespace Anamnesis.Serialization.Converters;
 
+using Anamnesis.Services;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Anamnesis.GameData.Excel;
-using Anamnesis.Services;
-using Serilog;
 
 public class GlassesConverter : JsonConverter<Glasses>
 {
@@ -27,7 +25,7 @@ public class GlassesConverter : JsonConverter<Glasses>
 			if (!string.IsNullOrEmpty(str))
 			{
 				glassesRowId = uint.Parse(str);
-				return GameDataService.Glasses.Get(glassesRowId);
+				return GameDataService.Glasses.GetRow(glassesRowId);
 			}
 		}
 		else if (reader.TokenType == JsonTokenType.StartObject)
@@ -36,7 +34,7 @@ public class GlassesConverter : JsonConverter<Glasses>
 			if (jsonDoc.RootElement.TryGetProperty("GlassesId", out JsonElement glassesIdEl))
 			{
 				glassesRowId = glassesIdEl.GetUInt32();
-				return GameDataService.Glasses.Get(glassesRowId);
+				return GameDataService.Glasses.GetRow(glassesRowId);
 			}
 		}
 

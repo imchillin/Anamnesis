@@ -8,8 +8,7 @@
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="800">
+			 mc:Ignorable="d">
 
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -67,8 +66,7 @@
 			<ana:RgbColorControl Grid.Row="3" Grid.Column="4" Value="{Binding HairHighlight, Converter={StaticResource SquaredRgb}}" ToolTip="Highlight Color"/>
 
 			<XivToolsWpf:TextBlock Grid.Row="4" Grid.Column="1" Key="Character_ExAppearance_Muscle" Style="{StaticResource Label}"/>
-			<XivToolsWpf:NumberBox Grid.Row="4" Value="{Binding MuscleTone}" Grid.Column="2" Grid.ColumnSpan="5" Slider="Absolute" Minimum="0" Maximum="5" TickFrequency="0.1"/>
-
+			<XivToolsWpf:NumberBox Grid.Row="4" Grid.Column="2" Value="{Binding MuscleTone}" Grid.ColumnSpan="5" Slider="Absolute" Minimum="0" Maximum="5" TickFrequency="0.1"/>
 		</Grid>
 	</Grid>
 </UserControl>

@@ -3,21 +3,21 @@
 
 namespace Anamnesis;
 
-using System;
-using System.ComponentModel;
-using System.Threading.Tasks;
 using Anamnesis.Core.Memory;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
+using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 public delegate void TerritoryEvent();
 
 [AddINotifyPropertyChangedInterface]
 public class TerritoryService : ServiceBase<TerritoryService>
 {
-	private ushort currentWeatherId;
+	private uint currentWeatherId;
 
 	public static event TerritoryEvent? TerritoryChanged;
 
@@ -25,7 +25,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 	public string CurrentTerritoryName { get; private set; } = "Unknown";
 	public Territory? CurrentTerritory { get; private set; }
 
-	public ushort CurrentWeatherId
+	public uint CurrentWeatherId
 	{
 		get
 		{
@@ -37,7 +37,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 				return;
 
 			this.currentWeatherId = value;
-			this.CurrentWeather = GameDataService.Weathers?.GetOrDefault(value);
+			this.CurrentWeather = GameDataService.Weathers?.GetRowOrDefault(value);
 		}
 	}
 
@@ -81,12 +81,12 @@ public class TerritoryService : ServiceBase<TerritoryService>
 
 						if (GameDataService.Territories == null)
 						{
-							this.CurrentTerritoryName = $"Unkown ({this.CurrentTerritoryId})";
+							this.CurrentTerritoryName = $"Unknown ({this.CurrentTerritoryId})";
 						}
 						else
 						{
-							this.CurrentTerritory = GameDataService.Territories.Get(this.CurrentTerritoryId);
-							this.CurrentTerritoryName = this.CurrentTerritory?.Place + " (" + this.CurrentTerritory?.Region + ")";
+							this.CurrentTerritory = GameDataService.Territories.GetRow(this.CurrentTerritoryId);
+							this.CurrentTerritoryName = this.CurrentTerritory?.Place.Value.Name.ToString() + " (" + this.CurrentTerritory?.Region.Value.Name.ToString() + ")";
 						}
 
 						TerritoryChanged?.Invoke();
@@ -133,7 +133,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 
 				if (current != this.CurrentWeatherId)
 				{
-					MemoryService.Write<ushort>(AddressService.GPoseWeather, this.CurrentWeatherId, "Gpose weather Changed");
+					MemoryService.Write(AddressService.GPoseWeather, this.CurrentWeatherId, "Gpose weather Changed");
 				}
 			}
 			else
@@ -142,7 +142,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 
 				if (current != this.CurrentWeatherId)
 				{
-					MemoryService.Write<byte>(AddressService.Weather, (byte)this.CurrentWeatherId, "Overworld weather Changed");
+					MemoryService.Write(AddressService.Weather, (byte)this.CurrentWeatherId, "Overworld weather Changed");
 				}
 			}
 		}
@@ -151,10 +151,10 @@ public class TerritoryService : ServiceBase<TerritoryService>
 			if (this.CurrentWeather == null)
 				return;
 
-			if (this.CurrentWeatherId == this.CurrentWeather.WeatherId)
+			if (this.CurrentWeatherId == this.CurrentWeather.Value.RowId)
 				return;
 
-			this.CurrentWeatherId = this.CurrentWeather.WeatherId;
+			this.CurrentWeatherId = this.CurrentWeather.Value.RowId;
 		}
 	}
 }

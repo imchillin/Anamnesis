@@ -3,12 +3,12 @@
 
 namespace Anamnesis.Serialization.Converters;
 
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
 using Anamnesis.Services;
+using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 public class IItemConverter : JsonConverter<IItem>
 {
@@ -47,7 +47,7 @@ public class IItemConverter : JsonConverter<IItem>
 			if (GameDataService.Items == null)
 				throw new Exception("No items in game data service");
 
-			return GameDataService.Items.Get(uint.Parse(str));
+			return GameDataService.Items.GetRow(uint.Parse(str));
 		}
 	}
 

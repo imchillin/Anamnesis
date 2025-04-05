@@ -3,72 +3,53 @@
 
 namespace Anamnesis.GameData.Excel;
 
-using Anamnesis.GameData.Sheets;
-using Anamnesis.Services;
-using Lumina.Data;
 using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System.Collections.Generic;
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-[Sheet("TerritoryType", 0x77b34bbb)]
-public class Territory : ExcelRow
+/// <summary>Represents a territory type in the game data.</summary>
+[Sheet("TerritoryType", 0x77B34BBB)]
+public readonly struct Territory(ExcelPage page, uint offset, uint row)
+	: IExcelRow<Territory>
 {
-	private static readonly HashSet<uint> HousingTerritories = new()
-	{
-		282,
-		283,
-		284,
-		342,
-		343,
-		344,
-		345,
-		346,
-		347,
-		384,
-		385,
-		386,
-		608,
-		609,
-		610,
-		649,
-		650,
-		651,
-		652,
-	};
+	/// <summary>Collection of housing territories.</summary>
+	private static readonly HashSet<uint> HousingTerritories =
+	[
+		282, 283, 284, 342, 343, 344, 345, 346, 347, 384, 385, 386, 608, 609, 610, 649, 650, 651, 652,
+	];
 
-	public string Name { get; private set; } = "Unknown";
-	public string Place { get; private set; } = "Unknown";
-	public string Region { get; private set; } = "Unknown";
-	public string Zone { get; private set; } = "Unknown";
+	/// <inheritdoc/>
+	public readonly uint RowId => row;
 
-	public bool IsHouse { get; private set; } = false;
+	/// <summary>Gets the name of the territory.</summary>
+	public readonly string Name => page.ReadString(offset, offset).ToString() ?? string.Empty;
 
-	public List<Weather> Weathers { get; private set; } = new List<Weather>();
+	/// <summary>Gets a reference to the current region.</summary>
+	public readonly RowRef<PlaceName> Region => new(page.Module, page.ReadUInt16(offset + 28), page.Language);
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
+	/// <summary>Gets a reference to the current zone.</summary>
+	public readonly RowRef<PlaceName> Zone => new(page.Module, page.ReadUInt16(offset + 30), page.Language);
 
-		this.Name = parser.ReadString(0) ?? "Unknown";
-		this.Region = parser.ReadRowReference<ushort, PlaceName>(3)?.Name ?? "Unknown";
-		this.Zone = parser.ReadRowReference<ushort, PlaceName>(4)?.Name ?? "Unknown";
-		this.Place = parser.ReadRowReference<ushort, PlaceName>(5)?.Name ?? "Unknown";
+	/// <summary>Gets a reference to the current place.</summary>
+	public readonly RowRef<PlaceName> Place => new(page.Module, page.ReadUInt16(offset + 32), page.Language);
 
-		WeatherRate? weatherRate = parser.ReadRowReference<byte, WeatherRate>(12);
+	/// <summary>
+	/// Gets a reference to weather rate applicable to this territory.
+	/// </summary>
+	public readonly RowRef<WeatherRate> WeatherRate => new(page.Module, page.ReadUInt8(offset + 50), page.Language);
 
-		this.Weathers.Clear();
-		if (weatherRate != null && weatherRate.UnkStruct0 != null)
-		{
-			foreach (WeatherRate.UnkStruct0Struct wr in weatherRate.UnkStruct0)
-			{
-				if (wr.Weather == 0)
-					continue;
+	/// <summary>
+	/// Gets a value indicating whether the territory is a housing territory.
+	/// </summary>
+	public readonly bool IsHouse => HousingTerritories.Contains(row);
 
-				this.Weathers.Add(GameDataService.Weathers.Get((uint)wr.Weather));
-			}
-		}
-
-		this.IsHouse = HousingTerritories.Contains(this.RowId);
-	}
+	/// <summary>
+	/// Creates a new instance of the <see cref="Territory"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="Territory"/> struct.</returns>
+	static Territory IExcelRow<Territory>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
 }

@@ -33,7 +33,7 @@ public class SceneFile : JsonFileBase
 	public override string TypeName => "Anamnesis Scene";
 
 	public uint Territory { get; set; }
-	public ushort Weather { get; set; }
+	public uint Weather { get; set; }
 	public byte DayOfMonth { get; set; }
 	public long TimeOfDay { get; set; }
 

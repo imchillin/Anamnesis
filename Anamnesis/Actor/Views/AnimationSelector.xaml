@@ -98,7 +98,7 @@
 						</Border>
 
 
-						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding DisplayName}" Foreground="{DynamicResource MaterialDesignBody}"/>
+						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Foreground="{DynamicResource MaterialDesignBody}"/>
 
 						<Grid Grid.Row="1" Grid.Column="1">
 							<Grid.ColumnDefinitions>

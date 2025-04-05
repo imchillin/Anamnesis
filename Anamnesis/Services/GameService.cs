@@ -3,11 +3,11 @@
 
 namespace Anamnesis.Services;
 
-using System;
-using System.Threading.Tasks;
 using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using PropertyChanged;
+using System;
+using System.Threading.Tasks;
 
 [AddINotifyPropertyChangedInterface]
 public class GameService : ServiceBase<GameService>
@@ -33,7 +33,7 @@ public class GameService : ServiceBase<GameService>
 			if (territoryID == -1)
 				return false;
 
-			if (GameDataService.Territories.GetOrDefault((uint)territoryID) == null)
+			if (GameDataService.Territories.GetRowOrDefault((uint)territoryID) == null)
 				return false;
 
 			return true;

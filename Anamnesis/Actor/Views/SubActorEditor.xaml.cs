@@ -3,12 +3,6 @@
 
 namespace Anamnesis.Actor.Views;
 
-using System;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Anamnesis.Actor.Utilities;
 using Anamnesis.Files;
 using Anamnesis.GameData;
@@ -17,6 +11,12 @@ using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
 using PropertyChanged;
+using System;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using XivToolsWpf;
 using XivToolsWpf.DependencyProperties;
 
@@ -83,7 +83,7 @@ public partial class SubActorEditor : UserControl
 
 	public INpcBase? Npc { get; set; }
 	public ImageSource? IconSource { get; set; }
-	public string TypeKey => "SubActor_" + this.SubActorType;
+	public string TypeKey => $"SubActor_{this.SubActorType}";
 
 	private static void OnActorChanged(SubActorEditor sender, ActorMemory? oldValue, ActorMemory? newValue)
 	{

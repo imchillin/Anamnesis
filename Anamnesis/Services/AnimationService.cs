@@ -146,7 +146,7 @@ public class AnimationService : ServiceBase<AnimationService>
 	{
 		if (animationId != null && memory.Animation!.BaseOverride != animationId)
 		{
-			if (animationId < GameDataService.ActionTimelines.RowCount)
+			if (animationId < GameDataService.ActionTimelines.Count)
 			{
 				memory.Animation!.BaseOverride = (ushort)animationId;
 			}

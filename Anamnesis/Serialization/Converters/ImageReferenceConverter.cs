@@ -3,20 +3,20 @@
 
 namespace Anamnesis.Serialization.Converters;
 
+using Anamnesis.GameData.Sheets;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Anamnesis.GameData.Sheets;
 
-public class ImageReferenceConverter : JsonConverter<ImageReference>
+public class ImageReferenceConverter : JsonConverter<ImgRef>
 {
-	public override ImageReference Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+	public override ImgRef Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
 		uint iconId = reader.GetUInt32();
-		return new ImageReference(iconId);
+		return new ImgRef(iconId);
 	}
 
-	public override void Write(Utf8JsonWriter writer, ImageReference value, JsonSerializerOptions options)
+	public override void Write(Utf8JsonWriter writer, ImgRef value, JsonSerializerOptions options)
 	{
 		writer.WriteNumberValue(value.ImageId);
 	}

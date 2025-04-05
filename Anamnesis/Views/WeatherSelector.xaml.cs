@@ -3,12 +3,12 @@
 
 namespace Anamnesis.Views;
 
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using Anamnesis.GameData.Excel;
+using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
-using PropertyChanged;
+using System.Linq;
+using System.Threading.Tasks;
 using XivToolsWpf;
 
 public abstract class WeatherSelectorDrawer : SelectorDrawer<Weather>
@@ -43,7 +43,7 @@ public partial class WeatherSelector : WeatherSelectorDrawer
 		if (TerritoryService.Instance.CurrentTerritory == null)
 			return Task.CompletedTask;
 
-		this.AddItems(GameDataService.Weathers);
+		this.AddItems(GameDataService.Weathers.ToEnumerable());
 
 		return Task.CompletedTask;
 	}
@@ -55,7 +55,7 @@ public partial class WeatherSelector : WeatherSelectorDrawer
 
 		if (TerritoryService.Instance.CurrentTerritory != null)
 		{
-			bool isNatural = TerritoryService.Instance.CurrentTerritory.Weathers.Contains(weather);
+			bool isNatural = TerritoryService.Instance.CurrentTerritory.Value.WeatherRate.Value.Weather.Any(w => w.RowId == weather.RowId);
 
 			if (natrualWeathers && !isNatural)
 			{
@@ -65,7 +65,7 @@ public partial class WeatherSelector : WeatherSelectorDrawer
 
 		bool matches = SearchUtility.Matches(weather.Name, search);
 		matches |= SearchUtility.Matches(weather.Description, search);
-		matches |= SearchUtility.Matches(weather.WeatherId.ToString(), search);
+		matches |= SearchUtility.Matches(weather.RowId.ToString(), search);
 
 		if (!matches)
 			return false;

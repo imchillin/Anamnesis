@@ -3,107 +3,130 @@
 
 namespace Anamnesis.GameData.Excel;
 
-using System;
 using Anamnesis.Memory;
 using Anamnesis.Services;
-using Lumina.Data;
 using Lumina.Excel;
-using Lumina.Text;
+using System;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("Race", 0x3403807a)]
-public class Race : ExcelRow
+/// <summary>Represents a playable race in the game data.</summary>
+[Sheet("Race", 0x3403807A)]
+public readonly struct Race(ExcelPage page, uint offset, uint row)
+	: IExcelRow<Race>
 {
-	public string Name => this.CustomizeRace.ToString();
-	public string DisplayName => this.Masculine;
-	public ActorCustomizeMemory.Races CustomizeRace => (ActorCustomizeMemory.Races)this.RowId;
+	/// <inheritdoc/>
+	public readonly uint RowId => row;
 
-	public string Feminine { get; private set; } = string.Empty;
-	public string Masculine { get; private set; } = string.Empty;
-	public int RSEMBody { get; private set; } = 0;
-	public int RSEMHands { get; private set; } = 0;
-	public int RSEMLegs { get; private set; } = 0;
-	public int RSEMFeet { get; private set; } = 0;
-	public int RSEFBody { get; private set; } = 0;
-	public int RSEFHands { get; private set; } = 0;
-	public int RSEFLegs { get; private set; } = 0;
-	public int RSEFFeet { get; private set; } = 0;
-	public Tribe[] Tribes { get; private set; } = new Tribe[0];
+	/// <summary>Gets the full race name.</summary>
+	public readonly string Name => this.CustomizeRace.ToString();
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
+	/// <summary>Gets the display name of the race.</summary>
+	public readonly string DisplayName => this.Masculine;
+
+	/// <summary>Gets the corresponding actor customize race value.</summary>
+	public readonly ActorCustomizeMemory.Races CustomizeRace => (ActorCustomizeMemory.Races)this.RowId;
+
+	/// <summary>Gets the masculine name of the race.</summary>
+	/// <remarks>
+	/// On the English version of the game, the masculine and feminine names are identical.
+	/// </remarks>
+	public readonly string Masculine => page.ReadString(offset, offset).ToString();
+
+	/// <summary>Gets the feminine name of the race.</summary>
+	/// <remarks>
+	/// On the English version of the game, the masculine and feminine names are identical.
+	/// </remarks>
+	public readonly string Feminine => page.ReadString(offset + 4, offset).ToString();
+
+	/// <summary>Gets the race-specific equipment (RSE) for the masculine body.</summary>
+	public readonly RowRef<Item> RSEMBody => new(page.Module, (uint)page.ReadInt32(offset + 8), page.Language);
+
+	/// <summary>Gets the race-specific equipment (RSE) for the feminine body.</summary>
+	public readonly RowRef<Item> RSEFBody => new(page.Module, (uint)page.ReadInt32(offset + 12), page.Language);
+
+	/// <summary>Gets the race-specific equipment (RSE) for the masculine hands.</summary>
+	public readonly RowRef<Item> RSEMHands => new(page.Module, (uint)page.ReadInt32(offset + 16), page.Language);
+
+	/// <summary>Gets the race-specific equipment (RSE) for the feminine hands.</summary>
+	public readonly RowRef<Item> RSEFHands => new(page.Module, (uint)page.ReadInt32(offset + 20), page.Language);
+
+	/// <summary>Gets the race-specific equipment (RSE) for the masculine legs.</summary>
+	public readonly RowRef<Item> RSEMLegs => new(page.Module, (uint)page.ReadInt32(offset + 24), page.Language);
+
+	/// <summary>Gets the race-specific equipment (RSE) for the feminine legs.</summary>
+	public readonly RowRef<Item> RSEFLegs => new(page.Module, (uint)page.ReadInt32(offset + 28), page.Language);
+
+	/// <summary>Gets the race-specific equipment (RSE) for the masculine feet.</summary>
+	public readonly RowRef<Item> RSEMFeet => new(page.Module, (uint)page.ReadInt32(offset + 32), page.Language);
+
+	/// <summary>Gets the race-specific equipment (RSE) for the feminine feet.</summary>
+	public readonly RowRef<Item> RSEFFeet => new(page.Module, (uint)page.ReadInt32(offset + 36), page.Language);
+
+	/// <summary>Gets the tribes associated with the race.</summary>
+	/// <exception cref="Exception">Thrown when no tribes are found in game data or an unrecognized race is encountered.</exception>
+	public Tribe[] Tribes
 	{
-		base.PopulateData(parser, gameData, language);
-
-		this.Masculine = parser.ReadColumn<SeString>(0) ?? string.Empty;
-		this.Feminine = parser.ReadColumn<SeString>(1) ?? string.Empty;
-
-		this.RSEMBody = parser.ReadColumn<int>(2);
-		this.RSEMHands = parser.ReadColumn<int>(3);
-		this.RSEMLegs = parser.ReadColumn<int>(4);
-		this.RSEMFeet = parser.ReadColumn<int>(5);
-		this.RSEFBody = parser.ReadColumn<int>(6);
-		this.RSEFHands = parser.ReadColumn<int>(7);
-		this.RSEFLegs = parser.ReadColumn<int>(8);
-		this.RSEFFeet = parser.ReadColumn<int>(9);
-
-		if (!Enum.IsDefined<ActorCustomizeMemory.Races>(this.CustomizeRace))
-			return;
-
-		if (GameDataService.Tribes == null)
-			throw new Exception("No Tribes list in game data service");
-
-		this.Tribes = this.CustomizeRace switch
+		get
 		{
-			ActorCustomizeMemory.Races.Hyur => new[]
-			{
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.Midlander),
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.Highlander),
-			},
+			if (!Enum.IsDefined(this.CustomizeRace))
+				return [];
 
-			ActorCustomizeMemory.Races.Elezen => new[]
-			{
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.Wildwood),
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.Duskwight),
-			},
+			if (GameDataService.Tribes == null)
+				throw new Exception("No tribes found in game data. Verify that Lumina has loaded this excel sheet.");
 
-			ActorCustomizeMemory.Races.Lalafel => new[]
+			return this.CustomizeRace switch
 			{
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.Plainsfolk),
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.Dunesfolk),
-			},
-
-			ActorCustomizeMemory.Races.Miqote => new[]
-			{
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.SeekerOfTheSun),
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.KeeperOfTheMoon),
-			},
-
-			ActorCustomizeMemory.Races.Roegadyn => new[]
-			{
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.SeaWolf),
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.Hellsguard),
-			},
-
-			ActorCustomizeMemory.Races.AuRa => new[]
-			{
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.Raen),
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.Xaela),
-			},
-
-			ActorCustomizeMemory.Races.Hrothgar => new[]
-			{
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.Helions),
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.TheLost),
-			},
-
-			ActorCustomizeMemory.Races.Viera => new[]
-			{
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.Rava),
-					GameDataService.Tribes.Get((byte)ActorCustomizeMemory.Tribes.Veena),
-			},
-
-			_ => throw new Exception($"Unrecognized race {this.CustomizeRace}"),
-		};
+				ActorCustomizeMemory.Races.Hyur =>
+				[
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.Midlander),
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.Highlander),
+				],
+				ActorCustomizeMemory.Races.Elezen =>
+				[
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.Wildwood),
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.Duskwight),
+				],
+				ActorCustomizeMemory.Races.Lalafel =>
+				[
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.Plainsfolk),
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.Dunesfolk),
+				],
+				ActorCustomizeMemory.Races.Miqote =>
+				[
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.SeekerOfTheSun),
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.KeeperOfTheMoon),
+				],
+				ActorCustomizeMemory.Races.Roegadyn =>
+				[
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.SeaWolf),
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.Hellsguard),
+				],
+				ActorCustomizeMemory.Races.AuRa =>
+				[
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.Raen),
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.Xaela),
+				],
+				ActorCustomizeMemory.Races.Hrothgar =>
+				[
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.Helions),
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.TheLost),
+				],
+				ActorCustomizeMemory.Races.Viera =>
+				[
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.Rava),
+					GameDataService.Tribes.GetRow((byte)ActorCustomizeMemory.Tribes.Veena),
+				],
+				_ => throw new Exception($"Unrecognized race: {this.CustomizeRace}"),
+			};
+		}
 	}
+
+	/// <summary>
+	/// Creates a new instance of the <see cref="Race"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="Race"/> struct.</returns>
+	static Race IExcelRow<Race>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
 }

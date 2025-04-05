@@ -7,206 +7,251 @@ using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
 using Lumina;
-using Lumina.Data;
 using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System;
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-[Sheet("BNpcBase", 0xd5d82616)]
-public class BattleNpc : ExcelRow, INpcBase
+/// <summary>Represents a base battle non-player entity from the game data.</summary>
+[Sheet("BNpcBase", 0xD5D82616)]
+public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
+	: IExcelRow<BattleNpc>, INpcBase
 {
-	private string? name;
+	/// <inheritdoc/>
+	public uint RowId => row;
 
-	private ushort customizeRow;
-	private ushort equipRow;
-	private BattleNpcAppearance? appearance;
+	/// <summary>The singular name of the battle non-player entity.</summary>
+	public string Name => GameDataService.GetNpcName(this) ?? $"{this.TypeName} #{this.RowId}";
 
-	public string Name => this.name ?? $"{this.TypeName} #{this.RowId}";
-	public string Description { get; private set; } = string.Empty;
-	public uint ModelCharaRow { get; private set; }
+	/// <summary>Gets the description of the battle non-player entity.</summary>
+	public string Description => string.Empty;
 
-	public ImageReference? Icon => null;
+	/// <summary>Gets the <c>ModelChara</c> sheet row ID of the battle non-player entity.</summary>
+	public uint ModelCharaRow => this.ModelChara.RowId;
+
+	/// <summary>Gets the ModelChara object reference of the battle non-player entity.</summary>
+	public readonly RowRef<ModelChara> ModelChara => new(page.Module, (uint)page.ReadUInt16(offset + 10), page.Language);
+
+	/// <summary>Gets the <c>BNpcCustomize</c> object reference of the battle non-player entity.</summary>
+	public readonly RowRef<BNpcCustomize> BNpcCustomize => new(page.Module, (uint)page.ReadUInt16(offset + 12), page.Language);
+
+	/// <summary>Gets the <c>NpcEquip</c> object reference of the battle non-player entity.</summary>
+	public readonly RowRef<NpcEquip> NpcEquip => new(page.Module, (uint)page.ReadUInt16(offset + 14), page.Language);
+
+	/// <inheritdoc/>
+	public ImgRef? Icon => null;
+
+	/// <inheritdoc/>
 	public Mod? Mod => null;
+
+	/// <inheritdoc/>
 	public bool CanFavorite => true;
-	public bool HasName => this.name != null;
+
+	/// <inheritdoc/>
+	public bool HasName => GameDataService.GetNpcName(this) != null;
+
+	/// <inheritdoc/>
 	public string TypeName => "Battle NPC";
 
+	/// <inheritdoc/>
 	public bool IsFavorite
 	{
 		get => FavoritesService.IsFavorite<INpcBase>(this);
 		set => FavoritesService.SetFavorite<INpcBase>(this, nameof(FavoritesService.Favorites.Models), value);
 	}
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
+	/// <inheritdoc/>
+	public byte FacePaintColor => this.BNpcCustomize.Value.FacePaintColor;
 
-		this.name = GameDataService.GetNpcName(this);
+	/// <inheritdoc/>
+	public byte FacePaint => this.BNpcCustomize.Value.FacePaint;
 
-		////Scale = parser.ReadColumn<float>(4);
-		this.ModelCharaRow = (uint)parser.ReadColumn<ushort>(5);
-		this.customizeRow = parser.ReadColumn<ushort>(6);
-		this.equipRow = parser.ReadColumn<ushort>(7);
-	}
+	/// <inheritdoc/>
+	public byte ExtraFeature2OrBust => this.BNpcCustomize.Value.ExtraFeature2OrBust;
 
-	public INpcAppearance? GetAppearance()
-	{
-		if (this.appearance == null)
-			this.appearance = new BattleNpcAppearance(this);
+	/// <inheritdoc/>
+	public byte ExtraFeature1 => this.BNpcCustomize.Value.ExtraFeature1;
 
-		return this.appearance;
-	}
+	/// <inheritdoc/>
+	public RowRef<Race> Race => GameDataService.CreateRef<Race>(Math.Max(this.BNpcCustomize.Value.Race.Value.RowId, 1));
 
-	public class BattleNpcAppearance : INpcAppearance
-	{
-		public BattleNpcAppearance(BattleNpc npc)
-		{
-			this.ModelCharaRow = npc.ModelCharaRow;
+	/// <inheritdoc/>
+	public byte Gender => this.BNpcCustomize.Value.Gender;
 
-			Sheets.ExcelSheet<BNpcCustomize>? customizeSheet = GameDataService.GetSheet<BNpcCustomize>();
-			BNpcCustomize? customize = customizeSheet?.GetOrDefault(npc.customizeRow);
-			if (customize != null)
-			{
-				this.Race = GameDataService.Races.Get(Math.Max(customize.Race.Row, 1));
-				this.Tribe = GameDataService.Tribes.Get(Math.Max(customize.Tribe.Row, 1));
+	/// <inheritdoc/>
+	public byte BodyType => this.BNpcCustomize.Value.BodyType;
 
-				this.FacePaintColor = customize.FacePaintColor;
-				this.FacePaint = customize.FacePaint;
+	/// <inheritdoc/>
+	public byte Height => this.BNpcCustomize.Value.Height;
 
-				// These were flipped
-				this.ExtraFeature1 = customize.ExtraFeature2OrBust;
-				this.ExtraFeature2OrBust = customize.ExtraFeature1;
+	/// <inheritdoc/>
+	public RowRef<Tribe> Tribe => GameDataService.CreateRef<Tribe>(Math.Max(this.BNpcCustomize.Value.Tribe.Value.RowId, 1));
 
-				this.Gender = customize.Gender;
-				this.BodyType = customize.BodyType;
-				this.Height = customize.Height;
-				this.Face = customize.Face;
-				this.HairStyle = customize.HairStyle;
-				this.EnableHairHighlight = customize.HairHighlight > 1;
-				this.SkinColor = customize.SkinColor;
-				this.EyeHeterochromia = customize.EyeHeterochromia;
-				this.HairHighlightColor = customize.HairHighlightColor;
-				this.FacialFeature = customize.FacialFeature;
-				this.FacialFeatureColor = customize.FacialFeatureColor;
-				this.Eyebrows = customize.Eyebrows;
-				this.EyeColor = customize.EyeColor;
-				this.EyeShape = customize.EyeShape;
-				this.Nose = customize.Nose;
-				this.Jaw = customize.Jaw;
-				this.Mouth = customize.Mouth;
-				this.LipColor = customize.LipColor;
-				this.BustOrTone1 = customize.BustOrTone1;
-				this.HairColor = customize.HairColor;
-			}
+	/// <inheritdoc/>
+	public byte Face => this.BNpcCustomize.Value.Face;
 
-			Sheets.ExcelSheet<NpcEquip>? equipSheet = GameDataService.GetSheet<NpcEquip>();
-			NpcEquip? npcEquip = equipSheet.Get(npc.equipRow);
-			if (npcEquip != null)
-			{
-				this.MainHand = LuminaExtensions.GetWeaponItem(ItemSlots.MainHand, npcEquip.ModelMainHand);
-				this.DyeMainHand = GameDataService.Dyes.Get(npcEquip.DyeMainHand.Row);
-				this.Dye2MainHand = GameDataService.Dyes.Get(npcEquip.Dye2MainHand.Row);
-				this.OffHand = LuminaExtensions.GetWeaponItem(ItemSlots.OffHand, npcEquip.ModelOffHand);
-				this.DyeOffHand = GameDataService.Dyes.Get(npcEquip.DyeOffHand.Row);
-				this.Dye2OffHand = GameDataService.Dyes.Get(npcEquip.Dye2OffHand.Row);
-				this.Head = LuminaExtensions.GetGearItem(ItemSlots.Head, npcEquip.ModelHead);
-				this.DyeHead = GameDataService.Dyes.Get(npcEquip.DyeHead.Row);
-				this.Dye2Head = GameDataService.Dyes.Get(npcEquip.Dye2Head.Row);
-				this.Body = LuminaExtensions.GetGearItem(ItemSlots.Body, npcEquip.ModelBody);
-				this.DyeBody = GameDataService.Dyes.Get(npcEquip.DyeBody.Row);
-				this.Dye2Body = GameDataService.Dyes.Get(npcEquip.Dye2Body.Row);
-				this.Hands = LuminaExtensions.GetGearItem(ItemSlots.Hands, npcEquip.ModelHead);
-				this.DyeHands = GameDataService.Dyes.Get(npcEquip.DyeHands.Row);
-				this.Dye2Hands = GameDataService.Dyes.Get(npcEquip.Dye2Hands.Row);
-				this.Legs = LuminaExtensions.GetGearItem(ItemSlots.Legs, npcEquip.ModelLegs);
-				this.DyeLegs = GameDataService.Dyes.Get(npcEquip.DyeLegs.Row);
-				this.Dye2Legs = GameDataService.Dyes.Get(npcEquip.Dye2Legs.Row);
-				this.Feet = LuminaExtensions.GetGearItem(ItemSlots.Feet, npcEquip.ModelFeet);
-				this.DyeFeet = GameDataService.Dyes.Get(npcEquip.DyeFeet.Row);
-				this.Dye2Feet = GameDataService.Dyes.Get(npcEquip.Dye2Feet.Row);
-				this.Ears = LuminaExtensions.GetGearItem(ItemSlots.Ears, npcEquip.ModelEars);
-				this.DyeEars = GameDataService.Dyes.Get(npcEquip.DyeEars.Row);
-				this.Dye2Ears = GameDataService.Dyes.Get(npcEquip.Dye2Ears.Row);
-				this.Neck = LuminaExtensions.GetGearItem(ItemSlots.Neck, npcEquip.ModelNeck);
-				this.DyeNeck = GameDataService.Dyes.Get(npcEquip.DyeNeck.Row);
-				this.Dye2Neck = GameDataService.Dyes.Get(npcEquip.Dye2Neck.Row);
-				this.Wrists = LuminaExtensions.GetGearItem(ItemSlots.Wrists, npcEquip.ModelWrists);
-				this.DyeWrists = GameDataService.Dyes.Get(npcEquip.DyeWrists.Row);
-				this.Dye2Wrists = GameDataService.Dyes.Get(npcEquip.Dye2Wrists.Row);
-				this.LeftRing = LuminaExtensions.GetGearItem(ItemSlots.LeftRing, npcEquip.ModelLeftRing);
-				this.DyeLeftRing = GameDataService.Dyes.Get(npcEquip.DyeLeftRing.Row);
-				this.Dye2LeftRing = GameDataService.Dyes.Get(npcEquip.Dye2LeftRing.Row);
-				this.RightRing = LuminaExtensions.GetGearItem(ItemSlots.RightRing, npcEquip.ModelRightRing);
-				this.DyeRightRing = GameDataService.Dyes.Get(npcEquip.DyeRightRing.Row);
-				this.Dye2RightRing = GameDataService.Dyes.Get(npcEquip.Dye2RightRing.Row);
-			}
-		}
+	/// <inheritdoc/>
+	public byte HairStyle => this.BNpcCustomize.Value.HairStyle;
 
-		public uint ModelCharaRow { get; private set; }
+	/// <inheritdoc/>
+	public bool EnableHairHighlight => this.BNpcCustomize.Value.HairHighlight > 1;
 
-		public int FacePaintColor { get; private set; }
-		public int FacePaint { get; private set; }
-		public int ExtraFeature2OrBust { get; private set; }
-		public int ExtraFeature1 { get; private set; }
-		public Race? Race { get; private set; }
-		public int Gender { get; private set; }
-		public int BodyType { get; private set; }
-		public int Height { get; private set; }
-		public Tribe? Tribe { get; private set; }
-		public int Face { get; private set; }
-		public int HairStyle { get; private set; }
-		public bool EnableHairHighlight { get; private set; }
-		public int SkinColor { get; private set; }
-		public int EyeHeterochromia { get; private set; }
-		public int HairHighlightColor { get; private set; }
-		public int FacialFeature { get; private set; }
-		public int FacialFeatureColor { get; private set; }
-		public int Eyebrows { get; private set; }
-		public int EyeColor { get; private set; }
-		public int EyeShape { get; private set; }
-		public int Nose { get; private set; }
-		public int Jaw { get; private set; }
-		public int Mouth { get; private set; }
-		public int LipColor { get; private set; }
-		public int BustOrTone1 { get; private set; }
-		public int HairColor { get; private set; }
+	/// <inheritdoc/>
+	public byte SkinColor => this.BNpcCustomize.Value.SkinColor;
 
-		public IItem? MainHand { get; private set; }
-		public IDye? DyeMainHand { get; private set; }
-		public IDye? Dye2MainHand { get; private set; }
-		public IItem? OffHand { get; private set; }
-		public IDye? DyeOffHand { get; private set; }
-		public IDye? Dye2OffHand { get; private set; }
-		public IItem? Head { get; private set; }
-		public IDye? DyeHead { get; private set; }
-		public IDye? Dye2Head { get; private set; }
-		public IItem? Body { get; private set; }
-		public IDye? DyeBody { get; private set; }
-		public IDye? Dye2Body { get; private set; }
-		public IItem? Legs { get; private set; }
-		public IDye? DyeLegs { get; private set; }
-		public IDye? Dye2Legs { get; private set; }
-		public IItem? Feet { get; private set; }
-		public IDye? DyeFeet { get; private set; }
-		public IDye? Dye2Feet { get; private set; }
-		public IItem? Hands { get; private set; }
-		public IDye? DyeHands { get; private set; }
-		public IDye? Dye2Hands { get; private set; }
-		public IItem? Wrists { get; private set; }
-		public IDye? DyeWrists { get; private set; }
-		public IDye? Dye2Wrists { get; private set; }
-		public IItem? Neck { get; private set; }
-		public IDye? DyeNeck { get; private set; }
-		public IDye? Dye2Neck { get; private set; }
-		public IItem? Ears { get; private set; }
-		public IDye? DyeEars { get; private set; }
-		public IDye? Dye2Ears { get; private set; }
-		public IItem? LeftRing { get; private set; }
-		public IDye? DyeLeftRing { get; private set; }
-		public IDye? Dye2LeftRing { get; private set; }
-		public IItem? RightRing { get; private set; }
-		public IDye? DyeRightRing { get; private set; }
-		public IDye? Dye2RightRing { get; private set; }
-	}
+	/// <inheritdoc/>
+	public byte EyeHeterochromia => this.BNpcCustomize.Value.EyeHeterochromia;
+
+	/// <inheritdoc/>
+	public byte HairHighlightColor => this.BNpcCustomize.Value.HairHighlightColor;
+
+	/// <inheritdoc/>
+	public byte FacialFeature => this.BNpcCustomize.Value.FacialFeature;
+
+	/// <inheritdoc/>
+	public byte FacialFeatureColor => this.BNpcCustomize.Value.FacialFeatureColor;
+
+	/// <inheritdoc/>
+	public byte Eyebrows => this.BNpcCustomize.Value.Eyebrows;
+
+	/// <inheritdoc/>
+	public byte EyeColor => this.BNpcCustomize.Value.EyeColor;
+
+	/// <inheritdoc/>
+	public byte EyeShape => this.BNpcCustomize.Value.EyeShape;
+
+	/// <inheritdoc/>
+	public byte Nose => this.BNpcCustomize.Value.Nose;
+
+	/// <inheritdoc/>
+	public byte Jaw => this.BNpcCustomize.Value.Jaw;
+
+	/// <inheritdoc/>
+	public byte Mouth => this.BNpcCustomize.Value.Mouth;
+
+	/// <inheritdoc/>
+	public byte LipColor => this.BNpcCustomize.Value.LipColor;
+
+	/// <inheritdoc/>
+	public byte BustOrTone1 => this.BNpcCustomize.Value.BustOrTone1;
+
+	/// <inheritdoc/>
+	public byte HairColor => this.BNpcCustomize.Value.HairColor;
+
+	/// <inheritdoc/>
+	public IItem MainHand => LuminaExtensions.GetWeaponItem(ItemSlots.MainHand, this.NpcEquip.Value.ModelMainHand);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> DyeMainHand => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeMainHand.Value.RowId);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> Dye2MainHand => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2MainHand.Value.RowId);
+
+	/// <inheritdoc/>
+	public IItem OffHand => LuminaExtensions.GetWeaponItem(ItemSlots.OffHand, this.NpcEquip.Value.ModelOffHand);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> DyeOffHand => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeOffHand.Value.RowId);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> Dye2OffHand => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2OffHand.Value.RowId);
+
+	/// <inheritdoc/>
+	public IItem Head => LuminaExtensions.GetGearItem(ItemSlots.Head, this.NpcEquip.Value.ModelHead);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> DyeHead => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeHead.Value.RowId);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> Dye2Head => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Head.Value.RowId);
+
+	/// <inheritdoc/>
+	public IItem Body => LuminaExtensions.GetGearItem(ItemSlots.Body, this.NpcEquip.Value.ModelBody);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> DyeBody => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeBody.Value.RowId);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> Dye2Body => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Body.Value.RowId);
+
+	/// <inheritdoc/>
+	public IItem Legs => LuminaExtensions.GetGearItem(ItemSlots.Legs, this.NpcEquip.Value.ModelLegs);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> DyeLegs => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeLegs.Value.RowId);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> Dye2Legs => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Legs.Value.RowId);
+
+	/// <inheritdoc/>
+	public IItem Feet => LuminaExtensions.GetGearItem(ItemSlots.Feet, this.NpcEquip.Value.ModelFeet);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> DyeFeet => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeFeet.Value.RowId);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> Dye2Feet => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Feet.Value.RowId);
+
+	/// <inheritdoc/>
+	public IItem Hands => LuminaExtensions.GetGearItem(ItemSlots.Hands, this.NpcEquip.Value.ModelHands);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> DyeHands => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeHands.Value.RowId);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> Dye2Hands => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Hands.Value.RowId);
+
+	/// <inheritdoc/>
+	public IItem Wrists => LuminaExtensions.GetGearItem(ItemSlots.Wrists, this.NpcEquip.Value.ModelWrists);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> DyeWrists => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeWrists.Value.RowId);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> Dye2Wrists => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Wrists.Value.RowId);
+
+	/// <inheritdoc/>
+	public IItem Neck => LuminaExtensions.GetGearItem(ItemSlots.Neck, this.NpcEquip.Value.ModelNeck);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> DyeNeck => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeNeck.Value.RowId);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> Dye2Neck => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Neck.Value.RowId);
+
+	/// <inheritdoc/>
+	public IItem Ears => LuminaExtensions.GetGearItem(ItemSlots.Ears, this.NpcEquip.Value.ModelEars);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> DyeEars => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeEars.Value.RowId);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> Dye2Ears => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Ears.Value.RowId);
+
+	/// <inheritdoc/>
+	public IItem LeftRing => LuminaExtensions.GetGearItem(ItemSlots.LeftRing, this.NpcEquip.Value.ModelLeftRing);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> DyeLeftRing => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeLeftRing.Value.RowId);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> Dye2LeftRing => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2LeftRing.Value.RowId);
+
+	/// <inheritdoc/>
+	public IItem RightRing => LuminaExtensions.GetGearItem(ItemSlots.RightRing, this.NpcEquip.Value.ModelRightRing);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> DyeRightRing => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeRightRing.Value.RowId);
+
+	/// <inheritdoc/>
+	public RowRef<Stain> Dye2RightRing => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2RightRing.Value.RowId);
+
+	/// <summary>
+	/// Creates a new instance of the <see cref="BattleNpc"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="BattleNpc"/> struct.</returns>
+	static BattleNpc IExcelRow<BattleNpc>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
 }

@@ -3,31 +3,34 @@
 
 namespace Anamnesis.GameData.Excel;
 
-using Lumina.Data;
 using Lumina.Excel;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("WeatherRate", 0x474abce2)]
-public class WeatherRate : ExcelRow
+/// <summary>Represents the weather rate data in the game data.</summary>
+[Sheet("WeatherRate", 0x474ABCE2)]
+public readonly unsafe struct WeatherRate(ExcelPage page, uint offset, uint row)
+	: IExcelRow<WeatherRate>
 {
-	public UnkStruct0Struct[]? UnkStruct0 { get; private set; }
+	/// <inheritdoc/>
+	public readonly uint RowId => row;
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
-		this.UnkStruct0 = new UnkStruct0Struct[8];
-		for (int i = 0; i < 8; i++)
-		{
-			this.UnkStruct0[i] = default(UnkStruct0Struct);
-			this.UnkStruct0[i].Weather = parser.ReadColumn<int>(i * 2);
-			this.UnkStruct0[i].Rate = parser.ReadColumn<byte>((i * 2) + 1);
-		}
-	}
+	/// <summary>
+	/// Gets all weather conditions as as a collection of references.
+	/// </summary>
+	public readonly Collection<RowRef<Weather>> Weather => new(page, offset, offset, &WeatherCtor, 8);
 
-	public struct UnkStruct0Struct
-	{
-		public int Weather;
-		public byte Rate;
-	}
+	/// <summary>Gets the collection of weather rates.</summary>
+	public readonly Collection<byte> Rate => new(page, offset, offset, &RateCtor, 8);
+
+	/// <summary>
+	/// Creates a new instance of the <see cref="WeatherRate"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="WeatherRate"/> struct.</returns>
+	static WeatherRate IExcelRow<WeatherRate>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
+
+	private static RowRef<Weather> WeatherCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => new(page.Module, (uint)page.ReadInt32(offset + (i * 4)), page.Language);
+	private static byte RateCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => page.ReadUInt8(offset + 32 + i);
 }

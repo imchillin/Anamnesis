@@ -3,79 +3,143 @@
 
 namespace Anamnesis.GameData.Excel;
 
-using System.Collections.Generic;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Memory;
-using Lumina.Data;
 using Lumina.Excel;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using static Lumina.Excel.Sheets.CharaMakeType;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-using LuminaData = Lumina.GameData;
-
-[Sheet("CharaMakeType", columnHash: 0x80d7db6d)]
-public class CharaMakeType : ExcelRow
+/// <summary>Represents a unique character type (a combination of attributes) in the game data.</summary>
+[Sheet("CharaMakeType", 0x80D7DB6D)]
+public readonly unsafe struct CharaMakeType(ExcelPage page, uint offset, uint row)
+	: IExcelRow<CharaMakeType>
 {
-	public string Name => this.RowId.ToString();
+	/// <inheritdoc/>
+	public uint RowId => row;
 
-	public ActorCustomizeMemory.Genders Gender { get; private set; }
-	public ActorCustomizeMemory.Races Race { get; private set; }
-	public ActorCustomizeMemory.Tribes Tribe { get; private set; }
+	/// <summary>Gets a string representation of the row identifier.</summary>
+	public readonly string Name => this.RowId.ToString();
 
-	public Dictionary<int, CustomizeRange>? CustomizeRanges { get; private set; }
+	/// <summary>
+	/// Gets the race reference object associated with the character type.
+	/// </summary>
+	public readonly RowRef<Race> Race => new(page.Module, (uint)page.ReadInt32(offset + 12392), page.Language);
 
-	public int[]? FacialFeatureOptions { get; private set; }
-	public List<ImageReference>? FacialFeatures { get; private set; }
-	public List<byte>? Voices { get; private set; }
+	/// <summary>
+	/// Gets the race customization value associated with the character type.
+	/// </summary>
+	public readonly ActorCustomizeMemory.Races CustomizeRace => this.Race.Value.CustomizeRace;
 
-	public override void PopulateData(RowParser parser, LuminaData lumina, Language language)
+	/// <summary>
+	/// Gets the tribe reference object associated with the character type.
+	/// </summary>
+	public readonly RowRef<Tribe> Tribe => new(page.Module, (uint)page.ReadInt32(offset + 12396), page.Language);
+
+	/// <summary>
+	/// Gets the tribe customization value associated with the character type.
+	/// </summary>
+	public readonly ActorCustomizeMemory.Tribes CustomizeTribe => this.Tribe.Value.CustomizeTribe;
+
+	/// <summary>
+	/// Gets the gender customization value associated with the character type.
+	/// </summary>
+	public readonly ActorCustomizeMemory.Genders Gender => (ActorCustomizeMemory.Genders)page.ReadInt8(offset + 12400);
+
+	/// <summary>
+	/// Gets the voice collection associated with the character type.
+	/// </summary>
+	public readonly Collection<byte> Voices => new(page, offset, offset, &VoiceStructCtor, 12);
+
+	/// <summary>
+	/// Gets the facial feature option collection associated with the character type.
+	/// </summary>
+	public readonly Collection<FacialFeatureOptionStruct> FacialFeatureOption => new(page, offset, offset, &FacialFeatureOptionCtor, 8);
+
+	/// <summary>
+	/// Gets a collection of facial feature icons associated with the character type.
+	/// </summary>
+	public List<ImgRef> FacialFeatures
 	{
-		this.RowId = parser.RowId;
-		this.SubRowId = parser.SubRowId;
-
-		this.Race = (ActorCustomizeMemory.Races)parser.ReadColumn<int>(0);
-		this.Tribe = (ActorCustomizeMemory.Tribes)parser.ReadColumn<int>(1);
-		this.Gender = (ActorCustomizeMemory.Genders)parser.ReadColumn<sbyte>(2);
-
-		this.FacialFeatureOptions = new int[7 * 8];
-		this.FacialFeatures = new List<ImageReference>();
-
-		for (int i = 0; i < 7 * 8; i++)
+		get
 		{
-			this.FacialFeatureOptions[i] = parser.ReadColumn<int>(3291 + i);
-			this.FacialFeatures.Add(new ImageReference(this.FacialFeatureOptions[i]));
-		}
+			var result = new List<ImgRef>(this.FacialFeatureOption.Count * 7);
+			foreach (var option in this.FacialFeatureOption)
+			{
+				result.AddRange(
+				[
+					new ImgRef(option.Option1),
+					new ImgRef(option.Option2),
+					new ImgRef(option.Option3),
+					new ImgRef(option.Option4),
+					new ImgRef(option.Option5),
+					new ImgRef(option.Option6),
+					new ImgRef(option.Option7),
+				]);
+			}
 
-		this.Voices = new List<byte>();
-		for (int i = 0; i < 12; i++)
-		{
-			byte voice = parser.ReadColumn<byte>(3279 + i);
-			this.Voices.Add(voice);
-		}
-
-		this.CustomizeRanges = new Dictionary<int, CustomizeRange>();
-		for (int i = 0; i < 28; i++)
-		{
-			int optionType = parser.ReadColumn<byte>(59 + i);
-			if (optionType != 0 && optionType != 1 && optionType != 4)
-				continue;
-
-			int customizeId = (int)parser.ReadColumn<uint>(171 + i);
-
-			CustomizeRange range = default(CustomizeRange);
-			range.Min = parser.ReadColumn<byte>(2999 + i);
-			range.Max = parser.ReadColumn<byte>(87 + i) - 1 + range.Min;
-			this.CustomizeRanges[customizeId] = range;
+			return result;
 		}
 	}
 
-	public struct CustomizeRange
-	{
-		public int Min;
-		public int Max;
+	/// <summary>
+	/// Gets the character make structure collection associated with the character type.
+	/// </summary>
+	public readonly Collection<CharaMakeStructStruct> CharaMakeStruct => new(page, offset, offset, &CharaMakeStructCtor, 28);
 
-		public bool InRange(int num)
+	/// <summary>
+	/// Gets a dictionary of customization ranges associated with the character type.
+	/// </summary>
+	public Dictionary<int, CustomizeRange> CustomizeRanges
+	{
+		get
 		{
-			return num >= this.Min && num <= this.Max;
+			Dictionary<int, CustomizeRange> result = [];
+			for (int i = 0; i < this.CharaMakeStruct.Count; i++)
+			{
+				CharaMakeStructStruct charaMakeStruct = this.CharaMakeStruct[i];
+				byte subMenuType = charaMakeStruct.SubMenuType;
+				if (subMenuType != 0x00 && subMenuType != 0x01 && subMenuType != 0x04)
+					continue;
+
+				var min = charaMakeStruct.SubMenuGraphic[0];
+				var max = charaMakeStruct.SubMenuNum - 1 + min;
+				result[(int)charaMakeStruct.Customize] = new CustomizeRange(min, max);
+			}
+
+			return result;
 		}
 	}
+
+	/// <summary>
+	/// Creates a new instance of the <see cref="CharaMakeType"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="CharaMakeType"/> struct.</returns>
+	static CharaMakeType IExcelRow<CharaMakeType>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
+
+	private static CharaMakeStructStruct CharaMakeStructCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => new(page, parentOffset, offset + (i * 428));
+	private static byte VoiceStructCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => page.ReadUInt8(offset + 11984 + i);
+	private static FacialFeatureOptionStruct FacialFeatureOptionCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => new(page, parentOffset, offset + 11996 + (i * 28));
+}
+
+/// <summary>Represents a facial feature option structure in the game data.</summary>
+public readonly struct CustomizeRange(int min, int max)
+{
+	/// <summary>Gets the minimum value of the customize range.</summary>
+	public readonly int Min = min;
+
+	/// <summary>Gets the maximum value of the customize range.</summary>
+	public readonly int Max = max;
+
+	/// <summary>
+	/// Determines whether a specified number is within the customize range.
+	/// </summary>
+	/// <param name="num">The number to check.</param>
+	/// <returns>True if the number is within the range; otherwise, false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public readonly bool InRange(int num) => num >= this.Min && num <= this.Max;
 }

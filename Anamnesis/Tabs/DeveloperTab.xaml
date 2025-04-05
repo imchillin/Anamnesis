@@ -22,7 +22,7 @@
 			<GroupBox.Header>
 				<controls:Header Icon="Database" Text="Game Data"/>
 			</GroupBox.Header>
-			
+
 			<StackPanel>
 				<Button Content="Search Battle Npc Names"
 						Style="{StaticResource TransparentButton}"
@@ -36,7 +36,6 @@
 						Padding="6,3"/>
 
 			</StackPanel>
-			
 		</GroupBox>
 
         <GroupBox Style="{StaticResource PanelGroupBox}" Grid.Column="1">
@@ -47,8 +46,7 @@
 				</StackPanel>
 			</GroupBox.Header>
 
-            <StackPanel>
-
+			<StackPanel>
 				<XivToolsWpf:TextBlock Text="{Binding TargetService.PlayerTarget.Index, StringFormat=Index: {0:D}}"/>
 
 				<ComboBox ItemsSource="{Binding Source={x:Static anaMem:ActorType.AllActorTypes}}" SelectedIndex="{Binding TargetService.PlayerTarget.ObjectKindInt}">
@@ -65,65 +63,62 @@
 					</ComboBox.ItemTemplate>
 				</ComboBox>
 
-				
+
 				<Button Content="Copy Actor Address"
                         IsEnabled="{Binding TargetService.PlayerTarget.IsValid}"
 						Style="{StaticResource TransparentButton}"
 						Height="32"
 						Click="OnCopyActorAddressClicked"/>
-                
-                <Button Content="Copy Associated Addresses"
+
+				<Button Content="Copy Associated Addresses"
                         IsEnabled="{Binding TargetService.PlayerTarget.IsValid}"
 						Style="{StaticResource TransparentButton}"
 						Height="32"
 						Click="OnCopyAssociatedAddressesClick"/>
 
 				<inspector:InspectorView Target="{Binding TargetService.PlayerTarget}" Height="350"/>
-
 			</StackPanel>
+		</GroupBox>
 
-        </GroupBox>
+		<GroupBox Style="{StaticResource PanelGroupBox}" Grid.Column="2">
+			<GroupBox.Header>
+				<controls:Header Icon="Question" Text="Experimental"/>
+			</GroupBox.Header>
+			<StackPanel>
+				<GroupBox Style="{StaticResource PanelGroupBox}" Grid.Column="2" IsEnabled="{Binding GposeService.IsGpose}">
+					<GroupBox.Header>
+						<controls:Header Icon="CameraRetro" Text="Scenes"/>
+					</GroupBox.Header>
 
-        <GroupBox Style="{StaticResource PanelGroupBox}" Grid.Column="2">
-            <GroupBox.Header>
-                <controls:Header Icon="Question" Text="Experimental"/>
-            </GroupBox.Header>
-            <StackPanel>
-                <GroupBox Style="{StaticResource PanelGroupBox}" Grid.Column="2" IsEnabled="{Binding GposeService.IsGpose}">
-                    <GroupBox.Header>
-                        <controls:Header Icon="CameraRetro" Text="Scenes"/>
-                    </GroupBox.Header>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition />
+						</Grid.ColumnDefinitions>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
+						</Grid.RowDefinitions>
 
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
+						<Button Grid.Row="0" Click="OnSaveSceneClicked" Style="{StaticResource TransparentButton}" Content="Save Scene" />
 
-                        <Button Grid.Row="0" Click="OnSaveSceneClicked" Style="{StaticResource TransparentButton}" Content="Save Scene" />
+						<Separator Grid.Row="1" />
 
-                        <Separator Grid.Row="1" />
+						<Button Grid.Row="2" Click="OnLoadSceneClicked" Style="{StaticResource TransparentButton}" Content="Load Scene" />
 
-                        <Button Grid.Row="2" Click="OnLoadSceneClicked" Style="{StaticResource TransparentButton}" Content="Load Scene" />
-
-                        <StackPanel Grid.Row="3">
-                            <CheckBox IsChecked="{Binding SceneOptions.RelativePositions}" Content="Relative Positions" />
-                            <CheckBox IsChecked="{Binding SceneOptions.WorldPositions}" Content="World Positions" />
-                            <CheckBox IsChecked="{Binding SceneOptions.Poses}" Content="Poses" />
-                            <CheckBox IsChecked="{Binding SceneOptions.Camera}" Content="Camera" />
-                            <CheckBox IsChecked="{Binding SceneOptions.Time}" Content="Time" />
-                            <CheckBox IsChecked="{Binding SceneOptions.Weather}" Content="Weather" />
-                        </StackPanel>
-                    </Grid>
-                </GroupBox>
-            </StackPanel>
-        </GroupBox>
-
-    </Grid>
+						<StackPanel Grid.Row="3">
+							<CheckBox IsChecked="{Binding SceneOptions.RelativePositions}" Content="Relative Positions" />
+							<CheckBox IsChecked="{Binding SceneOptions.WorldPositions}" Content="World Positions" />
+							<CheckBox IsChecked="{Binding SceneOptions.Poses}" Content="Poses" />
+							<CheckBox IsChecked="{Binding SceneOptions.Camera}" Content="Camera" />
+							<CheckBox IsChecked="{Binding SceneOptions.Time}" Content="Time" />
+							<CheckBox IsChecked="{Binding SceneOptions.Weather}" Content="Weather" />
+						</StackPanel>
+					</Grid>
+				</GroupBox>
+			</StackPanel>
+		</GroupBox>
+	</Grid>
 </UserControl>

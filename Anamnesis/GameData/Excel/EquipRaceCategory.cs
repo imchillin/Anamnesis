@@ -4,40 +4,84 @@
 namespace Anamnesis.GameData.Excel;
 
 using Anamnesis.Memory;
-using Lumina.Data;
 using Lumina.Excel;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("EquipRaceCategory", 0xf914b198)]
-public class EquipRaceCategory : ExcelRow
+/// <summary>
+/// Represents the race category data associated with game items.
+/// </summary>
+[Sheet("EquipRaceCategory", 0xF914B198)]
+public readonly struct EquipRaceCategory(ExcelPage page, uint offset, uint row)
+	: IExcelRow<EquipRaceCategory>
 {
-	public bool Hyur { get; private set; }
-	public bool Elezen { get; private set; }
-	public bool Lalafell { get; private set; }
-	public bool Miqote { get; private set; }
-	public bool Roegadyn { get; private set; }
-	public bool AuRa { get; private set; }
-	public bool Hrothgar { get; private set; }
-	public bool Viera { get; private set; }
-	public bool Male { get; private set; }
-	public bool Female { get; private set; }
+	/// <inheritdoc/>
+	public uint RowId => row;
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
-		this.Hyur = parser.ReadColumn<bool>(0);
-		this.Elezen = parser.ReadColumn<bool>(1);
-		this.Lalafell = parser.ReadColumn<bool>(2);
-		this.Miqote = parser.ReadColumn<bool>(3);
-		this.Roegadyn = parser.ReadColumn<bool>(4);
-		this.AuRa = parser.ReadColumn<bool>(5);
-		this.Hrothgar = parser.ReadColumn<bool>(6);
-		this.Viera = parser.ReadColumn<bool>(7);
-		this.Male = parser.ReadColumn<bool>(8);
-		this.Female = parser.ReadColumn<bool>(9);
-	}
+	/// <summary>
+	/// Gets a value whether the item can be equipped by Hyur characters.
+	/// </summary>
+	public readonly bool Hyur => page.ReadBool(offset);
 
+	/// <summary>
+	/// Gets a value whether the item can be equipped by Elezen characters.
+	/// </summary>
+	public readonly bool Elezen => page.ReadBool(offset + 1);
+
+	/// <summary>
+	/// Gets a value whether the item can be equipped by Lalafell characters.
+	/// </summary>
+	public readonly bool Lalafell => page.ReadBool(offset + 2);
+
+	/// <summary>
+	/// Gets a value whether the item can be equipped by Miqo'te characters.
+	/// </summary>
+	public readonly bool Miqote => page.ReadBool(offset + 3);
+
+	/// <summary>
+	/// Gets a value whether the item can be equipped by Roegadyn characters.
+	/// </summary>
+	public readonly bool Roegadyn => page.ReadBool(offset + 4);
+
+	/// <summary>
+	/// Gets a value whether the item can be equipped by Au Ra characters.
+	/// </summary>
+	public readonly bool AuRa => page.ReadBool(offset + 5);
+
+	/// <summary>
+	/// Gets a value whether the item can be equipped by Hrothgar characters.
+	/// </summary>
+	public bool Hrothgar => page.ReadBool(offset + 6);
+
+	/// <summary>
+	/// Gets a value whether the item can be equipped by Viera characters.
+	/// </summary>
+	public bool Viera => page.ReadBool(offset + 7);
+
+	/// <summary>
+	/// Gets a value whether the item can be equipped by male characters.
+	/// </summary>
+	public readonly bool Male => page.ReadPackedBool(offset + 8, 0);
+
+	/// <summary>
+	/// Gets a value whether the item can be equipped by female characters.
+	/// </summary>
+	public readonly bool Female => page.ReadPackedBool(offset + 8, 1);
+
+	/// <summary>
+	/// Creates a new instance of the <see cref="EquipRaceCategory"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="EquipRaceCategory"/> struct.</returns>
+	static EquipRaceCategory IExcelRow<EquipRaceCategory>.Create(ExcelPage page, uint offset, uint row) =>
+	   new(page, offset, row);
+
+	/// <summary>
+	/// Checks if the provided race and gender can equip this item.
+	/// </summary>
+	/// <param name="race">The playable race.</param>
+	/// <param name="gender">The gender.</param>
+	/// <returns>True if the item can be equipped, false otherwise.</returns>
 	public bool CanEquip(ActorCustomizeMemory.Races race, ActorCustomizeMemory.Genders gender)
 	{
 		if (!this.Male && gender == ActorCustomizeMemory.Genders.Masculine)

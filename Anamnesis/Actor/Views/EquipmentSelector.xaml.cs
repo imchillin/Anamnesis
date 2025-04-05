@@ -7,6 +7,7 @@ using Anamnesis.Actor.Utilities;
 using Anamnesis.Core.Extensions;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
+using Anamnesis.GameData.Sheets;
 using Anamnesis.Keyboard;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
@@ -65,8 +66,8 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 	public ItemSlots Slot { get; set; }
 	public bool IsMainHandSlot => this.Slot == ItemSlots.MainHand;
 	public bool IsOffHandSlot => this.Slot == ItemSlots.OffHand;
-	public bool IsWeaponSlot => this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand;
-	public bool IsSmallclothesSlot => this.Slot > ItemSlots.Head && this.Slot <= ItemSlots.OffHand;
+	public bool IsWeaponSlot => (this.Slot & ItemSlots.Weapons) != 0;
+	public bool IsSmallclothesSlot => (this.Slot & (~ItemSlots.Head) & ItemSlots.Armor) != 0;
 
 	public SortModes SortMode
 	{
@@ -178,8 +179,8 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 			this.AddItem(ItemUtility.InvisibileHeadItem);
 
 			this.AddItems(GameDataService.Equipment);
-			this.AddItems(GameDataService.Items);
-			this.AddItems(GameDataService.Perform);
+			this.AddItems(GameDataService.Items.ToEnumerable());
+			this.AddItems(GameDataService.Perform.ToEnumerable());
 		}
 
 		return Task.CompletedTask;
@@ -288,10 +289,10 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 
 	private bool CanEquip(Item item)
 	{
-		if (item.EquipRestriction == null || this.actor == null || this.actor.Customize == null)
+		if (!item.EquipRestriction.IsValid || this.actor == null || this.actor.Customize == null)
 			return true;
 
-		return item.EquipRestriction.CanEquip(this.actor.Customize.Race, this.actor.Customize.Gender);
+		return item.EquipRestriction.Value.CanEquip(this.actor.Customize.Race, this.actor.Customize.Gender);
 	}
 
 	private bool MatchesSearch(IItem item, string[]? search = null)

@@ -6,31 +6,40 @@ namespace Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Interfaces;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
-using Lumina.Data;
 using Lumina.Excel;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("Action", 0xf87a2103)]
-public class Action : ExcelRow, IAnimation
+/// <summary>Represents an executable actor action in the game data.</summary>
+[Sheet("Action", 0xF87A2103)]
+public readonly struct Action(ExcelPage page, uint offset, uint row)
+	: IExcelRow<Action>, IAnimation
 {
-	public string? DisplayName { get; set; }
-	public ImageReference? Icon { get; private set; }
-	public ActionTimeline? Timeline { get; private set; }
+	/// <inheritdoc/>
+	public readonly uint RowId => row;
+
+	/// <inheritdoc/>
+	public readonly string Name => page.ReadString(offset, offset).ToString();
+
+	/// <inheritdoc/>
+	public readonly ImgRef? Icon => new(page.ReadUInt16(offset + 8));
+
+	/// <inheritdoc/>
+	public ActionTimeline? Timeline => this.ActionTimelineHit.RowId >= 0 ? GameDataService.ActionTimelines.GetRow(this.ActionTimelineHit.RowId) : null;
+
+	/// <summary>
+	/// Gets a reference to the action timeline associated with the action.
+	/// </summary>
+	public readonly RowRef<ActionTimeline> ActionTimelineHit => new(page.Module, page.ReadUInt16(offset + 12), page.Language);
+
+	/// <inheritdoc/>
 	public IAnimation.AnimationPurpose Purpose => IAnimation.AnimationPurpose.Action;
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
-
-		this.DisplayName = parser.ReadString(0);
-		this.Icon = parser.ReadImageReference<ushort>(2);
-
-		short animationRow = parser.ReadColumn<short>(7);
-
-		if (animationRow >= 0)
-		{
-			this.Timeline = GameDataService.ActionTimelines.Get((uint)animationRow);
-		}
-	}
+	/// <summary>
+	/// Creates a new instance of the <see cref="Action"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="Action"/> struct.</returns>
+	static Action IExcelRow<Action>.Create(ExcelPage page, uint offset, uint row) =>
+	   new(page, offset, row);
 }

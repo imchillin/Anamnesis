@@ -3,22 +3,25 @@
 
 namespace Anamnesis.Actor.Items;
 
-using Anamnesis.GameData.Sheets;
 using Anamnesis.GameData;
+using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
+using System.Runtime.CompilerServices;
 
 public class EmperorsEquipItem : IItem
 {
 	public string Name => LocalizationService.GetString("Item_EmperorsBody");
 	public string Description => LocalizationService.GetString("Item_EmperorsBodyDesc");
-	public ImageReference? Icon => GameDataService.Items.Get(10033)?.Icon;
+	public ImgRef? Icon => GameDataService.Items.GetRow(10033).Icon;
+	public ulong Model => ExcelPageExtensions.ConvertToModel(0, 279, 1);
 	public ushort ModelBase => 279;
 	public ushort ModelVariant => 1;
 	public ushort ModelSet => 0;
 	public uint RowId => 0;
 	public bool IsWeapon => false;
 	public bool HasSubModel => false;
+	public ulong SubModel => 0;
 	public ushort SubModelBase => 0;
 	public ushort SubModelVariant => 0;
 	public ushort SubModelSet => 0;
@@ -37,8 +40,6 @@ public class EmperorsEquipItem : IItem
 
 	public ItemCategories Category => ItemCategories.Standard;
 
-	public bool FitsInSlot(ItemSlots slot)
-	{
-		return slot == ItemSlots.Head || slot == ItemSlots.Body || slot == ItemSlots.Feet || slot == ItemSlots.Hands || slot == ItemSlots.Legs;
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public bool FitsInSlot(ItemSlots slot) => (slot & ItemSlots.Armor) != 0;
 }

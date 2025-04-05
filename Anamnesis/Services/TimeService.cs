@@ -15,9 +15,20 @@ public class TimeService : ServiceBase<TimeService>
 {
 	private FrameworkMemory? frameworkMemory;
 	private NopHook? timeAsmHook;
+	private long timeOfDay;
+	private byte dayOfMonth;
+
 	public string TimeString { get; private set; } = "00:00";
-	public long TimeOfDay { get; set; }
-	public byte DayOfMonth { get; set; }
+	public long TimeOfDay
+	{
+		get => this.timeOfDay;
+		set => this.timeOfDay = value;
+	}
+	public byte DayOfMonth
+	{
+		get => this.dayOfMonth;
+		set => this.dayOfMonth = value;
+	}
 
 	public bool Freeze
 	{
@@ -46,6 +57,9 @@ public class TimeService : ServiceBase<TimeService>
 
 	private async Task CheckTime()
 	{
+		// Chache the previous time string to avoid unnecessary updates
+		string previousTimeString = this.TimeString;
+
 		while (this.IsAlive)
 		{
 			await Task.Delay(10);
@@ -64,7 +78,7 @@ public class TimeService : ServiceBase<TimeService>
 
 				if (this.Freeze)
 				{
-					long newTime = (long)((this.TimeOfDay * 60) + (86400 * (this.DayOfMonth - 1)));
+					long newTime = (this.timeOfDay * 60) + (86400 * (this.dayOfMonth - 1));
 
 					this.frameworkMemory.EorzeaTime = newTime;
 
@@ -75,11 +89,24 @@ public class TimeService : ServiceBase<TimeService>
 				long currentTime = this.frameworkMemory.IsTimeOverridden ? this.frameworkMemory.OverrideEorzeaTime : this.frameworkMemory.EorzeaTime;
 				long timeVal = currentTime % 2764800;
 				long secondInDay = timeVal % 86400;
-				this.TimeOfDay = (long)(secondInDay / 60f);
-				this.DayOfMonth = (byte)(Math.Floor(timeVal / 86400f) + 1);
+				this.timeOfDay = secondInDay / 60;
+				this.dayOfMonth = (byte)((timeVal / 86400) + 1);
 
-				var displayTime = TimeSpan.FromMinutes(this.TimeOfDay);
-				this.TimeString = string.Format("{0:D2}:{1:D2}", displayTime.Hours, displayTime.Minutes);
+				var displayTime = TimeSpan.FromMinutes(this.timeOfDay);
+				string newTimeString = string.Create(5, displayTime, (span, value) =>
+				{
+					span[0] = (char)('0' + (value.Hours / 10));
+					span[1] = (char)('0' + (value.Hours % 10));
+					span[2] = ':';
+					span[3] = (char)('0' + (value.Minutes / 10));
+					span[4] = (char)('0' + (value.Minutes % 10));
+				});
+
+				if (newTimeString != previousTimeString)
+				{
+					this.TimeString = newTimeString;
+					previousTimeString = newTimeString;
+				}
 			}
 			catch (Exception ex)
 			{

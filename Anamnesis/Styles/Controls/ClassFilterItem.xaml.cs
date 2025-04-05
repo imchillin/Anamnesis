@@ -61,7 +61,7 @@ public partial class ClassFilterItem : UserControl, INotifyPropertyChanged
 		}
 	}
 
-	public ImageReference? Image { get; set; }
+	public ImgRef? Image { get; set; }
 	////return "/Anamnesis;component/Assets/Classes/" + this.Class.ToString() + ".png";
 
 	private static void OnValueChanged(ClassFilterItem sender, Classes value)

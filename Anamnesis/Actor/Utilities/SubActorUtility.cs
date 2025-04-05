@@ -78,7 +78,7 @@ public class SubActorUtility
 		if (memory.Customize == null)
 			return 1.0f;
 
-		var mountCustomize = GameDataService.MountCustomize.Get(mount.MountCustomizeRow);
+		var mountCustomize = GameDataService.MountCustomize.GetRow(mount.MountCustomizeRow);
 		int mountScaleFactor = 100;
 
 		switch (memory.Customize.Race)

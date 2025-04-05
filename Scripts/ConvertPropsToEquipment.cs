@@ -2,9 +2,8 @@
 // Licensed under the MIT license.
 
 using Anamnesis.GameData;
+using Anamnesis.GameData.Excel;
 using Anamnesis.Serialization;
-using Anamnesis.Serialization.Converters;
-using System.Text.Json;
 
 namespace Scripts;
 
@@ -26,24 +25,24 @@ public class ConvertPropsToEquipment : ScriptBase
 		foreach ((string key, string value) in props)
 		{
 			string[] parts = value.Split(';', StringSplitOptions.RemoveEmptyEntries);
-			
+
 			string name = parts[0].Trim();
 			string? desc = null;
 
 			if (parts.Length == 2)
 				desc = parts[1].Trim();
 
-			Equipment eq = new();
-			eq.Name = name;
-			eq.Description = desc;
-			eq.Id = key;
-			eq.Slot = Equipment.FitsSlots.Weapons;
+			Equipment eq = new()
+			{
+				Name = name,
+				Description = desc,
+				Id = key,
+				Slot = ItemSlots.Weapons
+			};
 
 			equipment.Add(eq);
 		}
 
-		///equipment.Sort((a, b) => a.Id.CompareTo(b.Id));
-		
 		string json = SerializerService.Serialize(equipment);
 		File.WriteAllText(equipmentFilePath, json);
 	}
