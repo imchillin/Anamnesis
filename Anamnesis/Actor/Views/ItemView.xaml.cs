@@ -157,12 +157,12 @@ public partial class ItemView : UserControl
 
 	private void OnOpenInConsoleGamesWikiClicked(object sender, RoutedEventArgs e)
 	{
-		this.OpenItemInFanSiteUrl("https://ffxiv.consolegameswiki.com/wiki/" + this.Item?.Name.ToString().Replace(" ", "_"));
+		this.OpenItemInFanSiteUrl("https://ffxiv.consolegameswiki.com/wiki/" + this.Item?.Name.Replace(" ", "_"));
 	}
 
 	private void OnOpenInGamerEscapeClicked(object sender, RoutedEventArgs e)
 	{
-		this.OpenItemInFanSiteUrl("https://ffxiv.gamerescape.com/wiki/" + this.Item?.Name.ToString().Replace(" ", "_"));
+		this.OpenItemInFanSiteUrl("https://ffxiv.gamerescape.com/wiki/" + this.Item?.Name.Replace(" ", "_"));
 	}
 
 	private void OnOpenInGarlandToolsClicked(object sender, RoutedEventArgs e)
@@ -191,7 +191,7 @@ public partial class ItemView : UserControl
 
 		try
 		{
-			await ClipboardUtility.CopyToClipboardAsync(this.Item.Name.ToString());
+			await ClipboardUtility.CopyToClipboardAsync(this.Item.Name);
 		}
 		catch (Exception ex)
 		{

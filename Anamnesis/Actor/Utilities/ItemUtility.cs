@@ -41,17 +41,9 @@ public static class ItemUtility
 
 		string lookupKey = $"{slot}_{modelSet}_{modelBase}_{modelVariant}";
 
-		IItem item;
-		if (isChocobo)
-		{
-			item = ChocoboItemLookup.GetOrAdd(lookupKey, _ => ChocoboItemSearch(slot, modelSet, modelBase, modelVariant));
-			return ChocoboItemLookup[lookupKey];
-		}
-		else
-		{
-			item = ItemLookup.GetOrAdd(lookupKey, _ => ItemSearch(slot, modelSet, modelBase, modelVariant));
-			return ItemLookup[lookupKey];
-		}
+		return isChocobo
+			? ChocoboItemLookup.GetOrAdd(lookupKey, _ => ChocoboItemSearch(slot, modelSet, modelBase, modelVariant))
+			: ItemLookup.GetOrAdd(lookupKey, _ => ItemSearch(slot, modelSet, modelBase, modelVariant));
 	}
 
 	public static IItem GetDummyItem(ushort modelSet, ushort modelBase, ushort modelVariant)
