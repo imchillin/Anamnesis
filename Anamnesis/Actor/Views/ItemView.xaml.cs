@@ -410,8 +410,26 @@ public partial class ItemView : UserControl
 				if (valueVm is ItemMemory itemVm)
 				{
 					IItem? item = ItemUtility.GetItem(slots, 0, itemVm.Base, itemVm.Variant, this.Actor.IsChocobo);
-					IDye? dye = GameDataService.Dyes.GetRow(itemVm.Dye);
-					IDye? dye2 = GameDataService.Dyes.GetRow(itemVm.Dye2);
+					IDye? dye;
+					IDye? dye2;
+
+					try
+					{
+						dye = GameDataService.Dyes.GetRow(itemVm.Dye);
+					}
+					catch (ArgumentOutOfRangeException)
+					{
+						dye = DyeUtility.NoneDye;
+					}
+
+					try
+					{
+						dye2 = GameDataService.Dyes.GetRow(itemVm.Dye2);
+					}
+					catch (ArgumentOutOfRangeException)
+					{
+						dye2 = DyeUtility.NoneDye;
+					}
 
 					await Dispatch.MainThread();
 
@@ -426,8 +444,26 @@ public partial class ItemView : UserControl
 					if (weaponVm.Set == 0)
 						weaponVm.Dye = 0;
 
-					IDye? dye = GameDataService.Dyes.GetRow(weaponVm.Dye);
-					IDye? dye2 = GameDataService.Dyes.GetRow(weaponVm.Dye2);
+					IDye? dye;
+					IDye? dye2;
+
+					try
+					{
+						dye = GameDataService.Dyes.GetRow(weaponVm.Dye);
+					}
+					catch (ArgumentOutOfRangeException)
+					{
+						dye = DyeUtility.NoneDye;
+					}
+
+					try
+					{
+						dye2 = GameDataService.Dyes.GetRow(weaponVm.Dye2);
+					}
+					catch (ArgumentOutOfRangeException)
+					{
+						dye2 = DyeUtility.NoneDye;
+					}
 
 					await Dispatch.MainThread();
 
