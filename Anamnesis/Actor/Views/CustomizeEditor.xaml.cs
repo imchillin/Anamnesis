@@ -49,7 +49,7 @@ public partial class CustomizeEditor : UserControl
 
 		this.debounceTimer = new DispatcherTimer
 		{
-			Interval = TimeSpan.FromMilliseconds(200),
+			Interval = TimeSpan.FromMilliseconds(100),
 		};
 		this.debounceTimer.Tick += this.DebounceTimer_Tick;
 	}
@@ -127,7 +127,8 @@ public partial class CustomizeEditor : UserControl
 
 	private void OnAppearancePropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		if (e.PropertyName == nameof(ActorCustomizeMemory.Race) ||
+		if (e.PropertyName == nameof(ActorCustomizeMemory.Gender) ||
+			e.PropertyName == nameof(ActorCustomizeMemory.Race) ||
 			e.PropertyName == nameof(ActorCustomizeMemory.Tribe) ||
 			e.PropertyName == nameof(ActorCustomizeMemory.Hair) ||
 			e.PropertyName == nameof(ActorCustomizeMemory.FacePaint))
