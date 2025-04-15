@@ -8,10 +8,10 @@ using Anamnesis.GameData.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
-#pragma warning disable SA1649
-
+/// <summary>Represents a class or job in the game.</summary>
 [Flags]
 public enum Classes : long
 {
@@ -68,179 +68,193 @@ public enum Classes : long
 
 public static class ClassesExtensions
 {
+	/// <summary>
+	/// Gets the display name of a class/job.
+	/// </summary>
+	/// <param name="job">The class/job to get the name of.</param>
+	/// <returns>The name of the class/job.</returns>
+	/// <exception cref="Exception">Thrown if the class/job does not have a name.</exception>
 	public static string? GetName(this Classes job)
 	{
-		switch (job)
+		return job switch
 		{
-			case Classes.Alchemist: return "Alchemist";
-			case Classes.Arcanist: return "Arcanist";
-			case Classes.Archer: return "Archer";
-			case Classes.Armorer: return "Armorer";
-			case Classes.Astrologian: return "Astrologian";
-			case Classes.Bard: return "Bard";
-			case Classes.BlackMage: return "Black Mage";
-			case Classes.Blacksmith: return "Blacksmith";
-			case Classes.BlueMage: return "Blue Mage";
-			case Classes.Botanist: return "Botanist";
-			case Classes.Carpenter: return "Carpenter";
-			case Classes.Conjurer: return "Conjurer";
-			case Classes.Culinarian: return "Culinarian";
-			case Classes.Dancer: return "Dancer";
-			case Classes.DarkKnight: return "Dark Knight";
-			case Classes.Dragoon: return "Dragoon";
-			case Classes.Fisher: return "Fisher";
-			case Classes.Gladiator: return "Gladiator";
-			case Classes.Goldsmith: return "Goldsmith";
-			case Classes.Gunbreaker: return "Gunbreaker";
-			case Classes.Lancer: return "Lancer";
-			case Classes.Leatherworker: return "Leatherworker";
-			case Classes.Machinist: return "Machinist";
-			case Classes.Marauder: return "Marauder";
-			case Classes.Miner: return "Miner";
-			case Classes.Monk: return "Monk";
-			case Classes.Ninja: return "Ninja";
-			case Classes.Paladin: return "Paladin";
-			case Classes.Pugilist: return "Pugilist";
-			case Classes.RedMage: return "Red Mage";
-			case Classes.Rogue: return "Rogue";
-			case Classes.Samurai: return "Samurai";
-			case Classes.Scholar: return "Scholar";
-			case Classes.Summoner: return "Summoner";
-			case Classes.Thaumaturge: return "Thaumaturge";
-			case Classes.Warrior: return "Warrior";
-			case Classes.Weaver: return "Weaver";
-			case Classes.WhiteMage: return "White Mage";
-			case Classes.Reaper: return "Reaper";
-			case Classes.Sage: return "Sage";
-			case Classes.Viper: return "Viper";
-			case Classes.Pictomancer: return "Pictomancer";
-		}
-
-		throw new Exception($"No name for class/job: {job}");
+			Classes.Alchemist => "Alchemist",
+			Classes.Arcanist => "Arcanist",
+			Classes.Archer => "Archer",
+			Classes.Armorer => "Armorer",
+			Classes.Astrologian => "Astrologian",
+			Classes.Bard => "Bard",
+			Classes.BlackMage => "Black Mage",
+			Classes.Blacksmith => "Blacksmith",
+			Classes.BlueMage => "Blue Mage",
+			Classes.Botanist => "Botanist",
+			Classes.Carpenter => "Carpenter",
+			Classes.Conjurer => "Conjurer",
+			Classes.Culinarian => "Culinarian",
+			Classes.Dancer => "Dancer",
+			Classes.DarkKnight => "Dark Knight",
+			Classes.Dragoon => "Dragoon",
+			Classes.Fisher => "Fisher",
+			Classes.Gladiator => "Gladiator",
+			Classes.Goldsmith => "Goldsmith",
+			Classes.Gunbreaker => "Gunbreaker",
+			Classes.Lancer => "Lancer",
+			Classes.Leatherworker => "Leatherworker",
+			Classes.Machinist => "Machinist",
+			Classes.Marauder => "Marauder",
+			Classes.Miner => "Miner",
+			Classes.Monk => "Monk",
+			Classes.Ninja => "Ninja",
+			Classes.Paladin => "Paladin",
+			Classes.Pugilist => "Pugilist",
+			Classes.RedMage => "Red Mage",
+			Classes.Rogue => "Rogue",
+			Classes.Samurai => "Samurai",
+			Classes.Scholar => "Scholar",
+			Classes.Summoner => "Summoner",
+			Classes.Thaumaturge => "Thaumaturge",
+			Classes.Warrior => "Warrior",
+			Classes.Weaver => "Weaver",
+			Classes.WhiteMage => "White Mage",
+			Classes.Reaper => "Reaper",
+			Classes.Sage => "Sage",
+			Classes.Viper => "Viper",
+			Classes.Pictomancer => "Pictomancer",
+			_ => throw new Exception($"No name for class/job: {job}"),
+		};
 	}
 
+	/// <summary>
+	/// Gets the role of the given class/job.
+	/// </summary>
+	/// <param name="job">The class/job to get the role of.</param>
+	/// <returns>The role of the class/job.</returns>
+	/// <exception cref="Exception">Thrown if the class/job does not have a role.</exception>
 	public static Roles? GetRole(this Classes job)
 	{
-		switch (job)
+		return job switch
 		{
-			case Classes.None: return null;
-			case Classes.All: return null;
-
-			case Classes.Alchemist: return Roles.Crafters;
-			case Classes.Arcanist: return Roles.Damage;
-			case Classes.Archer: return Roles.Damage;
-			case Classes.Armorer: return Roles.Crafters;
-			case Classes.Astrologian: return Roles.Healers;
-			case Classes.Bard: return Roles.Damage;
-			case Classes.BlackMage: return Roles.Damage;
-			case Classes.Blacksmith: return Roles.Crafters;
-			case Classes.BlueMage: return Roles.Damage;
-			case Classes.Botanist: return Roles.Gatherers;
-			case Classes.Carpenter: return Roles.Crafters;
-			case Classes.Conjurer: return Roles.Healers;
-			case Classes.Culinarian: return Roles.Crafters;
-			case Classes.Dancer: return Roles.Damage;
-			case Classes.DarkKnight: return Roles.Tanks;
-			case Classes.Dragoon: return Roles.Damage;
-			case Classes.Fisher: return Roles.Gatherers;
-			case Classes.Gladiator: return Roles.Tanks;
-			case Classes.Goldsmith: return Roles.Crafters;
-			case Classes.Gunbreaker: return Roles.Tanks;
-			case Classes.Lancer: return Roles.Damage;
-			case Classes.Leatherworker: return Roles.Crafters;
-			case Classes.Machinist: return Roles.Damage;
-			case Classes.Marauder: return Roles.Tanks;
-			case Classes.Miner: return Roles.Gatherers;
-			case Classes.Monk: return Roles.Damage;
-			case Classes.Ninja: return Roles.Damage;
-			case Classes.Paladin: return Roles.Tanks;
-			case Classes.Pugilist: return Roles.Damage;
-			case Classes.RedMage: return Roles.Damage;
-			case Classes.Rogue: return Roles.Damage;
-			case Classes.Samurai: return Roles.Damage;
-			case Classes.Scholar: return Roles.Healers;
-			case Classes.Summoner: return Roles.Damage;
-			case Classes.Thaumaturge: return Roles.Damage;
-			case Classes.Warrior: return Roles.Tanks;
-			case Classes.Weaver: return Roles.Crafters;
-			case Classes.WhiteMage: return Roles.Healers;
-			case Classes.Reaper: return Roles.Damage;
-			case Classes.Sage: return Roles.Healers;
-			case Classes.Viper: return Roles.Damage;
-			case Classes.Pictomancer: return Roles.Damage;
-		}
-
-		throw new Exception($"No role for class/job: {job}");
+			Classes.None => null,
+			Classes.All => null,
+			Classes.Alchemist => Roles.Crafters,
+			Classes.Arcanist => Roles.Damage,
+			Classes.Archer => Roles.Damage,
+			Classes.Armorer => Roles.Crafters,
+			Classes.Astrologian => Roles.Healers,
+			Classes.Bard => Roles.Damage,
+			Classes.BlackMage => Roles.Damage,
+			Classes.Blacksmith => Roles.Crafters,
+			Classes.BlueMage => Roles.Damage,
+			Classes.Botanist => Roles.Gatherers,
+			Classes.Carpenter => Roles.Crafters,
+			Classes.Conjurer => Roles.Healers,
+			Classes.Culinarian => Roles.Crafters,
+			Classes.Dancer => Roles.Damage,
+			Classes.DarkKnight => Roles.Tanks,
+			Classes.Dragoon => Roles.Damage,
+			Classes.Fisher => Roles.Gatherers,
+			Classes.Gladiator => Roles.Tanks,
+			Classes.Goldsmith => Roles.Crafters,
+			Classes.Gunbreaker => Roles.Tanks,
+			Classes.Lancer => Roles.Damage,
+			Classes.Leatherworker => Roles.Crafters,
+			Classes.Machinist => Roles.Damage,
+			Classes.Marauder => Roles.Tanks,
+			Classes.Miner => Roles.Gatherers,
+			Classes.Monk => Roles.Damage,
+			Classes.Ninja => Roles.Damage,
+			Classes.Paladin => Roles.Tanks,
+			Classes.Pictomancer => Roles.Damage,
+			Classes.Pugilist => Roles.Damage,
+			Classes.Reaper => Roles.Damage,
+			Classes.RedMage => Roles.Damage,
+			Classes.Rogue => Roles.Damage,
+			Classes.Sage => Roles.Healers,
+			Classes.Samurai => Roles.Damage,
+			Classes.Scholar => Roles.Healers,
+			Classes.Summoner => Roles.Damage,
+			Classes.Thaumaturge => Roles.Damage,
+			Classes.Viper => Roles.Damage,
+			Classes.Warrior => Roles.Tanks,
+			Classes.Weaver => Roles.Crafters,
+			Classes.WhiteMage => Roles.Healers,
+			_ => throw new Exception($"No role for class/job: {job}"),
+		};
 	}
 
-	public static ImageReference GetIcon(this Classes job)
-	{
-		return new ImageReference(job.GetIconId());
-	}
+	/// <summary>
+	/// Gets the icon for a class/job.
+	/// </summary>
+	/// <param name="job">The class/job to get the icon for.</param>
+	/// <returns>An image reference to the icon.</returns>
+	public static ImgRef GetIcon(this Classes job) => new(job.GetIconId());
 
+	/// <summary>
+	/// Gets the icon ID for a class/job.
+	/// </summary>
+	/// <param name="job">The class/job to get the icon ID for.</param>
+	/// <returns>The icon ID.</returns>
+	/// <exception cref="Exception">Thrown if the class/job does not have an icon ID.</exception>
 	public static int GetIconId(this Classes job)
 	{
-		switch (job)
+		return job switch
 		{
-			case Classes.Alchemist: return 062014;
-			case Classes.Arcanist: return 062026;
-			case Classes.Archer: return 062005;
-			case Classes.Armorer: return 062010;
-			case Classes.Astrologian: return 062033;
-			case Classes.Bard: return 062023;
-			case Classes.BlackMage: return 062025;
-			case Classes.Blacksmith: return 062009;
-			case Classes.BlueMage: return 062036;
-			case Classes.Botanist: return 062017;
-			case Classes.Carpenter: return 062008;
-			case Classes.Conjurer: return 062006;
-			case Classes.Culinarian: return 062015;
-			case Classes.Dancer: return 062038;
-			case Classes.DarkKnight: return 062032;
-			case Classes.Dragoon: return 062022;
-			case Classes.Fisher: return 062018;
-			case Classes.Gladiator: return 062001;
-			case Classes.Goldsmith: return 062011;
-			case Classes.Gunbreaker: return 062037;
-			case Classes.Lancer: return 062004;
-			case Classes.Leatherworker: return 062012;
-			case Classes.Machinist: return 062031;
-			case Classes.Marauder: return 062003;
-			case Classes.Miner: return 062016;
-			case Classes.Monk: return 062020;
-			case Classes.Ninja: return 062030;
-			case Classes.Paladin: return 062019;
-			case Classes.Pictomancer: return 062042;
-			case Classes.Pugilist: return 062002;
-			case Classes.Reaper: return 062039;
-			case Classes.RedMage: return 062035;
-			case Classes.Rogue: return 062029;
-			case Classes.Sage: return 062040;
-			case Classes.Samurai: return 062034;
-			case Classes.Scholar: return 062028;
-			case Classes.Summoner: return 062027;
-			case Classes.Thaumaturge: return 062007;
-			case Classes.Viper: return 062041;
-			case Classes.Warrior: return 062021;
-			case Classes.Weaver: return 062013;
-			case Classes.WhiteMage: return 062024;
-		}
-
-		throw new Exception($"No icon for class/job: {job}");
+			Classes.Alchemist => 062014,
+			Classes.Arcanist => 062026,
+			Classes.Archer => 062005,
+			Classes.Armorer => 062010,
+			Classes.Astrologian => 062033,
+			Classes.Bard => 062023,
+			Classes.BlackMage => 062025,
+			Classes.Blacksmith => 062009,
+			Classes.BlueMage => 062036,
+			Classes.Botanist => 062017,
+			Classes.Carpenter => 062008,
+			Classes.Conjurer => 062006,
+			Classes.Culinarian => 062015,
+			Classes.Dancer => 062038,
+			Classes.DarkKnight => 062032,
+			Classes.Dragoon => 062022,
+			Classes.Fisher => 062018,
+			Classes.Gladiator => 062001,
+			Classes.Goldsmith => 062011,
+			Classes.Gunbreaker => 062037,
+			Classes.Lancer => 062004,
+			Classes.Leatherworker => 062012,
+			Classes.Machinist => 062031,
+			Classes.Marauder => 062003,
+			Classes.Miner => 062016,
+			Classes.Monk => 062020,
+			Classes.Ninja => 062030,
+			Classes.Paladin => 062019,
+			Classes.Pictomancer => 062042,
+			Classes.Pugilist => 062002,
+			Classes.Reaper => 062039,
+			Classes.RedMage => 062035,
+			Classes.Rogue => 062029,
+			Classes.Sage => 062040,
+			Classes.Samurai => 062034,
+			Classes.Scholar => 062028,
+			Classes.Summoner => 062027,
+			Classes.Thaumaturge => 062007,
+			Classes.Viper => 062041,
+			Classes.Warrior => 062021,
+			Classes.Weaver => 062013,
+			Classes.WhiteMage => 062024,
+			_ => throw new Exception($"No icon for class/job: {job}"),
+		};
 	}
 
-	public static Classes SetFlag(this Classes a, Classes b, bool enabled)
-	{
-		if (enabled)
-		{
-			return a | b;
-		}
-		else
-		{
-			return a & ~b;
-		}
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Classes SetFlag(this Classes a, Classes b, bool enabled) => enabled ? a | b : a & ~b;
 
+	/// <summary>
+	/// Determines if this class/job is included in the given classes.
+	/// </summary>
+	/// <param name="self">The class/job to check.</param>
+	/// <param name="role">The classes to check against.</param>
+	/// <param name="onlyJobs">True if only jobs should be checked, false if classes should be checked.</param>
+	/// <returns>The result of the check.</returns>
 	public static bool HasAllClassesInRole(this Classes self, Roles role, bool onlyJobs = false)
 	{
 		foreach (Classes job in role.GetClasses())
@@ -249,32 +263,39 @@ public static class ClassesExtensions
 				continue;
 
 			if (!self.HasFlagUnsafe(job))
-			{
 				return false;
-			}
 		}
 
 		return true;
 	}
 
+	/// <summary>
+	/// Determines if this is a class, and not a job.
+	/// </summary>
+	/// <param name="self">The class to check.</param>
+	/// <returns>True if this is a class, false if it is a job.</returns>
 	public static bool IsClass(this Classes self)
 	{
-		switch (self)
+		return self switch
 		{
-			case Classes.Gladiator: return true;
-			case Classes.Marauder: return true;
-			case Classes.Conjurer: return true;
-			case Classes.Arcanist: return true;
-			case Classes.Archer: return true;
-			case Classes.Lancer: return true;
-			case Classes.Pugilist: return true;
-			case Classes.Rogue: return true;
-			case Classes.Thaumaturge: return true;
-		}
-
-		return false;
+			Classes.Gladiator => true,
+			Classes.Marauder => true,
+			Classes.Conjurer => true,
+			Classes.Arcanist => true,
+			Classes.Archer => true,
+			Classes.Lancer => true,
+			Classes.Pugilist => true,
+			Classes.Rogue => true,
+			Classes.Thaumaturge => true,
+			_ => false,
+		};
 	}
 
+	/// <summary>
+	/// Determines if this is a job, and not a class.
+	/// </summary>
+	/// <param name="self">The class to check.</param>
+	/// <returns>True if this is a job, false if it is a class.</returns>
 	public static bool IsJob(this Classes self)
 	{
 		if (self == Classes.None || self == Classes.All)
@@ -283,6 +304,13 @@ public static class ClassesExtensions
 		return !self.IsClass();
 	}
 
+	/// <summary>
+	/// Creates a description of the given classes.
+	/// </summary>
+	/// <param name="self">The classes to describe.</param>
+	/// <param name="onlyJobs">True if only jobs should be included in the description, false if classes should be included.</param>
+	/// <returns>A description of the given classes.</returns>
+	/// <exception cref="Exception">Thrown if a class/job does not have a name.</exception>
 	public static string Describe(this Classes self, bool onlyJobs = false)
 	{
 		if (self == Classes.All)
@@ -291,7 +319,7 @@ public static class ClassesExtensions
 		if (self == Classes.None)
 			return "None";
 
-		List<Classes> selected = new();
+		List<Classes> selected = [];
 		foreach (Classes? job in Enum.GetValues<Classes>().Select(v => (Classes?)v))
 		{
 			if (job == null)
@@ -326,7 +354,7 @@ public static class ClassesExtensions
 		}
 
 		// Get all the roles that are entirely included
-		HashSet<Roles> entireRoles = new();
+		HashSet<Roles> entireRoles = [];
 		foreach (Roles? role in Enum.GetValues<Roles>().Select(v => (Roles?)v))
 		{
 			if (role == null)
@@ -360,13 +388,13 @@ public static class ClassesExtensions
 		}
 
 		int index = 0;
-		StringBuilder builder = new StringBuilder();
+		StringBuilder builder = new();
 		foreach (Roles role in entireRoles)
 		{
 			if (index > 0)
 				builder.Append(", ");
 
-			builder.Append(role.GetName());
+			builder.Append(role.ToString());
 			index++;
 		}
 

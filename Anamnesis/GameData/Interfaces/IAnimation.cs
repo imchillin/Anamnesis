@@ -20,8 +20,15 @@ public interface IAnimation
 		Blend,
 	}
 
-	public string? DisplayName { get; }
-	public ImageReference? Icon { get; }
+	/// <summary>The name of the animation object.</summary>
+	public string? Name { get; }
+
+	/// <summary>An image reference to the animation object's icon.</summary>
+	public ImgRef? Icon { get; }
+
+	/// <summary>The timeline of the animation.</summary>
 	public ActionTimeline? Timeline { get; }
+
+	/// <summary>The purpose of the animation.</summary>
 	public AnimationPurpose Purpose { get; }
 }

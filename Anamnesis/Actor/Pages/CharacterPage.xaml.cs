@@ -18,6 +18,7 @@ using PropertyChanged;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -42,7 +43,10 @@ public partial class CharacterPage : UserControl
 
 		HotkeyService.RegisterHotkeyHandler("CharacterPage.ClearEquipment", () => this.OnClearClicked());
 
+		Stopwatch stopwatch = Stopwatch.StartNew();
 		this.VoiceEntries = this.GenerateVoiceList();
+		stopwatch.Stop();
+		Log.Verbose($"Voice list generation time: {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public ActorMemory? Actor { get; private set; }
@@ -64,13 +68,10 @@ public partial class CharacterPage : UserControl
 		List<VoiceEntry> entries = new();
 		foreach (var makeType in GameDataService.CharacterMakeTypes)
 		{
-			if (makeType == null)
+			if (makeType.Tribe.RowId == 0)
 				continue;
 
-			if (makeType.Tribe == 0)
-				continue;
-
-			Tribe? tribe = GameDataService.Tribes.GetRow((uint)makeType.Tribe);
+			Tribe? tribe = makeType.Tribe.Value;
 
 			if (tribe == null)
 				continue;
@@ -81,7 +82,7 @@ public partial class CharacterPage : UserControl
 				byte voiceId = makeType.Voices[i]!;
 				VoiceEntry entry = new();
 				entry.VoiceName = $"Voice #{i + 1} ({voiceId})";
-				entry.VoiceCategory = $"{makeType.Race}, {tribe.Masculine} ({makeType.Gender})";
+				entry.VoiceCategory = $"{makeType.Race}, {tribe.Value.Masculine} ({makeType.Gender})";
 				entry.VoiceId = voiceId;
 				entries.Add(entry);
 			}
@@ -177,32 +178,19 @@ public partial class CharacterPage : UserControl
 
 		var race = GameDataService.Races.GetRow((uint)this.Actor.Customize.Race);
 
-		if (race == null)
-			return;
-
 		if (this.Actor.Customize.Gender == ActorCustomizeMemory.Genders.Masculine)
 		{
-			var body = GameDataService.Items.Get((uint)race.RSEMBody);
-			var hands = GameDataService.Items.Get((uint)race.RSEMHands);
-			var legs = GameDataService.Items.Get((uint)race.RSEMLegs);
-			var feet = GameDataService.Items.Get((uint)race.RSEMFeet);
-
-			this.Actor.Equipment?.Chest?.Equip(body);
-			this.Actor.Equipment?.Arms?.Equip(hands);
-			this.Actor.Equipment?.Legs?.Equip(legs);
-			this.Actor.Equipment?.Feet?.Equip(feet);
+			this.Actor.Equipment?.Chest?.Equip(race.RSEMBody.Value);
+			this.Actor.Equipment?.Arms?.Equip(race.RSEMHands.Value);
+			this.Actor.Equipment?.Legs?.Equip(race.RSEMLegs.Value);
+			this.Actor.Equipment?.Feet?.Equip(race.RSEMFeet.Value);
 		}
 		else
 		{
-			var body = GameDataService.Items.Get((uint)race.RSEFBody);
-			var hands = GameDataService.Items.Get((uint)race.RSEFHands);
-			var legs = GameDataService.Items.Get((uint)race.RSEFLegs);
-			var feet = GameDataService.Items.Get((uint)race.RSEFFeet);
-
-			this.Actor.Equipment?.Chest?.Equip(body);
-			this.Actor.Equipment?.Arms?.Equip(hands);
-			this.Actor.Equipment?.Legs?.Equip(legs);
-			this.Actor.Equipment?.Feet?.Equip(feet);
+			this.Actor.Equipment?.Chest?.Equip(race.RSEFBody.Value);
+			this.Actor.Equipment?.Arms?.Equip(race.RSEFHands.Value);
+			this.Actor.Equipment?.Legs?.Equip(race.RSEFLegs.Value);
+			this.Actor.Equipment?.Feet?.Equip(race.RSEFFeet.Value);
 		}
 
 		this.Actor.Equipment?.Ear?.Clear(this.Actor.IsHuman);

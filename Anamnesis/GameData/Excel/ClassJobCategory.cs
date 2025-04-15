@@ -3,72 +3,92 @@
 
 namespace Anamnesis.GameData.Excel;
 
-using Anamnesis.GameData.Sheets;
-using Lumina.Data;
 using Lumina.Excel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-[Sheet("ClassJobCategory", 0x65bbdb12)]
-public class ClassJobCategory : ExcelRow
+/// <summary>
+/// Represents the class job category data often associated with items in the game.
+/// </summary>
+[Sheet("ClassJobCategory", 0x65BBDB12)]
+public readonly struct ClassJobCategory(ExcelPage page, uint offset, uint row)
+	: IExcelRow<ClassJobCategory>
 {
-	public string? Name { get; set; }
+	/// <inheritdoc/>
+	public uint RowId => row;
 
-	public Dictionary<Classes, bool> ClassJobs { get; set; } = new Dictionary<Classes, bool>();
+	/// <summary>
+	/// Gets the singular name of the class job category.
+	/// </summary>
+	public readonly string Name => page.ReadString(offset, offset).ToString();
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
+	/// <summary>
+	/// Gets the class jobs supported by this category.
+	/// </summary>
+	public Dictionary<Classes, bool> ClassJobs { get; } = new Dictionary<Classes, bool>
 	{
-		base.PopulateData(parser, gameData, language);
-		this.Name = parser.ReadString(0);
+		{ Classes.Gladiator, page.ReadBool(offset + 5) },
+		{ Classes.Pugilist, page.ReadBool(offset + 6) },
+		{ Classes.Marauder, page.ReadBool(offset + 7) },
+		{ Classes.Lancer, page.ReadBool(offset + 8) },
+		{ Classes.Archer, page.ReadBool(offset + 9) },
+		{ Classes.Conjurer, page.ReadBool(offset + 10) },
+		{ Classes.Thaumaturge, page.ReadBool(offset + 11) },
+		{ Classes.Carpenter, page.ReadBool(offset + 12) },
+		{ Classes.Blacksmith, page.ReadBool(offset + 13) },
+		{ Classes.Armorer, page.ReadBool(offset + 14) },
+		{ Classes.Goldsmith, page.ReadBool(offset + 15) },
+		{ Classes.Leatherworker, page.ReadBool(offset + 16) },
+		{ Classes.Weaver, page.ReadBool(offset + 17) },
+		{ Classes.Alchemist, page.ReadBool(offset + 18) },
+		{ Classes.Culinarian, page.ReadBool(offset + 19) },
+		{ Classes.Miner, page.ReadBool(offset + 20) },
+		{ Classes.Botanist, page.ReadBool(offset + 21) },
+		{ Classes.Fisher, page.ReadBool(offset + 22) },
+		{ Classes.Paladin, page.ReadBool(offset + 23) },
+		{ Classes.Monk, page.ReadBool(offset + 24) },
+		{ Classes.Warrior, page.ReadBool(offset + 25) },
+		{ Classes.Dragoon, page.ReadBool(offset + 26) },
+		{ Classes.Bard, page.ReadBool(offset + 27) },
+		{ Classes.WhiteMage, page.ReadBool(offset + 28) },
+		{ Classes.BlackMage, page.ReadBool(offset + 29) },
+		{ Classes.Arcanist, page.ReadBool(offset + 30) },
+		{ Classes.Summoner, page.ReadBool(offset + 31) },
+		{ Classes.Scholar, page.ReadBool(offset + 32) },
+		{ Classes.Rogue, page.ReadBool(offset + 33) },
+		{ Classes.Ninja, page.ReadBool(offset + 34) },
+		{ Classes.Machinist, page.ReadBool(offset + 35) },
+		{ Classes.DarkKnight, page.ReadBool(offset + 36) },
+		{ Classes.Astrologian, page.ReadBool(offset + 37) },
+		{ Classes.Samurai, page.ReadBool(offset + 38) },
+		{ Classes.RedMage, page.ReadBool(offset + 39) },
+		{ Classes.BlueMage, page.ReadBool(offset + 40) },
+		{ Classes.Gunbreaker, page.ReadBool(offset + 41) },
+		{ Classes.Dancer, page.ReadBool(offset + 42) },
+		{ Classes.Reaper, page.ReadBool(offset + 43) },
+		{ Classes.Sage, page.ReadBool(offset + 44) },
+		{ Classes.Viper, page.ReadBool(offset + 45) },
+		{ Classes.Pictomancer, page.ReadBool(offset + 46) },
+	};
 
-		////ADV = ((parser.ReadColumn<bool>(1) ? ((byte)1) : ((byte)0)) != 0);
+	/// <summary>
+	/// Creates a new instance of the <see cref="ClassJobCategory"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="ClassJobCategory"/> struct.</returns>
+	static ClassJobCategory IExcelRow<ClassJobCategory>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
 
-		this.ClassJobs.Add(Classes.Gladiator, parser.ReadColumn<bool>(2));
-		this.ClassJobs.Add(Classes.Pugilist, parser.ReadColumn<bool>(3));
-		this.ClassJobs.Add(Classes.Marauder, parser.ReadColumn<bool>(4));
-		this.ClassJobs.Add(Classes.Lancer, parser.ReadColumn<bool>(5));
-		this.ClassJobs.Add(Classes.Archer, parser.ReadColumn<bool>(6));
-		this.ClassJobs.Add(Classes.Conjurer, parser.ReadColumn<bool>(7));
-		this.ClassJobs.Add(Classes.Thaumaturge, parser.ReadColumn<bool>(8));
-		this.ClassJobs.Add(Classes.Carpenter, parser.ReadColumn<bool>(9));
-		this.ClassJobs.Add(Classes.Blacksmith, parser.ReadColumn<bool>(10));
-		this.ClassJobs.Add(Classes.Armorer, parser.ReadColumn<bool>(11));
-		this.ClassJobs.Add(Classes.Goldsmith, parser.ReadColumn<bool>(12));
-		this.ClassJobs.Add(Classes.Leatherworker, parser.ReadColumn<bool>(13));
-		this.ClassJobs.Add(Classes.Weaver, parser.ReadColumn<bool>(14));
-		this.ClassJobs.Add(Classes.Alchemist, parser.ReadColumn<bool>(15));
-		this.ClassJobs.Add(Classes.Culinarian, parser.ReadColumn<bool>(16));
-		this.ClassJobs.Add(Classes.Miner, parser.ReadColumn<bool>(17));
-		this.ClassJobs.Add(Classes.Botanist, parser.ReadColumn<bool>(18));
-		this.ClassJobs.Add(Classes.Fisher, parser.ReadColumn<bool>(19));
-		this.ClassJobs.Add(Classes.Paladin, parser.ReadColumn<bool>(20));
-		this.ClassJobs.Add(Classes.Monk, parser.ReadColumn<bool>(21));
-		this.ClassJobs.Add(Classes.Warrior, parser.ReadColumn<bool>(22));
-		this.ClassJobs.Add(Classes.Dragoon, parser.ReadColumn<bool>(23));
-		this.ClassJobs.Add(Classes.Bard, parser.ReadColumn<bool>(24));
-		this.ClassJobs.Add(Classes.WhiteMage, parser.ReadColumn<bool>(25));
-		this.ClassJobs.Add(Classes.BlackMage, parser.ReadColumn<bool>(26));
-		this.ClassJobs.Add(Classes.Arcanist, parser.ReadColumn<bool>(27));
-		this.ClassJobs.Add(Classes.Summoner, parser.ReadColumn<bool>(28));
-		this.ClassJobs.Add(Classes.Scholar, parser.ReadColumn<bool>(29));
-		this.ClassJobs.Add(Classes.Rogue, parser.ReadColumn<bool>(30));
-		this.ClassJobs.Add(Classes.Ninja, parser.ReadColumn<bool>(31));
-		this.ClassJobs.Add(Classes.Machinist, parser.ReadColumn<bool>(32));
-		this.ClassJobs.Add(Classes.DarkKnight, parser.ReadColumn<bool>(33));
-		this.ClassJobs.Add(Classes.Astrologian, parser.ReadColumn<bool>(34));
-		this.ClassJobs.Add(Classes.Samurai, parser.ReadColumn<bool>(35));
-		this.ClassJobs.Add(Classes.RedMage, parser.ReadColumn<bool>(36));
-		this.ClassJobs.Add(Classes.BlueMage, parser.ReadColumn<bool>(37));
-		this.ClassJobs.Add(Classes.Gunbreaker, parser.ReadColumn<bool>(38));
-		this.ClassJobs.Add(Classes.Dancer, parser.ReadColumn<bool>(39));
-		this.ClassJobs.Add(Classes.Reaper, parser.ReadColumn<bool>(40));
-		this.ClassJobs.Add(Classes.Sage, parser.ReadColumn<bool>(41));
-		this.ClassJobs.Add(Classes.Viper, parser.ReadColumn<bool>(42));
-		this.ClassJobs.Add(Classes.Pictomancer, parser.ReadColumn<bool>(43));
-	}
-
+	/// <summary>
+	/// Checks if the class job category contains the specified class job.
+	/// </summary>
+	/// <param name="classJob">The class job to check for.</param>
+	/// <returns>
+	/// True if the class job category contains the specified class job, otherwise false.
+	/// </returns>
 	public bool Contains(Classes classJob)
 	{
 		if (this.ClassJobs.TryGetValue(classJob, out bool value))
@@ -77,6 +97,10 @@ public class ClassJobCategory : ExcelRow
 		return false;
 	}
 
+	/// <summary>
+	/// Converts the class job category to a <see cref="Classes"/> enum.
+	/// </summary>
+	/// <returns>The class job category as a <see cref="Classes"/> enum.</returns>
 	public Classes ToFlags()
 	{
 		Classes classes = Classes.None;

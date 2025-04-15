@@ -6,33 +6,47 @@ namespace Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Interfaces;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Memory;
-using Lumina.Data;
 using Lumina.Excel;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("ActionTimeline", 0xd803699f)]
-public class ActionTimeline : ExcelRow, IAnimation
+/// <summary>Represents an action timeline object in the game data.</summary>
+[Sheet("ActionTimeline", 0xD803699F)]
+public readonly struct ActionTimeline(ExcelPage page, uint offset, uint row)
+	: IExcelRow<ActionTimeline>, IAnimation
 {
-	public ushort AnimationId => (ushort)this.RowId;
-	public byte Type { get; set; }
-	public string? Key { get; set; }
-	public AnimationMemory.AnimationSlots Slot { get; set; }
-	public byte IsLoop { get; set; }
+	/// <inheritdoc/>
+	public readonly uint RowId => row;
 
-	public string? DisplayName => this.Key;
+	/// <summary>Gets the in-game path of the action timeline.</summary>
+	public readonly string Key => page.ReadString(offset, offset).ToString();
+
+	/// <summary>Gets the type of the action timeline.</summary>
+	public readonly byte Type => page.ReadUInt8(offset + 9);
+
+	/// <summary>Gets the animation slot of the action timeline.</summary>
+	public readonly AnimationMemory.AnimationSlots Slot => (AnimationMemory.AnimationSlots)page.ReadUInt8(offset + 12);
+
+	/// <summary>Gets a value indicating whether the action timeline is a looping animation.</summary>
+	public readonly bool IsLoop => page.ReadPackedBool(offset + 20, 5);
+
+	/// <inheritdoc/>
+	public readonly string? Name => this.Key;
+
+	/// <inheritdoc/>
 	public ActionTimeline? Timeline => this;
-	public ImageReference? Icon => null;
 
+	/// <inheritdoc/>
+	public readonly ImgRef? Icon => null;
+
+	/// <inheritdoc/>
 	public IAnimation.AnimationPurpose Purpose => IAnimation.AnimationPurpose.Raw;
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
-
-		this.Type = parser.ReadColumn<byte>(0);
-		this.Key = parser.ReadString(6);
-		this.Slot = (AnimationMemory.AnimationSlots)parser.ReadColumn<byte>(4);
-		this.IsLoop = parser.ReadColumn<byte>(16);
-	}
+	/// <summary>
+	/// Creates a new instance of the <see cref="ActionTimeline"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="ActionTimeline"/> struct.</returns>
+	static ActionTimeline IExcelRow<ActionTimeline>.Create(ExcelPage page, uint offset, uint row) =>
+	   new(page, offset, row);
 }

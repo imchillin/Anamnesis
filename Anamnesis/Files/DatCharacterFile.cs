@@ -3,17 +3,16 @@
 
 namespace Anamnesis.Files;
 
-using System;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
 using Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Sheets;
+using Anamnesis.GUI.Dialogs;
 using Anamnesis.Memory;
 using Anamnesis.Services;
-using Anamnesis.GUI.Dialogs;
 using Serilog;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 {
@@ -44,7 +43,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 				byte currentByte = reader.ReadByte();
 
 				if (currentByte == 0x00)
-                    break;
+					break;
 
 				nameBuilder.Append((char)currentByte);
 			}
@@ -99,7 +98,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 
 	public bool ValidateAllowedOptions(CharaMakeType makeType, ActorCustomizeMemory customize)
 	{
-		if (makeType == null || makeType.CustomizeRanges == null)
+		if (makeType.CustomizeRanges == null || makeType.CustomizeRanges.Count == 0)
 			return false;
 
 		Dictionary<int, int> validate = new Dictionary<int, int>()
@@ -136,7 +135,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		{
 			foreach (CharaMakeType set in GameDataService.CharacterMakeTypes)
 			{
-				if (set.Tribe != customize.Tribe || set.Gender != customize.Gender)
+				if (set.CustomizeTribe != customize.Tribe || set.Gender != customize.Gender)
 					continue;
 
 				makeType = set;
@@ -144,11 +143,11 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 			}
 		}
 
-		if (makeType == null || makeType.Voices == null)
+		if (!makeType.HasValue || makeType.Value.Voices.Count == 0)
 			return;
 
 		// Validate options
-		bool validate = this.ValidateAllowedOptions(makeType, customize);
+		bool validate = this.ValidateAllowedOptions((CharaMakeType)makeType, customize);
 		if (!validate)
 		{
 			GenericDialog.Show("This character uses custom features that are not available in the character creator.", "Failed to save appearance");
@@ -163,7 +162,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		if (hair != null)
 		{
 			// Check hairstyle is compatible with their face type (for hrothgars)
-			bool isIncompatible = hair.FaceType != 0 && hair.FaceType != customize.Head;
+			bool isIncompatible = hair.Value.FaceType != 0 && hair.Value.FaceType != customize.Head;
 			if (isIncompatible)
 			{
 				GenericDialog.Show("This character uses a hairstyle that is not compatible with their face type.", "Failed to save appearance");
@@ -171,7 +170,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 			}
 			else
 			{
-				useDefaultHair = hair.IsPurchasable;
+				useDefaultHair = hair.Value.IsPurchasable;
 			}
 		}
 		else
@@ -182,7 +181,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		if (customize.FacePaint != 0)
 		{
 			CharaMakeCustomize? facePaint = GameDataService.CharacterMakeCustomize.GetFeature(CustomizeSheet.Features.FacePaint, customize.Tribe, customize.Gender, customize.FacePaint);
-			useDefaultFacePaint = facePaint == null || facePaint.IsPurchasable;
+			useDefaultFacePaint = facePaint == null || facePaint.Value.IsPurchasable;
 		}
 
 		if (useDefaultHair || useDefaultFacePaint)
@@ -219,7 +218,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 			customize.Bust,
 			(byte)(useDefaultFacePaint ? 0x00 : customize.FacePaint),
 			customize.FacePaintColor,
-			makeType.Voices.Contains(actor.Voice) ? actor.Voice : makeType.Voices[0],
+			makeType.Value.Voices.Contains(actor.Voice) ? actor.Voice : makeType.Value.Voices[0],
 			0x00,
 
 			// Timestamp

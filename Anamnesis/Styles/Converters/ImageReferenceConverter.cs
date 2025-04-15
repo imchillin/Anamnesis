@@ -3,20 +3,20 @@
 
 namespace Anamnesis.Styles.Converters;
 
+using Anamnesis.GameData.Sheets;
 using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
-using Anamnesis.GameData.Sheets;
 
-[ValueConversion(typeof(ImageReference), typeof(ImageSource))]
+[ValueConversion(typeof(ImgRef), typeof(ImageSource))]
 public class ImageReferenceConverter : IValueConverter
 {
 	public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
 	{
-		if (value is ImageReference reference)
+		if (value is ImgRef reference)
 		{
-			return reference.GetImageSource();
+			return reference.GetImage();
 		}
 
 		return null;

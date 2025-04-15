@@ -30,7 +30,7 @@ using XivToolsWpf.DependencyProperties;
 [AddINotifyPropertyChangedInterface]
 public partial class ItemView : UserControl
 {
-	public static readonly IBind<ItemSlots> SlotDp = Binder.Register<ItemSlots, ItemView>("Slot");
+	public static readonly IBind<ItemSlots> SlotDp = Binder.Register<ItemSlots, ItemView>(nameof(Slot));
 	public static readonly IBind<IEquipmentItemMemory?> ItemModelDp = Binder.Register<IEquipmentItemMemory?, ItemView>(nameof(ItemModel), OnItemModelChanged, BindMode.TwoWay);
 	public static readonly IBind<WeaponSubModelMemory?> WeaponExModelDp = Binder.Register<WeaponSubModelMemory?, ItemView>(nameof(ExtendedViewModel));
 
@@ -73,39 +73,11 @@ public partial class ItemView : UserControl
 		set => WeaponExModelDp.Set(this, value);
 	}
 
-	public uint ItemKey
-	{
-		get
-		{
-			return this.Item?.RowId ?? 0;
-		}
-		set
-		{
-			IItem? item = GameDataService.Items?.Get(value);
-			this.SetItem(item);
-		}
-	}
+	public string SlotName => LocalizationService.GetString("Character_Equipment_" + this.Slot);
 
-	public string SlotName
-	{
-		get => LocalizationService.GetString("Character_Equipment_" + this.Slot);
-	}
+	public bool IsWeapon => (this.Slot & ItemSlots.Weapons) != 0;
 
-	public bool IsWeapon
-	{
-		get
-		{
-			return this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand;
-		}
-	}
-
-	public bool IsHead
-	{
-		get
-		{
-			return this.Slot == ItemSlots.Head;
-		}
-	}
+	public bool IsHead => this.Slot == ItemSlots.Head;
 
 	public bool IsValidWeapon
 	{
@@ -316,7 +288,7 @@ public partial class ItemView : UserControl
 
 			if (autoOffhand && this.Slot == ItemSlots.MainHand
 				&& item is Item ivm
-				&& ivm.EquipSlot?.OffHand == -1)
+				&& ivm.EquipSlotCategory.Value.OffHand == -1)
 			{
 				if (ivm.HasSubModel)
 				{
@@ -411,6 +383,11 @@ public partial class ItemView : UserControl
 		if (this.lockViewModel)
 			return;
 
+		// Ignore changes from the Transform property
+		// This is because weapon model transforms are constantly updating, which causes constant the item view refreshes
+		if (e?.PropertyName == nameof(TransformMemory.Position) || e?.PropertyName == nameof(TransformMemory.Rotation) || e?.PropertyName == nameof(TransformMemory.Scale) || e?.PropertyName == nameof(WeaponModelMemory.Transform))
+			return;
+
 		Task.Run(async () =>
 		{
 			await Task.Yield();
@@ -433,8 +410,8 @@ public partial class ItemView : UserControl
 				if (valueVm is ItemMemory itemVm)
 				{
 					IItem? item = ItemUtility.GetItem(slots, 0, itemVm.Base, itemVm.Variant, this.Actor.IsChocobo);
-					IDye? dye = GameDataService.Dyes.Get(itemVm.Dye);
-					IDye? dye2 = GameDataService.Dyes.Get(itemVm.Dye2);
+					IDye? dye = GameDataService.Dyes.GetRow(itemVm.Dye);
+					IDye? dye2 = GameDataService.Dyes.GetRow(itemVm.Dye2);
 
 					await Dispatch.MainThread();
 
@@ -449,8 +426,8 @@ public partial class ItemView : UserControl
 					if (weaponVm.Set == 0)
 						weaponVm.Dye = 0;
 
-					IDye? dye = GameDataService.Dyes.Get(weaponVm.Dye);
-					IDye? dye2 = GameDataService.Dyes.Get(weaponVm.Dye2);
+					IDye? dye = GameDataService.Dyes.GetRow(weaponVm.Dye);
+					IDye? dye2 = GameDataService.Dyes.GetRow(weaponVm.Dye2);
 
 					await Dispatch.MainThread();
 

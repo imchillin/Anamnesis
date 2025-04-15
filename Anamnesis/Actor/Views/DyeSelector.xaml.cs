@@ -3,11 +3,12 @@
 
 namespace Anamnesis.Actor.Views;
 
-using System.Threading.Tasks;
 using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
+using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
+using System.Threading.Tasks;
 using XivToolsWpf;
 
 public abstract class DyeSelectorDrawer : SelectorDrawer<IDye>
@@ -30,7 +31,7 @@ public partial class DyeSelector : DyeSelectorDrawer
 		this.AddItem(DyeUtility.NoneDye);
 
 		if (GameDataService.Dyes != null)
-			this.AddItems(GameDataService.Dyes);
+			this.AddItems(GameDataService.Dyes.ToEnumerable());
 
 		return Task.CompletedTask;
 	}
@@ -49,18 +50,24 @@ public partial class DyeSelector : DyeSelectorDrawer
 
 	protected override int Compare(IDye dyeA, IDye dyeB)
 	{
-		if (dyeA == DyeUtility.NoneDye && dyeB != DyeUtility.NoneDye)
+		if (dyeA == null && dyeB != null)
 			return -1;
 
-		if (dyeA != DyeUtility.NoneDye && dyeB == DyeUtility.NoneDye)
+		if (dyeA != null && dyeB == null)
 			return 1;
 
-		if (dyeA.IsFavorite && !dyeB.IsFavorite)
+		if (dyeA == default && dyeB != default)
 			return -1;
 
-		if (!dyeA.IsFavorite && dyeB.IsFavorite)
+		if (dyeA != default && dyeB == default)
 			return 1;
 
-		return -dyeB.RowId.CompareTo(dyeA.RowId);
+		if (dyeA!.IsFavorite && !dyeB!.IsFavorite)
+			return -1;
+
+		if (!dyeA.IsFavorite && dyeB!.IsFavorite)
+			return 1;
+
+		return -dyeB!.RowId.CompareTo(dyeA.RowId);
 	}
 }

@@ -107,6 +107,51 @@ public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChan
 		Task.Run(() => ViewService.ShowDrawer(view));
 	}
 
+	public static TView Show<TView, TValue>(TValue? current, Action<TValue> changed)
+ 	where TView : SelectorDrawer
+ 	where TValue : struct
+	{
+		TView view = Activator.CreateInstance<TView>();
+		Show(view, current, changed);
+		return view;
+	}
+
+	public static async Task<TValue?> ShowAsync<TView, TValue>(TValue? current)
+		where TView : SelectorDrawer
+		where TValue : struct
+	{
+		SelectorDrawer view = Activator.CreateInstance<TView>();
+
+		view.objectType = typeof(TValue);
+		view.currentValue = current;
+		await ViewService.ShowDrawer(view);
+
+		bool open = true;
+		((IDrawer)view).OnClosing += () => open = false;
+
+		while (open)
+			await Task.Delay(100);
+
+		return view.Selector.Value as TValue?;
+	}
+
+	public static void Show<TValue>(SelectorDrawer view, TValue? current, Action<TValue> changed)
+		where TValue : struct
+	{
+		view.objectType = typeof(TValue);
+		view.currentValue = current;
+		view.SelectionChanged += (close) =>
+		{
+			object? v = view.Selector.Value;
+			if (v is TValue tval)
+			{
+				changed?.Invoke(tval);
+			}
+		};
+
+		Task.Run(() => ViewService.ShowDrawer(view));
+	}
+
 	public void Close()
 	{
 		this.OnClosing?.Invoke();

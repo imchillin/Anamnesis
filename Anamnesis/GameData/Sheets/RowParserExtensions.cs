@@ -3,115 +3,89 @@
 
 namespace Anamnesis.GameData.Sheets;
 
-using System;
-using Anamnesis.Services;
 using Lumina.Excel;
-using Lumina.Text;
+using System.Runtime.CompilerServices;
 
-public static class RowParserExtensions
+public static class ExcelPageExtensions
 {
-	public static ImageReference? ReadImageReference<TColumn>(this RowParser self, int column)
+	/// <summary>
+	/// Reads a weapon model set from the excel page using the provided offset.
+	/// </summary>
+	/// <param name="self">The excel page.</param>
+	/// <param name="offset">The offset to read from.</param>
+	/// <returns>The weapon model set.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ushort ReadWeaponSet(this ExcelPage self, uint offset)
 	{
-		if (GameDataService.LuminaData == null)
-			throw new Exception("Game Data Service is not initialized");
-
-		TColumn? id = self.ReadColumn<TColumn>(column);
-
-		if (id == null)
-			return null;
-
-		if (id is ushort uVal)
-		{
-			return new ImageReference(uVal);
-		}
-		else if (id is int iVal)
-		{
-			return new ImageReference(iVal);
-		}
-		else if (id is uint uiVal)
-		{
-			return new ImageReference(uiVal);
-		}
-		else
-		{
-			throw new Exception($"Unrecognised image reference column type: {typeof(TColumn)}");
-		}
-	}
-
-	public static string? ReadString(this RowParser self, int column)
-	{
-		SeString? value = self.ReadColumn<SeString>(column);
-		if (value == null)
-			return null;
-
-		if (string.IsNullOrEmpty(value.RawString) || string.IsNullOrWhiteSpace(value.RawString))
-			return null;
-
-		return value.RawString;
-	}
-
-	public static ushort ReadWeaponSet(this RowParser self, int column)
-	{
-		ulong val = self.ReadColumn<ulong>(column);
+		ulong val = self.ReadUInt64(offset);
 		return (ushort)val;
 	}
 
-	public static ushort ReadWeaponBase(this RowParser self, int column)
+	/// <summary>
+	/// Reads a weapon model base from the excel page using the provided offset.
+	/// </summary>
+	/// <param name="self">The excel page.</param>
+	/// <param name="offset">The offset to read from.</param>
+	/// <returns>The weapon model base.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ushort ReadWeaponBase(this ExcelPage self, uint offset)
 	{
-		ulong val = self.ReadColumn<ulong>(column);
+		ulong val = self.ReadUInt64(offset);
 		return (ushort)(val >> 16);
 	}
 
-	public static ushort ReadWeaponVariant(this RowParser self, int column)
+	/// <summary>
+	/// Reads a weapon model variant from the excel page using the provided offset.
+	/// </summary>
+	/// <param name="self">The excel page.</param>
+	/// <param name="offset">The offset to read from.</param>
+	/// <returns>The weapon model variant.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ushort ReadWeaponVariant(this ExcelPage self, uint offset)
 	{
-		ulong val = self.ReadColumn<ulong>(column);
+		ulong val = self.ReadUInt64(offset);
 		return (ushort)(val >> 32);
 	}
 
-	public static ushort ReadSet(this RowParser self, int column)
+	/// <summary>
+	/// Reads a base value from the excel page using the provided offset.
+	/// </summary>
+	/// <param name="self">The excel page.</param>
+	/// <param name="offset">The offset to read from.</param>
+	/// <returns>The base value.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ushort ReadBase(this ExcelPage self, uint offset)
 	{
-		return 0;
-	}
-
-	public static ushort ReadBase(this RowParser self, int column)
-	{
-		ulong val = self.ReadColumn<ulong>(column);
+		ulong val = self.ReadUInt64(offset);
 		return (ushort)val;
 	}
 
-	public static ushort ReadVariant(this RowParser self, int column)
+	/// <summary>
+	/// Reads a variant value from the excel page using the provided offset.
+	/// </summary>
+	/// <param name="self">The excel page.</param>
+	/// <param name="offset">The offset to read from.</param>
+	/// <returns>The variant value.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ushort ReadVariant(this ExcelPage self, uint offset)
 	{
-		ulong val = self.ReadColumn<ulong>(column);
+		ulong val = self.ReadUInt64(offset);
 		return (ushort)(val >> 16);
 	}
 
-	public static TRow? ReadRowReference<TColumn, TRow>(this RowParser self, int column, int minValue = int.MinValue)
-		where TRow : Lumina.Excel.ExcelRow
+	/// <summary>
+	/// Converts the split (sub)model components (set, base, variant) into a single (sub)model value.
+	/// </summary>
+	/// <param name="set">The (sub)model set.</param>
+	/// <param name="baseValue">The (sub)model base.</param>
+	/// <param name="variant">The (sub)model variant.</param>
+	/// <returns>The combined (sub)model value.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ulong ConvertToModel(ushort set, ushort baseValue, ushort variant)
 	{
-		TColumn? id = self.ReadColumn<TColumn>(column);
-
-		if (id == null)
-			throw new Exception($"Failed to read column: {column} as type: {typeof(TColumn)} for row reference.");
-
-		ExcelSheet<TRow> sheet = GameDataService.GetSheet<TRow>();
-
-		if (id is byte bVal)
-		{
-			return sheet.GetOrDefault((byte)Math.Max(bVal, minValue));
-		}
-		else if (id is uint uVal)
-		{
-			return sheet.GetOrDefault((uint)Math.Max(uVal, minValue));
-		}
-		else if (id is int iVal)
-		{
-			return sheet.GetOrDefault((uint)Math.Max(iVal, minValue));
-		}
-		else if (id is ushort sVal)
-		{
-			return sheet.GetOrDefault((ushort)Math.Max(sVal, minValue));
-		}
-
-		throw new Exception($"Unrecognized row reference key type: {typeof(TColumn)}");
+		ulong result = set;
+		result |= (ulong)baseValue << (set != 0 ? 16 : 0);
+		result |= (ulong)variant << (set != 0 ? 32 : 16);
+		return result;
 	}
 }
