@@ -22,7 +22,7 @@ jobs:
 
       # 3. Run your update script
       - name: Run UpdateGallery.py
-        run: python Anamnesis/Scripts/UpdateGallery.py
+        run: python Scripts/UpdateGallery.py
 
       # 4. Commit any changes
       - name: Commit changes
