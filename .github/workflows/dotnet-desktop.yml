@@ -57,15 +57,15 @@ jobs:
 
       # 6. Zip up the entire publish folder
       - name: Create ZIP
-        run: Compress-Archive -Path './publish/*' -DestinationPath './Anamnesis_${{ env.VERSION_DATE }}.zip'
+        run: Compress-Archive -Path './publish/*' -DestinationPath './Anamnesis.zip'
 
       # 7. Draft a GitHub release
       - name: Create draft release
         uses: ncipollo/release-action@v1
         with:
-          tag: v${{ env.VERSION_DATE }}
-          name: v${{ env.VERSION_DATE }}
+          tag: ${{ env.VERSION_DATE }}
+          name: ${{ env.VERSION_DATE }}
           draft: true
-          artifacts: "Anamnesis_${{ env.VERSION_DATE }}.zip"
+          artifacts: "Anamnesis.zip"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
