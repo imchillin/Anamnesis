@@ -3,7 +3,6 @@
 
 namespace Anamnesis.Actor.Views;
 
-using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
@@ -28,8 +27,6 @@ public partial class DyeSelector : DyeSelectorDrawer
 
 	protected override Task LoadItems()
 	{
-		this.AddItem(DyeUtility.NoneDye);
-
 		if (GameDataService.Dyes != null)
 			this.AddItems(GameDataService.Dyes.ToEnumerable());
 

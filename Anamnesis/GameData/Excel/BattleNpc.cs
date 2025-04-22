@@ -20,7 +20,14 @@ public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
 	public uint RowId => row;
 
 	/// <summary>The singular name of the battle non-player entity.</summary>
-	public string Name => GameDataService.GetNpcName(this) ?? $"{this.TypeName} #{this.RowId}";
+	public string Name
+	{
+		get
+		{
+			var npcName = GameDataService.GetNpcName(this);
+			return !string.IsNullOrEmpty(npcName) ? npcName : $"{this.TypeName} #{this.RowId}";
+		}
+	}
 
 	/// <summary>Gets the description of the battle non-player entity.</summary>
 	public string Description => string.Empty;

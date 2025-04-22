@@ -44,7 +44,7 @@ public partial class CharacterPage : UserControl
 		HotkeyService.RegisterHotkeyHandler("CharacterPage.ClearEquipment", () => this.OnClearClicked());
 
 		Stopwatch stopwatch = Stopwatch.StartNew();
-		this.VoiceEntries = this.GenerateVoiceList();
+		this.VoiceEntries = GenerateVoiceList();
 		stopwatch.Stop();
 		Log.Verbose($"Voice list generation time: {stopwatch.ElapsedMilliseconds} ms");
 	}
@@ -63,9 +63,9 @@ public partial class CharacterPage : UserControl
 		this.OnActorChanged(this.DataContext as ActorMemory);
 	}
 
-	private ListCollectionView GenerateVoiceList()
+	private static ListCollectionView GenerateVoiceList()
 	{
-		List<VoiceEntry> entries = new();
+		List<VoiceEntry> entries = [];
 		foreach (var makeType in GameDataService.CharacterMakeTypes)
 		{
 			if (makeType.Tribe.RowId == 0)
@@ -80,10 +80,13 @@ public partial class CharacterPage : UserControl
 			for (int i = 0; i < voiceCount; i++)
 			{
 				byte voiceId = makeType.Voices[i]!;
-				VoiceEntry entry = new();
-				entry.VoiceName = $"Voice #{i + 1} ({voiceId})";
-				entry.VoiceCategory = $"{makeType.Race}, {tribe.Value.Masculine} ({makeType.Gender})";
-				entry.VoiceId = voiceId;
+				VoiceEntry entry = new()
+				{
+					VoiceName = $"Voice #{i + 1} ({voiceId})",
+					VoiceCategory = $"{makeType.Race.Value.Name}, {tribe.Value.Masculine} ({makeType.Gender})",
+					VoiceId = voiceId
+				};
+
 				entries.Add(entry);
 			}
 		}
