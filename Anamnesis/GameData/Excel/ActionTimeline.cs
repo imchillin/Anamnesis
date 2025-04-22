@@ -16,6 +16,15 @@ public readonly struct ActionTimeline(ExcelPage page, uint offset, uint row)
 	/// <inheritdoc/>
 	public readonly uint RowId => row;
 
+	/// <summary>
+	/// An unsigned 16-bit integer representing the row ID of the action timeline.
+	/// </summary>
+	/// <remarks>
+	/// This is necessary as we directly use this value to set
+	/// the game memory variable, which is of type ushort.
+	/// </remarks>
+	public readonly ushort AnimationId => (ushort)row;
+
 	/// <summary>Gets the in-game path of the action timeline.</summary>
 	public readonly string Key => page.ReadString(offset, offset).ToString();
 

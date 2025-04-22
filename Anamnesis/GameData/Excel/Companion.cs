@@ -22,7 +22,14 @@ public readonly struct Companion(ExcelPage page, uint offset, uint row)
 	/// <remarks>
 	/// If the name is not available, a row-based type name will be returned.
 	/// </remarks>
-	public string Name => page.ReadString(offset, offset).ToString() ?? $"{this.TypeName} #{this.RowId}";
+	public string Name
+	{
+		get
+		{
+			var name = page.ReadString(offset, offset).ToString();
+			return !string.IsNullOrEmpty(name) ? name : $"{this.TypeName} #{this.RowId}";
+		}
+	}
 
 	/// <summary>
 	/// Gets the minion's description.
@@ -41,7 +48,7 @@ public readonly struct Companion(ExcelPage page, uint offset, uint row)
 	public readonly RowRef<ModelChara> Model => new(page.Module, (uint)page.ReadUInt16(offset + 16), page.Language);
 
 	/// <inheritdoc/>
-	public ImgRef? Icon => new(page.ReadUInt16(offset + 28));
+	public ImgRef? Icon => new(page.ReadUInt16(offset + 22));
 
 	/// <inheritdoc/>
 	public Mod? Mod => null;

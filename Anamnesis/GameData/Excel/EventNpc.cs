@@ -24,7 +24,14 @@ public readonly unsafe struct EventNpc(ExcelPage page, uint offset, uint row)
 	/// <remarks>
 	/// If the NPC name is not available in the game data, a row-base type name will be returned.
 	/// </remarks>
-	public string Name => GameDataService.GetNpcName(this) ?? $"{this.TypeName} #{this.RowId}";
+	public string Name
+	{
+		get
+		{
+			var npcName = GameDataService.GetNpcName(this);
+			return !string.IsNullOrEmpty(npcName) ? npcName : $"{this.TypeName} #{this.RowId}";
+		}
+	}
 
 	/// <summary>Gets the NPC's description.</summary>
 	/// <remarks>

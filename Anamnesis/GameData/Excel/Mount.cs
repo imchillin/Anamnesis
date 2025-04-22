@@ -35,7 +35,14 @@ public readonly struct Mount(ExcelPage page, uint offset, uint row)
 	/// <remarks>
 	/// If the name is not found, a row-based type name is returned.
 	/// </remarks>
-	public string Name => page.ReadString(offset, offset).ToString() ?? $"{this.TypeName} #{this.RowId}";
+	public string Name
+	{
+		get
+		{
+			var name = page.ReadString(offset, offset).ToString();
+			return !string.IsNullOrEmpty(name) ? name : $"{this.TypeName} #{this.RowId}";
+		}
+	}
 
 	/// <summary>Gets the description of the mount.</summary>
 	/// <remarks>

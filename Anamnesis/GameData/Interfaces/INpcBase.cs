@@ -302,11 +302,12 @@ public static class INpcBaseExtensions
 	{
 		ArgumentNullException.ThrowIfNull(npc);
 
-		ActorCustomizeMemory.Races? race = npc.Race.Value.CustomizeRace;
-		ActorCustomizeMemory.Tribes? tribe = npc.Tribe.Value.CustomizeTribe;
-
-		race ??= ActorCustomizeMemory.Races.Hyur;
-		tribe ??= ActorCustomizeMemory.Tribes.Midlander;
+		ActorCustomizeMemory.Races race = npc.Race.IsValid
+			? npc.Race.Value.CustomizeRace
+			: ActorCustomizeMemory.Races.Hyur;
+		ActorCustomizeMemory.Tribes tribe = npc.Race.IsValid
+			? npc.Tribe.Value.CustomizeTribe
+			: ActorCustomizeMemory.Tribes.Midlander;
 
 		CharacterFile file = new()
 		{
@@ -337,8 +338,7 @@ public static class INpcBaseExtensions
 
 		// Hyurs and Roegadyn get muscle sliders, while everyone else
 		// Gets custom tails or ears.
-		if (npc.Race.Value.CustomizeRace == ActorCustomizeMemory.Races.Hyur ||
-			npc.Race.Value.CustomizeRace == ActorCustomizeMemory.Races.Roegadyn)
+		if (race is ActorCustomizeMemory.Races.Hyur or ActorCustomizeMemory.Races.Roegadyn)
 		{
 			file.Bust = npc.ExtraFeature1;
 			file.EarMuscleTailSize = npc.BustOrTone1;
@@ -390,8 +390,8 @@ public static class INpcBaseExtensions
 			ModelSet = item.ModelSet,
 			ModelBase = item.ModelBase,
 			ModelVariant = item.ModelVariant,
-			DyeId = (byte)dye.Value.RowId,
-			DyeId2 = (byte)dye2.Value.RowId,
+			DyeId = dye.IsValid ? (byte)dye.Value.RowId : (byte)0,
+			DyeId2 = dye2.IsValid ? (byte)dye2.Value.RowId : (byte)0,
 		};
 
 		if (isOffHand && item.HasSubModel)
@@ -420,8 +420,8 @@ public static class INpcBaseExtensions
 		{
 			ModelBase = item.ModelBase,
 			ModelVariant = (byte)item.ModelVariant,
-			DyeId = (byte)dye.Value.RowId,
-			DyeId2 = (byte)dye2.Value.RowId,
+			DyeId = dye.IsValid ? (byte)dye.Value.RowId : (byte)0,
+			DyeId2 = dye2.IsValid ? (byte)dye2.Value.RowId : (byte)0,
 		};
 
 		return save;

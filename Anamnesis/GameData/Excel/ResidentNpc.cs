@@ -22,7 +22,14 @@ public readonly struct ResidentNpc(ExcelPage page, uint offset, uint row)
 	public readonly RowRef<EventNpc> EventNpc => GameDataService.CreateRef<EventNpc>(this.RowId);
 
 	/// <summary>Gets the name of the Resident NPC.</summary>
-	public readonly string Name => page.ReadString(offset, offset).ToString() ?? $"{this.TypeName} #{this.RowId}";
+	public string Name
+	{
+		get
+		{
+			var name = page.ReadString(offset, offset).ToString();
+			return !string.IsNullOrEmpty(name) ? name : $"{this.TypeName} #{this.RowId}";
+		}
+	}
 
 	/// <summary>Gets the description of the Resident NPC.</summary>
 	/// <remarks>This contains the resident NPC's title.</remarks>

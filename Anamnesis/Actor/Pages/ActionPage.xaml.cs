@@ -28,7 +28,7 @@ public partial class ActionPage : UserControl
 
 		this.ContentArea.DataContext = this;
 
-		this.LipSyncTypes = this.GenerateLipList();
+		this.LipSyncTypes = GenerateLipList();
 
 		HotkeyService.RegisterHotkeyHandler("ActionPage.ResumeAll", () => this.OnResumeAll());
 		HotkeyService.RegisterHotkeyHandler("ActionPage.PauseAll", () => this.OnPauseAll());
@@ -82,10 +82,10 @@ public partial class ActionPage : UserControl
 		}
 	}
 
-	private IEnumerable<ActionTimeline> GenerateLipList()
+	private static IEnumerable<ActionTimeline> GenerateLipList()
 	{
 		// Grab "no animation" and all "speak/" animations, which are the only ones valid in this slot
-		IEnumerable<ActionTimeline> lips = (IEnumerable<ActionTimeline>)GameDataService.ActionTimelines.Where(x => x.RowId == 0 || (x.Key?.StartsWith("speak/") ?? false));
+		IEnumerable<ActionTimeline> lips = GameDataService.ActionTimelines.Where(x => x.RowId == 0 || (x.Key?.StartsWith("speak/") ?? false));
 		return lips;
 	}
 
