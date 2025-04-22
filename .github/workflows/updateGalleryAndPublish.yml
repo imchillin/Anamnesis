@@ -1,0 +1,101 @@
+name: Update Gallery and Publish Anamnesis
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  update:
+    name: Update Gallery
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v4.9.1
+        with:
+          python-version: '3.x'
+
+      - name: Run UpdateGallery.py
+        run: python Scripts/UpdateGallery.py
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff --quiet || git commit -m "chore: regenerate gallery via CI"
+
+      - name: Push changes
+        run: git push
+
+  publish:
+    name: Publish Anamnesis
+    needs: update
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      # 1. Checkout repo + all submodules
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+          submodules: recursive
+          persist-credentials: true
+
+      # 2. Capture dates in env vars
+      - name: Set version date
+        run: |
+          $d = Get-Date -Format 'yyyy-MM-dd'
+          echo "VERSION_DATE=$d" >> $env:GITHUB_ENV
+
+      - name: Set build timestamp
+        run: |
+          $t = Get-Date -Format 'yyyy, MM, dd, HH, mm, ss'
+          echo "BUILD_TIME=$t" >> $env:GITHUB_ENV
+
+      # 3. Inject into VersionInfo.cs
+      - name: Replace version info
+        run: |
+          (Get-Content ./Anamnesis/VersionInfo.cs) `
+            -replace '2000, 01, 01, 00, 00, 00', "${{ env.BUILD_TIME }}" |
+          Set-Content ./Anamnesis/VersionInfo.cs
+
+      # 4. Install .NET SDK
+      - name: Setup .NET 9.0
+        uses: actions/setup-dotnet@v3.4.2
+        with:
+          dotnet-version: '9.0.x'
+
+      # 5. Publish projects
+      - name: Publish Anamnesis
+        run: dotnet publish Anamnesis/Anamnesis.csproj `
+               -c Release -o ./publish/Anamnesis `
+               /p:PublishProfile="Anamnesis/Properties/PublishProfiles/FolderProfile.pubxml"
+
+      - name: Publish UpdateExtractor
+        run: dotnet publish UpdateExtractor/UpdateExtractor.csproj `
+               -c Release -o ./publish/UpdateExtractor `
+               /p:PublishProfile="UpdateExtractor/Properties/PublishProfiles/FolderProfile.pubxml"
+
+      # 6. Zip up the entire publish folder
+      - name: Create ZIP
+        run: Compress-Archive -Path './publish/*' -DestinationPath './Anamnesis.zip'
+
+      # 7. Draft a GitHub release
+      - name: Create draft release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.VERSION_DATE }}
+          name: ${{ env.VERSION_DATE }}
+          draft: true
+          artifacts: "Anamnesis.zip"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
