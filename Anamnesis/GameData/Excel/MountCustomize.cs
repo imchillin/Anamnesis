@@ -2,54 +2,116 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
-using Lumina.Data;
+
 using Lumina.Excel;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("MountCustomize", 0x525def92)]
-public class MountCustomize : ExcelRow
+/// <summary>
+/// Represents the mount actor customization data in the game data.
+/// </summary>
+[Sheet("MountCustomize", 0x525DEF92)]
+public readonly struct MountCustomize(ExcelPage page, uint offset, uint row)
+	: IExcelRow<MountCustomize>
 {
-	public ushort HyurMidlanderMaleScale { get; set; }
-	public ushort HyurMidlanderFemaleScale { get; set; }
-	public ushort HyurHighlanderMaleScale { get; set; }
-	public ushort HyurHighlanderFemaleScale { get; set; }
-	public ushort ElezenMaleScale { get; set; }
-	public ushort ElezenFemaleScale { get; set; }
-	public ushort LalaMaleScale { get; set; }
-	public ushort LalaFemaleScale { get; set; }
-	public ushort MiqoMaleScale { get; set; }
-	public ushort MiqoFemaleScale { get; set; }
-	public ushort RoeMaleScale { get; set; }
-	public ushort RoeFemaleScale { get; set; }
-	public ushort AuRaMaleScale { get; set; }
-	public ushort AuRaFemaleScale { get; set; }
-	public ushort HrothgarMaleScale { get; set; }
-	public ushort HrothgarFemaleScale { get; set; }
-	public ushort VieraMaleScale { get; set; }
-	public ushort VieraFemaleScale { get; set; }
+	/// <inheritdoc/>
+	public uint RowId => row;
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
+	/// <summary>
+	/// Gets the Male Midlander Hyur model mount scaling value.
+	/// </summary>
+	public readonly ushort HyurMidlanderMaleScale => page.ReadUInt16(offset);
 
-		this.HyurMidlanderMaleScale = parser.ReadColumn<ushort>(1);
-		this.HyurMidlanderFemaleScale = parser.ReadColumn<ushort>(2);
-		this.HyurHighlanderMaleScale = parser.ReadColumn<ushort>(3);
-		this.HyurHighlanderFemaleScale = parser.ReadColumn<ushort>(4);
-		this.ElezenMaleScale = parser.ReadColumn<ushort>(5);
-		this.ElezenFemaleScale = parser.ReadColumn<ushort>(6);
-		this.LalaMaleScale = parser.ReadColumn<ushort>(7);
-		this.LalaFemaleScale = parser.ReadColumn<ushort>(8);
-		this.MiqoMaleScale = parser.ReadColumn<ushort>(9);
-		this.MiqoFemaleScale = parser.ReadColumn<ushort>(10);
-		this.RoeMaleScale = parser.ReadColumn<ushort>(11);
-		this.RoeFemaleScale = parser.ReadColumn<ushort>(12);
-		this.AuRaMaleScale = parser.ReadColumn<ushort>(13);
-		this.AuRaFemaleScale = parser.ReadColumn<ushort>(14);
-		this.HrothgarMaleScale = parser.ReadColumn<ushort>(15);
-		this.HrothgarFemaleScale = parser.ReadColumn<ushort>(16);
-		this.VieraMaleScale = parser.ReadColumn<ushort>(17);
-		this.VieraFemaleScale = parser.ReadColumn<ushort>(18);
-	}
+	/// <summary>
+	/// Gets the Female Midlander Hyur model mount scaling value.
+	/// </summary>
+	public readonly ushort HyurMidlanderFemaleScale => page.ReadUInt16(offset + 2);
+
+	/// <summary>
+	/// Gets the Male Highlander Hyur model mount scaling value.
+	/// </summary>
+	public readonly ushort HyurHighlanderMaleScale => page.ReadUInt16(offset + 4);
+
+	/// <summary>
+	/// Gets the Female Highlander Hyur model mount scaling value.
+	/// </summary>
+	public readonly ushort HyurHighlanderFemaleScale => page.ReadUInt16(offset + 6);
+
+	/// <summary>
+	/// Gets the Male Elezen model mount scaling value.
+	/// </summary>
+	public readonly ushort ElezenMaleScale => page.ReadUInt16(offset + 8);
+
+	/// <summary>
+	/// Gets the Female Elezen model mount scaling value.
+	/// </summary>
+	public readonly ushort ElezenFemaleScale => page.ReadUInt16(offset + 10);
+
+	/// <summary>
+	/// Gets the Male Lalafell model mount scaling value.
+	/// </summary>
+	public readonly ushort LalaMaleScale => page.ReadUInt16(offset + 12);
+
+	/// <summary>
+	/// Gets the Female Lalafell model mount scaling value.
+	/// </summary>
+	public readonly ushort LalaFemaleScale => page.ReadUInt16(offset + 14);
+
+	/// <summary>
+	/// Gets the Male Miqo'te model mount scaling value.
+	/// </summary>
+	public readonly ushort MiqoMaleScale => page.ReadUInt16(offset + 16);
+
+	/// <summary>
+	/// Gets the Female Miqo'te model mount scaling value.
+	/// </summary>
+	public readonly ushort MiqoFemaleScale => page.ReadUInt16(offset + 18);
+
+	/// <summary>
+	/// Gets the Male Roegadyn model mount scaling value.
+	/// </summary>
+	public readonly ushort RoeMaleScale => page.ReadUInt16(offset + 20);
+
+	/// <summary>
+	/// Gets the Female Roegadyn model mount scaling value.
+	/// </summary>
+	public readonly ushort RoeFemaleScale => page.ReadUInt16(offset + 22);
+
+	/// <summary>
+	/// Gets the Male Au Ra model mount scaling value.
+	/// </summary>
+	public readonly ushort AuRaMaleScale => page.ReadUInt16(offset + 24);
+
+	/// <summary>
+	/// Gets the Female Au Ra model mount scaling value.
+	/// </summary>
+	public readonly ushort AuRaFemaleScale => page.ReadUInt16(offset + 26);
+
+	/// <summary>
+	/// Gets the Male Hrothgar model mount scaling value.
+	/// </summary>
+	public readonly ushort HrothgarMaleScale => page.ReadUInt16(offset + 28);
+
+	/// <summary>
+	/// Gets the Female Hrothgar model mount scaling value.
+	/// </summary>
+	public readonly ushort HrothgarFemaleScale => page.ReadUInt16(offset + 30);
+
+	/// <summary>
+	/// Gets the Male Viera model mount scaling value.
+	/// </summary>
+	public readonly ushort VieraMaleScale => page.ReadUInt16(offset + 32);
+
+	/// <summary>
+	/// Gets the Female Viera model mount scaling value.
+	/// </summary>
+	public readonly ushort VieraFemaleScale => page.ReadUInt16(offset + 34);
+
+	/// <summary>
+	/// Creates a new instance of the <see cref="MountCustomize"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="MountCustomize"/> struct.</returns>
+	static MountCustomize IExcelRow<MountCustomize>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
 }

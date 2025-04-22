@@ -3,25 +3,23 @@
 
 namespace Anamnesis.Services;
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using Anamnesis.Actor;
 using Anamnesis.Files;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Memory;
 using Lumina.Data;
+using Lumina.Excel;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 using LuminaData = global::Lumina.GameData;
 
 public class GameDataService : ServiceBase<GameDataService>
 {
 	internal static LuminaData? LuminaData;
-
-	private static readonly Dictionary<Type, Lumina.Excel.ExcelSheetImpl> Sheets = new Dictionary<Type, Lumina.Excel.ExcelSheetImpl>();
 
 	private static Dictionary<string, string>? npcNames;
 	private static Dictionary<uint, ItemCategories>? itemCategories;
@@ -62,35 +60,46 @@ public class GameDataService : ServiceBase<GameDataService>
 
 	public static EquipmentSheet Equipment { get; private set; } = null!;
 
-	public static ExcelSheet<T> GetSheet<T>()
-		where T : Lumina.Excel.ExcelRow
+	public static ExcelSheet<T> GetExcelSheet<T>(Language? language = null, string? name = null)
+					where T : struct, IExcelRow<T>
 	{
-		lock (Sheets)
-		{
-			Type type = typeof(T);
+		if (LuminaData == null)
+			throw new InvalidOperationException("LuminaData is not initialized.");
 
-			Lumina.Excel.ExcelSheetImpl? sheet;
-			if (Sheets.TryGetValue(type, out sheet) && sheet is ExcelSheet<T> sheetT)
-				return sheetT;
-
-			if (LuminaData == null)
-				throw new Exception("Game Data Service has not been initialized");
-
-			sheet = ExcelSheet<T>.GetSheet(LuminaData);
-			Sheets.Add(type, sheet);
-			return (ExcelSheet<T>)sheet;
-		}
+		return LuminaData.Excel.GetSheet<T>(language, name);
 	}
+
+	public static RowRef<T> CreateRef<T>(uint rowId)
+		where T : struct, IExcelRow<T>
+	{
+		if (LuminaData == null)
+			throw new InvalidOperationException("LuminaData is not initialized.");
+
+		return new(LuminaData.Excel, rowId);
+	}
+
+	public static bool TryGetRow<T>(string sheetName, uint rowId, out T row)
+		where T : struct, IExcelRow<T>
+		=> TryGetRow(sheetName, rowId, null, out row);
+
+	public static bool TryGetRow<T>(string sheetName, uint rowId, Language? language, out T row)
+		where T : struct, IExcelRow<T>
+	{
+		if (LuminaData == null)
+			throw new InvalidOperationException("LuminaData is not initialized.");
+
+		return LuminaData.Excel.GetSheet<T>(language, sheetName).TryGetRow(rowId, out row);
+	}
+
+	public static bool TryGetRawRow(string sheetName, uint rowId, out RawRow rawRow)
+	   => TryGetRow(sheetName, rowId, out rawRow);
 
 	public static byte[] GetFileData(string path)
 	{
 		if (LuminaData == null)
 			throw new Exception("Game Data Service has not been initialized");
 
-		FileResource? file = LuminaData.GetFile(path);
-		if (file == null)
-			throw new Exception($"Failed to read file from game data: \"{path}\"");
-
+		FileResource? file = LuminaData.GetFile(path) ?? throw new Exception($"Failed to read file from game data: \"{path}\"");
 		return file.Data;
 	}
 
@@ -100,9 +109,8 @@ public class GameDataService : ServiceBase<GameDataService>
 			return null;
 
 		string stringKey = npc.ToStringKey();
-		string? name;
 
-		if (!npcNames.TryGetValue(stringKey, out name))
+		if (!npcNames.TryGetValue(stringKey, out string? name))
 			return null;
 
 		// Is this a BattleNpcName entry?
@@ -114,10 +122,10 @@ public class GameDataService : ServiceBase<GameDataService>
 			uint bNpcNameKey = uint.Parse(name.Remove(0, 2));
 
 			BattleNpcName? row = BattleNpcNames.GetRow(bNpcNameKey);
-			if (row == null || string.IsNullOrEmpty(row.Name))
+			if (row == null || string.IsNullOrEmpty(row.Value.Name))
 				return name;
 
-			return row.Name;
+			return row.Value.Name;
 		}
 
 		return name;
@@ -156,7 +164,7 @@ public class GameDataService : ServiceBase<GameDataService>
 
 		Log.Information($"Found game client region: {Region}");
 
-		// these are json files that we write by hand
+		// These are JSON files that we write by hand
 		try
 		{
 			Equipment = new EquipmentSheet("Data/Equipment.json");
@@ -170,35 +178,40 @@ public class GameDataService : ServiceBase<GameDataService>
 
 		try
 		{
-			Lumina.LuminaOptions options = new Lumina.LuminaOptions();
-			options.DefaultExcelLanguage = defaultLuminaLaunguage;
+			Lumina.LuminaOptions options = new()
+			{
+				DefaultExcelLanguage = defaultLuminaLaunguage,
+				LoadMultithreaded = true,
+				CacheFileResources = true,
+				PanicOnSheetChecksumMismatch = true,
+			};
 
 			LuminaData = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\", options);
 
-			Races = GetSheet<Race>();
-			Tribes = GetSheet<Tribe>();
-			Items = GetSheet<Item>();
-			Dyes = GetSheet<Stain>();
-			EventNPCs = GetSheet<EventNpc>();
-			BattleNPCs = GetSheet<BattleNpc>();
-			Mounts = GetSheet<Mount>();
-			MountCustomize = GetSheet<MountCustomize>();
-			Companions = GetSheet<Companion>();
-			Territories = GetSheet<Territory>();
-			Weathers = GetSheet<Weather>();
-			CharacterMakeCustomize = GetSheet<CharaMakeCustomize>();
-			CharacterMakeTypes = GetSheet<CharaMakeType>();
-			ResidentNPCs = GetSheet<ResidentNpc>();
-			Perform = GetSheet<Perform>();
-			WeatherRates = GetSheet<WeatherRate>();
-			EquipRaceCategories = GetSheet<EquipRaceCategory>();
-			BattleNpcNames = GetSheet<BattleNpcName>();
-			Actions = GetSheet<GameData.Excel.Action>();
-			ActionTimelines = GetSheet<ActionTimeline>();
-			Emotes = GetSheet<Emote>();
-			Ornaments = GetSheet<Ornament>();
-			BuddyEquips = GetSheet<BuddyEquip>();
-			Glasses = GetSheet<Glasses>();
+			Races = GetExcelSheet<Race>();
+			Tribes = GetExcelSheet<Tribe>();
+			Items = GetExcelSheet<Item>();
+			Dyes = GetExcelSheet<Stain>();
+			EventNPCs = GetExcelSheet<EventNpc>();
+			BattleNPCs = GetExcelSheet<BattleNpc>();
+			Mounts = GetExcelSheet<Mount>();
+			MountCustomize = GetExcelSheet<MountCustomize>();
+			Companions = GetExcelSheet<Companion>();
+			Territories = GetExcelSheet<Territory>();
+			Weathers = GetExcelSheet<Weather>();
+			CharacterMakeCustomize = GetExcelSheet<CharaMakeCustomize>();
+			CharacterMakeTypes = GetExcelSheet<CharaMakeType>();
+			ResidentNPCs = GetExcelSheet<ResidentNpc>();
+			Perform = GetExcelSheet<Perform>();
+			WeatherRates = GetExcelSheet<WeatherRate>();
+			EquipRaceCategories = GetExcelSheet<EquipRaceCategory>();
+			BattleNpcNames = GetExcelSheet<BattleNpcName>();
+			Actions = GetExcelSheet<GameData.Excel.Action>();
+			ActionTimelines = GetExcelSheet<ActionTimeline>();
+			Emotes = GetExcelSheet<Emote>();
+			Ornaments = GetExcelSheet<Ornament>();
+			BuddyEquips = GetExcelSheet<BuddyEquip>();
+			Glasses = GetExcelSheet<Glasses>();
 		}
 		catch (Exception ex)
 		{

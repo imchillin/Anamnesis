@@ -49,7 +49,7 @@ public partial class CustomizeEditor : UserControl
 
 		this.debounceTimer = new DispatcherTimer
 		{
-			Interval = TimeSpan.FromMilliseconds(200),
+			Interval = TimeSpan.FromMilliseconds(100),
 		};
 		this.debounceTimer.Tick += this.DebounceTimer_Tick;
 	}
@@ -76,13 +76,11 @@ public partial class CustomizeEditor : UserControl
 		if (race == null || tribe == null)
 			return -1;
 
-		Tribe[] tribes = race.Tribes;
+		Tribe[] tribes = race.Value.Tribes;
 		for (int i = 0; i < tribes.Length; i++)
 		{
-			if (tribes[i] == tribe)
-			{
+			if (tribes[i].RowId == tribe.Value.RowId)
 				return i;
-			}
 		}
 
 		return -1;
@@ -129,7 +127,8 @@ public partial class CustomizeEditor : UserControl
 
 	private void OnAppearancePropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		if (e.PropertyName == nameof(ActorCustomizeMemory.Race) ||
+		if (e.PropertyName == nameof(ActorCustomizeMemory.Gender) ||
+			e.PropertyName == nameof(ActorCustomizeMemory.Race) ||
 			e.PropertyName == nameof(ActorCustomizeMemory.Tribe) ||
 			e.PropertyName == nameof(ActorCustomizeMemory.Hair) ||
 			e.PropertyName == nameof(ActorCustomizeMemory.FacePaint))
@@ -184,15 +183,15 @@ public partial class CustomizeEditor : UserControl
 		this.TribeComboBox.SelectionChanged -= this.OnTribeChanged;
 
 		this.RaceComboBox.SelectedItem = this.Race;
-		this.TribeComboBox.ItemsSource = this.Race.Tribes;
+		this.TribeComboBox.ItemsSource = this.Race.Value.Tribes;
 
 		if (!Enum.IsDefined<Tribes>((Tribes)this.Customize.Tribe))
 			this.Customize.Tribe = Tribes.Midlander;
 
-		this.Tribe = GameDataService.Tribes.Get((uint)this.Customize.Tribe);
+		this.Tribe = GameDataService.Tribes.GetRow((uint)this.Customize.Tribe);
 
 		if (this.Customize.Tribe == 0 || this.Tribe == null)
-			this.Customize.Tribe = this.Race.Tribes.First().CustomizeTribe;
+			this.Customize.Tribe = this.Race.Value.Tribes.First().CustomizeTribe;
 
 		this.TribeComboBox.SelectedItem = this.Tribe;
 
@@ -260,8 +259,8 @@ public partial class CustomizeEditor : UserControl
 
 	private void OnRaceChanged(object sender, SelectionChangedEventArgs e)
 	{
-		Race? race = this.RaceComboBox.SelectedItem as Race;
-		if (race == null || this.Customize == null || this.Race == race)
+		Race? race = this.RaceComboBox.SelectedItem as Race?;
+		if (race == null || this.Customize == null || this.Race == null || this.Race.Value.RowId == race.Value.RowId)
 			return;
 
 		// Unsubscribe to avoid the callback from being called
@@ -274,15 +273,15 @@ public partial class CustomizeEditor : UserControl
 
 		this.Race = race;
 
-		this.TribeComboBox.ItemsSource = this.Race.Tribes;
+		this.TribeComboBox.ItemsSource = this.Race.Value.Tribes;
 
-		if (oldTribeIndex < 0 || oldTribeIndex > this.Race.Tribes.Length)
+		if (oldTribeIndex < 0 || oldTribeIndex > this.Race.Value.Tribes.Length)
 		{
-			this.Tribe = this.Race.Tribes.First();
+			this.Tribe = this.Race.Value.Tribes.First();
 		}
 		else
 		{
-			this.Tribe = this.Race.Tribes[oldTribeIndex];
+			this.Tribe = this.Race.Value.Tribes[oldTribeIndex];
 		}
 
 		this.TribeComboBox.SelectedItem = this.Tribe;
@@ -290,20 +289,20 @@ public partial class CustomizeEditor : UserControl
 		// Re-subscribe to tribe changed event
 		this.TribeComboBox.SelectionChanged += this.OnTribeChanged;
 
-		this.Customize.Race = this.Race.CustomizeRace;
-		this.Customize.Tribe = this.Tribe.CustomizeTribe;
+		this.Customize.Race = this.Race.Value.CustomizeRace;
+		this.Customize.Tribe = this.Tribe.Value.CustomizeTribe;
 	}
 
 	private void OnTribeChanged(object sender, SelectionChangedEventArgs e)
 	{
-		Tribe? tribe = this.TribeComboBox.SelectedItem as Tribe;
-		if (tribe == null || this.Customize == null || this.Tribe == tribe)
+		Tribe? tribe = this.TribeComboBox.SelectedItem as Tribe?;
+		if (tribe == null || this.Customize == null || this.Tribe == null || this.Tribe.Value.RowId == tribe.Value.RowId)
 			return;
 
 		// Reset age when changing tribe
 		this.Customize.Age = Ages.Normal;
 
 		this.Tribe = tribe;
-		this.Customize.Tribe = this.Tribe.CustomizeTribe;
+		this.Customize.Tribe = this.Tribe.Value.CustomizeTribe;
 	}
 }

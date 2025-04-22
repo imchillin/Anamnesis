@@ -2,61 +2,100 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
+
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
-using Lumina.Data;
 using Lumina.Excel;
-using Lumina.Text;
+using System.Runtime.CompilerServices;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("Perform", 0x7bf81fa9)]
-public class Perform : ExcelRow, IItem
+/// <summary>Represents a performance instrument (e.g. bard instruments) in the game data.</summary>
+[Sheet("Perform", 0x7BF81FA9)]
+public readonly struct Perform(ExcelPage page, uint offset, uint row)
+	: IExcelRow<Perform>, IItem
 {
-	public string Name { get; private set; } = string.Empty;
-	public string Description { get; private set; } = string.Empty;
+	/// <inheritdoc/>
+	public readonly uint RowId => row;
 
-	public ushort ModelSet { get; private set; }
-	public ushort ModelBase { get; private set; }
-	public ushort ModelVariant { get; private set; }
-	public Mod? Mod { get; private set; }
+	/// <inheritdoc/>
+	public readonly string Name => page.ReadString(offset + 16, offset).ToString() ?? string.Empty;
 
-	public ImageReference? Icon => null;
-	public bool HasSubModel => false;
-	public ushort SubModelSet => 0;
-	public ushort SubModelBase => 0;
-	public ushort SubModelVariant => 0;
-	public Classes EquipableClasses => Classes.All;
-	public bool IsWeapon => true;
-	public byte EquipLevel => 0;
+	/// <inheritdoc/>
+	public readonly string Description => string.Empty;
 
+	/// <inheritdoc/>
+	public readonly ulong Model => page.ReadUInt64(offset + 8);
+
+	/// <inheritdoc/>
+	public readonly ushort ModelSet => page.ReadWeaponSet(offset + 8);
+
+	/// <inheritdoc/>
+	public readonly ushort ModelBase => page.ReadWeaponBase(offset + 8);
+
+	/// <inheritdoc/>
+	public readonly ushort ModelVariant => page.ReadWeaponVariant(offset + 8);
+
+	/// <inheritdoc/>
+	public readonly Mod? Mod => TexToolsService.GetMod(this);
+
+	/// <inheritdoc/>
+	public readonly ImgRef? Icon => null;
+
+	/// <inheritdoc/>
+	public readonly bool HasSubModel => false;
+
+	/// <inheritdoc/>
+	public readonly ulong SubModel => 0;
+
+	/// <inheritdoc/>
+	public readonly ushort SubModelSet => 0;
+
+	/// <inheritdoc/>
+	public readonly ushort SubModelBase => 0;
+
+	/// <inheritdoc/>
+	public readonly ushort SubModelVariant => 0;
+
+	/// <inheritdoc/>
+	public readonly Classes EquipableClasses => Classes.All;
+
+	/// <inheritdoc/>
+	public readonly bool IsWeapon => true;
+
+	/// <inheritdoc/>
+	public readonly byte EquipLevel => 0;
+
+	/// <inheritdoc/>
 	public bool IsFavorite
 	{
 		get => FavoritesService.IsFavorite<IItem>(this);
 		set => FavoritesService.SetFavorite<IItem>(this, nameof(FavoritesService.Favorites.Items), value);
 	}
 
-	public bool CanOwn => false;
-	public bool IsOwned { get; set; }
+	/// <inheritdoc/>
+	public readonly bool CanOwn => false;
 
-	public ItemCategories Category => ItemCategories.Performance;
-
-	public bool FitsInSlot(ItemSlots slot)
+	/// <inheritdoc/>
+	public readonly bool IsOwned
 	{
-		return slot == ItemSlots.MainHand;
+		get => false;
+		set { } // Interface requires a setter but this is a read-only struct
 	}
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
+	/// <inheritdoc/>
+	public readonly ItemCategories Category => ItemCategories.Performance;
 
-		this.Name = parser.ReadColumn<SeString>(0) ?? string.Empty;
-		this.ModelSet = parser.ReadWeaponSet(2);
-		this.ModelBase = parser.ReadWeaponBase(2);
-		this.ModelVariant = parser.ReadWeaponVariant(2);
-		this.Name = parser.ReadColumn<SeString>(9) ?? string.Empty;
+	/// <summary>
+	/// Creates a new instance of the <see cref="Perform"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page containing the data.</param>
+	/// <param name="offset">The offset within the page where the data starts.</param>
+	/// <param name="row">The row ID of the data.</param>
+	/// <returns>A new instance of the <see cref="Perform"/> struct.</returns>
+	static Perform IExcelRow<Perform>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
 
-		this.Mod = TexToolsService.GetMod(this);
-	}
+	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public bool FitsInSlot(ItemSlots slot) => slot == ItemSlots.MainHand;
 }

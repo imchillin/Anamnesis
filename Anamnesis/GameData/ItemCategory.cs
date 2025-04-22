@@ -5,6 +5,9 @@ namespace Anamnesis.GameData;
 
 using System;
 
+/// <summary>
+/// Represents the categories that an item can belong to.
+/// </summary>
 [Flags]
 public enum ItemCategories
 {
@@ -23,8 +26,14 @@ public enum ItemCategories
 	All = Standard | Premium | Limited | Deprecated | CustomEquipment | Performance | Modded | Favorites | Owned,
 }
 
-#pragma warning disable SA1649
 public static class ItemCategoriesExtensions
 {
+	/// <summary>
+	/// Modifies the flag of the given item category.
+	/// </summary>
+	/// <param name="a">The primary item category.</param>
+	/// <param name="b">The item category to apply.</param>
+	/// <param name="enabled">True to enable the flag(s), false to disable them.</param>
+	/// <returns>A new item category with the modified flag(s).</returns>
 	public static ItemCategories SetFlag(this ItemCategories a, ItemCategories b, bool enabled) => enabled ? a | b : a & ~b;
 }

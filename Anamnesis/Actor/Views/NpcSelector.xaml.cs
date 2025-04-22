@@ -3,16 +3,16 @@
 
 namespace Anamnesis.Actor.Views;
 
-using System.ComponentModel;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
+using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
 using Anamnesis.Utils;
 using PropertyChanged;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Windows;
 using XivToolsWpf;
 
 public abstract class NpcSelectorDrawer : SelectorDrawer<INpcBase>
@@ -57,22 +57,22 @@ public partial class NpcSelector : NpcSelectorDrawer
 	protected override Task LoadItems()
 	{
 		if (GameDataService.ResidentNPCs != null)
-			this.AddItems(GameDataService.ResidentNPCs);
+			this.AddItems(GameDataService.ResidentNPCs.ToEnumerable());
 
 		if (GameDataService.BattleNPCs != null)
-			this.AddItems(GameDataService.BattleNPCs);
+			this.AddItems(GameDataService.BattleNPCs.ToEnumerable());
 
 		if (GameDataService.EventNPCs != null)
-			this.AddItems(GameDataService.EventNPCs);
+			this.AddItems(GameDataService.EventNPCs.ToEnumerable());
 
 		if (GameDataService.Mounts != null)
-			this.AddItems(GameDataService.Mounts);
+			this.AddItems(GameDataService.Mounts.ToEnumerable());
 
 		if (GameDataService.Companions != null)
-			this.AddItems(GameDataService.Companions);
+			this.AddItems(GameDataService.Companions.ToEnumerable());
 
 		if (GameDataService.Ornaments != null)
-			this.AddItems(GameDataService.Ornaments);
+			this.AddItems(GameDataService.Ornaments.ToEnumerable());
 
 		return Task.CompletedTask;
 	}
@@ -112,13 +112,6 @@ public partial class NpcSelector : NpcSelectorDrawer
 			return -1;
 
 		if (itemA is not BattleNpc && itemB is BattleNpc)
-			return 1;
-
-		// Then Event NPCs
-		if (itemA is EventNpcAppearance && itemB is not EventNpcAppearance)
-			return -1;
-
-		if (itemA is not EventNpcAppearance && itemB is EventNpcAppearance)
 			return 1;
 
 		// Then Ornaments

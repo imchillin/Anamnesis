@@ -592,6 +592,14 @@ public class CharacterFile : JsonFileBase
 			this.GlassesId = glassesId;
 		}
 
+		public GlassesSave(uint glassesId)
+		{
+			if (glassesId > ushort.MaxValue)
+				throw new ArgumentOutOfRangeException(nameof(glassesId), $"Glasses ID exceeds the maximum support value of {ushort.MaxValue}.");
+
+			this.GlassesId = (ushort)glassesId;
+		}
+
 		public ushort GlassesId { get; set; }
 
 		public void Write(GlassesMemory? glasses)

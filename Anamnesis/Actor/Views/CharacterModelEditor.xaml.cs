@@ -3,9 +3,9 @@
 
 namespace Anamnesis.Actor.Views;
 
+using Anamnesis.Memory;
 using System.Windows;
 using System.Windows.Controls;
-using Anamnesis.Memory;
 
 /// <summary>
 /// Interaction logic for CharacterModelEditor.xaml.

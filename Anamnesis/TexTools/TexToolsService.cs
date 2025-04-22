@@ -3,12 +3,12 @@
 
 namespace Anamnesis.TexTools;
 
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using Anamnesis.GameData;
 using Anamnesis.Memory;
 using Anamnesis.Serialization;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 public class TexToolsService : ServiceBase<TexToolsService>
 {

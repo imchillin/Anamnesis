@@ -2,10 +2,6 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Utilities;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using Anamnesis.Dialogs;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
@@ -14,6 +10,11 @@ using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Utils;
 using Lumina.Excel;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
 
 public static class NpcAppearanceSearch
 {
@@ -29,9 +30,9 @@ public static class NpcAppearanceSearch
 		using (WaitDialog dlg = await WaitDialog.ShowAsync("Please Wait...", "NPC Appearance search"))
 		{
 			await dlg.SetProgress(0.1);
-			Search(actor, GameDataService.BattleNPCs, ref appearances);
+			Search(actor, GameDataService.BattleNPCs.Cast<INpcBase>(), ref appearances);
 			await dlg.SetProgress(0.5);
-			Search(actor, GameDataService.EventNPCs, ref appearances);
+			Search(actor, GameDataService.EventNPCs.Cast<INpcBase>(), ref appearances);
 			////await dlg.SetProgress(0.8);
 			////Search(actor, GameDataService.ResidentNPCs, ref appearances);
 
@@ -77,29 +78,38 @@ public static class NpcAppearanceSearch
 		}
 	}
 
-	private static void SearchNames(string name, ref List<ExcelRow> results)
+	private static void SearchNames(string name, ref List<RawRow> results)
 	{
 		foreach (BattleNpcName battleNpcName in GameDataService.BattleNpcNames)
 		{
-			if (battleNpcName.Name.ToLower() == name.ToLower())
+			if (battleNpcName.Name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase))
 			{
-				results.Add(battleNpcName);
+				if (!GameDataService.TryGetRawRow("BNpcName", battleNpcName.RowId, out RawRow row))
+					continue;
+
+				results.Add(row);
 			}
 		}
 
 		foreach (ResidentNpc residentNpc in GameDataService.ResidentNPCs)
 		{
-			if (residentNpc.Name.ToLower() == name.ToLower())
+			if (residentNpc.Name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase))
 			{
-				results.Add(residentNpc);
+				if (!GameDataService.TryGetRawRow("ENpcResident", residentNpc.RowId, out RawRow row))
+					continue;
+
+				results.Add(row);
 			}
 		}
 
 		foreach (EventNpc eventNpc in GameDataService.EventNPCs)
 		{
-			if (eventNpc.Name.ToLower() == name.ToLower())
+			if (eventNpc.Name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase))
 			{
-				results.Add(eventNpc);
+				if (!GameDataService.TryGetRawRow("ENpcBase", eventNpc.RowId, out RawRow row))
+					continue;
+
+				results.Add(row);
 			}
 		}
 	}
@@ -108,26 +118,21 @@ public static class NpcAppearanceSearch
 	{
 		foreach (INpcBase npc in npcs)
 		{
-			INpcAppearance? appearance = npc.GetAppearance();
-
-			if (appearance == null)
-				continue;
-
-			if (IsAppearance(actor, appearance))
+			if (IsAppearance(actor, npc))
 			{
 				results.Add(npc);
 			}
 		}
 	}
 
-	private static bool IsAppearance(ActorMemory actor, INpcAppearance appearance)
+	private static bool IsAppearance(ActorMemory actor, INpcBase npc)
 	{
-		if (actor.ModelType != appearance.ModelCharaRow)
+		if (actor.ModelType != npc.ModelCharaRow)
 			return false;
 
 		if (actor.Customize != null)
 		{
-			if (!IsCustomize(actor.Customize, appearance))
+			if (!IsCustomize(actor.Customize, npc))
 			{
 				return false;
 			}
@@ -135,7 +140,7 @@ public static class NpcAppearanceSearch
 
 		if (actor.Equipment != null)
 		{
-			if (!IsEquipment(actor.Equipment, appearance))
+			if (!IsEquipment(actor.Equipment, npc))
 			{
 				return false;
 			}
@@ -145,28 +150,28 @@ public static class NpcAppearanceSearch
 	}
 
 	// We dont check everything here, just enough to get unique.
-	private static bool IsCustomize(ActorCustomizeMemory customize, INpcAppearance appearance)
+	private static bool IsCustomize(ActorCustomizeMemory customize, INpcBase npc)
 	{
 		// It gets weird checking models other than players for race and tribe, so... try and skip
-		if (appearance.ModelCharaRow == 0)
+		if (npc.ModelCharaRow == 0)
 		{
-			if (customize.Race != appearance.Race?.CustomizeRace ||
-				customize.Tribe != appearance.Tribe?.CustomizeTribe ||
-				customize.Gender != (ActorCustomizeMemory.Genders)appearance.Gender ||
-				customize.Age != (ActorCustomizeMemory.Ages)appearance.BodyType)
+			if (customize.Race != npc.Race.Value.CustomizeRace ||
+				customize.Tribe != npc.Tribe.Value.CustomizeTribe ||
+				customize.Gender != (ActorCustomizeMemory.Genders)npc.Gender ||
+				customize.Age != (ActorCustomizeMemory.Ages)npc.BodyType)
 			{
 				return false;
 			}
 		}
 
-		if (customize.Skintone != appearance.SkinColor ||
-			customize.Eyes != appearance.EyeShape ||
-			customize.Head != appearance.Face ||
-			(int)customize.FacialFeatures != appearance.FacialFeature ||
-			appearance.FacePaint != appearance.FacePaint ||
-			appearance.HairStyle != appearance.HairStyle ||
-			customize.Mouth != appearance.Mouth ||
-			customize.Height != appearance.Height)
+		if (customize.Skintone != npc.SkinColor ||
+			customize.Eyes != npc.EyeShape ||
+			customize.Head != npc.Face ||
+			(int)customize.FacialFeatures != npc.FacialFeature ||
+			npc.FacePaint != npc.FacePaint ||
+			npc.HairStyle != npc.HairStyle ||
+			customize.Mouth != npc.Mouth ||
+			customize.Height != npc.Height)
 		{
 			return false;
 		}
@@ -174,36 +179,36 @@ public static class NpcAppearanceSearch
 		return true;
 	}
 
-	private static bool IsEquipment(ActorEquipmentMemory equipment, INpcAppearance appearance)
+	private static bool IsEquipment(ActorEquipmentMemory equipment, INpcBase npc)
 	{
-		if (equipment.Head?.Is(appearance.Head) == false)
+		if (equipment.Head?.Is(npc.Head) == false)
 			return false;
 
-		if (equipment.Chest?.Is(appearance.Body) == false)
+		if (equipment.Chest?.Is(npc.Body) == false)
 			return false;
 
-		if (equipment.Legs?.Is(appearance.Legs) == false)
+		if (equipment.Legs?.Is(npc.Legs) == false)
 			return false;
 
-		if (equipment.Feet?.Is(appearance.Feet) == false)
+		if (equipment.Feet?.Is(npc.Feet) == false)
 			return false;
 
-		if (equipment.Arms?.Is(appearance.Hands) == false)
+		if (equipment.Arms?.Is(npc.Hands) == false)
 			return false;
 
-		if (equipment.LFinger?.Is(appearance.LeftRing) == false)
+		if (equipment.LFinger?.Is(npc.LeftRing) == false)
 			return false;
 
-		if (equipment.RFinger?.Is(appearance.RightRing) == false)
+		if (equipment.RFinger?.Is(npc.RightRing) == false)
 			return false;
 
-		if (equipment.Wrist?.Is(appearance.Wrists) == false)
+		if (equipment.Wrist?.Is(npc.Wrists) == false)
 			return false;
 
-		if (equipment.Neck?.Is(appearance.Neck) == false)
+		if (equipment.Neck?.Is(npc.Neck) == false)
 			return false;
 
-		if (equipment.Ear?.Is(appearance.Ears) == false)
+		if (equipment.Ear?.Is(npc.Ears) == false)
 			return false;
 
 		return true;

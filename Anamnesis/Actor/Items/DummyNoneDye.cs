@@ -3,10 +3,10 @@
 
 namespace Anamnesis.Actor.Items;
 
-using System.Windows.Media;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
+using System.Windows.Media;
 
 public class DummyNoneDye : IDye
 {
@@ -14,7 +14,7 @@ public class DummyNoneDye : IDye
 	public byte Id => 0;
 	public string Name => "None";
 	public string? Description => null;
-	public ImageReference? Icon => null;
+	public ImgRef? Icon => null;
 	public Brush? Color => null;
 
 	public bool IsFavorite

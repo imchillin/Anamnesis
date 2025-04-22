@@ -6,6 +6,7 @@ using Anamnesis.GameData;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
+using System.Runtime.CompilerServices;
 
 public class DummyItem : IItem
 {
@@ -21,29 +22,17 @@ public class DummyItem : IItem
 	public bool HasSubModel => false;
 	public string Name => LocalizationService.GetString("Item_Unknown");
 	public string Description => string.Empty;
-	public ImageReference? Icon => null;
+	public ImgRef? Icon => null;
 	public Classes EquipableClasses => Classes.All;
 	public Mod? Mod => null;
 	public byte EquipLevel => 0;
 
-	public ushort ModelBase
-	{
-		get;
-		private set;
-	}
+	public ulong Model => ExcelPageExtensions.ConvertToModel(this.ModelSet, this.ModelBase, this.ModelVariant);
+	public ushort ModelBase { get; private set; }
+	public ushort ModelVariant { get; private set; }
+	public ushort ModelSet { get; private set; }
 
-	public ushort ModelVariant
-	{
-		get;
-		private set;
-	}
-
-	public ushort ModelSet
-	{
-		get;
-		private set;
-	}
-
+	public ulong SubModel => ExcelPageExtensions.ConvertToModel(this.SubModelSet, this.SubModelBase, this.SubModelVariant);
 	public ushort SubModelBase { get; }
 	public ushort SubModelVariant { get; }
 	public ushort SubModelSet { get; }
@@ -59,8 +48,6 @@ public class DummyItem : IItem
 
 	public ItemCategories Category => ItemCategories.Standard;
 
-	public virtual bool FitsInSlot(ItemSlots slot)
-	{
-		return true;
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public virtual bool FitsInSlot(ItemSlots slot) => true;
 }
