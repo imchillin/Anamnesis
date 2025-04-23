@@ -46,20 +46,20 @@ jobs:
 
       # 5. Publish projects
       - name: Publish Anamnesis
-        run: dotnet publish Anamnesis/Anamnesis.csproj `
-               -c Release -o ./publish/Anamnesis `
-               /p:PublishProfile="Anamnesis/Properties/PublishProfiles/FolderProfile.pubxml"
+        run: dotnet publish Anamnesis/Anamnesis.csproj /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml"
 
       - name: Publish UpdateExtractor
-        run: dotnet publish UpdateExtractor/UpdateExtractor.csproj `
-               -c Release -o ./publish/UpdateExtractor `
-               /p:PublishProfile="UpdateExtractor/Properties/PublishProfiles/FolderProfile.pubxml"
+        run: dotnet publish UpdateExtractor/UpdateExtractor.csproj /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml"
 
-      # 6. Zip up the entire publish folder
+      # 6. Delete redundant files
+      - name: Delete pdb and xml
+        run: Get-ChildItem -Path './publish/*' -Recurse -Include *.pdb,*.xml -File | Remove-Item -Force
+
+      # 7. Zip up the entire publish folder
       - name: Create ZIP
         run: Compress-Archive -Path './publish/*' -DestinationPath './Anamnesis.zip'
 
-      # 7. Draft a GitHub release
+      # 8. Draft a GitHub release
       - name: Create draft release
         uses: ncipollo/release-action@v1
         with:
