@@ -31,7 +31,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .
           # Only commit if there are changes
-          git diff --quiet || git commit -m "chore: regenerate gallery via CI"
+          git diff --staged --quiet || git commit -m "chore: regenerate gallery via CI"
 
       # 5. Push back to the repo
       - name: Push changes
