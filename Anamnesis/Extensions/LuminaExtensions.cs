@@ -87,6 +87,10 @@ public static class LuminaExtensions
 			ItemSlots.RightRing => self.FingerR == 1,
 			ItemSlots.LeftRing => self.FingerL == 1,
 			ItemSlots.SoulCrystal => self.SoulCrystal == 1,
+			ItemSlots.Weapons => self.MainHand == 1 || self.OffHand == 1,
+			ItemSlots.Armor => self.Head == 1 || self.Body == 1 || self.Gloves == 1 || self.Waist == 1 || self.Legs == 1 || self.Feet == 1,
+			ItemSlots.Accessories => self.Ears == 1 || self.Neck == 1 || self.Wrists == 1 || self.FingerR == 1 || self.FingerL == 1,
+			ItemSlots.All => self.MainHand == 1 || self.Head == 1 || self.Body == 1 || self.Gloves == 1 || self.Waist == 1 || self.Legs == 1 || self.Feet == 1 || self.OffHand == 1 || self.Ears == 1 || self.Neck == 1 || self.Wrists == 1 || self.FingerR == 1 || self.FingerL == 1 || self.SoulCrystal == 1,
 			_ => false,
 		};
 	}
@@ -98,7 +102,7 @@ public static class LuminaExtensions
 		if (self.MainHand == 1)
 			result |= ItemSlots.MainHand;
 
-		if (self.MainHand == 1)
+		if (self.OffHand == 1)
 			result |= ItemSlots.OffHand;
 
 		if (self.Head == 1)
