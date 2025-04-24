@@ -55,10 +55,7 @@ public partial class CustomizeEditor : UserControl
 	}
 
 	public bool HasGender { get; set; }
-
-	[DependsOn(nameof(Customize))]
-	public bool HasFur => this.Customize != null && this.Customize.Race == Races.Hrothgar;
-
+	public bool HasFur { get; set; }
 	public bool HasTail { get; set; }
 	public bool HasEars { get; set; }
 	public bool HasEarsTail { get; set; }
@@ -201,6 +198,7 @@ public partial class CustomizeEditor : UserControl
 
 		this.HasTail = this.Customize.Race == Races.Hrothgar || this.Customize.Race == Races.Miqote || this.Customize.Race == Races.AuRa;
 		this.HasEars = this.Customize.Race == Races.Viera || this.Customize.Race == Races.Lalafel || this.Customize.Race == Races.Elezen;
+		this.HasFur = this.Customize.Race == Races.Hrothgar;
 		this.HasEarsTail = this.HasTail | this.HasEars;
 		this.HasMuscles = !this.HasEars && !this.HasTail;
 		this.HasGender = true;
