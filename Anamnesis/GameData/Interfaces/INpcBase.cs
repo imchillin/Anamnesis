@@ -345,8 +345,8 @@ public static class INpcBaseExtensions
 		}
 		else
 		{
-			file.EarMuscleTailSize = npc.ExtraFeature1;
-			file.TailEarsType = npc.ExtraFeature2OrBust;
+			file.EarMuscleTailSize = npc.ExtraFeature2OrBust;
+			file.TailEarsType = npc.ExtraFeature1;
 			file.Bust = npc.BustOrTone1;
 		}
 
