@@ -145,7 +145,7 @@ public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
 	public byte HairColor => this.BNpcCustomize.Value.HairColor;
 
 	/// <inheritdoc/>
-	public IItem MainHand => LuminaExtensions.GetWeaponItem(ItemSlots.MainHand, this.NpcEquip.Value.ModelMainHand);
+	public IItem MainHand => LuminaExtensions.GetWeaponItem(ItemSlots.MainHand, this.NpcEquip.ValueNullable?.ModelMainHand ?? 0);
 
 	/// <inheritdoc/>
 	public RowRef<Stain> DyeMainHand => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeMainHand.Value.RowId);
@@ -154,7 +154,7 @@ public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
 	public RowRef<Stain> Dye2MainHand => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2MainHand.Value.RowId);
 
 	/// <inheritdoc/>
-	public IItem OffHand => LuminaExtensions.GetWeaponItem(ItemSlots.OffHand, this.NpcEquip.Value.ModelOffHand);
+	public IItem OffHand => LuminaExtensions.GetWeaponItem(ItemSlots.OffHand, this.NpcEquip.ValueNullable?.ModelOffHand ?? 0);
 
 	/// <inheritdoc/>
 	public RowRef<Stain> DyeOffHand => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeOffHand.Value.RowId);
@@ -163,7 +163,7 @@ public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
 	public RowRef<Stain> Dye2OffHand => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2OffHand.Value.RowId);
 
 	/// <inheritdoc/>
-	public IItem Head => LuminaExtensions.GetGearItem(ItemSlots.Head, this.NpcEquip.Value.ModelHead);
+	public IItem Head => LuminaExtensions.GetGearItem(ItemSlots.Head, this.NpcEquip.ValueNullable?.ModelHead ?? 0);
 
 	/// <inheritdoc/>
 	public RowRef<Stain> DyeHead => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeHead.Value.RowId);
@@ -172,7 +172,7 @@ public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
 	public RowRef<Stain> Dye2Head => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Head.Value.RowId);
 
 	/// <inheritdoc/>
-	public IItem Body => LuminaExtensions.GetGearItem(ItemSlots.Body, this.NpcEquip.Value.ModelBody);
+	public IItem Body => LuminaExtensions.GetGearItem(ItemSlots.Body, this.NpcEquip.ValueNullable?.ModelBody ?? 0);
 
 	/// <inheritdoc/>
 	public RowRef<Stain> DyeBody => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeBody.Value.RowId);
@@ -181,7 +181,7 @@ public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
 	public RowRef<Stain> Dye2Body => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Body.Value.RowId);
 
 	/// <inheritdoc/>
-	public IItem Legs => LuminaExtensions.GetGearItem(ItemSlots.Legs, this.NpcEquip.Value.ModelLegs);
+	public IItem Legs => LuminaExtensions.GetGearItem(ItemSlots.Legs, this.NpcEquip.ValueNullable?.ModelLegs ?? 0);
 
 	/// <inheritdoc/>
 	public RowRef<Stain> DyeLegs => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeLegs.Value.RowId);
@@ -190,7 +190,7 @@ public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
 	public RowRef<Stain> Dye2Legs => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Legs.Value.RowId);
 
 	/// <inheritdoc/>
-	public IItem Feet => LuminaExtensions.GetGearItem(ItemSlots.Feet, this.NpcEquip.Value.ModelFeet);
+	public IItem Feet => LuminaExtensions.GetGearItem(ItemSlots.Feet, this.NpcEquip.ValueNullable?.ModelFeet ?? 0);
 
 	/// <inheritdoc/>
 	public RowRef<Stain> DyeFeet => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeFeet.Value.RowId);
@@ -199,7 +199,7 @@ public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
 	public RowRef<Stain> Dye2Feet => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Feet.Value.RowId);
 
 	/// <inheritdoc/>
-	public IItem Hands => LuminaExtensions.GetGearItem(ItemSlots.Hands, this.NpcEquip.Value.ModelHands);
+	public IItem Hands => LuminaExtensions.GetGearItem(ItemSlots.Hands, this.NpcEquip.ValueNullable?.ModelHands ?? 0);
 
 	/// <inheritdoc/>
 	public RowRef<Stain> DyeHands => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeHands.Value.RowId);
@@ -208,7 +208,7 @@ public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
 	public RowRef<Stain> Dye2Hands => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Hands.Value.RowId);
 
 	/// <inheritdoc/>
-	public IItem Wrists => LuminaExtensions.GetGearItem(ItemSlots.Wrists, this.NpcEquip.Value.ModelWrists);
+	public IItem Wrists => LuminaExtensions.GetGearItem(ItemSlots.Wrists, this.NpcEquip.ValueNullable?.ModelWrists ?? 0);
 
 	/// <inheritdoc/>
 	public RowRef<Stain> DyeWrists => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeWrists.Value.RowId);
@@ -217,7 +217,7 @@ public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
 	public RowRef<Stain> Dye2Wrists => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Wrists.Value.RowId);
 
 	/// <inheritdoc/>
-	public IItem Neck => LuminaExtensions.GetGearItem(ItemSlots.Neck, this.NpcEquip.Value.ModelNeck);
+	public IItem Neck => LuminaExtensions.GetGearItem(ItemSlots.Neck, this.NpcEquip.ValueNullable?.ModelNeck ?? 0);
 
 	/// <inheritdoc/>
 	public RowRef<Stain> DyeNeck => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeNeck.Value.RowId);
@@ -226,7 +226,7 @@ public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
 	public RowRef<Stain> Dye2Neck => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Neck.Value.RowId);
 
 	/// <inheritdoc/>
-	public IItem Ears => LuminaExtensions.GetGearItem(ItemSlots.Ears, this.NpcEquip.Value.ModelEars);
+	public IItem Ears => LuminaExtensions.GetGearItem(ItemSlots.Ears, this.NpcEquip.ValueNullable?.ModelEars ?? 0);
 
 	/// <inheritdoc/>
 	public RowRef<Stain> DyeEars => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeEars.Value.RowId);
@@ -235,7 +235,7 @@ public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
 	public RowRef<Stain> Dye2Ears => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2Ears.Value.RowId);
 
 	/// <inheritdoc/>
-	public IItem LeftRing => LuminaExtensions.GetGearItem(ItemSlots.LeftRing, this.NpcEquip.Value.ModelLeftRing);
+	public IItem LeftRing => LuminaExtensions.GetGearItem(ItemSlots.LeftRing, this.NpcEquip.ValueNullable?.ModelLeftRing ?? 0);
 
 	/// <inheritdoc/>
 	public RowRef<Stain> DyeLeftRing => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeLeftRing.Value.RowId);
@@ -244,7 +244,7 @@ public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
 	public RowRef<Stain> Dye2LeftRing => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.Dye2LeftRing.Value.RowId);
 
 	/// <inheritdoc/>
-	public IItem RightRing => LuminaExtensions.GetGearItem(ItemSlots.RightRing, this.NpcEquip.Value.ModelRightRing);
+	public IItem RightRing => LuminaExtensions.GetGearItem(ItemSlots.RightRing, this.NpcEquip.ValueNullable?.ModelRightRing ?? 0);
 
 	/// <inheritdoc/>
 	public RowRef<Stain> DyeRightRing => GameDataService.CreateRef<Stain>(this.NpcEquip.Value.DyeRightRing.Value.RowId);

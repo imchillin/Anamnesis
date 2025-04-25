@@ -15,9 +15,7 @@ public static class LuminaExtensions
 		if (val == 0)
 			return ItemUtility.NoneItem;
 
-		short modelSet = (short)val;
-		short modelBase = (short)(val >> 16);
-		short modelVariant = (short)(val >> 32);
+		GetModel(val, true, out ushort modelSet, out ushort modelBase, out ushort modelVariant);
 
 		if (modelSet < 0 || modelBase < 0 || modelVariant < 0)
 		{
@@ -28,7 +26,7 @@ public static class LuminaExtensions
 			modelVariant = 0;
 		}
 
-		return ItemUtility.GetItem(slot, (ushort)modelSet, (ushort)modelBase, (ushort)modelVariant, false);
+		return ItemUtility.GetItem(slot, modelSet, modelBase, modelVariant, false);
 	}
 
 	public static IItem GetGearItem(ItemSlots slot, uint val)
@@ -36,9 +34,7 @@ public static class LuminaExtensions
 		if (val == 0)
 			return ItemUtility.NoneItem;
 
-		short modelSet = 0;
-		short modelBase = (short)val;
-		short modelVariant = (short)(val >> 16);
+		GetModel(val, false, out ushort modelSet, out ushort modelBase, out ushort modelVariant);
 
 		if (modelSet < 0 || modelBase < 0 || modelVariant < 0)
 		{
@@ -49,7 +45,7 @@ public static class LuminaExtensions
 			modelVariant = 0;
 		}
 
-		return ItemUtility.GetItem(slot, (ushort)modelSet, (ushort)modelBase, (ushort)modelVariant, false);
+		return ItemUtility.GetItem(slot, modelSet, modelBase, modelVariant, false);
 	}
 
 	public static void GetModel(ulong val, bool isWeapon, out ushort modelSet, out ushort modelBase, out ushort modelVariant)

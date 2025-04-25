@@ -162,112 +162,112 @@ public readonly unsafe struct EventNpc(ExcelPage page, uint offset, uint row)
 	public readonly byte FacePaintColor => page.ReadUInt8(offset + 227);
 
 	/// <inheritdoc/>
-	public readonly IItem MainHand => GetItem(ItemSlots.MainHand, (ulong)page.ReadUInt64(offset + 128), this.NpcEquip.Value.ModelMainHand);
+	public readonly IItem MainHand => GetWeaponItem(ItemSlots.MainHand, page.ReadUInt64(offset + 128), this.NpcEquip.ValueNullable?.ModelMainHand);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> DyeMainHand => new(page.Module, (uint)page.ReadUInt8(offset + 229), page.Language);
+	public readonly RowRef<Stain> DyeMainHand => new(page.Module, page.ReadUInt8(offset + 229), page.Language);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> Dye2MainHand => new(page.Module, (uint)page.ReadUInt8(offset + 230), page.Language);
+	public readonly RowRef<Stain> Dye2MainHand => new(page.Module, page.ReadUInt8(offset + 230), page.Language);
 
 	/// <inheritdoc/>
-	public readonly IItem OffHand => GetItem(ItemSlots.OffHand, (ulong)page.ReadUInt64(offset + 136), this.NpcEquip.Value.ModelOffHand);
+	public readonly IItem OffHand => GetWeaponItem(ItemSlots.OffHand, page.ReadUInt64(offset + 136), this.NpcEquip.ValueNullable?.ModelOffHand);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> DyeOffHand => new(page.Module, (uint)page.ReadUInt8(offset + 231), page.Language);
+	public readonly RowRef<Stain> DyeOffHand => new(page.Module, page.ReadUInt8(offset + 231), page.Language);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> Dye2OffHand => new(page.Module, (uint)page.ReadUInt8(offset + 232), page.Language);
+	public readonly RowRef<Stain> Dye2OffHand => new(page.Module, page.ReadUInt8(offset + 232), page.Language);
 
 	/// <inheritdoc/>
-	public readonly IItem Head => GetItem(ItemSlots.Head, (uint)page.ReadUInt32(offset + 148), this.NpcEquip.Value.ModelHead);
+	public readonly IItem Head => GetGearItem(ItemSlots.Head, page.ReadUInt32(offset + 148), this.NpcEquip.ValueNullable?.ModelHead);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> DyeHead => new(page.Module, (uint)page.ReadUInt8(offset + 233), page.Language);
+	public readonly RowRef<Stain> DyeHead => new(page.Module, page.ReadUInt8(offset + 233), page.Language);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> Dye2Head => new(page.Module, (uint)page.ReadUInt8(offset + 243), page.Language);
+	public readonly RowRef<Stain> Dye2Head => new(page.Module, page.ReadUInt8(offset + 243), page.Language);
 
 	/// <inheritdoc/>
-	public readonly IItem Body => GetItem(ItemSlots.Body, (uint)page.ReadUInt32(offset + 152), this.NpcEquip.Value.ModelBody);
+	public readonly IItem Body => GetGearItem(ItemSlots.Body, page.ReadUInt32(offset + 152), this.NpcEquip.ValueNullable?.ModelBody);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> DyeBody => new(page.Module, (uint)page.ReadUInt8(offset + 234), page.Language);
+	public readonly RowRef<Stain> DyeBody => new(page.Module, page.ReadUInt8(offset + 234), page.Language);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> Dye2Body => new(page.Module, (uint)page.ReadUInt8(offset + 244), page.Language);
+	public readonly RowRef<Stain> Dye2Body => new(page.Module, page.ReadUInt8(offset + 244), page.Language);
 
 	/// <inheritdoc/>
-	public readonly IItem Hands => LuminaExtensions.GetGearItem(ItemSlots.Hands, this.NpcEquip.ValueNullable?.ModelHands ?? 0);
+	public readonly IItem Hands => GetGearItem(ItemSlots.Hands, page.ReadUInt32(offset + 156), this.NpcEquip.ValueNullable?.ModelHands);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> DyeHands => new(page.Module, (uint)page.ReadUInt8(offset + 235), page.Language);
+	public readonly RowRef<Stain> DyeHands => new(page.Module, page.ReadUInt8(offset + 235), page.Language);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> Dye2Hands => new(page.Module, (uint)page.ReadUInt8(offset + 245), page.Language);
+	public readonly RowRef<Stain> Dye2Hands => new(page.Module, page.ReadUInt8(offset + 245), page.Language);
 
 	/// <inheritdoc/>
-	public readonly IItem Legs => GetItem(ItemSlots.Legs, (uint)page.ReadUInt32(offset + 160), this.NpcEquip.Value.ModelLegs);
+	public readonly IItem Legs => GetGearItem(ItemSlots.Legs, page.ReadUInt32(offset + 160), this.NpcEquip.ValueNullable?.ModelLegs);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> DyeLegs => new(page.Module, (uint)page.ReadUInt8(offset + 236), page.Language);
+	public readonly RowRef<Stain> DyeLegs => new(page.Module, page.ReadUInt8(offset + 236), page.Language);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> Dye2Legs => new(page.Module, (uint)page.ReadUInt8(offset + 246), page.Language);
+	public readonly RowRef<Stain> Dye2Legs => new(page.Module, page.ReadUInt8(offset + 246), page.Language);
 
 	/// <inheritdoc/>
-	public readonly IItem Feet => GetItem(ItemSlots.Feet, (uint)page.ReadUInt32(offset + 164), this.NpcEquip.Value.ModelFeet);
+	public readonly IItem Feet => GetGearItem(ItemSlots.Feet, page.ReadUInt32(offset + 164), this.NpcEquip.ValueNullable?.ModelFeet);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> DyeFeet => new(page.Module, (uint)page.ReadUInt8(offset + 237), page.Language);
+	public readonly RowRef<Stain> DyeFeet => new(page.Module, page.ReadUInt8(offset + 237), page.Language);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> Dye2Feet => new(page.Module, (uint)page.ReadUInt8(offset + 247), page.Language);
+	public readonly RowRef<Stain> Dye2Feet => new(page.Module, page.ReadUInt8(offset + 247), page.Language);
 
 	/// <inheritdoc/>
-	public readonly IItem Ears => GetItem(ItemSlots.Ears, (uint)page.ReadUInt32(offset + 168), this.NpcEquip.Value.ModelEars);
+	public readonly IItem Ears => GetGearItem(ItemSlots.Ears, page.ReadUInt32(offset + 168), this.NpcEquip.ValueNullable?.ModelEars);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> DyeEars => new(page.Module, (uint)page.ReadUInt8(offset + 238), page.Language);
+	public readonly RowRef<Stain> DyeEars => new(page.Module, page.ReadUInt8(offset + 238), page.Language);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> Dye2Ears => new(page.Module, (uint)page.ReadUInt8(offset + 248), page.Language);
+	public readonly RowRef<Stain> Dye2Ears => new(page.Module, page.ReadUInt8(offset + 248), page.Language);
 
 	/// <inheritdoc/>
-	public readonly IItem Neck => GetItem(ItemSlots.Neck, (uint)page.ReadUInt32(offset + 172), this.NpcEquip.Value.ModelNeck);
+	public readonly IItem Neck => GetGearItem(ItemSlots.Neck, page.ReadUInt32(offset + 172), this.NpcEquip.ValueNullable?.ModelNeck);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> DyeNeck => new(page.Module, (uint)page.ReadUInt8(offset + 239), page.Language);
+	public readonly RowRef<Stain> DyeNeck => new(page.Module, page.ReadUInt8(offset + 239), page.Language);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> Dye2Neck => new(page.Module, (uint)page.ReadUInt8(offset + 249), page.Language);
+	public readonly RowRef<Stain> Dye2Neck => new(page.Module, page.ReadUInt8(offset + 249), page.Language);
 
 	/// <inheritdoc/>
-	public readonly IItem Wrists => GetItem(ItemSlots.Wrists, (uint)page.ReadUInt32(offset + 176), this.NpcEquip.Value.ModelWrists);
+	public readonly IItem Wrists => GetGearItem(ItemSlots.Wrists, page.ReadUInt32(offset + 176), this.NpcEquip.ValueNullable?.ModelWrists);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> DyeWrists => new(page.Module, (uint)page.ReadUInt8(offset + 240), page.Language);
+	public readonly RowRef<Stain> DyeWrists => new(page.Module, page.ReadUInt8(offset + 240), page.Language);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> Dye2Wrists => new(page.Module, (uint)page.ReadUInt8(offset + 250), page.Language);
+	public readonly RowRef<Stain> Dye2Wrists => new(page.Module, page.ReadUInt8(offset + 250), page.Language);
 
 	/// <inheritdoc/>
-	public readonly IItem LeftRing => GetItem(ItemSlots.LeftRing, (uint)page.ReadUInt32(offset + 180), this.NpcEquip.Value.ModelLeftRing);
+	public readonly IItem LeftRing => GetGearItem(ItemSlots.LeftRing, page.ReadUInt32(offset + 180), this.NpcEquip.ValueNullable?.ModelLeftRing);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> DyeLeftRing => new(page.Module, (uint)page.ReadUInt8(offset + 241), page.Language);
+	public readonly RowRef<Stain> DyeLeftRing => new(page.Module, page.ReadUInt8(offset + 241), page.Language);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> DyeRightRing => new(page.Module, (uint)page.ReadUInt8(offset + 242), page.Language);
+	public readonly RowRef<Stain> DyeRightRing => new(page.Module, page.ReadUInt8(offset + 242), page.Language);
 
 	/// <inheritdoc/>
-	public readonly IItem RightRing => GetItem(ItemSlots.RightRing, page.ReadUInt32(offset + 184), this.NpcEquip.Value.ModelRightRing);
+	public readonly IItem RightRing => GetGearItem(ItemSlots.RightRing, page.ReadUInt32(offset + 184), this.NpcEquip.ValueNullable?.ModelRightRing);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> Dye2LeftRing => new(page.Module, (uint)page.ReadUInt8(offset + 251), page.Language);
+	public readonly RowRef<Stain> Dye2LeftRing => new(page.Module, page.ReadUInt8(offset + 251), page.Language);
 
 	/// <inheritdoc/>
-	public readonly RowRef<Stain> Dye2RightRing => new(page.Module, (uint)page.ReadUInt8(offset + 252), page.Language);
+	public readonly RowRef<Stain> Dye2RightRing => new(page.Module, page.ReadUInt8(offset + 252), page.Language);
 
 	/// <summary>
 	/// Creates a new instance of the <see cref="EventNpc"/> struct.
@@ -280,13 +280,30 @@ public readonly unsafe struct EventNpc(ExcelPage page, uint offset, uint row)
 		new(page, offset, row);
 
 	/// <summary>
-	/// Gets an item from the given slot and npc base and equipment model values.
+	/// Retrieves weapon with equipment model value if
+	/// available, otherwise retrieves using the the base model value.
+	/// </summary>
+	/// <param name="slot"></param>
+	/// <param name="baseVal"></param>
+	/// <param name="equipVal"></param>
+	/// <returns></returns>
+	private static IItem GetWeaponItem(ItemSlots slot, ulong baseVal, ulong? equipVal)
+	{
+		if (equipVal != null && equipVal != 0 && equipVal != uint.MaxValue && equipVal != long.MaxValue)
+			return LuminaExtensions.GetWeaponItem(slot, (ulong)equipVal);
+
+		return LuminaExtensions.GetWeaponItem(slot, baseVal);
+	}
+
+	/// <summary>
+	/// Retrieves gear item with equipment model value if
+	/// available, otherwise retrieves using the the base model value.
 	/// </summary>
 	/// <param name="slot">The item slot.</param>
 	/// <param name="baseVal">The base value of the item.</param>
 	/// <param name="equipVal">The equipment model value of the item.</param>
 	/// <returns>The found item in the game data.</returns>
-	private static IItem GetItem(ItemSlots slot, uint baseVal, uint? equipVal)
+	private static IItem GetGearItem(ItemSlots slot, uint baseVal, uint? equipVal)
 	{
 		if (equipVal != null && equipVal != 0 && equipVal != uint.MaxValue && equipVal != long.MaxValue)
 			return LuminaExtensions.GetGearItem(slot, (uint)equipVal);
@@ -301,8 +318,8 @@ public readonly unsafe struct EventNpc(ExcelPage page, uint offset, uint row)
 	/// <param name="baseVal">The base value of the item.</param>
 	/// <param name="equipVal">The equipment model value of the item.</param>
 	/// <returns>The found item in the game data.</returns>
-	private static IItem GetItem(ItemSlots slot, ulong baseVal, ulong? equipVal)
+	private static IItem GetGearItem(ItemSlots slot, ulong baseVal, ulong? equipVal)
 	{
-		return GetItem(slot, (uint)baseVal, (uint?)equipVal);
+		return GetGearItem(slot, (uint)baseVal, (uint?)equipVal);
 	}
 }
