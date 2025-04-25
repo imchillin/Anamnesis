@@ -5,7 +5,6 @@ namespace Lumina;
 
 using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
-using Serilog;
 using System.Runtime.CompilerServices;
 
 public static class LuminaExtensions
@@ -16,16 +15,6 @@ public static class LuminaExtensions
 			return ItemUtility.NoneItem;
 
 		GetModel(val, true, out ushort modelSet, out ushort modelBase, out ushort modelVariant);
-
-		if (modelSet < 0 || modelBase < 0 || modelVariant < 0)
-		{
-			Log.Warning($"Invalid item value: {val}");
-
-			modelSet = 0;
-			modelBase = 0;
-			modelVariant = 0;
-		}
-
 		return ItemUtility.GetItem(slot, modelSet, modelBase, modelVariant, false);
 	}
 
@@ -35,16 +24,6 @@ public static class LuminaExtensions
 			return ItemUtility.NoneItem;
 
 		GetModel(val, false, out ushort modelSet, out ushort modelBase, out ushort modelVariant);
-
-		if (modelSet < 0 || modelBase < 0 || modelVariant < 0)
-		{
-			Log.Warning($"Invalid item value: {val}");
-
-			modelSet = 0;
-			modelBase = 0;
-			modelVariant = 0;
-		}
-
 		return ItemUtility.GetItem(slot, modelSet, modelBase, modelVariant, false);
 	}
 
