@@ -9,6 +9,7 @@ using System;
 public class ActorCustomizeMemory : MemoryBase
 {
 	private bool linkEyeColors;
+	private Races race;
 
 	public enum Genders : byte
 	{
@@ -83,7 +84,22 @@ public class ActorCustomizeMemory : MemoryBase
 		return ap;
 	}*/
 
-	[Bind(0x000, BindFlags.ActorRefresh)] public Races Race { get; set; }
+	[Bind(0x000, BindFlags.ActorRefresh)]
+	public Races Race
+	{
+		get => this.race;
+		set
+		{
+			if (this.race == value)
+				return;
+
+			// Reset race feature value for some races to avoid a game crash
+			if (value is Races.Hyur or Races.Roegadyn)
+				this.TailEarsType = 1;
+
+			this.race = value;
+		}
+	}
 	[Bind(0x001, BindFlags.ActorRefresh)] public Genders Gender { get; set; }
 	[Bind(0x002, BindFlags.ActorRefresh)] public Ages Age { get; set; }
 	[Bind(0x003, BindFlags.ActorRefresh)] public byte Height { get; set; }

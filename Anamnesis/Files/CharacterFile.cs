@@ -10,7 +10,6 @@ using Anamnesis.Memory;
 using Serilog;
 using System;
 using System.Numerics;
-using System.Threading.Tasks;
 using XivToolsWpf.Math3D.Extensions;
 
 [Serializable]
@@ -229,12 +228,7 @@ public class CharacterFile : JsonFileBase
 		}
 	}
 
-	public async Task Apply(ActorMemory actor, SaveModes mode, ItemSlots? slot = null)
-	{
-		await Task.Run(() => this.ApplyInternal(actor, mode, slot));
-	}
-
-	public void ApplyInternal(ActorMemory actor, SaveModes mode, ItemSlots? slot = null)
+	public void Apply(ActorMemory actor, SaveModes mode, ItemSlots? slot = null)
 	{
 		if (this.Tribe == 0)
 			this.Tribe = ActorCustomizeMemory.Tribes.Midlander;

@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 public class SubActorUtility
 {
-	public static async Task SwitchMount(ActorMemory memory, Mount mount)
+	public static void SwitchMount(ActorMemory memory, Mount mount)
 	{
 		if (memory.IsMounted == true && memory.Mount != null)
 		{
@@ -23,9 +23,8 @@ public class SubActorUtility
 			float mountScale = CalculateMountScale(mount, memory);
 			memory.Mount.Scale = mountScale;
 
-			await Apply(mount, memory.Mount);
-
-			await memory.Refresh();
+			Apply(mount, memory.Mount);
+			Task.Run(memory.Refresh);
 		}
 		else
 		{
@@ -33,12 +32,12 @@ public class SubActorUtility
 		}
 	}
 
-	public static async Task SwitchCompanion(ActorMemory memory, Companion companion)
+	public static void SwitchCompanion(ActorMemory memory, Companion companion)
 	{
 		if (memory.Companion != null)
 		{
 			memory.Companion.DataId = companion.RowId;
-			await Apply(companion, memory.Companion);
+			Apply(companion, memory.Companion);
 		}
 		else
 		{
@@ -46,13 +45,13 @@ public class SubActorUtility
 		}
 	}
 
-	public static async Task SwitchOrnament(ActorMemory memory, Ornament ornament)
+	public static void SwitchOrnament(ActorMemory memory, Ornament ornament)
 	{
 		if (memory.IsUsingOrnament == true && memory.Ornament != null)
 		{
 			memory.OrnamentId = (ushort)ornament.RowId;
 			memory.Ornament.AttachmentPoint = (byte)ornament.AttachPoint;
-			await Apply(ornament, memory.Ornament);
+			Apply(ornament, memory.Ornament);
 		}
 		else
 		{
@@ -60,12 +59,12 @@ public class SubActorUtility
 		}
 	}
 
-	private static async Task Apply(INpcBase npc, ActorMemory targetActor)
+	private static void Apply(INpcBase npc, ActorMemory targetActor)
 	{
 		try
 		{
 			CharacterFile apFile = npc.ToFile();
-			await apFile.Apply(targetActor, CharacterFile.SaveModes.EquipmentGear);
+			apFile.Apply(targetActor, CharacterFile.SaveModes.EquipmentGear);
 		}
 		catch (Exception ex)
 		{

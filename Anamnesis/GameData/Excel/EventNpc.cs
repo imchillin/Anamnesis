@@ -198,7 +198,7 @@ public readonly unsafe struct EventNpc(ExcelPage page, uint offset, uint row)
 	public readonly RowRef<Stain> Dye2Body => new(page.Module, (uint)page.ReadUInt8(offset + 244), page.Language);
 
 	/// <inheritdoc/>
-	public readonly IItem Hands => GetItem(ItemSlots.Hands, (uint)page.ReadUInt32(offset + 156), this.NpcEquip.Value.ModelHands);
+	public readonly IItem Hands => LuminaExtensions.GetGearItem(ItemSlots.Hands, this.NpcEquip.ValueNullable?.ModelHands ?? 0);
 
 	/// <inheritdoc/>
 	public readonly RowRef<Stain> DyeHands => new(page.Module, (uint)page.ReadUInt8(offset + 235), page.Language);

@@ -3,7 +3,6 @@
 
 namespace Anamnesis;
 
-using Anamnesis.Actor;
 using Anamnesis.Files;
 using Anamnesis.GameData;
 using Anamnesis.Memory;
@@ -15,8 +14,6 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading.Tasks;
-using XivToolsWpf.Extensions;
 
 [AddINotifyPropertyChangedInterface]
 public class PinnedActor : INotifyPropertyChanged, IDisposable
@@ -200,7 +197,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		}
 	}
 
-	public async Task RestoreCharacterBackup(BackupModes mode, ItemSlots? slot = null)
+	public void RestoreCharacterBackup(BackupModes mode, ItemSlots? slot = null)
 	{
 		CharacterFile? backup = null;
 
@@ -224,7 +221,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		}
 
 		this.isRestoringBackup = true;
-		await backup.Apply(memory, slot == null ? CharacterFile.SaveModes.All : CharacterFile.SaveModes.EquipmentSlot, slot);
+		backup.Apply(memory, slot == null ? CharacterFile.SaveModes.All : CharacterFile.SaveModes.EquipmentSlot, slot);
 
 		// If we were a player, really make sure we are again.
 		if (backup.ObjectKind == ActorTypes.Player)
@@ -431,7 +428,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		// If we need to apply the appearance thanks to a GPose boundary changes?
 		if (SettingsService.Current.ReapplyAppearance || GposeService.GetIsGPose())
 		{
-			this.RestoreCharacterBackup(BackupModes.Gpose).Run();
+			this.RestoreCharacterBackup(BackupModes.Gpose);
 
 			// clear the appearance once it has been applied
 			if (!SettingsService.Current.ReapplyAppearance)
