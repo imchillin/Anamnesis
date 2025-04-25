@@ -23,12 +23,12 @@ public readonly struct Action(ExcelPage page, uint offset, uint row)
 	public readonly ImgRef? Icon => new(page.ReadUInt16(offset + 8));
 
 	/// <inheritdoc/>
-	public ActionTimeline? Timeline => this.ActionTimelineHit.RowId >= 0 ? GameDataService.ActionTimelines.GetRow(this.ActionTimelineHit.RowId) : null;
+	public ActionTimeline? Timeline => this.AnimationEnd.IsValid && this.AnimationEnd.RowId >= 0 ? GameDataService.ActionTimelines.GetRow(this.AnimationEnd.RowId) : null;
 
 	/// <summary>
 	/// Gets a reference to the action timeline associated with the action.
 	/// </summary>
-	public readonly RowRef<ActionTimeline> ActionTimelineHit => new(page.Module, page.ReadUInt16(offset + 12), page.Language);
+	public readonly RowRef<ActionTimeline> AnimationEnd => new(page.Module, (uint)page.ReadInt16(offset + 32), page.Language);
 
 	/// <inheritdoc/>
 	public IAnimation.AnimationPurpose Purpose => IAnimation.AnimationPurpose.Action;
