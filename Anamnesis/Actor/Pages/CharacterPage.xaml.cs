@@ -213,7 +213,7 @@ public partial class CharacterPage : UserControl
 		if (await GenericDialog.ShowLocalizedAsync("Character_Reset_Confirm", "Character_Reset", MessageBoxButton.YesNo) != true)
 			return;
 
-		await this.Actor.Pinned.RestoreCharacterBackup(PinnedActor.BackupModes.Original);
+		this.Actor.Pinned.RestoreCharacterBackup(PinnedActor.BackupModes.Original);
 	}
 
 	private async void OnImportClicked(object sender, RoutedEventArgs e)
@@ -273,11 +273,11 @@ public partial class CharacterPage : UserControl
 			if (npc == null)
 				return;
 
-			Task.Run(() => this.ApplyNpc(npc, mode));
+			this.ApplyNpc(npc, mode);
 		});
 	}
 
-	private async Task ApplyNpc(INpcBase? npc, CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)
+	private void ApplyNpc(INpcBase? npc, CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)
 	{
 		if (this.Actor == null || npc == null)
 			return;
@@ -285,7 +285,7 @@ public partial class CharacterPage : UserControl
 		try
 		{
 			CharacterFile apFile = npc.ToFile();
-			await apFile.Apply(this.Actor, mode);
+			apFile.Apply(this.Actor, mode);
 		}
 		catch (Exception ex)
 		{
@@ -329,7 +329,7 @@ public partial class CharacterPage : UserControl
 
 			if (result.File is CharacterFile apFile)
 			{
-				await apFile.Apply(this.Actor, mode);
+				apFile.Apply(this.Actor, mode);
 			}
 		}
 		catch (Exception ex)

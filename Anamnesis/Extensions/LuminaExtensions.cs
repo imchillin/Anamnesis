@@ -5,7 +5,6 @@ namespace Lumina;
 
 using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
-using Serilog;
 using System.Runtime.CompilerServices;
 
 public static class LuminaExtensions
@@ -15,20 +14,8 @@ public static class LuminaExtensions
 		if (val == 0)
 			return ItemUtility.NoneItem;
 
-		short modelSet = (short)val;
-		short modelBase = (short)(val >> 16);
-		short modelVariant = (short)(val >> 32);
-
-		if (modelSet < 0 || modelBase < 0 || modelVariant < 0)
-		{
-			Log.Warning($"Invalid item value: {val}");
-
-			modelSet = 0;
-			modelBase = 0;
-			modelVariant = 0;
-		}
-
-		return ItemUtility.GetItem(slot, (ushort)modelSet, (ushort)modelBase, (ushort)modelVariant, false);
+		GetModel(val, true, out ushort modelSet, out ushort modelBase, out ushort modelVariant);
+		return ItemUtility.GetItem(slot, modelSet, modelBase, modelVariant, false);
 	}
 
 	public static IItem GetGearItem(ItemSlots slot, uint val)
@@ -36,20 +23,8 @@ public static class LuminaExtensions
 		if (val == 0)
 			return ItemUtility.NoneItem;
 
-		short modelSet = 0;
-		short modelBase = (short)val;
-		short modelVariant = (short)(val >> 16);
-
-		if (modelSet < 0 || modelBase < 0 || modelVariant < 0)
-		{
-			Log.Warning($"Invalid item value: {val}");
-
-			modelSet = 0;
-			modelBase = 0;
-			modelVariant = 0;
-		}
-
-		return ItemUtility.GetItem(slot, (ushort)modelSet, (ushort)modelBase, (ushort)modelVariant, false);
+		GetModel(val, false, out ushort modelSet, out ushort modelBase, out ushort modelVariant);
+		return ItemUtility.GetItem(slot, modelSet, modelBase, modelVariant, false);
 	}
 
 	public static void GetModel(ulong val, bool isWeapon, out ushort modelSet, out ushort modelBase, out ushort modelVariant)

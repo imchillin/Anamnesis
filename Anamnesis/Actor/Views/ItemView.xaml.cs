@@ -199,7 +199,7 @@ public partial class ItemView : UserControl
 		}
 	}
 
-	private async void OnResetSlotClicked(object sender, RoutedEventArgs e)
+	private void OnResetSlotClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.Actor == null)
 			return;
@@ -207,7 +207,7 @@ public partial class ItemView : UserControl
 		if (this.Actor.Pinned == null)
 			return;
 
-		await this.Actor.Pinned.RestoreCharacterBackup(PinnedActor.BackupModes.Original, this.Slot);
+		this.Actor.Pinned.RestoreCharacterBackup(PinnedActor.BackupModes.Original, this.Slot);
 	}
 
 	private void OnClearSlotClicked(object sender, RoutedEventArgs e)

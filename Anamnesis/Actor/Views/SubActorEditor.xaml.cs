@@ -184,7 +184,7 @@ public partial class SubActorEditor : UserControl
 		}
 	}
 
-	private async void Apply(INpcBase npc)
+	private void Apply(INpcBase npc)
 	{
 		if (this.Actor == null || npc == null)
 			return;
@@ -193,15 +193,15 @@ public partial class SubActorEditor : UserControl
 
 		if (npc is Mount mount)
 		{
-			await SubActorUtility.SwitchMount(this.Actor, mount);
+			SubActorUtility.SwitchMount(this.Actor, mount);
 		}
 		else if (npc is Companion companion)
 		{
-			await SubActorUtility.SwitchCompanion(this.Actor, companion);
+			SubActorUtility.SwitchCompanion(this.Actor, companion);
 		}
 		else if (npc is Ornament ornament)
 		{
-			await SubActorUtility.SwitchOrnament(this.Actor, ornament);
+			SubActorUtility.SwitchOrnament(this.Actor, ornament);
 		}
 	}
 }
