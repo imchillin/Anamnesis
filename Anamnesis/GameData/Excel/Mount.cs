@@ -60,7 +60,7 @@ public readonly struct Mount(ExcelPage page, uint offset, uint row)
 	public uint MountCustomizeRow => this.MountCustomize.RowId;
 
 	/// <summary>Gets the mount customization data for player characters.</summary>
-	public readonly RowRef<MountCustomize> MountCustomize => new(page.Module, (uint)page.ReadUInt8(offset + 70), page.Language);
+	public readonly RowRef<MountCustomize> MountCustomize => new(page.Module, page.ReadUInt8(offset + 74), page.Language);
 
 	/// <inheritdoc/>
 	public ImgRef? Icon => new(page.ReadUInt16(offset + 52));
