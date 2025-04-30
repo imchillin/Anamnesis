@@ -136,6 +136,9 @@ jobs:
           /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml" `
           /p:DefineConstants="CI_BUILD"
 
+      - name: Publish PoseThumbHelper
+        run: dotnet publish PoseThumbHelper/PoseThumbHelper.csproj /p:PublishProfile=".\PoseThumbHelper\Properties\PublishProfiles\FolderProfile.pubxml"
+
       - name: Generate artifact attestation Anamnesis
         uses: actions/attest@v4
         with:
