@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFramework>net48</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>AnaKey.snk</AssemblyOriginatorKeyFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="SharpShell" Version="2.7.2" />
+		<PackageReference Include="System.Drawing.Common" Version="9.0.4" />
+		<PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
+	</ItemGroup>
+
+</Project>
