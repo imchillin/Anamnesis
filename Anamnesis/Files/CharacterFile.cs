@@ -264,7 +264,6 @@ public class CharacterFile : JsonFileBase
 			{
 				this.MainHand?.Write(actor.MainHand, true);
 				this.OffHand?.Write(actor.OffHand, false);
-				actor.IsWeaponDirty = true;
 			}
 
 			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
@@ -296,11 +295,9 @@ public class CharacterFile : JsonFileBase
 				{
 					case ItemSlots.MainHand:
 						this.MainHand?.Write(actor.MainHand, true);
-						actor.IsWeaponDirty = true;
 						break;
 					case ItemSlots.OffHand:
 						this.OffHand?.Write(actor.OffHand, false);
-						actor.IsWeaponDirty = true;
 						break;
 					case ItemSlots.Head:
 						this.HeadGear?.Write(actor.Equipment?.Head);
