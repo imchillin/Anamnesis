@@ -345,7 +345,38 @@ public class Skeleton : INotifyPropertyChanged
 		for (int partialSkeletonIndex = 0; partialSkeletonIndex < skeleton.Length; partialSkeletonIndex++)
 		{
 			PartialSkeletonMemory partialSkeleton = skeleton[partialSkeletonIndex];
-			HkaPoseMemory? bestHkaPose = partialSkeleton.Pose1;
+			HkaPoseMemory? bestHkaPose = null;
+
+			int retryCount = 0;
+
+			while (retryCount < MaxReadRetryAttempts)
+			{
+				try
+				{
+					bestHkaPose = partialSkeleton.Pose1;
+
+					if (bestHkaPose == null ||
+						bestHkaPose.Skeleton?.Bones == null ||
+						bestHkaPose.Skeleton?.ParentIndices == null ||
+						bestHkaPose.Transforms == null)
+						throw new Exception("Failed to find best Havok pose for partial skeleton");
+
+					break;
+				}
+				catch (Exception ex)
+				{
+					Log.Verbose(ex, $"{ex.Message}. Retrying... ({retryCount + 1}/{MaxReadRetryAttempts})");
+
+					retryCount++;
+					if (retryCount >= MaxReadRetryAttempts)
+					{
+						Log.Warning("Max retry attempts reached. Unable to find best pose for partial skeleton.");
+						continue; // Skip to the next iteration of the outer loop
+					}
+
+					Task.Delay(100).Wait();  // Wait 100ms between retries
+				}
+			}
 
 			if (bestHkaPose == null || bestHkaPose.Skeleton?.Bones == null || bestHkaPose.Skeleton?.ParentIndices == null || bestHkaPose.Transforms == null)
 			{
@@ -354,7 +385,8 @@ public class Skeleton : INotifyPropertyChanged
 			}
 
 			int count = bestHkaPose.Transforms.Length;
-			int retryCount = 0;
+
+			retryCount = 0;
 
 			// Load all bones first
 			for (int boneIndex = 0; boneIndex < count; boneIndex++)
