@@ -169,7 +169,7 @@
                         </Grid>
 
 
-						<Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Click="OnBlendAnimation" IsEnabled="{Binding Actor.Animation.BlendLocked, Converter={StaticResource NotConverter}}" Style="{StaticResource TransparentButton}">
+						<Button x:Name="AnimationBlendButton" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Click="OnBlendAnimation" IsEnabled="{Binding Actor.Animation.BlendLocked, Converter={StaticResource NotConverter}, Mode=OneWay}" Style="{StaticResource TransparentButton}">
                             <XivToolsWpf:TextBlock Key="Character_Action_AnimationBlend"/>
                         </Button>
 

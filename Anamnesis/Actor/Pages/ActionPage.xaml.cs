@@ -153,6 +153,7 @@ public partial class ActionPage : UserControl
 			return;
 
 		await this.AnimationService.BlendAnimation(this.Actor, this.AnimationOverride.BlendAnimationId);
+		this.AnimationBlendButton.Focus(); // Refocus on the button as the blend lock changes state in the function call above
 	}
 
 	private void OnIdleOverrideAnimation(object sender, RoutedEventArgs e)
