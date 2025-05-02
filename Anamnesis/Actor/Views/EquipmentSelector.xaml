@@ -204,16 +204,16 @@
 						</Grid.RowDefinitions>
 
 						<Border Width="38" Height="38" Background="#444444" Grid.RowSpan="3" CornerRadius="3"
-								Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}"
+								Visibility="{Binding Icon, Mode=OneTime, Converter={StaticResource NotNullToVisibilityConverter}}"
 								Margin="0, -4">
 							<Grid>
-								<Image Source="{Binding Icon, Converter={StaticResource Img}}" Margin="1"/>
+								<Image Source="{Binding Icon, Mode=OneTime, Converter={StaticResource Img}}" Margin="1"/>
 								<Image Source="/Assets/IconBorderSmall.png" Margin="-2, 0, -2, -4"/>
 							</Grid>
 						</Border>
 
 						<TextBlock Grid.Row="0" Grid.Column="1"
-								   Text="{Binding Name}"
+								   Text="{Binding Name, Mode=OneTime}"
 								   Margin="6, 0, 0, 0"
 								   FontWeight="DemiBold"
 								   Foreground="{DynamicResource MaterialDesignBody}"
@@ -229,18 +229,18 @@
 							</Grid.ColumnDefinitions>
 
 							<TextBlock Grid.Column="0"
-								   Text="{Binding EquipLevel, StringFormat=Lv.{0:D}}"
+								   Text="{Binding EquipLevel, Mode=OneTime, StringFormat=Lv.{0:D}}"
 								   TextTrimming="CharacterEllipsis"
 								   Margin="6,0,0,0"
 								   TextAlignment="Left"
-								   Visibility="{Binding EquipLevel, Converter={StaticResource NotZeroToVisibilityConverter}}"/>
+								   Visibility="{Binding EquipLevel, Mode=OneTime, Converter={StaticResource NotZeroToVisibilityConverter}}"/>
 
 							<TextBlock Grid.Column="1"
-								   Text="{Binding Description}"
+								   Text="{Binding Description, Mode=OneTime}"
 								   TextTrimming="CharacterEllipsis"
 								   Margin="6,0,0,0"
 								   TextAlignment="Left"
-								   Visibility="{Binding Description, Converter={StaticResource NotEmptyToVisibilityConverter}}"/>
+								   Visibility="{Binding Description, Mode=OneTime, Converter={StaticResource NotEmptyToVisibilityConverter}}"/>
 							
 						</Grid>
 						
@@ -250,11 +250,11 @@
 									   Fill="Transparent" >
 							<ToolTipService.ToolTip>
 								<StackPanel Orientation="Vertical">
-									<TextBlock Text="{Binding Name}" FontWeight="DemiBold"/>
-									<TextBlock Text="{Binding Description}"
+									<TextBlock Text="{Binding Name, Mode=OneTime}" FontWeight="DemiBold"/>
+									<TextBlock Text="{Binding Description, Mode=OneTime}"
 											   MaxWidth="200"
 											   TextWrapping="Wrap"
-											   Visibility="{Binding Description, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+											   Visibility="{Binding Description, Mode=OneTime, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 
 									<Grid Grid.Column="1" Grid.Row="2" Margin="0, 3, 0, 0">
 										<Grid.ColumnDefinitions>
@@ -269,19 +269,19 @@
 											<RowDefinition/>
 										</Grid.RowDefinitions>
 
-										<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="0" Key="EquipmentSelector_ItemId" HorizontalAlignment="Right" Visibility="{Binding RowId, Converter={StaticResource NotZeroToVisibility}}" Margin="0, 0, 6, 0"/>
-										<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding RowId}" Visibility="{Binding RowId, Converter={StaticResource NotZeroToVisibility}}"/>
+										<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="0" Key="EquipmentSelector_ItemId" HorizontalAlignment="Right" Visibility="{Binding RowId, Mode=OneTime, Converter={StaticResource NotZeroToVisibility}}" Margin="0, 0, 6, 0"/>
+										<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding RowId, Mode=OneTime}" Visibility="{Binding RowId, Mode=OneTime, Converter={StaticResource NotZeroToVisibility}}"/>
 
-										<TextBlock Grid.Column="0" Grid.Row="1" Text="Lv." HorizontalAlignment="Right" Visibility="{Binding EquipLevel, Converter={StaticResource NotZeroToVisibility}}" Margin="0, 0, 6, 0"/>
-										<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding EquipLevel}" Visibility="{Binding EquipLevel, Converter={StaticResource NotZeroToVisibility}}"/>
+										<TextBlock Grid.Column="0" Grid.Row="1" Text="Lv." HorizontalAlignment="Right" Visibility="{Binding EquipLevel, Mode=OneTime, Converter={StaticResource NotZeroToVisibility}}" Margin="0, 0, 6, 0"/>
+										<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding EquipLevel, Mode=OneTime}" Visibility="{Binding EquipLevel, Mode=OneTime, Converter={StaticResource NotZeroToVisibility}}"/>
 										
 										<TextBlock Grid.Column="0" Grid.Row="2" Text="Model:" HorizontalAlignment="Right" Margin="0, 0, 6, 0"/>
 										<StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="2">
-											<TextBlock Text="{Binding ModelSet}" Visibility="{Binding ModelSet, Converter={StaticResource NotZeroToVisibility}}"/>
-											<TextBlock Text=", " Visibility="{Binding ModelSet, Converter={StaticResource NotZeroToVisibility}}"/>
-											<TextBlock Text="{Binding ModelBase}"/>
+											<TextBlock Text="{Binding ModelSet, Mode=OneTime}" Visibility="{Binding ModelSet, Mode=OneTime, Converter={StaticResource NotZeroToVisibility}}"/>
+											<TextBlock Text=", " Visibility="{Binding ModelSet, Mode=OneTime, Converter={StaticResource NotZeroToVisibility}}"/>
+											<TextBlock Text="{Binding ModelBase, Mode=OneTime}"/>
 											<TextBlock Text=", "/>
-											<TextBlock Text="{Binding ModelVariant}"/>
+											<TextBlock Text="{Binding ModelVariant, Mode=OneTime}"/>
 										</StackPanel>
 
 										<TextBlock Grid.Column="0" Grid.Row="2" Text="Modded: " HorizontalAlignment="Left" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}"/>

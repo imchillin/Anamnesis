@@ -117,9 +117,9 @@
 								Background="#444444"
 								Grid.RowSpan="2"
 								CornerRadius="3"
-								Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}">
+								Visibility="{Binding Icon, Mode=OneTime, Converter={StaticResource NotNullToVisibilityConverter}}">
 							<Grid>
-								<Image Source="{Binding Icon, Converter={StaticResource Img}}"
+								<Image Source="{Binding Icon, Mode=OneTime, Converter={StaticResource Img}}"
 									   Margin="1" />
 								<Image Source="/Assets/IconBorderSmall.png"
 									   Margin="-2, 0, -2, -4" />
@@ -132,7 +132,7 @@
 									Grid.Row="1"
 									Grid.Column="1"
 									Margin="3, 0, 0, 0"
-									Visibility="{Binding ModelCharaRow, Converter={StaticResource NotZeroToVisibility}}">
+									Visibility="{Binding ModelCharaRow, Mode=OneTime, Converter={StaticResource NotZeroToVisibility}}">
 
 							<xivToolsWpf:TextBlock Key="Character_Actor_Model"
 												   Style="{StaticResource Label}"
@@ -158,22 +158,22 @@
 								   Fill="Transparent" >
 							<ToolTipService.ToolTip>
 								<StackPanel Orientation="Vertical">
-									<TextBlock Text="{Binding Name}"
+									<TextBlock Text="{Binding Name, Mode=OneTime}"
 											   FontWeight="Bold"
 											   Visibility="{Binding HasName, Converter={StaticResource B2V}}" />
-									
-									<TextBlock Text="{Binding Description}" Visibility="{Binding Description, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+
+									<TextBlock Text="{Binding Description, Mode=OneTime}" Visibility="{Binding Description, Mode=OneTime, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 
 									<StackPanel Orientation="Horizontal">
-										<xivToolsWpf:TextBlock Text="{Binding TypeName}" />
+										<xivToolsWpf:TextBlock Text="{Binding TypeName, Mode=OneTime}" />
 										<xivToolsWpf:TextBlock Text=": #" Margin="0" />
-										<TextBlock Text="{Binding RowId}" />
+										<TextBlock Text="{Binding RowId, Mode=OneTime}" />
 									</StackPanel>
 
 									<StackPanel Orientation="Horizontal">
 										<xivToolsWpf:TextBlock Key="Character_Actor_Model"/>
 										<xivToolsWpf:TextBlock Text=": #" Margin="0" />
-										<TextBlock Text="{Binding ModelCharaRow}" Margin="0" />
+										<TextBlock Text="{Binding ModelCharaRow, Mode=OneTime}" Margin="0" />
 									</StackPanel>
 
 									<Grid Grid.Column="1" Grid.Row="2" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}" Margin="3, 0, 0, 0">
@@ -183,7 +183,7 @@
 										</Grid.ColumnDefinitions>
 
 										<TextBlock Grid.Column="0" Text="Modded: " HorizontalAlignment="Left" />
-										<TextBlock Grid.Column="1" Text="{Binding Mod.ModPack.Name}" HorizontalAlignment="Left" />
+										<TextBlock Grid.Column="1" Text="{Binding Mod.ModPack.Name, Mode=OneTime}" HorizontalAlignment="Left" />
 									</Grid>
 								</StackPanel>
 							</ToolTipService.ToolTip>

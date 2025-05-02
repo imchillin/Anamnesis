@@ -189,35 +189,28 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 	protected override int Compare(IItem itemA, IItem itemB)
 	{
 		if (itemA.IsFavorite && !itemB.IsFavorite)
-		{
 			return -1;
-		}
-		else if (!itemA.IsFavorite && itemB.IsFavorite)
-		{
+
+		if (!itemA.IsFavorite && itemB.IsFavorite)
 			return 1;
-		}
 
 		// Push the Emperor's New Fists to the top of the list for weapons.
 		if (this.IsWeaponSlot)
 		{
 			if (itemA == ItemUtility.EmperorsNewFists && itemB != ItemUtility.EmperorsNewFists)
-			{
 				return -1;
-			}
-			else if (itemA != ItemUtility.EmperorsNewFists && itemB == ItemUtility.EmperorsNewFists)
-			{
+
+			if (itemA != ItemUtility.EmperorsNewFists && itemB == ItemUtility.EmperorsNewFists)
 				return 1;
-			}
 		}
 
-		switch (this.SortMode)
+		return this.SortMode switch
 		{
-			case SortModes.Name: return itemA.Name.CompareTo(itemB.Name);
-			case SortModes.Row: return itemA.RowId.CompareTo(itemB.RowId);
-			case SortModes.Level: return itemA.EquipLevel.CompareTo(itemB.EquipLevel);
-		}
-
-		throw new NotImplementedException($"Sort mode {this.SortMode} not implemented");
+			SortModes.Name => itemA.Name.CompareTo(itemB.Name),
+			SortModes.Row => itemA.RowId.CompareTo(itemB.RowId),
+			SortModes.Level => itemA.EquipLevel.CompareTo(itemB.EquipLevel),
+			_ => throw new NotImplementedException($"Sort mode {this.SortMode} not implemented"),
+		};
 	}
 
 	protected override bool Filter(IItem item, string[]? search)
