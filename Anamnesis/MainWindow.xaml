@@ -292,7 +292,7 @@
 					<!--Wiki Button -->
 					<Button Click="OnWikiClicked"
 							Background="Transparent"
-							Foreground="{Binding TitlebarForeground}"
+							Foreground="{DynamicResource MaterialDesignBodyLight}"
 							Padding="0"
 							VerticalAlignment="Top"
 							Grid.Column="1"
@@ -344,7 +344,6 @@
 									  Margin="3,0,0,0"
 									  BorderThickness="0"
 									  IsChecked="{Binding LogService.VerboseLogging}"
-									  Foreground="{Binding TitlebarForeground}"
 									  Background="{DynamicResource MaterialDesignCardBackground}"
 									  Style="{DynamicResource TransparentIconToggleButton}"
 									  ToolTip="Enable verbose logging"
@@ -367,7 +366,6 @@
 								  Margin="3,0,0,0"
 								  BorderThickness="0"
 								  IsChecked="{Binding SettingsService.Settings.EnableGameHotkeyHooks}"
-								  Foreground="{Binding TitlebarForeground}"
 								  Background="{DynamicResource MaterialDesignCardBackground}"
 								  Style="{DynamicResource TransparentIconToggleButton}">
 
@@ -384,7 +382,6 @@
 								  Margin="3,0,0,0"
 								  BorderThickness="0"
 								  IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}"
-								  Foreground="{Binding TitlebarForeground}"
 								  Background="{DynamicResource MaterialDesignCardBackground}"
 								  Style="{DynamicResource TransparentIconToggleButton}">
 
