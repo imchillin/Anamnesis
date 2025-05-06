@@ -51,15 +51,26 @@ jobs:
       - name: Publish UpdateExtractor
         run: dotnet publish UpdateExtractor/UpdateExtractor.csproj /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml"
 
-      # 6. Delete redundant files
+      # 6. Attest Build Artifacts
+      - name: Generate artifact attestation Ana
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: './publish/Anamnesis.exe'
+
+      - name: Generate artifact attestation Updater
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: './publish/Updater/UpdateExtractor.exe'
+
+      # 7. Delete redundant files
       - name: Delete pdb and xml
         run: Get-ChildItem -Path './publish/*' -Recurse -Include *.pdb,*.xml -File | Remove-Item -Force
 
-      # 7. Zip up the entire publish folder
+      # 8. Zip up the entire publish folder
       - name: Create ZIP
         run: Compress-Archive -Path './publish/*' -DestinationPath './Anamnesis.zip'
 
-      # 8. Draft a GitHub release
+      # 9. Draft a GitHub release
       - name: Create draft release
         uses: ncipollo/release-action@v1
         with:
