@@ -10,6 +10,7 @@ using System.Linq;
 using System.Numerics;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using XivToolsWpf;
 using XivToolsWpf.Math3D;
 using XivToolsWpf.Math3D.Extensions;
 
@@ -23,7 +24,8 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 	private static readonly double SphereRadius = 0.015;
 	private static readonly Material SelectedMaterial = CreateMaterial(Colors.Orange);
 	private static readonly Material HoveredMaterial = CreateMaterial(Colors.DarkOrange);
-	private static readonly Material NormalMaterial = CreateMaterial(Colors.White, 128);
+	private static readonly Material NormalMaterialLightTheme = CreateMaterial(Colors.Black, 128);
+	private static readonly Material NormalMaterialDarkTheme = CreateMaterial(Colors.White, 128);
 	private static readonly Sphere PrecomputedSphere = CreatePrecomputedSphere();
 	private readonly PrsTransform sphereTransform = new();
 
@@ -185,7 +187,7 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 		else if (this.Bone.IsSelected)
 			this.sphere.Material = SelectedMaterial;
 		else
-			this.sphere.Material = NormalMaterial;
+			this.sphere.Material = Themes.IsLightTheme ? NormalMaterialLightTheme : NormalMaterialDarkTheme;
 
 		// Handle child bones
 		foreach (BoneVisual3D bone in this.Children.OfType<BoneVisual3D>())
@@ -232,7 +234,7 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 		var sphere = new Sphere
 		{
 			Radius = SphereRadius,
-			Material = NormalMaterial,
+			Material = Themes.IsLightTheme ? NormalMaterialLightTheme : NormalMaterialDarkTheme,
 		};
 
 		return sphere;
