@@ -164,8 +164,8 @@ public partial class MainWindow : ChromedWindow
 			}
 		}
 
-		if (SettingsService.Current.WindowOpacity < 1)
-			this.TransprentWhenNotInFocus = true;
+		this.TransprentWhenNotInFocus = SettingsService.Current.WindowOpacity < 1;
+		this.WindowOpacity = SettingsService.Current.WindowOpacity;
 
 		if (!this.hasSetPosition && SettingsService.Current.WindowPosition.X != 0)
 		{
