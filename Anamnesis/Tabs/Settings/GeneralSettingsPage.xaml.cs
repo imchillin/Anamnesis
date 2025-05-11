@@ -13,6 +13,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Navigation;
+using XivToolsWpf.Utility;
 
 /// <summary>
 /// Interaction logic for GeneralSettingsPage.xaml.
@@ -71,6 +72,7 @@ public partial class GeneralSettingsPage : System.Windows.Controls.UserControl, 
 
 	public static SettingsService SettingsService => SettingsService.Instance;
 	public static int LabelColumnWidth => 150;
+	public static bool IsWindows11 => Win32.IsWindows11();
 	public Dictionary<string, SettingCategory> SettingCategories { get; }
 	public IEnumerable<FontOption> Fonts { get; }
 
