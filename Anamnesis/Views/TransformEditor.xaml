@@ -34,7 +34,7 @@
 				<XivToolsWpf:TextBlock Key="Pose_Scale"/>
 			</GroupBox.Header>
 
-			<controls:VectorEditorNew Value="{Binding Scale}" LayoutStyle="Compact" Minimum="0" Maximum="10" DefaultValue="1" TickFrequency="0.01" DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" EnableStepButtons="True" SliderMode="Relative"
+			<controls:VectorEditorNew x:Name="ScaleVectorEditor" Value="{Binding Scale}" LayoutStyle="Compact" Minimum="0" Maximum="10" DefaultValue="1" TickFrequency="0.01" DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" EnableStepButtons="True" SliderMode="Relative"
 									  CanLink="{Binding CanLinkScale, Mode=OneWay}" Linked="{Binding ScaleLinked, Mode=OneWay}" SliderType="{Binding Settings.BoneScaleSliderType, Mode=OneWay}" Margin="-3, 3, -2, 0"
 									  ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 		</GroupBox>
