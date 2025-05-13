@@ -3,15 +3,24 @@
 
 namespace Anamnesis;
 
+using Anamnesis.Core;
 using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 public class CameraService : ServiceBase<CameraService>
 {
+	private const int TaskSuccessDelay = 33; // ms
+	private const int TaskFailureDelay = 1000; // ms
+
 	private bool delimitCamera;
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [GameService.Instance, GposeService.Instance];
 
 	public CameraMemory Camera { get; set; } = new CameraMemory();
 	public GPoseCameraMemory GPoseCamera { get; set; } = new GPoseCameraMemory();
@@ -36,64 +45,79 @@ public class CameraService : ServiceBase<CameraService>
 		}
 	}
 
-	public override async Task Start()
-	{
-		await base.Start();
-
-		_ = Task.Run(this.Tick);
-	}
-
-	public override Task Shutdown()
+	/// <inheritdoc/>
+	public override async Task Shutdown()
 	{
 		this.DelimitCamera = false;
-		return base.Shutdown();
+		await base.Shutdown();
 	}
 
-	private async Task Tick()
+	/// <inheritdoc/>
+	protected override async Task OnStart()
 	{
-		while (this.IsAlive)
+		this.CancellationTokenSource = new CancellationTokenSource();
+		this.BackgroundTask = Task.Run(() => this.Tick(this.CancellationToken));
+		await base.OnStart();
+	}
+
+	private async Task Tick(CancellationToken cancellationToken)
+	{
+		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
 		{
-			await Task.Delay(33);
-
-			if (!GameService.Ready)
-				continue;
-
-			if (this.Camera == null)
-				continue;
-
 			try
 			{
-				if (!MemoryService.IsProcessAlive)
-				{
-					await Task.Delay(1000);
+				await Task.Delay(TaskSuccessDelay, cancellationToken);
+
+				if (!GameService.Ready)
 					continue;
-				}
 
-				if (!GposeService.Instance.IsGpose)
+				if (this.Camera == null)
+					continue;
+
+				try
 				{
-					this.DelimitCamera = false;
-					this.Camera.FreezeAngle = false;
-				}
-				else
-				{
-					// SetAddress will synchronize if addresses are different
-					// so we don't need to call Synchronize() again.
-					if (this.GPoseCamera.Address == AddressService.GPoseCamera)
-						this.GPoseCamera.Synchronize();
+					if (!MemoryService.IsProcessAlive)
+					{
+						await Task.Delay(TaskFailureDelay, cancellationToken);
+						continue;
+					}
+
+					if (!GposeService.Instance.IsGpose)
+					{
+						this.DelimitCamera = false;
+						this.Camera.FreezeAngle = false;
+					}
 					else
-						this.GPoseCamera.SetAddress(AddressService.GPoseCamera);
-				}
+					{
+						// SetAddress will synchronize if addresses are different
+						// so we don't need to call Synchronize() again.
+						if (this.GPoseCamera.Address == AddressService.GPoseCamera)
+							this.GPoseCamera.Synchronize();
+						else
+							this.GPoseCamera.SetAddress(AddressService.GPoseCamera);
+					}
 
-				// Same as above
-				if (this.Camera.Address == AddressService.Camera)
-					this.Camera.Synchronize();
-				else
-					this.Camera.SetAddress(AddressService.Camera);
+					// Same as above
+					if (this.Camera.Address == AddressService.Camera)
+						this.Camera.Synchronize();
+					else
+						this.Camera.SetAddress(AddressService.Camera);
+				}
+				catch (TaskCanceledException)
+				{
+					// Task was canceled, exit the loop
+					break;
+				}
+				catch (Exception ex)
+				{
+					Log.Warning(ex, "Failed to update camera");
+					await Task.Delay(TaskFailureDelay, cancellationToken);
+				}
 			}
-			catch (Exception ex)
+			catch (TaskCanceledException)
 			{
-				Log.Warning(ex, "Failed to update camera");
-				await Task.Delay(1000);
+				// Task was canceled, exit the loop
+				break;
 			}
 		}
 	}

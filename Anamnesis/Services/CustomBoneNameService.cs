@@ -2,12 +2,13 @@
 // Licensed under the MIT license.
 namespace Anamnesis.Services;
 
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Anamnesis.Core;
 using Anamnesis.Files;
 using Anamnesis.Serialization;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 public class CustomBoneNameService : ServiceBase<CustomBoneNameService>
 {
@@ -50,9 +51,9 @@ public class CustomBoneNameService : ServiceBase<CustomBoneNameService>
 		File.WriteAllText(SavePath, json);
 	}
 
+	/// <inheritdoc/>
 	public override async Task Initialize()
 	{
-		await base.Initialize();
 		try
 		{
 			if (File.Exists(SavePath))
@@ -67,8 +68,11 @@ public class CustomBoneNameService : ServiceBase<CustomBoneNameService>
 			customBoneNames = new Dictionary<string, string>();
 			Save();
 		}
+
+		await base.Initialize();
 	}
 
+	/// <inheritdoc/>
 	public override Task Shutdown()
 	{
 		Save();

@@ -3,11 +3,12 @@
 
 namespace Anamnesis.Services;
 
+using Anamnesis.Core;
+using Anamnesis.Files;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Anamnesis.Files;
 using XivToolsWpf.DependencyInjection;
 
 public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProvider
@@ -21,7 +22,7 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 
 	public event LocalizationEvent? LocaleChanged;
 
-	public static bool Loaded => Exists && currentLocale != null;
+	public static bool Loaded => Instance.IsInitialized && currentLocale != null;
 
 	bool ILocaleProvider.Loaded => Loaded;
 
@@ -140,8 +141,6 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 	{
 		DependencyFactory.RegisterDependency<ILocaleProvider>(this);
 
-		await base.Initialize();
-
 		string[] languageFilePaths = EmbeddedFileUtility.GetAllFilesInDirectory("Languages");
 		foreach (string languageFilePath in languageFilePaths)
 		{
@@ -163,12 +162,8 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 		}
 
 		fallbackLocale = Locales[FallbackCulture];
+		await base.Initialize();
 		SetLocale(SettingsService.Current.Language);
-	}
-
-	public override async Task Start()
-	{
-		await base.Start();
 	}
 
 	bool ILocaleProvider.HasString(string key) => HasString(key);

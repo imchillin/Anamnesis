@@ -3,11 +3,14 @@
 
 namespace Anamnesis.Core.Memory;
 
+using Anamnesis.Core;
 using Anamnesis.Memory;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using XivToolsWpf;
+
+// TODO: Move this to the services directory.
 
 #pragma warning disable SA1027, SA1025
 public class AddressService : ServiceBase<AddressService>
@@ -109,10 +112,45 @@ public class AddressService : ServiceBase<AddressService>
 		}
 	}
 
-	public override async Task Initialize()
+	/// <inheritdoc/>
+	public override async Task Shutdown()
 	{
-		await base.Initialize();
+		ActorTable = IntPtr.Zero;
+		GPoseFilters = IntPtr.Zero;
+		SkeletonFreezeRotation = IntPtr.Zero;
+		SkeletonFreezeRotation2 = IntPtr.Zero;
+		SkeletonFreezeRotation3 = IntPtr.Zero;
+		SkeletonFreezeScale = IntPtr.Zero;
+		SkeletonFreezeScale2 = IntPtr.Zero;
+		SkeletonFreezePosition = IntPtr.Zero;
+		SkeletonFreezePosition2 = IntPtr.Zero;
+		SkeletonFreezePhysics = IntPtr.Zero;
+		SkeletonFreezePhysics2 = IntPtr.Zero;
+		SkeletonFreezePhysics3 = IntPtr.Zero;
+		WorldPositionFreeze = IntPtr.Zero;
+		WorldRotationFreeze = IntPtr.Zero;
+		GPoseCameraTargetPositionFreeze = IntPtr.Zero;
+		GposeCheck = IntPtr.Zero;
+		GposeCheck2 = IntPtr.Zero;
+		Territory = IntPtr.Zero;
+		GPose = IntPtr.Zero;
+		TimeAsm = IntPtr.Zero;
+		Framework = IntPtr.Zero;
+		PlayerTargetSystem = IntPtr.Zero;
+		AnimationSpeedPatch = IntPtr.Zero;
+		KineDriverPosition = IntPtr.Zero;
+		KineDriverRotation = IntPtr.Zero;
+		KineDriverScale = IntPtr.Zero;
+		cameraManager = IntPtr.Zero;
+		weather = IntPtr.Zero;
+		await base.Shutdown();
+	}
+
+	/// <inheritdoc/>
+	protected override async Task OnStart()
+	{
 		await this.Scan();
+		await base.OnStart();
 	}
 
 	private async Task Scan()

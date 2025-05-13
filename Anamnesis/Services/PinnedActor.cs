@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
+// TODO: Move this class to a better location. This is not a service.
 [AddINotifyPropertyChangedInterface]
 public class PinnedActor : INotifyPropertyChanged, IDisposable
 {

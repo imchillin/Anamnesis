@@ -428,7 +428,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	{
 		if (e.PropertyName == nameof(SkeletonEntity.SelectedBones))
 		{
-			Application.Current.Dispatcher.Invoke(() =>
+			Application.Current?.Dispatcher.Invoke(() =>
 			{
 				this.SetInitialValues();
 				this.RaisePropertyChanged(string.Empty);

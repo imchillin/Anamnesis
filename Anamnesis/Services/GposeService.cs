@@ -3,10 +3,13 @@
 
 namespace Anamnesis.Services;
 
+using Anamnesis.Core;
 using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using PropertyChanged;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 public delegate void GposeEvent(bool newState);
@@ -14,8 +17,14 @@ public delegate void GposeEvent(bool newState);
 [AddINotifyPropertyChangedInterface]
 public class GposeService : ServiceBase<GposeService>
 {
+	private const int TaskDelay = 32; // ms (~30 fps)
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GameService.Instance];
+
 	public static event GposeEvent? GposeStateChanged;
 
+	// TODO: Remove this property. The base class already has IsInitialized.
 	public bool Initialized { get; private set; } = false;
 	public bool IsGpose { get; private set; }
 
@@ -34,33 +43,41 @@ public class GposeService : ServiceBase<GposeService>
 		return check1 == 1 && check2 == 4;
 	}
 
-	public override Task Start()
+	protected override async Task OnStart()
 	{
-		Task.Run(this.CheckThread);
-		return base.Start();
+		this.CancellationTokenSource = new CancellationTokenSource();
+		this.BackgroundTask = Task.Run(() => this.CheckThread(this.CancellationToken));
+		await base.OnStart();
 	}
 
-	private async Task CheckThread()
+	private async Task CheckThread(CancellationToken cancellationToken)
 	{
-		while (this.IsAlive)
+		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
 		{
-			bool newGpose = GetIsGPose();
-
-			if (!this.Initialized)
+			try
 			{
-				this.Initialized = true;
-				this.IsGpose = newGpose;
-				continue;
-			}
+				bool newGpose = GetIsGPose();
 
-			if (newGpose != this.IsGpose)
+				if (!this.Initialized)
+				{
+					this.Initialized = true;
+					this.IsGpose = newGpose;
+					continue;
+				}
+
+				if (newGpose != this.IsGpose)
+				{
+					this.IsGpose = newGpose;
+					GposeStateChanged?.Invoke(newGpose);
+				}
+
+				await Task.Delay(TaskDelay, cancellationToken);
+			}
+			catch (TaskCanceledException)
 			{
-				this.IsGpose = newGpose;
-				GposeStateChanged?.Invoke(newGpose);
+				// Task was canceled, exit the loop.
+				break;
 			}
-
-			// ~30 fps
-			await Task.Delay(32);
 		}
 	}
 }

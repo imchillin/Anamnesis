@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
+// TODO: Move this file to a different location (possibly Anamnesis.Core?). This is not a service.
 [Serializable]
 [AddINotifyPropertyChangedInterface]
 public class Settings : INotifyPropertyChanged
@@ -91,10 +92,8 @@ public class Settings : INotifyPropertyChanged
 
 			this.enableAutoSave = value;
 
-			if (AutoSaveService.Exists)
-			{
-				AutoSaveService.Instance?.RestartUpdateTask();
-			}
+			if (AutoSaveService.Instance != null && AutoSaveService.Instance.IsAlive)
+				AutoSaveService.Instance.RestartUpdateTask();
 		}
 	}
 
@@ -116,10 +115,8 @@ public class Settings : INotifyPropertyChanged
 
 			this.autoSaveIntervalMinutes = value;
 
-			if (AutoSaveService.Exists)
-			{
-				AutoSaveService.Instance?.RestartUpdateTask();
-			}
+			if (AutoSaveService.Instance != null && AutoSaveService.Instance.IsAlive)
+				AutoSaveService.Instance.RestartUpdateTask();
 		}
 	}
 	public bool AutoSaveOnlyInGpose { get; set; } = true;

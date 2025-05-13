@@ -3,12 +3,14 @@
 
 namespace Anamnesis.Services;
 
+using Anamnesis.Core;
 using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 [AddINotifyPropertyChangedInterface]
@@ -18,10 +20,18 @@ public class AnimationService : ServiceBase<AnimationService>
 	private const ushort DrawWeaponAnimationId = 34;
 	private const ushort IdleAnimationId = 3;
 
-	private readonly HashSet<ActorMemory> overriddenActors = new();
+	private readonly HashSet<ActorMemory> overriddenActors = [];
 
 	private NopHook? animationSpeedHook;
 	private bool speedControlEnabled = false;
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies =>
+	[
+		TargetService.Instance,
+		GposeService.Instance,
+		GameDataService.Instance
+	];
 
 	public bool SpeedControlEnabled
 	{
@@ -33,27 +43,12 @@ public class AnimationService : ServiceBase<AnimationService>
 		}
 	}
 
-	public override Task Start()
-	{
-		GposeService.GposeStateChanged += this.OnGposeStateChanged;
-
-		this.animationSpeedHook = new NopHook(AddressService.AnimationSpeedPatch, 0x9);
-
-		this.OnGposeStateChanged(GposeService.Instance.IsGpose);
-
-		_ = Task.Run(this.CheckThread);
-
-		return base.Start();
-	}
-
+	/// <inheritdoc/>
 	public override async Task Shutdown()
 	{
 		GposeService.GposeStateChanged -= this.OnGposeStateChanged;
-
 		this.SpeedControlEnabled = false;
-
 		this.ResetOverriddenActors();
-
 		await base.Shutdown();
 	}
 
@@ -132,13 +127,34 @@ public class AnimationService : ServiceBase<AnimationService>
 		}
 	}
 
-	private async Task CheckThread()
+	/// <inheritdoc/>
+	protected override Task OnStart()
 	{
-		while (this.IsAlive)
-		{
-			await Task.Delay(TickDelay);
+		GposeService.GposeStateChanged += this.OnGposeStateChanged;
 
-			this.CleanupInvalidActors();
+		this.animationSpeedHook = new NopHook(AddressService.AnimationSpeedPatch, 0x9);
+
+		this.OnGposeStateChanged(GposeService.Instance.IsGpose);
+
+		this.CancellationTokenSource = new CancellationTokenSource();
+		this.BackgroundTask = Task.Run(() => this.CheckThread(this.CancellationToken));
+		return base.OnStart();
+	}
+
+	private async Task CheckThread(CancellationToken cancellationToken)
+	{
+		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
+		{
+			try
+			{
+				this.CleanupInvalidActors();
+				await Task.Delay(TickDelay, cancellationToken);
+			}
+			catch (TaskCanceledException)
+			{
+				// Task was canceled, exit the loop
+				break;
+			}
 		}
 	}
 

@@ -3,7 +3,7 @@
 
 namespace Anamnesis.Services;
 
-using Anamnesis;
+using Anamnesis.Core;
 using Anamnesis.Files;
 using Anamnesis.GUI.Dialogs;
 using Anamnesis.Serialization;
@@ -52,8 +52,6 @@ public class SettingsService : ServiceBase<SettingsService>
 
 	public override async Task Initialize()
 	{
-		await base.Initialize();
-
 		if (!File.Exists(SettingsPath))
 		{
 			this.FirstTimeUser = true;
@@ -88,6 +86,8 @@ public class SettingsService : ServiceBase<SettingsService>
 				Save();
 			}
 		}
+
+		await base.Initialize();
 
 		this.Settings.PropertyChanged += this.OnSettingsChanged;
 		this.OnSettingsChanged(null, new PropertyChangedEventArgs(null));

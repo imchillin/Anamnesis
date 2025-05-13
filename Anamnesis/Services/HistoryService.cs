@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Services;
 
+using Anamnesis.Core;
 using Anamnesis.Keyboard;
 using Anamnesis.Memory;
 using System.Threading;
@@ -29,19 +30,19 @@ public class HistoryService : ServiceBase<HistoryService>
 
 	public static void SetContext(HistoryContext context)
 	{
-		ActorMemory? actor = TargetService.Instance.SelectedActor;
+		ActorMemory? actor = TargetService.Instance?.SelectedActor;
 		if (actor is null)
 			return;
 
 		actor.History.CurrentContext = context;
 	}
 
-	public override Task Initialize()
+	public override async Task Initialize()
 	{
 		HotkeyService.RegisterHotkeyHandler("System.Undo", this.StepBack);
 		HotkeyService.RegisterHotkeyHandler("System.Redo", this.StepForward);
 
-		return base.Initialize();
+		await base.Initialize();
 	}
 
 	public void StepBack()
@@ -56,7 +57,7 @@ public class HistoryService : ServiceBase<HistoryService>
 
 	public void Clear()
 	{
-		ActorMemory? actor = TargetService.Instance.SelectedActor;
+		ActorMemory? actor = TargetService.Instance?.SelectedActor;
 
 		if (actor is null)
 			return;
@@ -69,7 +70,7 @@ public class HistoryService : ServiceBase<HistoryService>
 
 	private void Step(bool forward)
 	{
-		ActorMemory? actor = TargetService.Instance.SelectedActor;
+		ActorMemory? actor = TargetService.Instance?.SelectedActor;
 
 		if (actor is null)
 			return;

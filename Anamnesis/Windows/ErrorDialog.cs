@@ -3,16 +3,14 @@
 
 namespace Anamnesis.Windows;
 
-using System;
-using System.Runtime.ExceptionServices;
-using System.Windows;
 using Anamnesis.GUI.Windows;
 using Anamnesis.Services;
 using Serilog;
+using System;
+using System.Runtime.ExceptionServices;
+using System.Windows;
 using XivToolsWpf;
-
 using static XivToolsWpf.Dialogs.ErrorDialog;
-
 using XivToolsErrorDialog = XivToolsWpf.Dialogs.ErrorDialog;
 
 public static class ErrorDialog
@@ -35,7 +33,7 @@ public static class ErrorDialog
 			dlg.TitleText.Text = "Anamnesis v" + VersionInfo.Date.ToString("yyyy-MM-dd HH:mm");
 			XivToolsErrorDialog errorDialog = new XivToolsErrorDialog(dlg, ex, isCriticial);
 
-			if (SettingsService.Exists && SettingsService.Instance.Settings != null)
+			if (SettingsService.Instance.IsInitialized && SettingsService.Instance.Settings != null)
 				dlg.Topmost = SettingsService.Current.AlwaysOnTop;
 
 			dlg.ContentArea.Content = errorDialog;
