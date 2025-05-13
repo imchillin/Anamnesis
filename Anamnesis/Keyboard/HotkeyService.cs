@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using XivToolsWpf;
 
 // TODO: Move this file to Services folder.
 public class HotkeyService : ServiceBase<HotkeyService>
@@ -97,17 +96,8 @@ public class HotkeyService : ServiceBase<HotkeyService>
 	/// <inheritdoc/>
 	public override async Task Initialize()
 	{
-		await Task.Run(async () =>
-		{
-			// Slight delay before starting the keyboard binding service.
-			await Task.Delay(1000);
-			await Dispatch.MainThread();
-
-			Hook.OnKeyboardInput += this.OnKeyboardInput;
-
-			foreach ((string function, KeyCombination key) in SettingsService.Current.KeyboardBindings.GetBinds())
-				RegisterHotkey(key.Key, key.Modifiers, function);
-		});
+		foreach ((string function, KeyCombination key) in SettingsService.Current.KeyboardBindings.GetBinds())
+			RegisterHotkey(key.Key, key.Modifiers, function);
 
 		await base.Initialize();
 	}
@@ -115,6 +105,7 @@ public class HotkeyService : ServiceBase<HotkeyService>
 	/// <inheritdoc/>
 	public override Task Shutdown()
 	{
+		Hook.OnKeyboardInput -= this.OnKeyboardInput;
 		Hook.Stop();
 		return base.Shutdown();
 	}
@@ -122,6 +113,7 @@ public class HotkeyService : ServiceBase<HotkeyService>
 	/// <inheritdoc/>
 	protected override Task OnStart()
 	{
+		Hook.OnKeyboardInput += this.OnKeyboardInput;
 		Hook.Start();
 		return base.OnStart();
 	}
