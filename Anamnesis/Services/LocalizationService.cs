@@ -147,6 +147,30 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 	}
 
 	/// <summary>
+	/// Gets all entries in the current locale that start with the specified key prefix.
+	/// </summary>
+	/// <param name="prefix">The prefix to search for.</param>
+	/// <returns>A read-only dictionary of entries with the specified key prefix.</returns>
+	/// <exception cref="ArgumentException">Thrown if the provided prefix is null or empty.</exception>
+	public static IReadOnlyDictionary<string, string> GetEntriesWithPrefix(string prefix)
+	{
+		if (string.IsNullOrEmpty(prefix))
+			throw new ArgumentException("Prefix cannot be null or empty. Use GetString() instead.", nameof(prefix));
+
+		var results = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		if (currentLocale == null)
+			return results;
+
+		foreach (var kvp in currentLocale.Translations)
+		{
+			if (kvp.Key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+				results[kvp.Key] = kvp.Value;
+		}
+
+		return results;
+	}
+
+	/// <summary>
 	/// Sets the application's active locale by its two-letter culture code.
 	/// </summary>
 	/// <param name="locale">
@@ -248,6 +272,9 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 		public readonly string Name = name;
 
 		private readonly Dictionary<string, string> translations = [];
+
+		/// <summary>Gets all translations stored in the locale.</summary>
+		public IReadOnlyDictionary<string, string> Translations => this.translations;
 
 		/// <summary>Adds a key-value translation to the locale.</summary>
 		/// <param name="key">The key of the translation.</param>
