@@ -487,4 +487,21 @@ public partial class ItemView : UserControl
 	{
 		this.Actor = this.DataContext as ActorMemory;
 	}
+
+	private void OnLoaded(object sender, RoutedEventArgs e)
+	{
+		if (LocalizationService.Instance != null)
+			LocalizationService.Instance.LocaleChanged += this.OnLocaleChanged;
+	}
+
+	private void OnUnloaded(object sender, RoutedEventArgs e)
+	{
+		if (LocalizationService.Instance != null)
+			LocalizationService.Instance.LocaleChanged -= this.OnLocaleChanged;
+	}
+
+	private void OnLocaleChanged()
+	{
+		this.OnPropertyChanged(nameof(this.SlotName));
+	}
 }
