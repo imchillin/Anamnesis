@@ -3,6 +3,7 @@
 
 namespace Anamnesis.TexTools;
 
+using Anamnesis.Core;
 using Anamnesis.GameData;
 using Anamnesis.Memory;
 using Anamnesis.Serialization;
@@ -10,6 +11,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
+// TODO: Move this file to Services folder.
 public class TexToolsService : ServiceBase<TexToolsService>
 {
 	private static ModList? modList;
@@ -40,8 +42,6 @@ public class TexToolsService : ServiceBase<TexToolsService>
 
 	public override async Task Initialize()
 	{
-		await base.Initialize();
-
 		try
 		{
 			string filePath = MemoryService.GamePath + "\\aFileThatDefinitelyDoesNotExistEverAgain.json";   // If this ever gets fixed again, change string to: \\game\\XivMods.json
@@ -54,5 +54,7 @@ public class TexToolsService : ServiceBase<TexToolsService>
 		{
 			Log.Error(ex, "Failed to read modlist");
 		}
+
+		await base.Initialize();
 	}
 }

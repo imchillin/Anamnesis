@@ -3,17 +3,19 @@
 
 namespace Anamnesis.Keyboard;
 
+using Anamnesis.Core;
+using Anamnesis.GUI;
+using Anamnesis.Memory;
+using Anamnesis.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using Anamnesis.GUI;
-using Anamnesis.Memory;
-using Anamnesis.Services;
 using XivToolsWpf;
 
+// TODO: Move this file to Services folder.
 public class HotkeyService : ServiceBase<HotkeyService>
 {
 	private static readonly Hook Hook = new();
@@ -74,7 +76,7 @@ public class HotkeyService : ServiceBase<HotkeyService>
 		var dicKey = (key, modifiers);
 
 		if (KeyToFunction.ContainsKey(dicKey))
-			throw new Exception($"Duplicte key binding: {key} - {modifiers} - {function}");
+			throw new Exception($"Duplicate key binding: {key} - {modifiers} - {function}");
 
 		KeyToFunction.Add(dicKey, function);
 	}
@@ -92,9 +94,10 @@ public class HotkeyService : ServiceBase<HotkeyService>
 		return null;
 	}
 
-	public override Task Start()
+	/// <inheritdoc/>
+	public override async Task Initialize()
 	{
-		Task.Run(async () =>
+		await Task.Run(async () =>
 		{
 			// Slight delay before starting the keyboard binding service.
 			await Task.Delay(1000);
@@ -103,20 +106,24 @@ public class HotkeyService : ServiceBase<HotkeyService>
 			Hook.OnKeyboardInput += this.OnKeyboardInput;
 
 			foreach ((string function, KeyCombination key) in SettingsService.Current.KeyboardBindings.GetBinds())
-			{
 				RegisterHotkey(key.Key, key.Modifiers, function);
-			}
-
-			Hook.Start();
 		});
 
-		return base.Start();
+		await base.Initialize();
 	}
 
+	/// <inheritdoc/>
 	public override Task Shutdown()
 	{
 		Hook.Stop();
 		return base.Shutdown();
+	}
+
+	/// <inheritdoc/>
+	protected override Task OnStart()
+	{
+		Hook.Start();
+		return base.OnStart();
 	}
 
 	private bool OnKeyboardInput(Key key, KeyboardKeyStates state, ModifierKeys modifiers)

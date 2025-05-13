@@ -3,12 +3,14 @@
 
 namespace Anamnesis.Serialization;
 
+using Anamnesis.Core;
 using Anamnesis.Serialization.Converters;
 using System;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+// TODO: Move this file to Services folder.
 public class SerializerService : ServiceBase<SerializerService>
 {
 	public static JsonSerializerOptions Options = new JsonSerializerOptions();

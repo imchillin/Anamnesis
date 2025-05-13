@@ -3,37 +3,39 @@
 
 namespace Anamnesis.Services;
 
+using Anamnesis.Core;
+using Anamnesis.Files;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Anamnesis.Files;
 
 public class TipService : ServiceBase<TipService>
 {
+	private const int TipCycleDelay = 10000; // ms (10 seconds)
 	private List<TipEntry>? tips;
 
 	public bool IsHydaelyn { get; set; }
 	public bool IsZodiark { get; set; }
 	public bool IsAmaurotine { get; set; }
 	public bool IsAnamTan { get; set; }
-
 	public TipEntry? Tip { get; set; }
 
-	public override Task Start()
+	public override async Task Initialize()
 	{
 		try
 		{
+			// TODO: Move tips to localization files
 			this.tips = EmbeddedFileUtility.Load<List<TipEntry>>("Data/Tips.json");
 		}
 		catch (Exception ex)
 		{
 			Log.Warning(ex, "Failed to load tips.");
+			// TODO: If failed to load this, there's no need to have a continously running task
 		}
 
-		Task.Run(this.TipCycle);
-
-		return base.Start();
+		await base.Initialize();
+		_ = Task.Run(this.TipCycle);
 	}
 
 	public void NextTip()
@@ -73,12 +75,10 @@ public class TipService : ServiceBase<TipService>
 
 	private async Task TipCycle()
 	{
-		this.NextTip();
-
-		while (this.IsAlive)
+		while (this.IsInitialized)
 		{
-			await Task.Delay(10000);
 			this.NextTip();
+			await Task.Delay(TipCycleDelay);
 		}
 	}
 

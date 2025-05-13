@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Services;
 
+using Anamnesis.Core;
 using Anamnesis.Files;
 using Anamnesis.Windows;
 using Serilog;
@@ -15,7 +16,7 @@ using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-public class LogService : IService
+public class LogService : ServiceBase<LogService>
 {
 	private const string LogfilePath = "/Logs/";
 
@@ -28,21 +29,7 @@ public class LogService : IService
 #endif
 	};
 
-	private static LogService? instance;
 	private static string? currentLogPath;
-
-	public static LogService Instance
-	{
-		get
-		{
-			if (instance == null)
-				throw new Exception("No logging service found");
-
-			return instance;
-		}
-	}
-
-	public bool IsAlive => true;
 
 	public bool VerboseLogging
 	{
@@ -103,22 +90,10 @@ public class LogService : IService
 		Log.Information("Anamnesis Version: " + VersionInfo.Date.ToString(@"yyyy-MM-dd HH:mm"), "Info");
 	}
 
-	public Task Initialize()
+	public override async Task Initialize()
 	{
-		instance = this;
 		CreateLog();
-
-		return Task.CompletedTask;
-	}
-
-	public Task Shutdown()
-	{
-		return Task.CompletedTask;
-	}
-
-	public Task Start()
-	{
-		return Task.CompletedTask;
+		await base.Initialize();
 	}
 
 	private class ErrorDialogLogDestination : ILogEventSink

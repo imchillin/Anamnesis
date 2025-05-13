@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Updater;
 
+using Anamnesis.Core;
 using Anamnesis.GUI.Dialogs;
 using Anamnesis.Services;
 using System;
@@ -17,6 +18,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using XivToolsWpf;
 
+// TODO: Move this file to Services folder.
 public class UpdateService : ServiceBase<UpdateService>
 {
 	private const string Repository = "imchillin/Anamnesis";

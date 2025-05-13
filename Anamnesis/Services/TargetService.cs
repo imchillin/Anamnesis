@@ -4,6 +4,7 @@
 namespace Anamnesis;
 
 using Anamnesis.Actor;
+using Anamnesis.Core;
 using Anamnesis.Core.Memory;
 using Anamnesis.Keyboard;
 using Anamnesis.Memory;
@@ -14,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using XivToolsWpf;
 
@@ -23,6 +25,17 @@ public delegate void PinnedEvent(PinnedActor actor);
 [AddINotifyPropertyChangedInterface]
 public class TargetService : ServiceBase<TargetService>
 {
+	private const int TaskDelay = 32; // ms (~30 fps)
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies =>
+	[
+		AddressService.Instance,
+		ActorService.Instance,
+		GameService.Instance,
+		GposeService.Instance
+	];
+
 	public static readonly int OverworldPlayerTargetOffset = 0x80;
 	public static readonly int GPosePlayerTargetOffset = 0x98;
 
@@ -231,10 +244,10 @@ public class TargetService : ServiceBase<TargetService>
 		}
 	}
 
-	public override async Task Start()
+	/// <inheritdoc/>
+	public override async Task Initialize()
 	{
-		await base.Start();
-
+		// Register hotkeys only once
 		HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned1", () => this.SelectActor(0));
 		HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned2", () => this.SelectActor(1));
 		HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned3", () => this.SelectActor(2));
@@ -243,55 +256,13 @@ public class TargetService : ServiceBase<TargetService>
 		HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned6", () => this.SelectActor(5));
 		HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned7", () => this.SelectActor(6));
 		HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned8", () => this.SelectActor(7));
-		HotkeyService.RegisterHotkeyHandler("TargetService.NextPinned", () => this.NextPinned());
-		HotkeyService.RegisterHotkeyHandler("TargetService.PrevPinned", () => this.PrevPinned());
+		HotkeyService.RegisterHotkeyHandler("TargetService.NextPinned", this.NextPinned);
+		HotkeyService.RegisterHotkeyHandler("TargetService.PrevPinned", this.PrevPinned);
 
-		GposeService.GposeStateChanged += this.GposeService_GposeStateChanged;
-		PoseService.EnabledChanged += this.PoseService_EnabledChanged;
-		PoseService.FreezeWorldPositionsEnabledChanged += this.PoseService_EnabledChanged;
-
-#if DEBUG
-		if (MemoryService.Process == null)
-		{
-			await TargetService.PinActor(new DummyActor(1));
-			await TargetService.PinActor(new DummyActor(2));
-			return;
-		}
-#endif
-
-		if (GameService.GetIsSignedIn())
-		{
-			try
-			{
-				bool isGpose = GposeService.GetIsGPose();
-
-				List<ActorBasicMemory> allActors = ActorService.Instance.GetAllActors();
-
-				// We want the first non-hidden actor with a name in the same mode as the game
-				foreach (ActorBasicMemory actor in allActors)
-				{
-					if (actor.IsHidden)
-						continue;
-
-					if (string.IsNullOrEmpty(actor.Name))
-						continue;
-
-					if (actor.IsGPoseActor != isGpose)
-						continue;
-
-					await PinActor(actor);
-					break;
-				}
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, "Failed to pin default actor");
-			}
-		}
-
-		_ = Task.Run(this.TickPinnedActors);
+		await base.Initialize();
 	}
 
+	/// <inheritdoc/>
 	public override Task Shutdown()
 	{
 		GposeService.GposeStateChanged -= this.GposeService_GposeStateChanged;
@@ -409,6 +380,56 @@ public class TargetService : ServiceBase<TargetService>
 		});
 	}
 
+	protected override async Task OnStart()
+	{
+		GposeService.GposeStateChanged += this.GposeService_GposeStateChanged;
+		PoseService.EnabledChanged += this.PoseService_EnabledChanged;
+		PoseService.FreezeWorldPositionsEnabledChanged += this.PoseService_EnabledChanged;
+
+#if DEBUG
+		if (MemoryService.Process == null)
+		{
+			await TargetService.PinActor(new DummyActor(1));
+			await TargetService.PinActor(new DummyActor(2));
+			return;
+		}
+#endif
+
+		if (GameService.GetIsSignedIn())
+		{
+			try
+			{
+				bool isGpose = GposeService.GetIsGPose();
+
+				List<ActorBasicMemory> allActors = ActorService.Instance.GetAllActors();
+
+				// We want the first non-hidden actor with a name in the same mode as the game
+				foreach (ActorBasicMemory actor in allActors)
+				{
+					if (actor.IsHidden)
+						continue;
+
+					if (string.IsNullOrEmpty(actor.Name))
+						continue;
+
+					if (actor.IsGPoseActor != isGpose)
+						continue;
+
+					await PinActor(actor);
+					break;
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to pin default actor");
+			}
+		}
+
+		this.CancellationTokenSource = new CancellationTokenSource();
+		this.BackgroundTask = Task.Run(() => this.TickPinnedActors(this.CancellationToken));
+		await base.OnStart();
+	}
+
 	private static void SetPlayerTarget(IntPtr? ptr)
 	{
 		if (ptr != null && ptr != IntPtr.Zero)
@@ -427,22 +448,30 @@ public class TargetService : ServiceBase<TargetService>
 		}
 	}
 
-	private async Task TickPinnedActors()
+	private async Task TickPinnedActors(CancellationToken cancellationToken)
 	{
-		while (this.IsAlive)
+		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
 		{
-			this.UpdatePlayerTarget();
-
-			for (int i = this.PinnedActors.Count - 1; i >= 0; i--)
+			try
 			{
-				// Skip the player target as it is already updated in the preceding function call
-				if (this.PinnedActors[i].Memory?.Address == this.PlayerTarget.Address)
-					continue;
+				this.UpdatePlayerTarget();
 
-				this.PinnedActors[i].Tick();
+				for (int i = this.PinnedActors.Count - 1; i >= 0; i--)
+				{
+					// Skip the player target as it is already updated in the preceding function call
+					if (this.PinnedActors[i].Memory?.Address == this.PlayerTarget.Address)
+						continue;
+
+					this.PinnedActors[i].Tick();
+				}
+
+				await Task.Delay(TaskDelay, cancellationToken);
 			}
-
-			await Task.Delay(33);
+			catch (TaskCanceledException)
+			{
+				// Task was canceled, exit the loop.
+				break;
+			}
 		}
 	}
 

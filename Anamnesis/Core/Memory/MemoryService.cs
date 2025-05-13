@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Memory;
 
+using Anamnesis.Core;
 using Anamnesis.Core.Memory;
 using Anamnesis.GUI.Dialogs;
 using Anamnesis.GUI.Windows;
@@ -20,6 +21,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using XivToolsWpf;
 
+// TODO: Move this to the services directory.
+// TODO: Consider splitting the generic memory functions from the memory service. (MemoryOps, MemoryUtils, etc.)
 [AddINotifyPropertyChangedInterface]
 public partial class MemoryService : ServiceBase<MemoryService>
 {
@@ -67,7 +70,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	{
 		get
 		{
-			if (!Instance.IsAlive)
+			if (!Instance.IsInitialized)
 				return false;
 
 			if (Process == null || Process.HasExited)
@@ -568,12 +571,6 @@ public partial class MemoryService : ServiceBase<MemoryService>
 		_ = Task.Run(this.ProcessWatcherTask);
 	}
 
-	/// <inheritdoc/>
-	public override async Task Start()
-	{
-		await base.Start();
-	}
-
 	/// <summary>
 	/// Opens the specified game process with all necessary security and access rights.
 	/// </summary>
@@ -715,7 +712,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 
 		proc = ProcessSelector.FindProcess();
 
-		if (SettingsService.Exists)
+		if (SettingsService.Instance.IsInitialized)
 			App.Current.MainWindow.Topmost = SettingsService.Current.AlwaysOnTop;
 
 		await Dispatch.NonUiThread();
@@ -739,7 +736,9 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// <returns>A task representing the asynchronous operation.</returns>
 	private async Task ProcessWatcherTask()
 	{
-		while (this.IsAlive && Process != null)
+		bool servicesWereShutdown = false;
+
+		while (this.IsInitialized && Process != null)
 		{
 			await Task.Delay(ProcessRefreshTimerInterval);
 
@@ -747,10 +746,24 @@ public partial class MemoryService : ServiceBase<MemoryService>
 			{
 				try
 				{
+					// Shutdown all services only once per process death
+					if (!servicesWereShutdown)
+					{
+						TargetService.Instance.ClearSelection();
+						await App.Services.ShutdownServices();
+						servicesWereShutdown = true;
+					}
+
 					Log.Information("FFXIV Process has terminated");
 					await Task.Delay(ProcessWatchdogInterval);
-					TargetService.Instance.ClearSelection();
 					await this.GetProcess();
+
+					// If process is restored, start all services again
+					if (IsProcessAlive && servicesWereShutdown)
+					{
+						await App.Services.StartServices();
+						servicesWereShutdown = false;
+					}
 				}
 				catch (Win32Exception)
 				{

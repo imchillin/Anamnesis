@@ -3,13 +3,16 @@
 
 namespace Anamnesis;
 
+using Anamnesis.Core;
 using Anamnesis.Core.Memory;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 
 public delegate void TerritoryEvent();
@@ -17,7 +20,18 @@ public delegate void TerritoryEvent();
 [AddINotifyPropertyChangedInterface]
 public class TerritoryService : ServiceBase<TerritoryService>
 {
+	private const int TaskSuccessDelay = 16; // ms
+	private const int TaskFailureDelay = 1000; // ms
 	private uint currentWeatherId;
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies =>
+	[
+		AddressService.Instance,
+		GameService.Instance,
+		GameDataService.Instance,
+		GposeService.Instance
+	];
 
 	public static event TerritoryEvent? TerritoryChanged;
 
@@ -43,81 +57,95 @@ public class TerritoryService : ServiceBase<TerritoryService>
 
 	public Weather? CurrentWeather { get; set; }
 
-	public override async Task Start()
+	/// <inheritdoc/>
+	protected override async Task OnStart()
 	{
-		await base.Start();
-
-		_ = Task.Run(this.Update);
+		this.CancellationTokenSource = new CancellationTokenSource();
+		this.BackgroundTask = Task.Run(() => this.Update(this.CancellationToken));
+		await base.OnStart();
 
 		this.PropertyChanged += this.OnThisPropertyChanged;
 	}
 
-	private async Task Update()
+	private async Task Update(CancellationToken cancellationToken)
 	{
-		while (this.IsAlive)
+		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
 		{
 			try
 			{
-				await Task.Delay(10);
-
-				if (!MemoryService.IsProcessAlive)
-					continue;
-
-				// Update territory
-				int newTerritoryId = MemoryService.Read<int>(AddressService.Territory);
-
-				if (newTerritoryId == -1)
+				try
 				{
-					this.currentWeatherId = 0;
-					this.CurrentTerritoryId = 0;
-					this.CurrentTerritory = null;
-					this.CurrentTerritoryName = "Menu";
-				}
-				else
-				{
-					if (newTerritoryId != this.CurrentTerritoryId)
+					await Task.Delay(TaskSuccessDelay, cancellationToken);
+
+					if (!MemoryService.IsProcessAlive)
+						continue;
+
+					// Update territory
+					int newTerritoryId = MemoryService.Read<int>(AddressService.Territory);
+
+					if (newTerritoryId == -1)
 					{
-						this.CurrentTerritoryId = (uint)newTerritoryId;
-
-						if (GameDataService.Territories == null)
-						{
-							this.CurrentTerritoryName = $"Unknown ({this.CurrentTerritoryId})";
-						}
-						else
-						{
-							this.CurrentTerritory = GameDataService.Territories.GetRow(this.CurrentTerritoryId);
-							this.CurrentTerritoryName = this.CurrentTerritory?.Place.Value.Name.ToString() + " (" + this.CurrentTerritory?.Region.Value.Name.ToString() + ")";
-						}
-
-						TerritoryChanged?.Invoke();
-					}
-
-					// Update weather
-					ushort weatherId;
-					if (GposeService.Instance.IsGpose)
-					{
-						weatherId = MemoryService.Read<ushort>(AddressService.GPoseWeather);
+						this.currentWeatherId = 0;
+						this.CurrentTerritoryId = 0;
+						this.CurrentTerritory = null;
+						this.CurrentTerritoryName = "Menu";
 					}
 					else
 					{
-						weatherId = MemoryService.Read<byte>(AddressService.Weather);
-					}
+						if (newTerritoryId != this.CurrentTerritoryId)
+						{
+							this.CurrentTerritoryId = (uint)newTerritoryId;
 
-					if (weatherId != this.CurrentWeatherId)
-					{
-						this.CurrentWeatherId = weatherId;
+							if (GameDataService.Territories == null)
+							{
+								this.CurrentTerritoryName = $"Unknown ({this.CurrentTerritoryId})";
+							}
+							else
+							{
+								this.CurrentTerritory = GameDataService.Territories.GetRow(this.CurrentTerritoryId);
+								this.CurrentTerritoryName = this.CurrentTerritory?.Place.Value.Name.ToString() + " (" + this.CurrentTerritory?.Region.Value.Name.ToString() + ")";
+							}
+
+							TerritoryChanged?.Invoke();
+						}
+
+						// Update weather
+						ushort weatherId;
+						if (GposeService.Instance.IsGpose)
+						{
+							weatherId = MemoryService.Read<ushort>(AddressService.GPoseWeather);
+						}
+						else
+						{
+							weatherId = MemoryService.Read<byte>(AddressService.Weather);
+						}
+
+						if (weatherId != this.CurrentWeatherId)
+						{
+							this.CurrentWeatherId = weatherId;
+						}
 					}
 				}
-			}
-			catch (Exception)
-			{
-				Log.Information("Failed to update territory");
-				this.currentWeatherId = 0;
-				this.CurrentTerritoryId = 0;
-				this.CurrentTerritory = null;
-				this.CurrentTerritoryName = "Unknown";
+				catch (TaskCanceledException)
+				{
+					// Task was canceled, exit the loop.
+					break;
+				}
+				catch (Exception)
+				{
+					Log.Information("Failed to update territory");
+					this.currentWeatherId = 0;
+					this.CurrentTerritoryId = 0;
+					this.CurrentTerritory = null;
+					this.CurrentTerritoryName = "Unknown";
 
-				await Task.Delay(1000);
+					await Task.Delay(TaskFailureDelay, cancellationToken);
+				}
+			}
+			catch (TaskCanceledException)
+			{
+				// Task was canceled, exit the loop.
+				break;
 			}
 		}
 	}

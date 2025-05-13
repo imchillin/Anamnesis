@@ -365,7 +365,7 @@ public partial class MainWindow : ChromedWindow
 
 	private async void Window_Closing(object sender, CancelEventArgs e)
 	{
-		if (PoseService.Exists && PoseService.Instance.IsEnabled && !this.IsClosing)
+		if (PoseService.Instance.IsInitialized && PoseService.Instance.IsEnabled && !this.IsClosing)
 		{
 			bool? result = await GenericDialog.ShowAsync(LocalizationService.GetString("Pose_WarningQuit"), LocalizationService.GetString("Common_Confirm"), MessageBoxButton.OKCancel);
 

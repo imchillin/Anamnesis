@@ -3,16 +3,19 @@
 
 namespace Anamnesis.Actor;
 
+using Anamnesis.Core;
 using Anamnesis.Core.Memory;
 using Anamnesis.Files;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 
+// TODO: Move this file to Services folder.
 [AddINotifyPropertyChangedInterface]
 public class PoseService : ServiceBase<PoseService>
 {
@@ -34,6 +37,9 @@ public class PoseService : ServiceBase<PoseService>
 	private NopHook? kineDriverScale;
 
 	private bool isEnabled;
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GposeService.Instance];
 
 	public delegate void PoseEvent(bool value);
 
@@ -177,35 +183,16 @@ public class PoseService : ServiceBase<PoseService>
 
 	public override async Task Initialize()
 	{
-		await base.Initialize();
-
-		this.freezePosition = new NopHook(AddressService.SkeletonFreezePosition, 5);
-		this.freezePosition2 = new NopHook(AddressService.SkeletonFreezePosition2, 5);
-		this.freezeRot1 = new NopHook(AddressService.SkeletonFreezeRotation, 6);
-		this.freezeRot2 = new NopHook(AddressService.SkeletonFreezeRotation2, 6);
-		this.freezeRot3 = new NopHook(AddressService.SkeletonFreezeRotation3, 4);
-		this.freezeScale1 = new NopHook(AddressService.SkeletonFreezeScale, 6);
-		this.freeseScale2 = new NopHook(AddressService.SkeletonFreezeScale2, 6);
-		this.freezePhysics1 = new NopHook(AddressService.SkeletonFreezePhysics, 4);
-		this.freezePhysics2 = new NopHook(AddressService.SkeletonFreezePhysics2, 3);
-		this.freezePhysics3 = new NopHook(AddressService.SkeletonFreezePhysics3, 4);
-		this.freezeWorldPosition = new NopHook(AddressService.WorldPositionFreeze, 16);
-		this.freezeWorldRotation = new NopHook(AddressService.WorldRotationFreeze, 4);
-		this.freezeGposeTargetPosition = new NopHook(AddressService.GPoseCameraTargetPositionFreeze, 5);
-		this.kineDriverPosition = new NopHook(AddressService.KineDriverPosition, 5);
-		this.kineDriverRotation = new NopHook(AddressService.KineDriverRotation, 6);
-		this.kineDriverScale = new NopHook(AddressService.KineDriverScale, 6);
-
-		GposeService.GposeStateChanged += this.OnGposeStateChanged;
-
 		_ = Task.Run(ExtractStandardPoses);
+		await base.Initialize();
 	}
 
 	public override async Task Shutdown()
 	{
-		await base.Shutdown();
+		GposeService.GposeStateChanged -= this.OnGposeStateChanged;
 		this.SetEnabled(false);
 		this.FreezeWorldPosition = false;
+		await base.Shutdown();
 	}
 
 	public void SetEnabled(bool enabled)
@@ -233,6 +220,30 @@ public class PoseService : ServiceBase<PoseService>
 		EnabledChanged?.Invoke(enabled);
 
 		this.RaisePropertyChanged(nameof(this.IsEnabled));
+	}
+
+	protected override async Task OnStart()
+	{
+		this.freezePosition = new NopHook(AddressService.SkeletonFreezePosition, 5);
+		this.freezePosition2 = new NopHook(AddressService.SkeletonFreezePosition2, 5);
+		this.freezeRot1 = new NopHook(AddressService.SkeletonFreezeRotation, 6);
+		this.freezeRot2 = new NopHook(AddressService.SkeletonFreezeRotation2, 6);
+		this.freezeRot3 = new NopHook(AddressService.SkeletonFreezeRotation3, 4);
+		this.freezeScale1 = new NopHook(AddressService.SkeletonFreezeScale, 6);
+		this.freeseScale2 = new NopHook(AddressService.SkeletonFreezeScale2, 6);
+		this.freezePhysics1 = new NopHook(AddressService.SkeletonFreezePhysics, 4);
+		this.freezePhysics2 = new NopHook(AddressService.SkeletonFreezePhysics2, 3);
+		this.freezePhysics3 = new NopHook(AddressService.SkeletonFreezePhysics3, 4);
+		this.freezeWorldPosition = new NopHook(AddressService.WorldPositionFreeze, 16);
+		this.freezeWorldRotation = new NopHook(AddressService.WorldRotationFreeze, 4);
+		this.freezeGposeTargetPosition = new NopHook(AddressService.GPoseCameraTargetPositionFreeze, 5);
+		this.kineDriverPosition = new NopHook(AddressService.KineDriverPosition, 5);
+		this.kineDriverRotation = new NopHook(AddressService.KineDriverRotation, 6);
+		this.kineDriverScale = new NopHook(AddressService.KineDriverScale, 6);
+
+		await base.OnStart();
+
+		GposeService.GposeStateChanged += this.OnGposeStateChanged;
 	}
 
 	private static async Task ExtractStandardPoses()
