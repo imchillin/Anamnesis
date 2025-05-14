@@ -11,14 +11,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 
 [AddINotifyPropertyChangedInterface]
 public class GameService : ServiceBase<GameService>
 {
 	private const int TaskWaitTime = 16; // ms
 
-	private bool isSignedIn = false;
+	private int isSignedIn = 0;
 
 	/// <inheritdoc/>
 	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GameDataService.Instance];
@@ -26,25 +25,15 @@ public class GameService : ServiceBase<GameService>
 	/// <summary>
 	/// Gets a value indicating whether the game process is in a ready state.
 	/// </summary>
-	public static bool Ready => Instance.IsInitialized && Instance.IsSignedIn;
+	public static bool Ready => (Instance?.IsInitialized ?? false) && Instance.IsSignedIn;
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the user is signed into a character.
 	/// </summary>
 	public bool IsSignedIn
 	{
-		get => this.isSignedIn;
-		private set
-		{
-			if (this.isSignedIn != value)
-			{
-				// Update the property on the UI thread as it likely bound to UI elements
-				if (Application.Current != null && Application.Current.Dispatcher.CheckAccess())
-					this.isSignedIn = value;
-				else
-					Application.Current?.Dispatcher.Invoke(() => this.isSignedIn = value);
-			}
-		}
+		get => Interlocked.CompareExchange(ref this.isSignedIn, 0, 0) == 1;
+		private set => Interlocked.Exchange(ref this.isSignedIn, value ? 1 : 0);
 	}
 
 	/// <summary>

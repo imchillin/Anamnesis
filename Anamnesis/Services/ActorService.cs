@@ -249,7 +249,7 @@ public class ActorService : ServiceBase<ActorService>
 				}
 				catch (Exception ex)
 				{
-					Log.Warning(ex, $"Failed to create Actor Basic View Model for address: {ptr}");
+					Log.Warning(ex, $"Failed to create basic actor memory object from address: {ptr}");
 				}
 			}
 		}
