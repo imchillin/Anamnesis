@@ -119,7 +119,7 @@ public readonly struct Stain(ExcelPage page, uint offset, uint row)
 	public bool IsFavorite
 	{
 		get => FavoritesService.IsFavorite<IDye>(this);
-		set => FavoritesService.SetFavorite<IDye>(this, nameof(FavoritesService.Favorites.Dyes), value);
+		set => FavoritesService.SetFavorite<IDye>(this, value);
 	}
 
 	/// <summary>

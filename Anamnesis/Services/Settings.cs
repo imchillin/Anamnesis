@@ -14,7 +14,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
-// TODO: Move this file to a different location (possibly Anamnesis.Core?). This is not a service.
 [Serializable]
 [AddINotifyPropertyChangedInterface]
 public class Settings : INotifyPropertyChanged
@@ -81,10 +80,7 @@ public class Settings : INotifyPropertyChanged
 	public double ViewportRotationSpeed { get; set; } = 1;
 	public bool EnableAutoSave
 	{
-		get
-		{
-			return this.enableAutoSave;
-		}
+		get => this.enableAutoSave;
 		set
 		{
 			if (value == this.enableAutoSave)
@@ -100,10 +96,7 @@ public class Settings : INotifyPropertyChanged
 	public int AutoSaveFileCount { get; set; } = 12;
 	public int AutoSaveIntervalMinutes
 	{
-		get
-		{
-			return Math.Max(this.autoSaveIntervalMinutes, MinAutoSaveIntervalMinutes);
-		}
+		get => Math.Max(this.autoSaveIntervalMinutes, MinAutoSaveIntervalMinutes);
 		set
 		{
 			if (value == this.autoSaveIntervalMinutes)

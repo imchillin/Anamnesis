@@ -16,28 +16,53 @@ using System.Windows.Input;
 using System.Windows.Media;
 using XivToolsWpf;
 
+/// <summary>
+/// A service that manages application settings, including theme and other user preferences.
+/// </summary>
 public class SettingsService : ServiceBase<SettingsService>
 {
 	private static readonly string SettingsPath = FileService.ParseToFilePath(FileService.StoreDirectory + "/Settings.json");
 
+	/// <summary>
+	/// Event that is raised when the settings have changed.
+	/// </summary>
 	public static event PropertyChangedEventHandler? SettingsChanged;
 
+	/// <summary>
+	/// Gets the current settings stored in the singleton instance of the service.
+	/// </summary>
 	public static Settings Current => Instance.Settings!;
 
+	/// <summary>
+	/// Gets the current settings for the application.
+	/// </summary>
 	public Settings? Settings { get; private set; }
+
+	/// <summary>
+	/// Gets a value indicating whether the user is using the application for the first time.
+	/// </summary>
 	public bool FirstTimeUser { get; private set; }
 
+	/// <summary>
+	/// Opens the settings directory in Windows Explorer.
+	/// </summary>
 	public static void ShowDirectory()
 	{
 		FileService.OpenDirectory(FileService.StoreDirectory);
 	}
 
+	/// <summary>
+	/// Saves the current settings to the local file system.
+	/// </summary>
 	public static void Save()
 	{
 		string json = SerializerService.Serialize(Instance.Settings!);
 		File.WriteAllText(SettingsPath, json);
 	}
 
+	/// <summary>
+	/// Applies the current theme settings to the application.
+	/// </summary>
 	public static void ApplyTheme()
 	{
 		if (Current.OverrideSystemTheme)
@@ -50,6 +75,7 @@ public class SettingsService : ServiceBase<SettingsService>
 		}
 	}
 
+	/// <inheritdoc/>
 	public override async Task Initialize()
 	{
 		if (!File.Exists(SettingsPath))

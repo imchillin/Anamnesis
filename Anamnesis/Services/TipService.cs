@@ -4,6 +4,7 @@
 namespace Anamnesis.Services;
 
 using Anamnesis.Core;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,6 +12,10 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
+/// <summary>
+/// A service that handles the display of cycling tips in the application.
+/// </summary>
+[AddINotifyPropertyChangedInterface]
 public partial class TipService : ServiceBase<TipService>
 {
 	private const int TipCycleDelay = 10000; // ms (10 seconds)

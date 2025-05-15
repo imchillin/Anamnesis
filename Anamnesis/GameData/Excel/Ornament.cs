@@ -64,7 +64,7 @@ public readonly struct Ornament(ExcelPage page, uint offset, uint row)
 	public bool IsFavorite
 	{
 		get => FavoritesService.IsFavorite<INpcBase>(this);
-		set => FavoritesService.SetFavorite<INpcBase>(this, nameof(FavoritesService.Favorites.Models), value);
+		set => FavoritesService.SetFavorite<INpcBase>(this, value);
 	}
 
 	/// <inheritdoc/>

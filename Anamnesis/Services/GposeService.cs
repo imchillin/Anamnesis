@@ -12,8 +12,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-public delegate void GposeEvent(bool newState);
-
+/// <summary>
+/// A service that continously checks for changes to the game's GPose state.
+/// </summary>
 [AddINotifyPropertyChangedInterface]
 public class GposeService : ServiceBase<GposeService>
 {
@@ -22,12 +23,29 @@ public class GposeService : ServiceBase<GposeService>
 	/// <inheritdoc/>
 	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GameService.Instance];
 
+	/// <summary>
+	/// The delegate object for the <see cref="GposeService.GposeStateChanged"/> event.
+	/// </summary>
+	/// <param name="newState"></param>
+	public delegate void GposeEvent(bool newState);
+
+	/// <summary>
+	/// Event that is triggered when the GPose state changes.
+	/// </summary>
 	public static event GposeEvent? GposeStateChanged;
 
-	// TODO: Remove this property. The base class already has IsInitialized.
-	public bool Initialized { get; private set; } = false;
-	public bool IsGpose { get; private set; }
+	/// <summary>
+	/// Gets a value indicating whether the signed-in character is currently in the GPose photo mode.
+	/// </summary>
+	/// <remarks>
+	/// This is a cached value that is updated by a continuous background task.
+	/// </remarks>
+	public bool IsGpose { get; private set; } = false;
 
+	/// <summary>
+	/// Checks if the user is in GPose photo mode by probing the game process' memory.
+	/// </summary>
+	/// <returns>True if the user is in GPose, false otherwise.</returns>
 	public static bool GetIsGPose()
 	{
 		if (AddressService.GposeCheck == IntPtr.Zero)
@@ -43,6 +61,7 @@ public class GposeService : ServiceBase<GposeService>
 		return check1 == 1 && check2 == 4;
 	}
 
+	/// <inheritdoc/>
 	protected override async Task OnStart()
 	{
 		this.CancellationTokenSource = new CancellationTokenSource();
@@ -57,13 +76,6 @@ public class GposeService : ServiceBase<GposeService>
 			try
 			{
 				bool newGpose = GetIsGPose();
-
-				if (!this.Initialized)
-				{
-					this.Initialized = true;
-					this.IsGpose = newGpose;
-					continue;
-				}
 
 				if (newGpose != this.IsGpose)
 				{

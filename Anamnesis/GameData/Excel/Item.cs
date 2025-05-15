@@ -89,7 +89,7 @@ public readonly unsafe struct Item(ExcelPage page, uint offset, uint row)
 	public bool IsFavorite
 	{
 		get => FavoritesService.IsFavorite<IItem>(this);
-		set => FavoritesService.SetFavorite<IItem>(this, nameof(FavoritesService.Favorites.Items), value);
+		set => FavoritesService.SetFavorite<IItem>(this, value);
 	}
 
 	/// <inheritdoc/>

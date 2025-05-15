@@ -41,7 +41,7 @@ public class ChocoboSkinItem : IItem
 	public bool IsFavorite
 	{
 		get => FavoritesService.IsFavorite<IItem>(this);
-		set => FavoritesService.SetFavorite<IItem>(this, nameof(FavoritesService.Favorites.Items), value);
+		set => FavoritesService.SetFavorite<IItem>(this, value);
 	}
 
 	public bool CanOwn => false;

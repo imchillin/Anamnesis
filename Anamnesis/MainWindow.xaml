@@ -26,7 +26,7 @@
 
 	<XivToolsWpfWindows:ChromedWindow.Resources>
 		<ResourceDictionary>
-			<DataTemplate x:Key="PinnedActor">
+			<DataTemplate x:Key="PinnedActorTemplate">
 				<Grid Margin="3,0">
 					<ToggleButton Height="32"
 								  MinWidth="32"
@@ -147,7 +147,7 @@
 				<ScaleTransform x:Name="WindowScale" ScaleX="0.5" ScaleY="0.5" />
 			</Grid.LayoutTransform>
 
-			<Grid IsEnabled="{Binding GposeService.Initialized}" Margin="3,0,3,3">
+			<Grid IsEnabled="{Binding GposeService.IsAlive}" Margin="3,0,3,3">
 
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
@@ -240,7 +240,7 @@
 								</Border.Effect>
 		
 									<ItemsControl ItemsSource="{Binding TargetService.PinnedActors}" 
-												  ItemTemplate="{StaticResource PinnedActor}"
+												  ItemTemplate="{StaticResource PinnedActorTemplate}"
 												  Margin="0, 4, 4, 4"/>
 
 							</Border>
@@ -258,7 +258,7 @@
 
 							<ItemsControl Margin="0,3,0,0"
 										  ItemsSource="{Binding TargetService.PinnedActors}"
-										  ItemTemplate="{StaticResource PinnedActor}"
+										  ItemTemplate="{StaticResource PinnedActorTemplate}"
 										  x:Name="PinnedActorList"
 										  ana:Behaviours.IsReorderable="True">
 								<ItemsControl.ItemsPanel>

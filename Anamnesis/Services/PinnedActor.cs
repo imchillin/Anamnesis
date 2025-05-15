@@ -15,11 +15,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-// TODO: Move this class to a better location. This is not a service.
 [AddINotifyPropertyChangedInterface]
 public class PinnedActor : INotifyPropertyChanged, IDisposable
 {
-	////private bool wasPlayer = false;
 	private bool isRestoringBackup = false;
 
 	public PinnedActor(ActorMemory memory)
@@ -38,7 +36,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	}
 
 	public event PropertyChangedEventHandler? PropertyChanged;
-	public event PinnedEvent? Retargeted;
+	public event TargetService.PinnedEvent? Retargeted;
 
 	public enum BackupModes
 	{
@@ -70,16 +68,9 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 	public bool IsSelected
 	{
-		get
-		{
-			return TargetService.Instance.CurrentlyPinned == this;
-		}
-
+		get => TargetService.Instance.CurrentlyPinned == this;
 		set
 		{
-			////if (!GameService.Instance.IsSignedIn)
-			////	return;
-
 			if (value)
 			{
 				TargetService.Instance.SelectActor(this);
@@ -417,15 +408,6 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 	private void OnRetargetedActor(IntPtr? oldPointer, IntPtr? newPointer)
 	{
-		/*if (GposeService.GetIsGPose() &&
-			this.wasPlayer &&
-			this.Memory != null &&
-			this.Memory.ObjectKind != ActorTypes.Player)
-		{
-			IntPtr objectKindAddress = this.Memory.GetAddressOfProperty(nameof(ActorBasicMemory.ObjectKind));
-			MemoryService.Write(objectKindAddress, ActorTypes.Player, "NPC face hack - entered gpose - gpose actor");
-		}*/
-
 		// If we need to apply the appearance thanks to a GPose boundary changes?
 		if (SettingsService.Current.ReapplyAppearance || GposeService.GetIsGPose())
 		{
@@ -446,19 +428,6 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		if (newState)
 		{
 			this.CreateCharacterBackup(BackupModes.Gpose);
-
-			/*Task.Run(async () =>
-			{
-				if (this.Memory != null && this.Memory.ObjectKind == ActorTypes.Player)
-				{
-					this.wasPlayer = true;
-
-					IntPtr objectKindAddress = this.Memory.GetAddressOfProperty(nameof(ActorBasicMemory.ObjectKind));
-					MemoryService.Write(objectKindAddress, ActorTypes.BattleNpc, "NPC face hack - entering gpose - overworld actor");
-					await Task.Delay(1000);
-					MemoryService.Write(objectKindAddress, ActorTypes.Player, "NPC face hack - entered gpose - overworld actor");
-				}
-			});*/
 		}
 	}
 }

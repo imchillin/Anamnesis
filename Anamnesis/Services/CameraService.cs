@@ -12,6 +12,10 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+/// <summary>
+/// A service that keeps track of the camera's memory state, responsible for
+/// updating the camera every time a user enters or exits GPose to ensure camera object validity.
+/// </summary>
 public class CameraService : ServiceBase<CameraService>
 {
 	private const int TaskSuccessDelay = 33; // ms
@@ -22,9 +26,16 @@ public class CameraService : ServiceBase<CameraService>
 	/// <inheritdoc/>
 	protected override IEnumerable<IService> Dependencies => [GameService.Instance, GposeService.Instance];
 
-	public CameraMemory Camera { get; set; } = new CameraMemory();
-	public GPoseCameraMemory GPoseCamera { get; set; } = new GPoseCameraMemory();
+	/// <summary>Gets the overworld camera's memory.</summary>
+	public CameraMemory Camera { get; private set; } = new CameraMemory();
 
+	/// <summary>Gets the gpose camera's memory.</summary>
+	public GPoseCameraMemory GPoseCamera { get; private set; } = new GPoseCameraMemory();
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the camera
+	/// should be limited to the in-game camera limitations.
+	/// </summary>
 	public bool DelimitCamera
 	{
 		get
