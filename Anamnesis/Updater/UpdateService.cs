@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Updater;
 
+using Anamnesis.Core;
 using Anamnesis.GUI.Dialogs;
 using Anamnesis.Services;
 using System;
