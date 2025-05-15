@@ -1,13 +1,12 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Actor;
+namespace Anamnesis.Services;
 
+using Anamnesis;
 using Anamnesis.Core;
-using Anamnesis.Core.Memory;
 using Anamnesis.Files;
 using Anamnesis.Memory;
-using Anamnesis.Services;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,6 @@ using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 
-// TODO: Move this file to Services folder.
 [AddINotifyPropertyChangedInterface]
 public class PoseService : ServiceBase<PoseService>
 {
@@ -171,8 +169,8 @@ public class PoseService : ServiceBase<PoseService>
 			this.freezeWorldPosition?.SetEnabled(value);
 			this.freezeWorldRotation?.SetEnabled(value);
 			this.freezeGposeTargetPosition?.SetEnabled(value);
-			this.RaisePropertyChanged(nameof(PoseService.FreezeWorldPosition));
-			this.RaisePropertyChanged(nameof(PoseService.WorldPositionNotFrozen));
+			this.RaisePropertyChanged(nameof(this.FreezeWorldPosition));
+			this.RaisePropertyChanged(nameof(this.WorldPositionNotFrozen));
 			FreezeWorldPositionsEnabledChanged?.Invoke(this.IsEnabled);
 		}
 	}

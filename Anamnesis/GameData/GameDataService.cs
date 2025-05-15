@@ -18,7 +18,6 @@ using System.Threading.Tasks;
 
 using LuminaData = global::Lumina.GameData;
 
-// TODO: Move this file to Services folder.
 public class GameDataService : ServiceBase<GameDataService>
 {
 	internal static LuminaData? LuminaData;

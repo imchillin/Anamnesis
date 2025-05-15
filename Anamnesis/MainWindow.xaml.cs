@@ -4,7 +4,6 @@
 namespace Anamnesis.GUI;
 
 using Anamnesis;
-using Anamnesis.Actor;
 using Anamnesis.GUI.Dialogs;
 using Anamnesis.GUI.Views;
 using Anamnesis.Memory;

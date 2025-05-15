@@ -3,7 +3,6 @@
 
 namespace Anamnesis;
 
-using Anamnesis.Actor;
 using Anamnesis.Core;
 using Anamnesis.Files;
 using Anamnesis.Memory;

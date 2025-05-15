@@ -18,7 +18,6 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using XivToolsWpf;
 
-// TODO: Move this file to Services folder.
 public class UpdateService : ServiceBase<UpdateService>
 {
 	private const string Repository = "imchillin/Anamnesis";
