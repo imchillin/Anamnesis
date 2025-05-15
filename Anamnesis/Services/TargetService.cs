@@ -3,9 +3,7 @@
 
 namespace Anamnesis;
 
-using Anamnesis.Actor;
 using Anamnesis.Core;
-using Anamnesis.Core.Memory;
 using Anamnesis.Keyboard;
 using Anamnesis.Memory;
 using Anamnesis.Services;

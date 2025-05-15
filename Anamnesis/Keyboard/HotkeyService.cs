@@ -14,7 +14,6 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
-// TODO: Move this file to Services folder.
 public class HotkeyService : ServiceBase<HotkeyService>
 {
 	private static readonly Hook Hook = new();
