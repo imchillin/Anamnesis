@@ -5,7 +5,6 @@ namespace Anamnesis;
 
 using Anamnesis.Actor.Refresh;
 using Anamnesis.Core;
-using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
@@ -22,7 +21,7 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class ActorService : ServiceBase<ActorService>
 {
-	private const int TickDelay = 10; // ms
+	private const int TickDelay = 16; // ms
 	private const int ActorTableSize = 819;
 	private const int GPoseIndexStart = 200;
 	private const int GPoseIndexEnd = 440;

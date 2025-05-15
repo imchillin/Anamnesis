@@ -4,7 +4,6 @@
 namespace Anamnesis;
 
 using Anamnesis.Core;
-using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using System;
@@ -18,7 +17,7 @@ using System.Threading.Tasks;
 /// </summary>
 public class CameraService : ServiceBase<CameraService>
 {
-	private const int TaskSuccessDelay = 33; // ms
+	private const int TaskSuccessDelay = 32; // ms
 	private const int TaskFailureDelay = 1000; // ms
 
 	private bool delimitCamera;
