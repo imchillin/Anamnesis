@@ -10,41 +10,55 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
+/// <summary>
+/// A service that manages custom names for posable bones in the game.
+/// </summary>
 public class CustomBoneNameService : ServiceBase<CustomBoneNameService>
 {
 	private static readonly string SavePath = FileService.ParseToFilePath(FileService.StoreDirectory + "/CustomBoneNames.json");
-	private static Dictionary<string, string> customBoneNames = new Dictionary<string, string>();
+	private static Dictionary<string, string> customBoneNames = [];
 
+	/// <summary>
+	/// Gets the custom name for a bone (if it exists).
+	/// </summary>
+	/// <param name="bone">The target bone, represented by its unique internal name.</param>
+	/// <returns>The custom name for the bone if found, or null if no custom name exists.</returns>
 	public static string? GetBoneName(string bone)
 	{
 		if (customBoneNames.TryGetValue(bone, out var customName))
 			return customName;
+
 		return null;
 	}
 
+	/// <summary>Sets a custom name for a bone.</summary>
+	/// <remarks>
+	/// If the custom name parameter is set to null or empty, the custom name will be removed.
+	/// </remarks>
+	/// <param name="bone">The target bone, represented by its unique internal name.</param>
+	/// <param name="customName">The custom (display) name to set for the bone.</param>
 	public static void SetBoneName(string bone, string? customName)
 	{
-		if (customBoneNames.ContainsKey(bone))
+		bool changed = false;
+
+		if (string.IsNullOrEmpty(customName))
 		{
-			if (string.IsNullOrEmpty(customName))
-			{
-				customBoneNames.Remove(bone);
-			}
-			else
-			{
-				customBoneNames[bone] = customName;
-			}
+			changed = customBoneNames.Remove(bone);
 		}
 		else
 		{
-			if (string.IsNullOrEmpty(customName))
-				return;
-			customBoneNames.Add(bone, customName);
+			changed = !customBoneNames.TryGetValue(bone, out var existing) || existing != customName;
+			if (changed)
+				customBoneNames[bone] = customName;
 		}
 
-		Save();
+		if (changed)
+			Save();
 	}
 
+	/// <summary>
+	/// Saves the current custom bone settings to the local file system.
+	/// </summary>
 	public static void Save()
 	{
 		string json = SerializerService.Serialize(customBoneNames);
@@ -65,17 +79,10 @@ public class CustomBoneNameService : ServiceBase<CustomBoneNameService>
 		catch (Exception ex)
 		{
 			Log.Warning(ex, "Failed to load custom bone names.");
-			customBoneNames = new Dictionary<string, string>();
-			Save();
+			customBoneNames = [];   // Reset to empty dictionary on error
+			Save();                 // Wipe the file to avoid future errors
 		}
 
 		await base.Initialize();
-	}
-
-	/// <inheritdoc/>
-	public override Task Shutdown()
-	{
-		Save();
-		return base.Shutdown();
 	}
 }

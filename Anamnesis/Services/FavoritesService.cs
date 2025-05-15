@@ -16,14 +16,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+/// <summary>
+/// A services that manages user favourited elements, such as in-game items, dyes, NPCs, etc.
+/// </summary>
 [AddINotifyPropertyChangedInterface]
 public class FavoritesService : ServiceBase<FavoritesService>
 {
 	private static readonly string FilePath = FileService.ParseToFilePath(FileService.StoreDirectory + "/Favorites.json");
-
-	public static List<Color4>? Colors => Instance.Current?.Colors;
-
-	public Favorites? Current { get; set; }
 
 	private HashSet<uint>? itemIds;
 	private HashSet<uint>? dyeIds;
@@ -31,6 +30,21 @@ public class FavoritesService : ServiceBase<FavoritesService>
 	private HashSet<uint>? glassesIds;
 	private HashSet<uint>? ownedIds;
 
+	/// <summary>
+	/// Retrieves a list of favourited colors.
+	/// </summary>
+	public static List<Color4>? Colors => Instance.Current?.Colors;
+
+	/// <summary>
+	/// The singleton instance of the <see cref="FavoritesService"/> class.
+	/// </summary>
+	public Favorites? Current { get; set; }
+
+	/// <summary>
+	/// Check if the target item is marked as owned
+	/// </summary>
+	/// <param name="item">The item to check</param>
+	/// <returns>True if the item is owned, false otherwise</returns>
 	public static bool IsOwned(Item item)
 	{
 		if (Instance.Current == null)
@@ -39,6 +53,11 @@ public class FavoritesService : ServiceBase<FavoritesService>
 		return Instance.ownedIds != null && Instance.ownedIds.Contains(item.RowId);
 	}
 
+	/// <summary>
+	/// Changes the owned status of the target item.
+	/// </summary>
+	/// <param name="item">The item to change the owned status of</param>
+	/// <param name="owned">The new owned status</param>
 	public static void SetOwned(Item item, bool owned)
 	{
 		if (Instance.Current == null)
@@ -62,6 +81,12 @@ public class FavoritesService : ServiceBase<FavoritesService>
 		Save();
 	}
 
+	/// <summary>
+	/// Checks if the target component is marked as a favorite.
+	/// </summary>
+	/// <typeparam name="T">The type of the item (e.g., item, dyes, NPC, etc.)</typeparam>
+	/// <param name="item">The component to check</param>
+	/// <returns>True if the item is a favorite, false otherwise</returns>
 	public static bool IsFavorite<T>(T item)
 	{
 		HashSet<uint>? lookupTable = GetLookupTable(item);
@@ -84,7 +109,13 @@ public class FavoritesService : ServiceBase<FavoritesService>
 		return false;
 	}
 
-	public static void SetFavorite<T>(T item, string favsCollection, bool favorite)
+	/// <summary>
+	/// Changes the favorite status of the target item.
+	/// </summary>
+	/// <typeparam name="T">The type of the item (e.g., item, dyes, NPC, etc.)</typeparam>
+	/// <param name="item">The component to change the favorite status of</param>
+	/// <param name="favorite">The new favorite status</param>
+	public static void SetFavorite<T>(T item, bool favorite)
 	{
 		List<T>? curInstCollection = GetInstanceCollection<T>(item);
 		HashSet<uint>? lookupTable = GetLookupTable(item);
@@ -106,10 +137,13 @@ public class FavoritesService : ServiceBase<FavoritesService>
 			RemoveFromLookupTable(item, lookupTable);
 		}
 
-		Instance.RaisePropertyChanged(favsCollection);
+		Instance.RaisePropertyChanged(GetFavoritesCollectionName(item));
 		Save();
 	}
 
+	/// <summary>
+	/// Saves the currently favorited components to the local file system.
+	/// </summary>
 	public static void Save()
 	{
 		if (Instance.Current == null)
@@ -154,8 +188,6 @@ public class FavoritesService : ServiceBase<FavoritesService>
 
 		await base.Initialize();
 	}
-
-	// TODO: Save on shutdown (similar to CustomBoneNameService)
 
 	private static List<T>? GetInstanceCollection<T>(T item)
 	{
@@ -229,14 +261,52 @@ public class FavoritesService : ServiceBase<FavoritesService>
 		}
 	}
 
+	private static string GetFavoritesCollectionName<T>(T item)
+	{
+		return item switch
+		{
+			Glasses => nameof(Favorites.Glasses),
+			IDye => nameof(Favorites.Dyes),
+			INpcBase => nameof(Favorites.Models),
+			IItem => nameof(Favorites.Items),
+			_ => throw new NotImplementedException("Unsupported favorites type")
+		};
+	}
+
+	/// <summary>
+	/// A class that represents the user's favorited components (e.g., items, dyes, NPCs, etc.).
+	/// </summary>
 	[Serializable]
 	public class Favorites
 	{
+		/// <summary>
+		/// Gets or sets the list of favorited items (e.g., equipment, weapons, accessories, etc.).
+		/// </summary>
 		public List<IItem> Items { get; set; } = [];
+
+		/// <summary>
+		/// Gets or sets the list of favorited dyes.
+		/// </summary>
 		public List<IDye> Dyes { get; set; } = [];
+
+		/// <summary>
+		/// Gets or sets the list of favorited custom colors.
+		/// </summary>
 		public List<Color4> Colors { get; set; } = [];
+
+		/// <summary>
+		/// Gets or sets the list of favorited models (e.g., NPCs, mounts, minions, etc.).
+		/// </summary>
 		public List<INpcBase> Models { get; set; } = [];
+
+		/// <summary>
+		/// Gets or sets the list of owned items.
+		/// </summary>
 		public List<IItem> Owned { get; set; } = [];
+
+		/// <summary>
+		/// Gets or sets the list of favorited glasses (accessory).
+		/// </summary>
 		public List<Glasses> Glasses { get; set; } = [];
 	}
 }

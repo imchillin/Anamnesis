@@ -13,6 +13,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+/// <summary>
+/// A service that manages the animation state of actors in the game
+/// (e.g., applying animations, animation blending, speed control, etc.).
+/// </summary>
 [AddINotifyPropertyChangedInterface]
 public class AnimationService : ServiceBase<AnimationService>
 {
@@ -33,6 +37,12 @@ public class AnimationService : ServiceBase<AnimationService>
 		GameDataService.Instance
 	];
 
+	/// <summary>
+	/// Gets or sets a value indicating whether the animation speed control is enabled.
+	/// </summary>
+	/// <remarks>
+	/// Changes to this property will be applied only if the player is in GPose mode.
+	/// </remarks>
 	public bool SpeedControlEnabled
 	{
 		get => this.speedControlEnabled;
@@ -52,6 +62,13 @@ public class AnimationService : ServiceBase<AnimationService>
 		await base.Shutdown();
 	}
 
+	/// <summary>
+	/// Applies an animation override to the specified actor.
+	/// </summary>
+	/// <param name="memory">The actor's memory.</param>
+	/// <param name="animationId">The animation ID to apply.</param>
+	/// <param name="interrupt">A flag indicating whether to interrupt the currently played animation.</param>
+	/// <returns>True if the animation override was successfully applied; otherwise, false.</returns>
 	public bool ApplyAnimationOverride(ActorMemory memory, ushort? animationId, bool interrupt)
 	{
 		if (!memory.IsValid)
@@ -66,6 +83,12 @@ public class AnimationService : ServiceBase<AnimationService>
 		return true;
 	}
 
+	/// <summary>
+	/// Blends the specified animation to the actor's current animation.
+	/// </summary>
+	/// <param name="memory">The actor's memory.</param>
+	/// <param name="animationId">The animation ID to blend.</param>
+	/// <returns>True if the animation was successfully blended; otherwise, false.</returns>
 	public async Task<bool> BlendAnimation(ActorMemory memory, ushort animationId)
 	{
 		if (!memory.IsValid)
@@ -89,6 +112,10 @@ public class AnimationService : ServiceBase<AnimationService>
 		return true;
 	}
 
+	/// <summary>
+	/// Resets the animation override for the specified actor.
+	/// </summary>
+	/// <param name="memory">The actor's memory.</param>
 	public void ResetAnimationOverride(ActorMemory memory)
 	{
 		if (!memory.IsValid)
@@ -105,10 +132,21 @@ public class AnimationService : ServiceBase<AnimationService>
 		this.overriddenActors.Remove(memory);
 	}
 
+	/// <summary>
+	/// Applies the idle animation override to the specified actor.
+	/// </summary>
+	/// <param name="memory">The actor's memory.</param>
 	public void ApplyIdle(ActorMemory memory) => this.ApplyAnimationOverride(memory, IdleAnimationId, true);
 
+	/// <summary>
+	/// Applies the draw weapon animation override to the specified actor.
+	/// </summary>
+	/// <param name="memory">The actor's memory.</param>
 	public void DrawWeapon(ActorMemory memory) => this.ApplyAnimationOverride(memory, DrawWeaponAnimationId, true);
 
+	/// <summary>
+	/// Pauses the animation of all pinned actors. This will set their animation speed to 0.
+	/// </summary>
 	public void PausePinnedActors()
 	{
 		this.SpeedControlEnabled = true;

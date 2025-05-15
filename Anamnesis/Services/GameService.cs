@@ -12,6 +12,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+/// <summary>
+/// A service that continously checks for changes in the game's state.
+/// </summary>
 [AddINotifyPropertyChangedInterface]
 public class GameService : ServiceBase<GameService>
 {

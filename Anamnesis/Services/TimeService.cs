@@ -13,6 +13,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+/// <summary>
+/// A service that monitors and controls the in-game time and date.
+/// </summary>
 [AddINotifyPropertyChangedInterface]
 public class TimeService : ServiceBase<TimeService>
 {

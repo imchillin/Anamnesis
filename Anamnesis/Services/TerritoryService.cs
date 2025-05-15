@@ -15,8 +15,9 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-public delegate void TerritoryEvent();
-
+/// <summary>
+/// A service that monitors and controls the current territory and weather in the game.
+/// </summary>
 [AddINotifyPropertyChangedInterface]
 public class TerritoryService : ServiceBase<TerritoryService>
 {
@@ -33,18 +34,34 @@ public class TerritoryService : ServiceBase<TerritoryService>
 		GposeService.Instance
 	];
 
+	/// <summary>
+	/// The delegate object for the <see cref="TerritoryService.TerritoryChanged"/> event.
+	/// </summary>
+	public delegate void TerritoryEvent();
+
+	/// <summary>
+	/// Event that is triggered when the territory changes (when the player enters a new zone).
+	/// </summary>
 	public static event TerritoryEvent? TerritoryChanged;
 
+	/// <summary>Gets the current territory's identifier.</summary>
 	public uint CurrentTerritoryId { get; private set; }
-	public string CurrentTerritoryName { get; private set; } = "Unknown";
+
+	/// <summary>Gets the current territory in the game.</summary>
 	public Territory? CurrentTerritory { get; private set; }
 
+	/// <summary>Gets the current territory's name.</summary>
+	public string CurrentTerritoryName { get; private set; } = "Unknown";
+
+	/// <summary>
+	/// Gets or sets the current weather in the game by its identifier.
+	/// </summary>
+	/// <remarks>
+	/// Changes to this property affect the value of <see cref="CurrentWeather"/> as well.
+	/// </remarks>
 	public uint CurrentWeatherId
 	{
-		get
-		{
-			return this.currentWeatherId;
-		}
+		get => this.currentWeatherId;
 		set
 		{
 			if (this.currentWeatherId == value)
@@ -55,6 +72,12 @@ public class TerritoryService : ServiceBase<TerritoryService>
 		}
 	}
 
+	/// <summary>
+	/// Gets or sets the current weather in the game.
+	/// </summary>
+	/// <remarks>
+	/// Changes to this property affect the value of <see cref="CurrentWeatherId"/> as well.
+	/// </remarks>
 	public Weather? CurrentWeather { get; set; }
 
 	/// <inheritdoc/>
