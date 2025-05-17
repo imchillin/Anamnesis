@@ -1,11 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
-using SharpShell.Attributes;
+﻿using SharpShell.Attributes;
 using SharpShell.SharpThumbnailHandler;
-using SharpShell.Helpers;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
-namespace PoseThumbHandler {
+namespace PoseFileCOMHandler {
 
 	[ComVisible(true)]
 	[DisplayName("Pose File Thumbnail Handler")]						// Friendly name in regasm logs, etc.
@@ -22,19 +21,34 @@ namespace PoseThumbHandler {
 		/// <param name="width">Max width and height of the thumbnail in pixels.</param>
 		/// <returns>A Bitmap at or below that size, or null.</returns>
 		protected override Bitmap GetThumbnailImage(uint width) {
-			ComStream comStream = this.SelectedItemStream;
+			Debug.WriteLine("COM: Entered GetThumbnailImage");
+			string base64 = null;
 
-			string jsonText;
-			using (var reader = new StreamReader(comStream))
-				jsonText = reader.ReadToEnd();
-			var jo = JObject.Parse(jsonText);
-			var b64 = jo["Base64Image"]?.ToString() ?? "";
-			var comma = b64.IndexOf(',');
-			if (comma >= 0) b64 = b64.Substring(comma + 1);
+			// Using jsonReader to Stream the Json.
+			using (var reader = new StreamReader(this.SelectedItemStream))
+			using (var jsonReader = new Newtonsoft.Json.JsonTextReader(reader)) {
+				while (jsonReader.Read()) {
+					if (jsonReader.TokenType == Newtonsoft.Json.JsonToken.PropertyName &&
+						(string)jsonReader.Value == "Base64Image") {
+						jsonReader.Read();
+						base64 = jsonReader.Value as string;
+						Debug.WriteLine($"Base64 string length: {base64.Length}, first 40: {base64.Substring(0, 40)}");
+						break;
+					}
+				}
+			}
+
+			if (string.IsNullOrEmpty(base64)) {
+				Debug.WriteLine("COM: Is Null");
+				return null;
+			}
+
+			int comma = base64.IndexOf(',');
+			if (comma >= 0) base64 = base64.Substring(comma + 1);
 
 			byte[] bytes;
 			try {
-				bytes = Convert.FromBase64String(b64);
+				bytes = Convert.FromBase64String(base64);
 			} catch {
 				return null;
 			}
@@ -46,9 +60,11 @@ namespace PoseThumbHandler {
 			double aspect = (double)img.Width / img.Height;
 			int thumbW, thumbH;
 			if (aspect >= 1) {
-				thumbW = (int)width; thumbH = (int)(width / aspect);
+				thumbW = (int)width;
+				thumbH = (int)(width / aspect);
 			} else {
-				thumbH = (int)width; thumbW = (int)(width * aspect);
+				thumbH = (int)width;
+				thumbW = (int)(width * aspect);
 			}
 
 			var thumb = new Bitmap(thumbW, thumbH);
@@ -57,5 +73,6 @@ namespace PoseThumbHandler {
 
 			return thumb;
 		}
+
 	}
 }
