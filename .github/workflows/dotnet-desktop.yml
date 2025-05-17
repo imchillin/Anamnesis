@@ -52,7 +52,7 @@ jobs:
         run: dotnet publish UpdateExtractor/UpdateExtractor.csproj /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml"
 
       - name: Publish PoseThumbHelper
-        run: dotnet publish PoseThumbHelper/PoseThumbHelper.csproj /p:PublishProfile=".\PoseThumbHelper\Properties\PublishProfiles\FolderProfile.pubxml"
+        run: dotnet publish PoseThumbHandler/PoseFileCOMHandler.csproj /p:PublishProfile=".\PoseThumbHandler\Properties\PublishProfiles\FolderProfile.pubxml"
 
       # 6. Delete redundant files
       - name: Delete pdb and xml
