@@ -118,6 +118,27 @@
 						</StackPanel>
 					</Grid>
 				</GroupBox>
+				<GroupBox Style="{StaticResource PanelGroupBox}" Grid.Column="2">
+					<GroupBox.Header>
+						<controls:Header Icon="FileImage" Text="Thumbnail Handler"/>
+					</GroupBox.Header>
+					
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition />
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
+						</Grid.RowDefinitions>
+
+						<Button Grid.Row="0" Click="OnInstallThumbHandlerClicked" Style="{StaticResource TransparentButton}" Content="Install" />
+						<Separator Grid.Row="1" />
+						<Button Grid.Row="2" Click="OnUninstallThumbHandlerClicked" Style="{StaticResource TransparentButton}" Content="Uninstall" />
+					</Grid>
+				</GroupBox>
 			</StackPanel>
 		</GroupBox>
 	</Grid>

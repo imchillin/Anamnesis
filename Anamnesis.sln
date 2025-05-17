@@ -20,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{44B1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scripts", "Scripts\Scripts.csproj", "{C5DCA9DB-7B2B-4E92-B884-B8994D23CDB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoseThumbHandler", "PoseThumbHandler\PoseThumbHandler.csproj", "{04639DEB-4D63-4D32-98EF-C02A71B8F5E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoseFileCOMHandler", "PoseThumbHandler\PoseFileCOMHandler.csproj", "{04639DEB-4D63-4D32-98EF-C02A71B8F5E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
