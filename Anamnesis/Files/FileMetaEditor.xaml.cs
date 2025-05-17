@@ -4,6 +4,8 @@
 namespace Anamnesis.Files;
 
 using System;
+using System.Drawing.Imaging;
+using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +15,7 @@ using Anamnesis.GUI.Windows;
 using Anamnesis.Services;
 using Microsoft.Win32;
 using PropertyChanged;
+using System.Linq;
 
 /// <summary>
 /// Interaction logic for FileMetaEditor.xaml.
@@ -72,38 +75,58 @@ public partial class FileMetaEditor : UserControl
 
 		byte[] bytes = System.IO.File.ReadAllBytes(dlg.FileName);
 
-		if (bytes.Length > 6 * 1024 * 1024)
-		{
-			GenericDialog.Show("image too big", "Error");
-			return;
-		}
+		// COMPRESS/RESIZE here!
+		byte[] compressed = CompressImageToJpeg(bytes);
 
-		this.File.SetImage(bytes);
+		this.File.SetImage(compressed);
 		this.ImageSource = null;
 	}
 
-	private void OnImageClipboardClicked(object sender, RoutedEventArgs e)
-	{
+	private void OnImageClipboardClicked(object sender, RoutedEventArgs e) {
 		BitmapSource? src = Clipboard.GetImage();
-
 		if (src == null)
 			return;
 
-		JpegBitmapEncoder encoder = new JpegBitmapEncoder();
-		encoder.QualityLevel = 90;
-		using MemoryStream stream = new MemoryStream();
-
+		// Convert BitmapSource to byte[] (PNG, because BitmapSource stuff)
+		using var ms = new MemoryStream();
+		var encoder = new PngBitmapEncoder();
 		encoder.Frames.Add(BitmapFrame.Create(src));
-		encoder.Save(stream);
-		byte[] bytes = stream.ToArray();
-		stream.Close();
+		encoder.Save(ms);
+		byte[] pngBytes = ms.ToArray();
 
-		this.File.SetImage(bytes);
+		// COMPRESS/RESIZE here!
+		byte[] compressed = CompressImageToJpeg(pngBytes);
+
+		this.File.SetImage(compressed);
 		this.ImageSource = null;
 	}
 
-	private void OnSaveClicked(object sender, RoutedEventArgs e)
-	{
+	public static byte[] CompressImageToJpeg(byte[] originalImageBytes, int maxSize = 512, long jpegQuality = 80L) {
+		using var inputStream = new MemoryStream(originalImageBytes);
+		using var originalImage = System.Drawing.Image.FromStream(inputStream);
+
+		// Scale down if needed (keeping aspect ratio)
+		int newWidth = originalImage.Width;
+		int newHeight = originalImage.Height;
+		if (originalImage.Width > maxSize || originalImage.Height > maxSize) {
+			double ratio = Math.Min((double)maxSize / originalImage.Width, (double)maxSize / originalImage.Height);
+			newWidth = (int)(originalImage.Width * ratio);
+			newHeight = (int)(originalImage.Height * ratio);
+		}
+
+		using var scaledImage = new Bitmap(originalImage, new System.Drawing.Size(newWidth, newHeight));
+
+		// Set JPEG encoder and compression quality
+		var jpegCodec = ImageCodecInfo.GetImageEncoders().FirstOrDefault(c => c.FormatID == ImageFormat.Jpeg.Guid) ?? throw new InvalidOperationException("JPEG encoder not found on this system."); ;
+		var encoderParams = new EncoderParameters(1);
+		encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, jpegQuality);
+
+		using var outputStream = new MemoryStream();
+		scaledImage.Save(outputStream, jpegCodec, encoderParams);
+		return outputStream.ToArray();
+	}
+
+	private void OnSaveClicked(object sender, RoutedEventArgs e) {
 		using FileStream stream = new FileStream(this.Info.FullName, FileMode.Create);
 		this.File.Serialize(stream);
 		this.dlg.Close();
