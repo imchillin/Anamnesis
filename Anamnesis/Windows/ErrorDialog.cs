@@ -8,6 +8,7 @@ using Anamnesis.Services;
 using Serilog;
 using System;
 using System.Runtime.ExceptionServices;
+using System.Threading.Tasks;
 using System.Windows;
 using XivToolsWpf;
 using static XivToolsWpf.Dialogs.ErrorDialog;
@@ -32,6 +33,7 @@ public static class ErrorDialog
 			Dialog dlg = new Dialog();
 			dlg.TitleText.Text = "Anamnesis v" + VersionInfo.Date.ToString("yyyy-MM-dd HH:mm");
 			XivToolsErrorDialog errorDialog = new XivToolsErrorDialog(dlg, ex, isCriticial);
+			errorDialog.OnQuitRequested = HandleFatalErrorShutdown;
 
 			if (SettingsService.Instance.IsInitialized && SettingsService.Instance.Settings != null)
 				dlg.Topmost = SettingsService.Current.AlwaysOnTop;
@@ -39,11 +41,9 @@ public static class ErrorDialog
 			dlg.ContentArea.Content = errorDialog;
 			dlg.ShowDialog();
 
-			if (Application.Current == null)
-				return;
-
+			// If the user closed the error dialog without clicking the quit button, call the handler explicitly
 			if (isCriticial)
-				Application.Current.Shutdown(2);
+				await HandleFatalErrorShutdown();
 
 			SplashWindow.ShowWindow();
 		}
@@ -51,5 +51,17 @@ public static class ErrorDialog
 		{
 			Log.Error(new ErrorException(newEx), "Failed to display error dialog");
 		}
+	}
+
+	private static async Task<bool> HandleFatalErrorShutdown()
+	{
+		if (Application.Current == null)
+			return false;
+
+		Log.Verbose($"Shutting down app on critical error");
+		TargetService.Instance.ClearSelection();
+		await App.Services.ShutdownServices();
+		Application.Current?.Shutdown(2);
+		return true; // Indicate that quit was handled to prevent forced shutdown
 	}
 }
