@@ -3,22 +3,49 @@
 
 namespace Anamnesis.Services;
 
+using Anamnesis.Core;
 using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using PropertyChanged;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
-public delegate void GposeEvent(bool newState);
-
+/// <summary>
+/// A service that continously checks for changes to the game's GPose state.
+/// </summary>
 [AddINotifyPropertyChangedInterface]
 public class GposeService : ServiceBase<GposeService>
 {
+	private const int TaskDelay = 32; // ms (~30 fps)
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GameService.Instance];
+
+	/// <summary>
+	/// The delegate object for the <see cref="GposeService.GposeStateChanged"/> event.
+	/// </summary>
+	/// <param name="newState"></param>
+	public delegate void GposeEvent(bool newState);
+
+	/// <summary>
+	/// Event that is triggered when the GPose state changes.
+	/// </summary>
 	public static event GposeEvent? GposeStateChanged;
 
-	public bool Initialized { get; private set; } = false;
-	public bool IsGpose { get; private set; }
+	/// <summary>
+	/// Gets a value indicating whether the signed-in character is currently in the GPose photo mode.
+	/// </summary>
+	/// <remarks>
+	/// This is a cached value that is updated by a continuous background task.
+	/// </remarks>
+	public bool IsGpose { get; private set; } = false;
 
+	/// <summary>
+	/// Checks if the user is in GPose photo mode by probing the game process' memory.
+	/// </summary>
+	/// <returns>True if the user is in GPose, false otherwise.</returns>
 	public static bool GetIsGPose()
 	{
 		if (AddressService.GposeCheck == IntPtr.Zero)
@@ -34,33 +61,35 @@ public class GposeService : ServiceBase<GposeService>
 		return check1 == 1 && check2 == 4;
 	}
 
-	public override Task Start()
+	/// <inheritdoc/>
+	protected override async Task OnStart()
 	{
-		Task.Run(this.CheckThread);
-		return base.Start();
+		this.CancellationTokenSource = new CancellationTokenSource();
+		this.BackgroundTask = Task.Run(() => this.CheckThread(this.CancellationToken));
+		await base.OnStart();
 	}
 
-	private async Task CheckThread()
+	private async Task CheckThread(CancellationToken cancellationToken)
 	{
-		while (this.IsAlive)
+		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
 		{
-			bool newGpose = GetIsGPose();
-
-			if (!this.Initialized)
+			try
 			{
-				this.Initialized = true;
-				this.IsGpose = newGpose;
-				continue;
-			}
+				bool newGpose = GetIsGPose();
 
-			if (newGpose != this.IsGpose)
+				if (newGpose != this.IsGpose)
+				{
+					this.IsGpose = newGpose;
+					GposeStateChanged?.Invoke(newGpose);
+				}
+
+				await Task.Delay(TaskDelay, cancellationToken);
+			}
+			catch (TaskCanceledException)
 			{
-				this.IsGpose = newGpose;
-				GposeStateChanged?.Invoke(newGpose);
+				// Task was canceled, exit the loop.
+				break;
 			}
-
-			// ~30 fps
-			await Task.Delay(32);
 		}
 	}
 }

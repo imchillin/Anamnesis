@@ -1,14 +1,18 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Core.Memory;
+namespace Anamnesis.Services;
 
+using Anamnesis.Core;
 using Anamnesis.Memory;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using XivToolsWpf;
 
+/// <summary>
+/// A service that handles the scanning and resolution of memory addresses from the game process.
+/// </summary>
 #pragma warning disable SA1027, SA1025
 public class AddressService : ServiceBase<AddressService>
 {
@@ -47,6 +51,9 @@ public class AddressService : ServiceBase<AddressService>
 	public static IntPtr KineDriverRotation { get; private set; }
 	public static IntPtr KineDriverScale { get; private set; }
 
+	/// <summary>
+	/// Gets the camera address from the game process.
+	/// </summary>
 	public static IntPtr Camera
 	{
 		get
@@ -60,6 +67,9 @@ public class AddressService : ServiceBase<AddressService>
 		}
 	}
 
+	/// <summary>
+	/// Gets the weather address from the game process.
+	/// </summary>
 	public static IntPtr Weather
 	{
 		get
@@ -79,6 +89,9 @@ public class AddressService : ServiceBase<AddressService>
 		}
 	}
 
+	/// <summary>
+	/// Gets the GPose weather address from the game process.
+	/// </summary>
 	public static IntPtr GPoseWeather
 	{
 		get
@@ -94,6 +107,9 @@ public class AddressService : ServiceBase<AddressService>
 		}
 	}
 
+	/// <summary>
+	/// Gets the GPose camera address from the game process.
+	/// </summary>
 	public static IntPtr GPoseCamera
 	{
 		get
@@ -109,10 +125,45 @@ public class AddressService : ServiceBase<AddressService>
 		}
 	}
 
-	public override async Task Initialize()
+	/// <inheritdoc/>
+	public override async Task Shutdown()
 	{
-		await base.Initialize();
+		ActorTable = IntPtr.Zero;
+		GPoseFilters = IntPtr.Zero;
+		SkeletonFreezeRotation = IntPtr.Zero;
+		SkeletonFreezeRotation2 = IntPtr.Zero;
+		SkeletonFreezeRotation3 = IntPtr.Zero;
+		SkeletonFreezeScale = IntPtr.Zero;
+		SkeletonFreezeScale2 = IntPtr.Zero;
+		SkeletonFreezePosition = IntPtr.Zero;
+		SkeletonFreezePosition2 = IntPtr.Zero;
+		SkeletonFreezePhysics = IntPtr.Zero;
+		SkeletonFreezePhysics2 = IntPtr.Zero;
+		SkeletonFreezePhysics3 = IntPtr.Zero;
+		WorldPositionFreeze = IntPtr.Zero;
+		WorldRotationFreeze = IntPtr.Zero;
+		GPoseCameraTargetPositionFreeze = IntPtr.Zero;
+		GposeCheck = IntPtr.Zero;
+		GposeCheck2 = IntPtr.Zero;
+		Territory = IntPtr.Zero;
+		GPose = IntPtr.Zero;
+		TimeAsm = IntPtr.Zero;
+		Framework = IntPtr.Zero;
+		PlayerTargetSystem = IntPtr.Zero;
+		AnimationSpeedPatch = IntPtr.Zero;
+		KineDriverPosition = IntPtr.Zero;
+		KineDriverRotation = IntPtr.Zero;
+		KineDriverScale = IntPtr.Zero;
+		cameraManager = IntPtr.Zero;
+		weather = IntPtr.Zero;
+		await base.Shutdown();
+	}
+
+	/// <inheritdoc/>
+	protected override async Task OnStart()
+	{
 		await this.Scan();
+		await base.OnStart();
 	}
 
 	private async Task Scan()

@@ -3,7 +3,6 @@
 
 namespace Anamnesis;
 
-using Anamnesis.Actor;
 using Anamnesis.Core;
 using Anamnesis.Files;
 using Anamnesis.Memory;
@@ -23,33 +22,14 @@ using System.Threading.Tasks;
 public class AutoSaveService : ServiceBase<AutoSaveService>
 {
 	private const int MinuteToMilliseconds = 60 * 1000;
-	private static readonly int MaxStartAttempts = 10; // Maximum number of attempts to start the service
-	private CancellationTokenSource? cancellationTokenSource;
 
-	/// <summary>Starts the auto-save service.</summary>
-	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-	public override async Task Start()
-	{
-		// Wait for Settings service to be initialized
-		var servicesToCheck = new List<IService> { SettingsService.Instance, FileService.Instance, TargetService.Instance, PoseService.Instance };
-		await EnsureServicesAreAlive(servicesToCheck, MaxStartAttempts, 1000);
-
-		this.RestartUpdateTask();
-		await base.Start();
-	}
-
-	/// <summary>Shuts down the auto-save service.</summary>
-	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-	public override Task Shutdown()
-	{
-		this.cancellationTokenSource?.Cancel();
-		return base.Shutdown();
-	}
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [TargetService.Instance, PoseService.Instance];
 
 	/// <summary>(Re)starts the update task with the (new) wake-up time.</summary>
 	public void RestartUpdateTask()
 	{
-		this.cancellationTokenSource?.Cancel();
+		this.CancellationTokenSource?.Cancel();
 
 		if (!SettingsService.Current.EnableAutoSave)
 		{
@@ -57,8 +37,15 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 			return;
 		}
 
-		this.cancellationTokenSource = new CancellationTokenSource();
-		_ = Task.Run(() => Update(this.cancellationTokenSource.Token));
+		this.CancellationTokenSource = new CancellationTokenSource();
+		this.BackgroundTask = Task.Run(() => this.Update(this.CancellationToken));
+	}
+
+	/// <inheritdoc/>
+	protected override async Task OnStart()
+	{
+		this.RestartUpdateTask();
+		await base.OnStart();
 	}
 
 	/// <summary>
@@ -66,9 +53,9 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 	/// </summary>
 	/// <param name="cancellationToken">A <see cref="CancellationToken"/> to cancel the task.</param>
 	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-	private static async Task Update(CancellationToken cancellationToken)
+	private async Task Update(CancellationToken cancellationToken)
 	{
-		while (!cancellationToken.IsCancellationRequested)
+		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
 		{
 			try
 			{
