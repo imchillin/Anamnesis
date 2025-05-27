@@ -11,6 +11,7 @@ using Anamnesis.Styles.Drawers;
 using Anamnesis.Utils;
 using PropertyChanged;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using XivToolsWpf;
@@ -86,41 +87,13 @@ public partial class NpcSelector : NpcSelectorDrawer
 		if (!itemA.IsFavorite && itemB.IsFavorite)
 			return 1;
 
-		// Then Residents
-		if (itemA is ResidentNpc && itemB is not ResidentNpc)
-			return -1;
+		int priorityA = GetNpcSortPriority(itemA);
+		int priorityB = GetNpcSortPriority(itemB);
 
-		if (itemA is not ResidentNpc && itemB is ResidentNpc)
-			return 1;
+		if (priorityA != priorityB)
+			return priorityA.CompareTo(priorityB);
 
-		// Then Mounts
-		if (itemA is Mount && itemB is not Mount)
-			return -1;
-
-		if (itemA is not Mount && itemB is Mount)
-			return 1;
-
-		// Then Minions
-		if (itemA is Companion && itemB is not Companion)
-			return -1;
-
-		if (itemA is not Companion && itemB is Companion)
-			return 1;
-
-		// Then Battle NPCs
-		if (itemA is BattleNpc && itemB is not BattleNpc)
-			return -1;
-
-		if (itemA is not BattleNpc && itemB is BattleNpc)
-			return 1;
-
-		// Then Ornaments
-		if (itemA is Ornament && itemB is not Ornament)
-			return -1;
-
-		if (itemA is not Ornament && itemB is Ornament)
-			return 1;
-
+		// Fallback to RowId comparison if priorities are equal
 		return -itemB.RowId.CompareTo(itemA.RowId);
 	}
 
@@ -220,6 +193,20 @@ public partial class NpcSelector : NpcSelectorDrawer
 			return;
 
 		await ClipboardUtility.CopyToClipboardAsync(this.Value.ToStringKey());
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static int GetNpcSortPriority(INpcBase npc)
+	{
+		return npc switch
+		{
+			ResidentNpc => 0,
+			Mount => 1,
+			Companion => 2,
+			BattleNpc => 3,
+			Ornament => 4,
+			_ => 5,
+		};
 	}
 
 	[AddINotifyPropertyChangedInterface]

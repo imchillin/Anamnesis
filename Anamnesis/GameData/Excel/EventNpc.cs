@@ -3,6 +3,7 @@
 
 namespace Anamnesis.GameData.Excel;
 
+using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
@@ -289,10 +290,13 @@ public readonly unsafe struct EventNpc(ExcelPage page, uint offset, uint row)
 	/// <returns></returns>
 	private static IItem GetWeaponItem(ItemSlots slot, ulong baseVal, ulong? equipVal)
 	{
+		if (baseVal != 0 && baseVal != uint.MaxValue)
+			return LuminaExtensions.GetWeaponItem(slot, baseVal);
+
 		if (equipVal != null && equipVal != 0 && equipVal != uint.MaxValue && equipVal != long.MaxValue)
 			return LuminaExtensions.GetWeaponItem(slot, (ulong)equipVal);
 
-		return LuminaExtensions.GetWeaponItem(slot, baseVal);
+		return ItemUtility.EmperorsNewFists;
 	}
 
 	/// <summary>
@@ -305,10 +309,13 @@ public readonly unsafe struct EventNpc(ExcelPage page, uint offset, uint row)
 	/// <returns>The found item in the game data.</returns>
 	private static IItem GetGearItem(ItemSlots slot, uint baseVal, uint? equipVal)
 	{
-		if (equipVal != null && equipVal != 0 && equipVal != uint.MaxValue && equipVal != long.MaxValue)
+		if (baseVal != 0 && baseVal != uint.MaxValue)
+			return LuminaExtensions.GetGearItem(slot, baseVal);
+
+		if (equipVal != null && equipVal != 0 && equipVal != uint.MaxValue && equipVal != uint.MaxValue)
 			return LuminaExtensions.GetGearItem(slot, (uint)equipVal);
 
-		return LuminaExtensions.GetGearItem(slot, baseVal);
+		return ItemUtility.NoneItem;
 	}
 
 	/// <summary>
