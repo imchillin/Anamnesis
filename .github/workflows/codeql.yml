@@ -58,6 +58,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
     # Add any setup steps before running the `github/codeql-action/init` action.
     # This includes steps like installing compilers or runtimes (`actions/setup-node`
@@ -87,6 +89,8 @@ jobs:
     - if: matrix.build-mode == 'manual'
       shell: pwsh
       run: |
+        dotnet restore ./Anamnesis/Lib/XivToolsWpf/XivToolsWpf.sln
+        dotnet build ./Anamnesis/Lib/XivToolsWpf/XivToolsWpf.sln --configuration Release
         dotnet restore Anamnesis.sln
         dotnet build Anamnesis.sln --configuration Release
 
