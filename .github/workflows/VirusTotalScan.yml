@@ -1,0 +1,26 @@
+name: released
+
+permissions:
+  contents: read
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  virustotal:
+    runs-on: ubuntu-latest
+    permissions:
+      # required to write GitHub Release body
+      contents: write
+    steps:
+      -
+        name: VirusTotal Scan
+        uses: crazy-max/ghaction-virustotal@v4
+        with:
+          vt_api_key: ${{ secrets.VIRUSTOTALAPIKEY }}
+          update_release_body: true
+          request_rate: 4
+          files: |
+            Anamnesis.zip
