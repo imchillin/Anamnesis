@@ -9,6 +9,8 @@
 			 mc:Ignorable="d"
 			 Margin="0"
 			 d:DesignWidth="300"
+			 Loaded="OnLoaded"
+			 Unloaded="OnUnloaded"
 			 DataContextChanged="OnDataContextChanged">
 
 	<GroupBox Margin="3, 0" x:Name="ContentArea">
