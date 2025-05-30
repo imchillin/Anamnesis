@@ -224,7 +224,7 @@
 								<StackPanel>
 									<XivToolsWpf:TextBlock Key="Character_Equipment_Dye2"/>
 									<TextBlock Text="{Binding Dye2.Name}" FontWeight="DemiBold"/>
-									<XivToolsWpf:TextBlock Key="Character_Equipment_MiddleClickToClear" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+									<XivToolsWpf:TextBlock Key="Character_Equipment_MiddleClickToClear" Visibility="{Binding Dye2.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 								</StackPanel>
 							</Grid.ToolTip>
 						</Grid>
