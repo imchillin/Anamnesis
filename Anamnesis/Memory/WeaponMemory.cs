@@ -89,4 +89,14 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 		this.Dye = 0;
 		this.Dye2 = 0;
 	}
+
+	public void ApplyDye1(IDye dye)
+	{
+		this.Dye = (dye == null) ? DyeUtility.NoneDye.Id : dye.Id;
+	}
+
+	public void ApplyDye2(IDye dye)
+	{
+		this.Dye2 = (dye == null) ? DyeUtility.NoneDye.Id : dye.Id;
+	}
 }

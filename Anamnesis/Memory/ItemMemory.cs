@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Memory;
 
+using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
 
 public class ItemMemory : MemoryBase, IEquipmentItemMemory
@@ -12,7 +13,7 @@ public class ItemMemory : MemoryBase, IEquipmentItemMemory
 	[Bind(0x003, BindFlags.ActorRefresh)] public byte Dye { get; set; }
 	[Bind(0x004, BindFlags.ActorRefresh)] public byte Dye2 { get; set; }
 
-	// Item's dont have a 'Set' but the UI wants to bind to something, so...
+	// Items dont have a 'Set' but the UI wants to bind to something, so...
 	public ushort Set { get; set; } = 0;
 	public bool WeaponHidden { get; set; } = false;
 
@@ -36,5 +37,15 @@ public class ItemMemory : MemoryBase, IEquipmentItemMemory
 			return false;
 
 		return this.Base == item.ModelBase && this.Variant == item.ModelVariant;
+	}
+
+	public void ApplyDye1(IDye dye)
+	{
+		this.Dye = (dye == null) ? DyeUtility.NoneDye.Id : dye.Id;
+	}
+
+	public void ApplyDye2(IDye dye)
+	{
+		this.Dye2 = (dye == null) ? DyeUtility.NoneDye.Id : dye.Id;
 	}
 }
