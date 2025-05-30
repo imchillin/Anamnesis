@@ -233,7 +233,7 @@ public partial class CharacterPage : UserControl
 		this.ShowDyeDrawerAndApplyDyeToEquipment(true, true, true, true);
 	}
 
-	//Dye1 - Weapon only - Will dye both weapons if able.
+	//Dye1 - Weapons only - Will dye both weapons if able.
 	private void OnSetDye1OnWeaponClicked(object sender, RoutedEventArgs e)
 	{
 		this.ShowDyeDrawerAndApplyDyeToEquipment(true, false, false, true);
@@ -257,7 +257,7 @@ public partial class CharacterPage : UserControl
 		this.ApplyDyeToEquipment(DyeUtility.NoneDye, true, true, true, true);
 	}
 
-	//Dye1 - Clear on weapon only.
+	//Dye1 - Clear on weapons only.
 	private void OnClearDye1OnWeaponClicked(object sender, RoutedEventArgs e)
 	{
 		this.ApplyDyeToEquipment(DyeUtility.NoneDye, true, false, false, true);
@@ -290,7 +290,7 @@ public partial class CharacterPage : UserControl
 		this.ShowDyeDrawerAndApplyDyeToEquipment(true, true, true, false);
 	}
 
-	//Dye2 - Weapon only - Will dye both weapons if able.
+	//Dye2 - Weapons only - Will dye both weapons if able.
 	private void OnSetDye2OnWeaponClicked(object sender, RoutedEventArgs e)
 	{
 		this.ShowDyeDrawerAndApplyDyeToEquipment(true, false, false, false);
@@ -314,7 +314,7 @@ public partial class CharacterPage : UserControl
 		this.ApplyDyeToEquipment(DyeUtility.NoneDye, true, true, true, false);
 	}
 
-	//Dye2 - Clear on weapon only.
+	//Dye2 - Clear on weapons only.
 	private void OnClearDye2OnWeaponClicked(object sender, RoutedEventArgs e)
 	{
 		this.ApplyDyeToEquipment(DyeUtility.NoneDye, true, false, false, false);
@@ -342,7 +342,7 @@ public partial class CharacterPage : UserControl
 	}
 
 	//Show dye selection drawer, and then apply the resulting dye as specified.
-	private void ShowDyeDrawerAndApplyDyeToEquipment(bool doApplyDyeToWeapon, bool doApplyDyeToClothes, bool doApplyDyeToAccessories, bool applyDye1)
+	private void ShowDyeDrawerAndApplyDyeToEquipment(bool doApplyDyeToWeapons, bool doApplyDyeToClothes, bool doApplyDyeToAccessories, bool applyDye1)
 	{
 		if (this.Actor == null)
 			return;
@@ -352,29 +352,29 @@ public partial class CharacterPage : UserControl
 			return;
 
 		//Don't show the drawer if we want to dye only the weapon, but can't.
-		if (doApplyDyeToWeapon && !this.CanDyeWeapon && !(doApplyDyeToClothes || doApplyDyeToAccessories))
+		if (doApplyDyeToWeapons && !this.CanDyeWeapon && !(doApplyDyeToClothes || doApplyDyeToAccessories))
 			return;
 
 		//Don't show the drawer if we want to dye only equipment, but can't.
-		if ((doApplyDyeToClothes || doApplyDyeToAccessories) && !this.CanDyeEquipment && !doApplyDyeToWeapon)
+		if ((doApplyDyeToClothes || doApplyDyeToAccessories) && !this.CanDyeEquipment && !doApplyDyeToWeapons)
 			return;
 
 		//Don't show the drawer if we dont want to dye... anything.
-		if (!doApplyDyeToWeapon && !doApplyDyeToClothes && !doApplyDyeToAccessories)
+		if (!doApplyDyeToWeapons && !doApplyDyeToClothes && !doApplyDyeToAccessories)
 			return;
 
 		SelectorDrawer.Show<DyeSelector, IDye>(null, (dye) =>
 		{
-			this.ApplyDyeToEquipment(dye, doApplyDyeToWeapon, doApplyDyeToClothes, doApplyDyeToAccessories, applyDye1);
+			this.ApplyDyeToEquipment(dye, doApplyDyeToWeapons, doApplyDyeToClothes, doApplyDyeToAccessories, applyDye1);
 		});
 	}
 
 	//Applies a dye to equipment as specified
-	//doApplyDyeToWeapon - if true, will apply the dye to the weapon, if dyable.
+	//doApplyDyeToWeapon - if true, will apply the dye to the weapons, if dyable.
 	//doApplyDyeToClothes - if true, will apply the dye to the left side equipment.
 	//doApplyDyeToAccessories - if true, will apply the dye to the right side equipment.
 	//applyDye1 - if true, will apply to dye1. Otherwise, will apply to dye2.
-	private void ApplyDyeToEquipment(IDye dye, bool doApplyDyeToWeapon, bool doApplyDyeToClothes, bool doApplyDyeToAccessories, bool applyDye1)
+	private void ApplyDyeToEquipment(IDye dye, bool doApplyDyeToWeapons, bool doApplyDyeToClothes, bool doApplyDyeToAccessories, bool applyDye1)
 	{
 		if (this.Actor == null)
 			return;
@@ -383,9 +383,9 @@ public partial class CharacterPage : UserControl
 
 		if (applyDye1)
 		{
-			if (this.CanDyeWeapon && doApplyDyeToWeapon)
+			if (this.CanDyeWeapon && doApplyDyeToWeapons)
 				this.Actor?.MainHand?.ApplyDye1(dye);
-			if (this.CanDyeWeapon && doApplyDyeToWeapon)
+			if (this.CanDyeWeapon && doApplyDyeToWeapons)
 				this.Actor?.OffHand?.ApplyDye1(dye);
 			if (this.CanDyeEquipment && doApplyDyeToClothes)
 			{
@@ -406,9 +406,9 @@ public partial class CharacterPage : UserControl
 		}
 		else
 		{
-			if (this.CanDyeWeapon && doApplyDyeToWeapon)
+			if (this.CanDyeWeapon && doApplyDyeToWeapons)
 				this.Actor?.MainHand?.ApplyDye2(dye);
-			if (this.CanDyeWeapon && doApplyDyeToWeapon)
+			if (this.CanDyeWeapon && doApplyDyeToWeapons)
 				this.Actor?.OffHand?.ApplyDye2(dye);
 			if (this.CanDyeEquipment && doApplyDyeToClothes)
 			{

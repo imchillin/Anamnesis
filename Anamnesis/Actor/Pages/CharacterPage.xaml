@@ -112,15 +112,6 @@
 										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
-								<!-- Set Dye 1 to Weapon -->
-								<MenuItem Click="OnSetDye1OnWeaponClicked">
-									<MenuItem.Header>
-										<XivToolsWpf:TextBlock Key="Character_Equipment_SetDye1OnWeapon"/>
-									</MenuItem.Header>
-									<MenuItem.Icon>
-										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
-									</MenuItem.Icon>
-								</MenuItem>
 								<!-- Set Dye 1 to Clothes -->
 								<MenuItem Click="OnSetDye1OnClothesClicked">
 									<MenuItem.Header>
@@ -139,20 +130,20 @@
 										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
+								<!-- Set Dye 1 to Weapon -->
+								<MenuItem Click="OnSetDye1OnWeaponClicked">
+									<MenuItem.Header>
+										<XivToolsWpf:TextBlock Key="Character_Equipment_SetDye1OnWeapon"/>
+									</MenuItem.Header>
+									<MenuItem.Icon>
+										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+									</MenuItem.Icon>
+								</MenuItem>
 								<Separator/>
 								<!-- Clear Dye 1 to ALL Equipment -->
 								<MenuItem Click="OnClearDye1OnAllEquipmentClicked">
 									<MenuItem.Header>
 										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDye1OnEquipment"/>
-									</MenuItem.Header>
-									<MenuItem.Icon>
-										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-								<!-- Clear Dye 1 to Weapon -->
-								<MenuItem Click="OnClearDye1OnWeaponClicked">
-									<MenuItem.Header>
-										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDye1OnWeapon"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
 										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
@@ -171,6 +162,15 @@
 								<MenuItem Click="OnClearDye1OnAccessoriesClicked">
 									<MenuItem.Header>
 										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDye1OnAccessories"/>
+									</MenuItem.Header>
+									<MenuItem.Icon>
+										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<!-- Clear Dye 1 to Weapon -->
+								<MenuItem Click="OnClearDye1OnWeaponClicked">
+									<MenuItem.Header>
+										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDye1OnWeapon"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
 										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
@@ -200,15 +200,6 @@
 										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
-								<!-- Set Dye 2 to Weapon -->
-								<MenuItem Click="OnSetDye2OnWeaponClicked">
-									<MenuItem.Header>
-										<XivToolsWpf:TextBlock Key="Character_Equipment_SetDye2OnWeapon"/>
-									</MenuItem.Header>
-									<MenuItem.Icon>
-										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
-									</MenuItem.Icon>
-								</MenuItem>
 								<!-- Set Dye 2 to Clothes -->
 								<MenuItem Click="OnSetDye2OnClothesClicked">
 									<MenuItem.Header>
@@ -227,20 +218,20 @@
 										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
+								<!-- Set Dye 2 to Weapon -->
+								<MenuItem Click="OnSetDye2OnWeaponClicked">
+									<MenuItem.Header>
+										<XivToolsWpf:TextBlock Key="Character_Equipment_SetDye2OnWeapon"/>
+									</MenuItem.Header>
+									<MenuItem.Icon>
+										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+									</MenuItem.Icon>
+								</MenuItem>
 								<Separator/>
 								<!-- Clear Dye 2 to ALL Equipment -->
 								<MenuItem Click="OnClearDye2OnAllEquipmentClicked">
 									<MenuItem.Header>
 										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDye2OnEquipment"/>
-									</MenuItem.Header>
-									<MenuItem.Icon>
-										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-								<!-- Clear Dye 2 to Weapon -->
-								<MenuItem Click="OnClearDye2OnWeaponClicked">
-									<MenuItem.Header>
-										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDye2OnWeapon"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
 										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
@@ -259,6 +250,15 @@
 								<MenuItem Click="OnClearDye2OnAccessoriesClicked">
 									<MenuItem.Header>
 										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDye2OnAccessories"/>
+									</MenuItem.Header>
+									<MenuItem.Icon>
+										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<!-- Clear Dye 2 to Weapon -->
+								<MenuItem Click="OnClearDye2OnWeaponClicked">
+									<MenuItem.Header>
+										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDye2OnWeapon"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
 										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
