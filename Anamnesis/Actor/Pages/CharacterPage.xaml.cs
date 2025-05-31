@@ -5,6 +5,7 @@ namespace Anamnesis.Actor.Pages;
 
 using Anamnesis.Actor.Utilities;
 using Anamnesis.Actor.Views;
+using Anamnesis.Core.Extensions;
 using Anamnesis.Files;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
@@ -24,7 +25,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Navigation;
+using static Anamnesis.Actor.Utilities.DyeUtility;
 
 /// <summary>
 /// Interaction logic for AppearancePage.xaml.
@@ -61,6 +64,21 @@ public partial class CharacterPage : UserControl
 	private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 	{
 		this.OnActorChanged(this.DataContext as ActorMemory);
+	}
+
+	public bool CanDyeEquipment => this.Actor != null && this.Actor.Equipment != null;
+
+	public bool CanDyeWeapons
+	{
+		get
+		{
+			if (this.Actor == null)
+				return false;
+
+			// One of the weapons must not be null and have a non-zero set to be dyable.
+			return (this.Actor.MainHand != null && this.Actor?.MainHand?.Set != 0) ||
+				   (this.Actor.OffHand != null && this.Actor?.OffHand?.Set != 0);
+		}
 	}
 
 	private static ListCollectionView GenerateVoiceList()
@@ -203,6 +221,178 @@ public partial class CharacterPage : UserControl
 		this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsHuman);
 		this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsHuman);
 		this.Actor.Glasses?.Clear();
+	}
+
+	// Dye1 - ALL equipment
+	private void OnSetDye1OnAllEquipmentClicked(object sender, RoutedEventArgs e)
+	{
+		this.ShowDyeDrawerAndApplyDyeToEquipment(DyeTarget.All, DyeSlot.First);
+	}
+
+	// Dye1 - Weapons only - Will dye both weapons if able.
+	private void OnSetDye1OnWeaponsClicked(object sender, RoutedEventArgs e)
+	{
+		this.ShowDyeDrawerAndApplyDyeToEquipment(DyeTarget.Weapons, DyeSlot.First);
+	}
+
+	// Dye1 - Clothes (left side) only.
+	private void OnSetDye1OnClothesClicked(object sender, RoutedEventArgs e)
+	{
+		this.ShowDyeDrawerAndApplyDyeToEquipment(DyeTarget.Clothing, DyeSlot.First);
+	}
+
+	// Dye1 - Accessories (right side) only.
+	private void OnSetDye1OnAccessoriesClicked(object sender, RoutedEventArgs e)
+	{
+		this.ShowDyeDrawerAndApplyDyeToEquipment(DyeTarget.Accessories, DyeSlot.First);
+	}
+
+	// Dye1 - Clear on ALL equipment
+	private void OnClearDye1OnAllEquipmentClicked(object sender, RoutedEventArgs e)
+	{
+		this.ApplyDyeToEquipment(DyeUtility.NoneDye, DyeTarget.All, DyeSlot.First);
+	}
+
+	// Dye1 - Clear on weapons only.
+	private void OnClearDye1OnWeaponsClicked(object sender, RoutedEventArgs e)
+	{
+		this.ApplyDyeToEquipment(DyeUtility.NoneDye, DyeTarget.Weapons, DyeSlot.First);
+	}
+
+	// Dye1 - Clear on clothes (left side) only.
+	private void OnClearDye1OnClothesClicked(object sender, RoutedEventArgs e)
+	{
+		this.ApplyDyeToEquipment(DyeUtility.NoneDye, DyeTarget.Clothing, DyeSlot.First);
+	}
+
+	// Dye1 - Clear on accessories (right side) only.
+	private void OnClearDye1OnAccessoriesClicked(object sender, RoutedEventArgs e)
+	{
+		this.ApplyDyeToEquipment(DyeUtility.NoneDye, DyeTarget.Accessories, DyeSlot.First);
+	}
+
+	// Dye1 - Middle click to clear - All Equipment
+	private void OnSetDye1OnAllEquipmentMouseUp(object sender, MouseButtonEventArgs e)
+	{
+		if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Released)
+		{
+			this.ApplyDyeToEquipment(DyeUtility.NoneDye, DyeTarget.All, DyeSlot.First);
+		}
+	}
+
+	// Dye2 - ALL Equipment
+	private void OnSetDye2OnAllEquipmentClicked(object sender, RoutedEventArgs e)
+	{
+		this.ShowDyeDrawerAndApplyDyeToEquipment(DyeTarget.All, DyeSlot.Second);
+	}
+
+	// Dye2 - Weapons only - Will dye both weapons if able.
+	private void OnSetDye2OnWeaponsClicked(object sender, RoutedEventArgs e)
+	{
+		this.ShowDyeDrawerAndApplyDyeToEquipment(DyeTarget.Weapons, DyeSlot.Second);
+	}
+
+	// Dye2 - Clothes (left side) only.
+	private void OnSetDye2OnClothesClicked(object sender, RoutedEventArgs e)
+	{
+		this.ShowDyeDrawerAndApplyDyeToEquipment(DyeTarget.Clothing, DyeSlot.Second);
+	}
+
+	// Dye2 - Accessories (right side) only.
+	private void OnSetDye2OnAccessoriesClicked(object sender, RoutedEventArgs e)
+	{
+		this.ShowDyeDrawerAndApplyDyeToEquipment(DyeTarget.Accessories, DyeSlot.Second);
+	}
+	 
+	// Dye2 - Clear on ALL equipment
+	private void OnClearDye2OnAllEquipmentClicked(object sender, RoutedEventArgs e)
+	{
+		this.ApplyDyeToEquipment(DyeUtility.NoneDye, DyeTarget.All, DyeSlot.Second);
+	}
+
+	// Dye2 - Clear on weapons only.
+	private void OnClearDye2OnWeaponsClicked(object sender, RoutedEventArgs e)
+	{
+		this.ApplyDyeToEquipment(DyeUtility.NoneDye, DyeTarget.Weapons, DyeSlot.Second);
+	}
+
+	// Dye2 - Clear on clothes (left side) only.
+	private void OnClearDye2OnClothesClicked(object sender, RoutedEventArgs e)
+	{
+		this.ApplyDyeToEquipment(DyeUtility.NoneDye, DyeTarget.Clothing, DyeSlot.Second);
+	}
+
+	// Dye2 - Clear on accessories (right side) only.
+	private void OnClearDye2OnAccessoriesClicked(object sender, RoutedEventArgs e)
+	{
+		this.ApplyDyeToEquipment(DyeUtility.NoneDye, DyeTarget.Accessories, DyeSlot.Second);
+	}
+
+	// Dye2 - Middle click to clear - All Equipment
+	private void OnSetDye2OnAllEquipmentMouseUp(object sender, MouseButtonEventArgs e)
+	{
+		if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Released)
+		{
+			this.ApplyDyeToEquipment(DyeUtility.NoneDye, DyeTarget.All, DyeSlot.Second);
+		}
+	}
+
+	// Show dye selection drawer, and then apply the resulting dye as specified.
+	// If the actor is null or we are unable to dye anything, return.
+	// Otherwise, check each intended dye target and remove them if they cannot be dyed.
+	// Show the drawer, and apply the dye to the remaining valid targets.
+	private void ShowDyeDrawerAndApplyDyeToEquipment(DyeTarget dyeTarget, DyeSlot dyeSlot)
+	{
+		if (this.Actor == null)
+			return;
+
+		if (!this.CanDyeWeapons && !this.CanDyeEquipment)
+			return;
+
+		if (dyeTarget.HasFlagUnsafe(DyeTarget.Weapons) && !this.CanDyeWeapons)
+			dyeTarget &= ~DyeTarget.Weapons;
+
+		if (dyeTarget.HasFlagUnsafe(DyeTarget.Clothing) && !this.CanDyeEquipment)
+			dyeTarget &= ~DyeTarget.Clothing;
+
+		if (dyeTarget.HasFlagUnsafe(DyeTarget.Accessories) && !this.CanDyeEquipment)
+			dyeTarget &= ~DyeTarget.Accessories;
+
+		SelectorDrawer.Show<DyeSelector, IDye>(null, (dye) =>
+		{
+			this.ApplyDyeToEquipment(dye, dyeTarget, dyeSlot);
+		});
+	}
+
+	// Applies a dye to a specified slot on the specified targets, whether they be weapons, clothing, 
+	private void ApplyDyeToEquipment(IDye dye, DyeTarget dyeTarget, DyeSlot dyeSlot)
+	{
+		if (this.Actor == null || dye == null)
+			return;
+
+		if (this.CanDyeWeapons && dyeTarget.HasFlagUnsafe(DyeTarget.Weapons))
+			this.Actor.MainHand?.ApplyDye(dye, dyeSlot);
+
+		if (this.CanDyeWeapons && dyeTarget.HasFlagUnsafe(DyeTarget.Weapons))
+			this.Actor.OffHand?.ApplyDye(dye, dyeSlot);
+
+		if (this.CanDyeEquipment && dyeTarget.HasFlagUnsafe(DyeTarget.Clothing))
+		{
+			this.Actor.Equipment?.Head?.ApplyDye(dye, dyeSlot);
+			this.Actor.Equipment?.Chest?.ApplyDye(dye, dyeSlot);
+			this.Actor.Equipment?.Arms?.ApplyDye(dye, dyeSlot);
+			this.Actor.Equipment?.Legs?.ApplyDye(dye, dyeSlot);
+			this.Actor.Equipment?.Feet?.ApplyDye(dye, dyeSlot);
+		}
+
+		if (this.CanDyeEquipment && dyeTarget.HasFlagUnsafe(DyeTarget.Accessories))
+		{
+			this.Actor.Equipment?.Ear?.ApplyDye(dye, dyeSlot);
+			this.Actor.Equipment?.Neck?.ApplyDye(dye, dyeSlot);
+			this.Actor.Equipment?.Wrist?.ApplyDye(dye, dyeSlot);
+			this.Actor.Equipment?.RFinger?.ApplyDye(dye, dyeSlot);
+			this.Actor.Equipment?.LFinger?.ApplyDye(dye, dyeSlot);
+		}
 	}
 
 	private async void OnResetClicked(object sender, RoutedEventArgs e)
