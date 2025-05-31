@@ -199,12 +199,15 @@
 						<Grid Visibility="{Binding ItemModel, Converter={StaticResource NotNullToVisibilityConverter}}">
 							<Image Source="{Binding Dye.Icon, Converter={StaticResource Img}}" Margin="2"/>
 							<Image Source="/AppearanceModule;component/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
-							<fa:IconBlock Opacity="0.5" Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="_1" Visibility="{Binding Dye.Icon, Converter={StaticResource NullToVisibilityConverter}}"/>
-							
+							<fa:IconBlock Opacity="0.2" Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="_1" Visibility="{Binding Dye.Icon, Converter={StaticResource NullToVisibilityConverter}}"/>
+
 							<Grid.ToolTip>
 								<StackPanel>
-									<XivToolsWpf:TextBlock Key="Character_Equipment_Dye1"/>
-									<TextBlock Text="{Binding Dye.Name}" FontWeight="DemiBold"/>
+									<StackPanel Orientation="Horizontal">
+										<XivToolsWpf:TextBlock Key="Character_Equipment_DyeN" Value="1"/>
+										<TextBlock Text=": "/>
+										<TextBlock Text="{Binding Dye.Name}" FontWeight="DemiBold"/>
+									</StackPanel>
 									<XivToolsWpf:TextBlock Key="Character_Equipment_MiddleClickToClear" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 								</StackPanel>
 							</Grid.ToolTip>
@@ -218,12 +221,15 @@
 						<Grid Visibility="{Binding ItemModel, Converter={StaticResource NotNullToVisibilityConverter}, Mode=OneWay}">
 							<Image Source="{Binding Dye2.Icon, Converter={StaticResource Img}}" Margin="2"/>
 							<Image Source="/AppearanceModule;component/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Dye2.Icon, Converter={StaticResource NotNullToVisibilityConverter}, Mode=OneWay}"/>
-							<fa:IconBlock Opacity="0.5" Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="_2" Visibility="{Binding Dye2.Icon, Converter={StaticResource NullToVisibilityConverter}}"/>
+							<fa:IconBlock Opacity="0.2" Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="_2" Visibility="{Binding Dye2.Icon, Converter={StaticResource NullToVisibilityConverter}}"/>
 
 							<Grid.ToolTip>
 								<StackPanel>
-									<XivToolsWpf:TextBlock Key="Character_Equipment_Dye2"/>
-									<TextBlock Text="{Binding Dye2.Name}" FontWeight="DemiBold"/>
+									<StackPanel Orientation="Horizontal">
+										<XivToolsWpf:TextBlock Key="Character_Equipment_DyeN" Value="2"/>
+										<TextBlock Text=": "/>
+										<TextBlock Text="{Binding Dye2.Name}" FontWeight="DemiBold"/>
+									</StackPanel>
 									<XivToolsWpf:TextBlock Key="Character_Equipment_MiddleClickToClear" Visibility="{Binding Dye2.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 								</StackPanel>
 							</Grid.ToolTip>

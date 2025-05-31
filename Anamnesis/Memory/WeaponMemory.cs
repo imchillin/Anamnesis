@@ -9,6 +9,7 @@ using Anamnesis.GameData;
 using PropertyChanged;
 using System;
 using System.Numerics;
+using static Anamnesis.Actor.Utilities.DyeUtility;
 
 public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 {
@@ -90,13 +91,12 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 		this.Dye2 = 0;
 	}
 
-	public void ApplyDye1(IDye dye)
+	public void ApplyDye(IDye dye, DyeSlot dyeSlot)
 	{
-		this.Dye = (dye == null) ? DyeUtility.NoneDye.Id : dye.Id;
-	}
+		if (dyeSlot.HasFlagUnsafe(DyeSlot.First))
+			this.Dye = (dye != null) ? dye.Id : DyeUtility.NoneDye.Id;
 
-	public void ApplyDye2(IDye dye)
-	{
-		this.Dye2 = (dye == null) ? DyeUtility.NoneDye.Id : dye.Id;
+		if (dyeSlot.HasFlagUnsafe(DyeSlot.Second))
+			this.Dye2 = (dye != null) ? dye.Id : DyeUtility.NoneDye.Id;
 	}
 }

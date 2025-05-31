@@ -4,7 +4,9 @@
 namespace Anamnesis.Memory;
 
 using Anamnesis.Actor.Utilities;
+using Anamnesis.Core.Extensions;
 using Anamnesis.GameData;
+using static Anamnesis.Actor.Utilities.DyeUtility;
 
 public class ItemMemory : MemoryBase, IEquipmentItemMemory
 {
@@ -39,13 +41,12 @@ public class ItemMemory : MemoryBase, IEquipmentItemMemory
 		return this.Base == item.ModelBase && this.Variant == item.ModelVariant;
 	}
 
-	public void ApplyDye1(IDye dye)
+	public void ApplyDye(IDye dye, DyeSlot dyeSlot)
 	{
-		this.Dye = (dye == null) ? DyeUtility.NoneDye.Id : dye.Id;
-	}
+		if(dyeSlot.HasFlagUnsafe(DyeSlot.First))
+			this.Dye = (dye != null) ? dye.Id : DyeUtility.NoneDye.Id;
 
-	public void ApplyDye2(IDye dye)
-	{
-		this.Dye2 = (dye == null) ? DyeUtility.NoneDye.Id : dye.Id;
+		if (dyeSlot.HasFlagUnsafe(DyeSlot.Second))
+			this.Dye2 = (dye != null) ? dye.Id : DyeUtility.NoneDye.Id;
 	}
 }
