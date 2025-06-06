@@ -65,6 +65,14 @@ public static class ItemUtility
 		return new DummyItem(rowId, modelSet, modelBase, modelVariant);
 	}
 
+	/// <summary>
+	/// Attempts to locate an item based on the different properties associated with favoriting items
+	/// It will first use the prefix to decide how to locate the item.
+	/// - For chocobo skins, simply return one or the other based on the rowId.
+	/// - For buddy equipment, get the buddy equip and then use the buddyEquipSlot parameter to decide which slot to return.
+	/// - For one-off items, simply return the right item based on the rowId.
+	/// - For all else, return the item from its GameData list based on its rowId.
+	/// </summary>
 	public static IItem? GetItemByItemFavoriteProperties(uint favoritePrefix, uint rowId, uint buddyEquipSlot)
 	{
 		ItemFavoriteCategory favoriteItemCategory = (ItemFavoriteCategory)favoritePrefix;
@@ -143,6 +151,11 @@ public static class ItemUtility
 			return uint.Parse(favoriteItemCategoryPrefix.ToString() + item.RowId.ToString());
 		}
 	}
+
+	/// <summary>
+	/// Used as a simple method to compare two IItem objects by the properties that make up the
+	/// composite Id for favoriting. This is only used to remove items from the respective favorites array.
+	/// </summary>
 	public static bool CompareItemFavoritesByCompositeId<T>(T x, T y)
 	{
 		if (x == null || y == null)
