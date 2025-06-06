@@ -123,6 +123,12 @@ public partial class ItemView : UserControl
 			if (!isNormalCategory)
 				return false;
 
+			// Invalid if we are not in the None category for favorites.
+			// Previously, the rowId == 0 would catch this, but since we're using non-zero values for 
+			// special items, we don't want the context menu for those.
+			if(!this.Item.FavoriteItemCategory.Equals(ItemFavoriteCategory.None)) 
+				return false;
+
 			return true;
 		}
 	}

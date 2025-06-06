@@ -30,7 +30,9 @@ public class EquipmentSheet : ISheet<Equipment>
 
 			foreach (Equipment equipment in rows)
 			{
-				this.rows.Add(index, equipment);
+				// Give a RowId for this custom equipment.
+				equipment.RowId = index;
+				this.rows.Add(equipment.RowId, equipment);
 				index++;
 			}
 		}

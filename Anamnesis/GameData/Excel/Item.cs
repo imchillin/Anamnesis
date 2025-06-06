@@ -105,6 +105,9 @@ public readonly unsafe struct Item(ExcelPage page, uint offset, uint row)
 	/// <summary>Gets the item category.</summary>
 	public ItemCategories Category => GameDataService.GetCategory(this);
 
+	/// <inheritdoc/>
+	public ItemFavoriteCategory FavoriteItemCategory => ItemFavoriteCategory.None;
+
 	/// <summary>
 	/// Creates a new instance of the <see cref="Item"/> struct.
 	/// </summary>

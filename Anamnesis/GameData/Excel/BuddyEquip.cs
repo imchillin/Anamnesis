@@ -5,6 +5,7 @@ namespace Anamnesis.GameData.Excel;
 
 using Anamnesis.Core.Extensions;
 using Anamnesis.GameData.Sheets;
+using Anamnesis.Services;
 using Anamnesis.TexTools;
 using Lumina.Excel;
 using System.Runtime.CompilerServices;
@@ -35,7 +36,7 @@ public readonly struct BuddyEquip(ExcelPage page, uint offset, uint row)
 			if (headBase == 0 && headVariant == 0)
 				return null;
 
-			return new(this.Name, ItemSlots.Head, headBase, headVariant, headIcon);
+			return new(row, this.Name, ItemSlots.Head, headBase, headVariant, headIcon);
 		}
 	}
 
@@ -52,7 +53,7 @@ public readonly struct BuddyEquip(ExcelPage page, uint offset, uint row)
 			if (bodyBase == 0 && bodyVariant == 0)
 				return null;
 
-			return new(this.Name, ItemSlots.Body, bodyBase, bodyVariant, bodyIcon);
+			return new(row, this.Name, ItemSlots.Body, bodyBase, bodyVariant, bodyIcon);
 		}
 	}
 
@@ -67,10 +68,25 @@ public readonly struct BuddyEquip(ExcelPage page, uint offset, uint row)
 			ushort legsIcon = page.ReadUInt16(offset + 36);
 
 			if (legsBase != 0 || legsVariant != 0)
-				return new(this.Name, ItemSlots.Feet, legsBase, legsVariant, legsIcon);
+				return new(row, this.Name, ItemSlots.Feet, legsBase, legsVariant, legsIcon);
 
 			return null;
 		}
+	}
+
+	/// <summary>
+	/// Based on a given integer, return the ItemSlot value for which it is aliased.
+	/// This is used when loading favorites to easily look up the ItemSlot for the favorite BuddyEquip.
+	/// </summary>
+	public static ItemSlots GetBuddyEquipItemSlotByIntAlias(uint value)
+	{
+		return value switch
+		{
+			1 => ItemSlots.Head,
+			2 => ItemSlots.Body,
+			5 => ItemSlots.Feet,
+			_ => (ItemSlots)value
+		};
 	}
 
 	/// <summary>
@@ -84,8 +100,7 @@ public readonly struct BuddyEquip(ExcelPage page, uint offset, uint row)
 		new(page, offset, row);
 
 	/// <summary>Represents a companion equipment item.</summary>
-	public class BuddyItem(string name, ItemSlots slot, ushort modelBase, ushort modelVariant, ushort icon)
-		: IItem
+	public class BuddyItem(uint row, string name, ItemSlots slot, ushort modelBase, ushort modelVariant, ushort icon): IItem
 	{
 		/// <inheritdoc/>
 		public string Name { get; private set; } = name;
@@ -97,7 +112,7 @@ public readonly struct BuddyEquip(ExcelPage page, uint offset, uint row)
 		public ImgRef? Icon { get; private set; } = new(icon);
 
 		/// <inheritdoc/>
-		public uint RowId => 0;
+		public uint RowId => row;
 
 		/// <inheritdoc/>
 		public string? Description => null;
@@ -139,10 +154,18 @@ public readonly struct BuddyEquip(ExcelPage page, uint offset, uint row)
 		public ItemCategories Category => ItemCategories.None;
 
 		/// <inheritdoc/>
+		public ItemFavoriteCategory FavoriteItemCategory => ItemFavoriteCategory.BuddyEquipment;
+
+		/// <inheritdoc/>
 		public Mod? Mod => null;
 
 		/// <inheritdoc/>
-		public bool IsFavorite { get; set; }
+		public bool IsFavorite
+		{
+			get => FavoritesService.IsFavorite<IItem>(this);
+			set => FavoritesService.SetFavorite<IItem>(this, nameof(FavoritesService.Favorites.Items), value);
+		}
+
 
 		/// <inheritdoc/>
 		public bool CanOwn => false;
@@ -156,5 +179,20 @@ public readonly struct BuddyEquip(ExcelPage page, uint offset, uint row)
 		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool FitsInSlot(ItemSlots slot) => this.Slot.HasFlagUnsafe(slot);
+
+		/// <summary>
+		/// For this BuddyItem, return the integer alias for its ItemSlot value.
+		/// This is used when saving favorites to store which ItemSlot this BuddyEquip is favorited.
+		/// </summary>
+		public uint GetBuddyEquipSlotIntAlias()
+		{
+			return this.Slot switch
+			{
+				ItemSlots.Head => 1,
+				ItemSlots.Body => 2,
+				ItemSlots.Feet => 5,
+				_ => (uint)this.Slot
+			};
+		}
 	}
 }

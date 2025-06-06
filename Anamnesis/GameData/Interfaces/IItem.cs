@@ -72,6 +72,9 @@ public interface IItem
 	/// <summary>Gets the item's category.</summary>
 	ItemCategories Category { get; }
 
+	/// <summary>Get the item's favorite category and favorite prefix.</summary>
+	ItemFavoriteCategory FavoriteItemCategory { get; }
+
 	/// <summary>Gets the TexTools mod associated with the item.</summary>
 	Mod? Mod { get; }
 

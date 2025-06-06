@@ -39,6 +39,7 @@ public class DummyNoneItem : IItem
 	public bool IsOwned { get; set; }
 
 	public ItemCategories Category => ItemCategories.Standard;
+	public ItemFavoriteCategory FavoriteItemCategory => ItemFavoriteCategory.OneOffItem;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool FitsInSlot(ItemSlots slot) => true;

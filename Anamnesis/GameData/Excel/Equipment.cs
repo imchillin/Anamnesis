@@ -97,6 +97,9 @@ public class Equipment : IItem, IRow
 	[JsonIgnore] public ItemCategories Category => ItemCategories.CustomEquipment;
 
 	/// <inheritdoc/>
+	[JsonIgnore] public ItemFavoriteCategory FavoriteItemCategory => ItemFavoriteCategory.CustomEquipment;
+
+	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool FitsInSlot(ItemSlots slot)
 	{

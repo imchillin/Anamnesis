@@ -19,7 +19,7 @@ public class EmperorsAccessoryItem : IItem
 	public ushort ModelBase => 53;
 	public ushort ModelVariant => 1;
 	public ushort ModelSet => 0;
-	public uint RowId => 0;
+	public uint RowId => 52;
 	public bool IsWeapon => false;
 	public bool HasSubModel => false;
 
@@ -41,6 +41,7 @@ public class EmperorsAccessoryItem : IItem
 	public bool IsOwned { get; set; }
 
 	public ItemCategories Category => ItemCategories.Standard;
+	public ItemFavoriteCategory FavoriteItemCategory => ItemFavoriteCategory.OneOffItem;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool FitsInSlot(ItemSlots slot) => (slot & ItemSlots.Accessories) != 0;

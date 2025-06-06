@@ -10,14 +10,15 @@ using System.Runtime.CompilerServices;
 
 public class DummyItem : IItem
 {
-	public DummyItem(ushort modelSet, ushort modelBase, ushort modelVariant)
+	public DummyItem(uint rowId, ushort modelSet, ushort modelBase, ushort modelVariant)
 	{
+		this.RowId = rowId;
 		this.ModelSet = modelSet;
 		this.ModelBase = modelBase;
 		this.ModelVariant = modelVariant;
 	}
 
-	public uint RowId => 0;
+	public uint RowId { get; private set; }
 	public bool IsWeapon => true;
 	public bool HasSubModel => false;
 	public string Name => LocalizationService.GetString("Item_Unknown");
@@ -47,6 +48,7 @@ public class DummyItem : IItem
 	public bool IsOwned { get; set; }
 
 	public ItemCategories Category => ItemCategories.Standard;
+	public ItemFavoriteCategory FavoriteItemCategory => ItemFavoriteCategory.CustomEquipment;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public virtual bool FitsInSlot(ItemSlots slot) => true;

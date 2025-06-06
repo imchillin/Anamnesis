@@ -18,7 +18,7 @@ public class NpcBodyItem : IItem
 	public ushort ModelSet => 0;
 	public ushort ModelBase => 9903;
 	public ushort ModelVariant => 1;
-	public uint RowId => 0;
+	public uint RowId => 9903;
 	public bool IsWeapon => false;
 	public bool HasSubModel => false;
 	public ulong SubModel => 0;
@@ -39,6 +39,8 @@ public class NpcBodyItem : IItem
 	public bool IsOwned { get; set; }
 
 	public ItemCategories Category => ItemCategories.Standard;
+
+	public ItemFavoriteCategory FavoriteItemCategory => ItemFavoriteCategory.OneOffItem;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool FitsInSlot(ItemSlots slot) => (slot & (ItemSlots.Body | ItemSlots.Feet | ItemSlots.Hands | ItemSlots.Legs)) != 0;
