@@ -149,6 +149,11 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		HotkeyService.ClearHotkeyHandler("AppearancePage.ClearEquipment", this);
 	}
 
+	/// <summary>
+	/// Initializes the selector with items.
+	/// 
+	/// Adding items to this method? Be sure to mind FavoriteItemCategories. 
+	/// </summary>
 	protected override Task LoadItems()
 	{
 		if (this.actor?.IsChocobo == true)

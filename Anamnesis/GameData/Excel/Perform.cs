@@ -85,6 +85,9 @@ public readonly struct Perform(ExcelPage page, uint offset, uint row)
 	/// <inheritdoc/>
 	public readonly ItemCategories Category => ItemCategories.Performance;
 
+	/// <inheritdoc/>
+	public ItemFavoriteCategory FavoriteItemCategory => ItemFavoriteCategory.Perform;
+
 	/// <summary>
 	/// Creates a new instance of the <see cref="Perform"/> struct.
 	/// </summary>

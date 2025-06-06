@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Services;
 
+using Anamnesis.Actor.Utilities;
 using Anamnesis.Files;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
@@ -78,7 +79,7 @@ public class FavoritesService : ServiceBase<FavoritesService>
 			return lookupTable.Contains(iNpcBase.RowId);
 
 		if (item is IItem iItem)
-			return lookupTable.Contains(iItem.RowId);
+			return lookupTable.Contains(ItemUtility.GetCompositeIdForItemFavorite(iItem));
 
 		return false;
 	}
@@ -101,7 +102,15 @@ public class FavoritesService : ServiceBase<FavoritesService>
 		}
 		else
 		{
-			curInstCollection.Remove(item);
+			
+			if(item is IItem)
+			{
+				curInstCollection.RemoveAll(entry => ItemUtility.CompareItemFavoritesByCompositeId(entry, item));
+			}
+			else
+			{
+				curInstCollection.Remove(item);
+			}
 			RemoveFromLookupTable(item, lookupTable);
 		}
 
@@ -146,7 +155,7 @@ public class FavoritesService : ServiceBase<FavoritesService>
 			}
 		}
 
-		this.itemIds = [.. this.Current.Items.Select(i => i.RowId)];
+		this.itemIds = [.. this.Current.Items.Select(i => ItemUtility.GetCompositeIdForItemFavorite(i))];
 		this.dyeIds = [.. this.Current.Dyes.Select(d => d.RowId)];
 		this.modelIds = [.. this.Current.Models.Select(m => m.RowId)];
 		this.glassesIds = [.. this.Current.Glasses.Select(g => g.RowId)];
@@ -188,7 +197,7 @@ public class FavoritesService : ServiceBase<FavoritesService>
 		switch (item)
 		{
 			case IItem iItem:
-				lookupTable.Add(iItem.RowId);
+				lookupTable.Add(ItemUtility.GetCompositeIdForItemFavorite(iItem));
 				break;
 			case IDye iDye:
 				lookupTable.Add(iDye.RowId);
@@ -209,7 +218,7 @@ public class FavoritesService : ServiceBase<FavoritesService>
 		switch (item)
 		{
 			case IItem iItem:
-				lookupTable.Remove(iItem.RowId);
+				lookupTable.Remove(ItemUtility.GetCompositeIdForItemFavorite(iItem));
 				break;
 			case IDye iDye:
 				lookupTable.Remove(iDye.RowId);

@@ -27,7 +27,7 @@ public class InvisibleBodyItem : IItem
 	public Classes EquipableClasses => Classes.All;
 	public bool IsWeapon => false;
 	public Mod? Mod => null;
-	public uint RowId => 0;
+	public uint RowId => 2;
 	public byte EquipLevel => 0;
 
 	public bool IsFavorite
@@ -40,6 +40,7 @@ public class InvisibleBodyItem : IItem
 	public bool IsOwned { get; set; }
 
 	public ItemCategories Category => ItemCategories.Standard;
+	public ItemFavoriteCategory FavoriteItemCategory => ItemFavoriteCategory.OneOffItem;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool FitsInSlot(ItemSlots slot) => slot == ItemSlots.Body;

@@ -17,6 +17,7 @@ public class ChocoboSkinItem : IItem
 		this.Description = mount.Description;
 		this.ModelVariant = variant;
 		this.Icon = mount.Icon;
+		this.RowId = variant;
 	}
 
 	public string Name { get; private set; }
@@ -35,7 +36,7 @@ public class ChocoboSkinItem : IItem
 	public Classes EquipableClasses => Classes.All;
 	public bool IsWeapon => false;
 	public Mod? Mod => null;
-	public uint RowId => 0;
+	public uint RowId { get; private set; }
 	public byte EquipLevel => 0;
 
 	public bool IsFavorite
@@ -48,6 +49,8 @@ public class ChocoboSkinItem : IItem
 	public bool IsOwned { get; set; }
 
 	public ItemCategories Category => ItemCategories.Standard;
+
+	public ItemFavoriteCategory FavoriteItemCategory => ItemFavoriteCategory.ChocoboSkin;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool FitsInSlot(ItemSlots slot) => slot == ItemSlots.Legs;
