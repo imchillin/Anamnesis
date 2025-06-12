@@ -20,6 +20,6 @@ public class DummyNoneDye : IDye
 	public bool IsFavorite
 	{
 		get => FavoritesService.IsFavorite<IDye>(this);
-		set => FavoritesService.SetFavorite<IDye>(this, nameof(FavoritesService.Favorites.Dyes), value);
+		set => FavoritesService.SetFavorite<IDye>(this, value);
 	}
 }

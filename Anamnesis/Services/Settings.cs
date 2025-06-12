@@ -80,10 +80,7 @@ public class Settings : INotifyPropertyChanged
 	public double ViewportRotationSpeed { get; set; } = 1;
 	public bool EnableAutoSave
 	{
-		get
-		{
-			return this.enableAutoSave;
-		}
+		get => this.enableAutoSave;
 		set
 		{
 			if (value == this.enableAutoSave)
@@ -91,20 +88,15 @@ public class Settings : INotifyPropertyChanged
 
 			this.enableAutoSave = value;
 
-			if (AutoSaveService.Exists)
-			{
-				AutoSaveService.Instance?.RestartUpdateTask();
-			}
+			if (AutoSaveService.Instance != null && AutoSaveService.Instance.IsAlive)
+				AutoSaveService.Instance.RestartUpdateTask();
 		}
 	}
 
 	public int AutoSaveFileCount { get; set; } = 12;
 	public int AutoSaveIntervalMinutes
 	{
-		get
-		{
-			return Math.Max(this.autoSaveIntervalMinutes, MinAutoSaveIntervalMinutes);
-		}
+		get => Math.Max(this.autoSaveIntervalMinutes, MinAutoSaveIntervalMinutes);
 		set
 		{
 			if (value == this.autoSaveIntervalMinutes)
@@ -116,10 +108,8 @@ public class Settings : INotifyPropertyChanged
 
 			this.autoSaveIntervalMinutes = value;
 
-			if (AutoSaveService.Exists)
-			{
-				AutoSaveService.Instance?.RestartUpdateTask();
-			}
+			if (AutoSaveService.Instance != null && AutoSaveService.Instance.IsAlive)
+				AutoSaveService.Instance.RestartUpdateTask();
 		}
 	}
 	public bool AutoSaveOnlyInGpose { get; set; } = true;

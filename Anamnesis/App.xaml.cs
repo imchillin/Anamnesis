@@ -3,6 +3,9 @@
 
 namespace Anamnesis;
 
+using Anamnesis.Services;
+using Anamnesis.Windows;
+using Serilog;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -10,11 +13,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using Anamnesis.Services;
-using Anamnesis.Windows;
-using Serilog;
 using XivToolsWpf;
-
 using Application = System.Windows.Application;
 
 /// <summary>
@@ -22,7 +21,7 @@ using Application = System.Windows.Application;
 /// </summary>
 public partial class App : Application
 {
-	private static readonly ServiceManager Services = new ServiceManager();
+	public static readonly ServiceManager Services = new ServiceManager();
 
 	protected override void OnStartup(StartupEventArgs e)
 	{
