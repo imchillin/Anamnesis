@@ -35,8 +35,8 @@ You can check the official Wiki over at [xivmodding.com](https://xivmodding.com/
 
 Developers that have since moved on to different projects.
 
-* **[Yuki](https://github.com/Yuki-Walsh)** - *Main development*
-* **[Ani-ki](https://github.com/Ani-ki)** - *Project management, code contributions and wiki curating* 
+* **[Yuki](https://github.com/Yuki-Codes)** - *Main development*
+* **Ani-ki** - *Project management, code contributions and wiki curating* 
 * **[Peebs-miqo](https://github.com/Peebs-miqo)** - *Wiki and tip curating* 
 * **[AsgardXIV](https://github.com/AsgardXIV)** - *Animation god*
 
@@ -62,7 +62,7 @@ Developers that have since moved on to different projects.
 * **[ShadyWhite](https://github.com/ShadyWhite)** - *Chinese*
 * **[ajiiisai](https://github.com/ajiiisai)** - *Spanish*
 * **[ModernTiger](https://github.com/ModernTiger)** - *Korean*
-* **[RageShoTT](https://github.com/RageShoTT)** - *Italian*
+* **RageShoTT** - *Italian*
 * **[Murakumo-JP](https://github.com/Murakumo-JP)** - *Russian*
 
 ## License
