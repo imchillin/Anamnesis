@@ -36,7 +36,7 @@ You can check the official Wiki over at [xivmodding.com](https://xivmodding.com/
 Developers that have since moved on to different projects.
 
 * **[Yuki](https://github.com/Yuki-Codes)** - *Main development*
-* **Ani-ki** - *Project management, code contributions and wiki curating* 
+* **[Luminiari](https://github.com/luminiari)** - *Project management, code contributions and wiki curating* 
 * **[Peebs-miqo](https://github.com/Peebs-miqo)** - *Wiki and tip curating* 
 * **[AsgardXIV](https://github.com/AsgardXIV)** - *Animation god*
 
