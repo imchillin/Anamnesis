@@ -9,6 +9,7 @@ using Anamnesis.GameData;
 using PropertyChanged;
 using System;
 using System.Numerics;
+using static Anamnesis.Actor.Utilities.DyeUtility;
 
 public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 {
@@ -88,5 +89,14 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 		this.Variant = useEmperorsFists ? ItemUtility.EmperorsNewFists.ModelVariant : (ushort)0;
 		this.Dye = 0;
 		this.Dye2 = 0;
+	}
+
+	public void ApplyDye(IDye dye, DyeSlot dyeSlot)
+	{
+		if (dyeSlot.HasFlagUnsafe(DyeSlot.First))
+			this.Dye = (dye != null) ? dye.Id : DyeUtility.NoneDye.Id;
+
+		if (dyeSlot.HasFlagUnsafe(DyeSlot.Second))
+			this.Dye2 = (dye != null) ? dye.Id : DyeUtility.NoneDye.Id;
 	}
 }

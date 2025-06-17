@@ -130,8 +130,8 @@
 						<ColumnDefinition Width="78"/>
 					</Grid.ColumnDefinitions>
 
-					<XivToolsWpf:NumberBox Value="{Binding Customize.Head}" Grid.Column="0" Grid.Row="4" Minimum="1" Maximum="255" Margin="0, 0, 0, 2" Buttons="True"/>
-					<controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_FacialFeatureColor" Value="{Binding Customize.FacialFeatureColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="6,0,0,0" HorizontalAlignment="Left"/>
+					<XivToolsWpf:NumberBox Value="{Binding Customize.Head}" Grid.Column="0" Grid.Row="4" Minimum="1" Maximum="255" Margin="2, 0, 2, 2" Buttons="True"/>
+					<controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_FacialFeatureColor" Value="{Binding Customize.FacialFeatureColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="4,0,0,0" HorizontalAlignment="Left"/>
 
 				</Grid>
 				

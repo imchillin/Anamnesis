@@ -41,7 +41,7 @@
 		</Style>
 	</UserControl.Resources>
 
-	<Grid Width="168">
+	<Grid Width="170" Margin="-1, 0, 0, 0">
 		<ListBox
 			x:Name="FeaturesList"
 			ItemContainerStyle="{StaticResource ListBoxItemStyle}"

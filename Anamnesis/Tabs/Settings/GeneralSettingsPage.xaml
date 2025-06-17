@@ -118,8 +118,14 @@
 											   Grid.Column="1"
 											   Minimum="0.1"
 											   Maximum="1"
-											   TickFrequency="0.1"
-											   IsEnabled="{Binding SettingsService.Settings.EnableTranslucency}"/>
+											   TickFrequency="0.1">
+							<XivToolsWPF:NumberBox.IsEnabled>
+								<MultiBinding Converter="{StaticResource MultiBoolAnd}">
+									<Binding Path="SettingsService.Settings.EnableTranslucency"/>
+									<Binding Path="IsWindows11"/>
+								</MultiBinding>
+							</XivToolsWPF:NumberBox.IsEnabled>
+						</XivToolsWPF:NumberBox>
 					</Grid>
 
 					<Grid x:Name="General_Interface_Font" Grid.Row="6">
