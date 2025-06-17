@@ -1,8 +1,9 @@
 name: Publish Anamnesis
 
 permissions:
-  id-token: write
-  attestations: write
+  id-token: write     # Required for attestations
+  attestations: write # Required for attestations
+  contents: write     # Required for creating the draft release
 
 on:
   workflow_dispatch:
