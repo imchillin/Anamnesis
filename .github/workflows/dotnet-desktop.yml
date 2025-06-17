@@ -1,5 +1,9 @@
 name: Publish Anamnesis
 
+permissions:
+  id-token: write
+  attestations: write
+
 on:
   workflow_dispatch:
 
