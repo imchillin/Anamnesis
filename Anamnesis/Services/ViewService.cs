@@ -3,12 +3,13 @@
 
 namespace Anamnesis.Services;
 
+using Anamnesis;
+using Anamnesis.Core;
+using Anamnesis.GUI.Windows;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using Anamnesis;
-using Anamnesis.GUI.Windows;
 
 public delegate void DrawerEvent();
 public delegate void DialogEvent();

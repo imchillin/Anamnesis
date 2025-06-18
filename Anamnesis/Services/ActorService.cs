@@ -4,7 +4,7 @@
 namespace Anamnesis;
 
 using Anamnesis.Actor.Refresh;
-using Anamnesis.Core.Memory;
+using Anamnesis.Core;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class ActorService : ServiceBase<ActorService>
 {
-	private const int TickDelay = 10;
+	private const int TickDelay = 16; // ms
 	private const int ActorTableSize = 819;
 	private const int GPoseIndexStart = 200;
 	private const int GPoseIndexEnd = 440;
@@ -31,12 +31,15 @@ public class ActorService : ServiceBase<ActorService>
 	private readonly IntPtr[] actorTable = new IntPtr[ActorTableSize];
 	private readonly ReaderWriterLockSlim actorTableLock = new();
 
-	private readonly List<IActorRefresher> actorRefreshers = new()
-	{
+	private readonly List<IActorRefresher> actorRefreshers =
+	[
 		new BrioActorRefresher(),
 		new PenumbraActorRefresher(),
 		new AnamnesisActorRefresher(),
-	};
+	];
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [AddressService.Instance];
 
 	/// <summary>Gets the actor table as a read-only collection.</summary>
 	public ReadOnlyCollection<IntPtr> ActorTable
@@ -227,7 +230,7 @@ public class ActorService : ServiceBase<ActorService>
 		if (refresh)
 			this.UpdateActorTable();
 
-		List<ActorBasicMemory> results = new();
+		List<ActorBasicMemory> results = [];
 
 		this.actorTableLock.EnterReadLock();
 		try
@@ -245,7 +248,7 @@ public class ActorService : ServiceBase<ActorService>
 				}
 				catch (Exception ex)
 				{
-					Log.Warning(ex, $"Failed to create Actor Basic View Model for address: {ptr}");
+					Log.Warning(ex, $"Failed to create basic actor memory object from address: {ptr}");
 				}
 			}
 		}
@@ -257,41 +260,29 @@ public class ActorService : ServiceBase<ActorService>
 		return results;
 	}
 
-	/// <summary>Forces a refresh of the actor table.</summary>
-	public void ForceRefresh()
-	{
-		this.UpdateActorTable();
-	}
-
 	/// <inheritdoc/>
-	public override async Task Initialize()
+	protected override async Task OnStart()
 	{
-		await base.Initialize();
-	}
-
-	/// <inheritdoc/>
-	public override Task Start()
-	{
-		this.UpdateActorTable();
-
-		_ = Task.Run(this.TickTask);
-		return base.Start();
-	}
-
-	/// <inheritdoc/>
-	public override async Task Shutdown()
-	{
-		await base.Shutdown();
+		this.CancellationTokenSource = new CancellationTokenSource();
+		this.BackgroundTask = Task.Run(() => this.TickTask(this.CancellationToken));
+		await base.OnStart();
 	}
 
 	/// <summary>Periodically refreshes the actor table.</summary>
-	private async Task TickTask()
+	private async Task TickTask(CancellationToken cancellationToken)
 	{
-		while (this.IsAlive)
+		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
 		{
-			await Task.Delay(TickDelay);
-
-			this.ForceRefresh();
+			try
+			{
+				this.UpdateActorTable();
+				await Task.Delay(TickDelay, cancellationToken);
+			}
+			catch (TaskCanceledException)
+			{
+				// Task was canceled, exit the loop.
+				break;
+			}
 		}
 	}
 
