@@ -84,10 +84,11 @@ public partial class GeneralSettingsPage : System.Windows.Controls.UserControl, 
 	}
 
 	public IEnumerable<LanguageOption> Languages { get; }
+
 	[DependsOn(nameof(this.Languages))]
 	public LanguageOption SelectedLanguage
 	{
-		get => this.Languages.FirstOrDefault(language => language.Key == SettingsService.Current.Language) ?? this.Languages.First();
+		get => this.Languages.FirstOrDefault(language => language.Key.Equals(SettingsService.Current.Language, StringComparison.CurrentCultureIgnoreCase)) ?? this.Languages.First();
 		set
 		{
 			SettingsService.Current.Language = value.Key;

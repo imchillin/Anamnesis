@@ -32,7 +32,7 @@ public readonly struct Glasses(ExcelPage page, uint offset, uint row)
 	public bool IsFavorite
 	{
 		get => FavoritesService.IsFavorite(this);
-		set => FavoritesService.SetFavorite(this, nameof(FavoritesService.Favorites.Glasses), value);
+		set => FavoritesService.SetFavorite(this, value);
 	}
 
 	/// <summary>

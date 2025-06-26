@@ -3,7 +3,6 @@
 
 namespace Anamnesis.Views;
 
-using Anamnesis.Actor;
 using Anamnesis.Brio;
 using Anamnesis.Core;
 using Anamnesis.Files;
