@@ -146,6 +146,9 @@ public partial class SliderInputBox : UserControl
 	/// <summary>Cached maximum of parsed dependency property value.</summary>
 	private decimal? parsedMaximum;
 
+	/// <summary>
+	/// Gets a value that indicates whether the user control has valid lower and upper value bounds.
+	/// </summary>
 	private bool HasValidBounds => this.parsedMinimum != null && this.parsedMaximum != null;
 
 	/// <summary>
@@ -316,7 +319,6 @@ public partial class SliderInputBox : UserControl
 		set
 		{
 			this.isInternalSet = true;
-			MinDp.Set(this, value);
 
 			var parsed = ParseBoundValue(value);
 			if (parsed != null && this.parsedMaximum != null && parsed > this.parsedMaximum)
@@ -327,6 +329,7 @@ public partial class SliderInputBox : UserControl
 			else
 			{
 				this.parsedMinimum = parsed;
+				MinDp.Set(this, value);
 			}
 
 			this.isInternalSet = false;
@@ -340,10 +343,8 @@ public partial class SliderInputBox : UserControl
 		set
 		{
 			this.isInternalSet = true;
-			MaxDp.Set(this, value);
 
 			var parsed = ParseBoundValue(value);
-
 			if (parsed != null && this.parsedMinimum != null && parsed < this.parsedMinimum)
 			{
 				this.parsedMaximum = this.parsedMinimum;
@@ -352,6 +353,7 @@ public partial class SliderInputBox : UserControl
 			else
 			{
 				this.parsedMaximum = parsed;
+				MaxDp.Set(this, value);
 			}
 
 			this.isInternalSet = false;
@@ -484,17 +486,16 @@ public partial class SliderInputBox : UserControl
 		if (sender.isInternalSet)
 			return;
 
-		sender.Minimum = value;
-
 		var parsed = ParseBoundValue(value);
 		if (parsed != null && sender.parsedMaximum != null && parsed > sender.parsedMaximum)
 		{
 			sender.parsedMinimum = sender.parsedMaximum;
-			sender.Minimum = value;
+			sender.Minimum = sender.Maximum;
 		}
 		else
 		{
 			sender.parsedMinimum = parsed;
+			sender.Minimum = value;
 		}
 
 		sender.UpdateTickPosition();
@@ -508,18 +509,16 @@ public partial class SliderInputBox : UserControl
 		if (sender.isInternalSet)
 			return;
 
-		sender.Maximum = value;
-
 		var parsed = ParseBoundValue(value);
-
 		if (parsed != null && sender.parsedMinimum != null && parsed < sender.parsedMinimum)
 		{
 			sender.parsedMaximum = sender.parsedMinimum;
-			sender.Maximum = value;
+			sender.Maximum = sender.Minimum;
 		}
 		else
 		{
 			sender.parsedMaximum = parsed;
+			sender.Maximum = value;
 		}
 
 		sender.UpdateTickPosition();
