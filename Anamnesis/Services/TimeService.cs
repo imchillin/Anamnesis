@@ -15,20 +15,10 @@ public class TimeService : ServiceBase<TimeService>
 {
 	private FrameworkMemory? frameworkMemory;
 	private NopHook? timeAsmHook;
-	private long timeOfDay;
-	private byte dayOfMonth;
 
 	public string TimeString { get; private set; } = "00:00";
-	public long TimeOfDay
-	{
-		get => this.timeOfDay;
-		set => this.timeOfDay = value;
-	}
-	public byte DayOfMonth
-	{
-		get => this.dayOfMonth;
-		set => this.dayOfMonth = value;
-	}
+	public long TimeOfDay { get; set; }
+	public byte DayOfMonth { get; set; }
 
 	public bool Freeze
 	{
@@ -78,7 +68,7 @@ public class TimeService : ServiceBase<TimeService>
 
 				if (this.Freeze)
 				{
-					long newTime = (this.timeOfDay * 60) + (86400 * (this.dayOfMonth - 1));
+					long newTime = (this.TimeOfDay * 60) + (86400 * (this.DayOfMonth - 1));
 
 					this.frameworkMemory.EorzeaTime = newTime;
 
@@ -89,10 +79,10 @@ public class TimeService : ServiceBase<TimeService>
 				long currentTime = this.frameworkMemory.IsTimeOverridden ? this.frameworkMemory.OverrideEorzeaTime : this.frameworkMemory.EorzeaTime;
 				long timeVal = currentTime % 2764800;
 				long secondInDay = timeVal % 86400;
-				this.timeOfDay = secondInDay / 60;
-				this.dayOfMonth = (byte)((timeVal / 86400) + 1);
+				this.TimeOfDay = secondInDay / 60;
+				this.DayOfMonth = (byte)((timeVal / 86400) + 1);
 
-				var displayTime = TimeSpan.FromMinutes(this.timeOfDay);
+				var displayTime = TimeSpan.FromMinutes(this.TimeOfDay);
 				string newTimeString = string.Create(5, displayTime, (span, value) =>
 				{
 					span[0] = (char)('0' + (value.Hours / 10));
