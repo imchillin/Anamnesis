@@ -28,10 +28,10 @@ public partial class Vector2DEditorNew : UserControl, INotifyPropertyChanged
 	public static readonly IBind<decimal> TickFrequencyDp = Binder.Register<decimal, Vector2DEditorNew>(nameof(TickFrequency));
 
 	/// <summary>Gets or sets the minimum value.</summary>
-	public static readonly IBind<decimal?> MinDp = Binder.Register<decimal?, Vector2DEditorNew>(nameof(Minimum));
+	public static readonly IBind<string?> MinDp = Binder.Register<string?, Vector2DEditorNew>(nameof(Minimum));
 
 	/// <summary>Gets or sets the maximum value.</summary>
-	public static readonly IBind<decimal?> MaxDp = Binder.Register<decimal?, Vector2DEditorNew>(nameof(Maximum));
+	public static readonly IBind<string?> MaxDp = Binder.Register<string?, Vector2DEditorNew>(nameof(Maximum));
 
 	/// <summary>Gets or sets a value indicating whether linking can be enabled.</summary>
 	public static readonly IBind<bool> CanLinkDp = Binder.Register<bool, Vector2DEditorNew>(nameof(CanLink), BindMode.OneWay);
@@ -117,14 +117,14 @@ public partial class Vector2DEditorNew : UserControl, INotifyPropertyChanged
 	}
 
 	/// <summary>Gets or sets the minimum value.</summary>
-	public decimal? Minimum
+	public string? Minimum
 	{
 		get => MinDp.Get(this);
 		set => MinDp.Set(this, value);
 	}
 
 	/// <summary>Gets or sets the maximum value.</summary>
-	public decimal? Maximum
+	public string? Maximum
 	{
 		get => MaxDp.Get(this);
 		set => MaxDp.Set(this, value);
