@@ -5,7 +5,7 @@ namespace Anamnesis.Memory;
 
 using System.Numerics;
 
-public class GPoseCameraMemory : MemoryBase
+public class GPoseTargetMemory : MemoryBase
 {
-	[Bind(0x10)] public Vector3 Position { get; set; }
+	[Bind(0xA0)] public Vector3 Position { get; set; }
 }

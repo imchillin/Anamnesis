@@ -34,7 +34,7 @@ public class AddressService : ServiceBase<AddressService>
 	public static IntPtr GposeCheck { get; private set; }               // GPoseCheckOffset
 	public static IntPtr GposeCheck2 { get; private set; }              // GPoseCheck2Offset
 	public static IntPtr Territory { get; private set; }
-	public static IntPtr GPose { get; private set; }
+	public static IntPtr GPoseTarget { get; private set; }
 	public static IntPtr TimeAsm { get; private set; }
 	public static IntPtr Framework { get; set; }
 	public static IntPtr PlayerTargetSystem { get; set; }
@@ -98,13 +98,10 @@ public class AddressService : ServiceBase<AddressService>
 	{
 		get
 		{
-			IntPtr address = MemoryService.ReadPtr(GPose);
-
+			IntPtr address = MemoryService.ReadPtr(GPoseTarget);
 			if (address == IntPtr.Zero)
 				throw new Exception("Failed to read gpose address");
 
-			// CMTools CamX offset
-			address += 0x90;
 			return address;
 		}
 	}
@@ -146,7 +143,9 @@ public class AddressService : ServiceBase<AddressService>
 			this.GetAddressFromSignature("GPoseFilters", "48 85 D2 4C 8B 05 ?? ?? ?? ??", 0, (p) => { GPoseFilters = p; }),
 			this.GetAddressFromSignature("GposeCheck", "0F 84 ?? ?? ?? ?? 8B 15 ?? ?? ?? ?? 48 89 6C 24 ??", 0, (p) => { GposeCheck = p; }),
 			this.GetAddressFromSignature("GposeCheck2", "8D 48 FF 48 8D 05 ?? ?? ?? ?? 8B 0C 88 48 8B 02 83 F9 04 49 8B CA", 0, (p) => { GposeCheck2 = p; }),
-			this.GetAddressFromSignature("GPose", "74 35 48 39 0D ?? ?? ?? ??", 0, (p) => { GPose = p + 0x20; }),
+			
+			// Get the GPoseTarget object's address from the TargetSystem Instance.
+			this.GetAddressFromSignature("TargetSystem", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 3B C6 0F 95 C0", 3, (p) => { GPoseTarget = p + 0x98; }),
 			this.GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { cameraManager = p; }),
 			this.GetAddressFromSignature("PlayerTargetSystem", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 3B C3 74 08", 0, (p) => { PlayerTargetSystem = p; }),
 			this.GetAddressFromTextSignature("TimeAsm", "48 89 87 ?? ?? ?? ?? 48 69 C0", (p) => TimeAsm = p),

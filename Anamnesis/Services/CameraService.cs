@@ -14,7 +14,7 @@ public class CameraService : ServiceBase<CameraService>
 	private bool delimitCamera;
 
 	public CameraMemory Camera { get; set; } = new CameraMemory();
-	public GPoseCameraMemory GPoseCamera { get; set; } = new GPoseCameraMemory();
+	public GPoseTargetMemory GPoseCamera { get; set; } = new GPoseTargetMemory();
 
 	public bool DelimitCamera
 	{
