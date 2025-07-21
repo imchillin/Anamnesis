@@ -29,7 +29,7 @@ public class CameraService : ServiceBase<CameraService>
 	public CameraMemory Camera { get; private set; } = new CameraMemory();
 
 	/// <summary>Gets the gpose camera's memory.</summary>
-	public GPoseCameraMemory GPoseCamera { get; private set; } = new GPoseCameraMemory();
+	public GPoseTargetMemory GPoseCamera { get; private set; } = new GPoseTargetMemory();
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the camera
