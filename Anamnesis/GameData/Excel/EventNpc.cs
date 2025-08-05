@@ -14,7 +14,7 @@ using Lumina.Excel.Sheets;
 /// <summary>
 /// Represents an event non-player character (NPC) in the game data.
 /// </summary>
-[Sheet("ENpcBase", 0x464052CD)]
+[Sheet("ENpcBase", 0x5BA9E1A6)]
 public readonly unsafe struct EventNpc(ExcelPage page, uint offset, uint row)
 	: IExcelRow<EventNpc>, INpcBase
 {
