@@ -12,7 +12,6 @@ using XivToolsWpf;
 #pragma warning disable SA1027, SA1025
 public class AddressService : ServiceBase<AddressService>
 {
-	private static IntPtr weather;
 	private static IntPtr cameraManager;
 
 	// Static offsets
@@ -60,24 +59,9 @@ public class AddressService : ServiceBase<AddressService>
 		}
 	}
 
-	public static IntPtr Weather
-	{
-		get
-		{
-			IntPtr address = MemoryService.ReadPtr(weather);
+	public static IntPtr ServerWeather { get; private set; } = IntPtr.Zero;
 
-			if (address == IntPtr.Zero)
-				throw new Exception("Failed to read weather address");
-
-			// CMtools Weather offset
-			address += 0x20;
-			return address;
-		}
-		private set
-		{
-			weather = value;
-		}
-	}
+	public static IntPtr NextWeatherId => ServerWeather + 0x08;
 
 	public static IntPtr GPoseWeather
 	{
@@ -139,7 +123,9 @@ public class AddressService : ServiceBase<AddressService>
 			this.GetAddressFromTextSignature("GPoseCameraTargetPositionFreeze", "F3 0F 10 4D 00 E8 ?? ?? ?? ?? 48 8B 74 24", (p) => { GPoseCameraTargetPositionFreeze = p + 5; }),
 			this.GetAddressFromTextSignature("AnimationSpeedPatch", "F3 0F 11 94 ?? ?? ?? ?? ?? 80 89 ?? ?? ?? ?? 01", (p) => { AnimationSpeedPatch = p; }),
 			this.GetAddressFromSignature("Territory", "8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }),
-			this.GetAddressFromSignature("Weather", "48 8B 9F ?? ?? ?? ?? 48 8D 0D", 0, (p) => { Weather = p + 0x8; }),
+
+			// Get the ServerWeather struct from the WeatherManager Instance.
+			this.GetAddressFromSignature("WeatherManager", "48 8D 0D ?? ?? ?? ?? 44 0F B7 45", 0, (p) => { ServerWeather = p + 0x48; }),
 			this.GetAddressFromSignature("GPoseFilters", "48 85 D2 4C 8B 05 ?? ?? ?? ??", 0, (p) => { GPoseFilters = p; }),
 			this.GetAddressFromSignature("GposeCheck", "0F 84 ?? ?? ?? ?? 8B 15 ?? ?? ?? ?? 48 89 6C 24 ??", 0, (p) => { GposeCheck = p; }),
 			this.GetAddressFromSignature("GposeCheck2", "8D 48 FF 48 8D 05 ?? ?? ?? ?? 8B 04 88 83 F8 04 49 8B CA", 0, (p) => { GposeCheck2 = p; }),
