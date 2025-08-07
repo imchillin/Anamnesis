@@ -4,7 +4,6 @@
 namespace Anamnesis.Memory;
 
 using Anamnesis.Core.Memory;
-using Anamnesis.GUI.Dialogs;
 using Anamnesis.GUI.Windows;
 using Anamnesis.Keyboard;
 using Anamnesis.Services;
@@ -603,7 +602,9 @@ public partial class MemoryService : ServiceBase<MemoryService>
 		if (gameVer != VersionInfo.ValidatedGameVersion)
 		{
 			Log.Warning($"Unrecognized game version: {gameVer}. Current validated version is: {VersionInfo.ValidatedGameVersion}");
+#if !DEBUG
 			await GenericDialog.ShowLocalizedAsync("Error_WrongVersion", "Error_WrongVersionTitle");
+#endif
 		}
 
 		Handle = OpenProcess(0x001F0FFF, true, process.Id);
