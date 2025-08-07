@@ -4,6 +4,9 @@
 namespace Anamnesis.Memory;
 
 using Anamnesis.Core.Memory;
+#if !DEBUG
+	using Anamnesis.GUI.Dialogs;
+#endif
 using Anamnesis.GUI.Windows;
 using Anamnesis.Keyboard;
 using Anamnesis.Services;
