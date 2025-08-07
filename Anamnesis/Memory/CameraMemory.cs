@@ -10,15 +10,15 @@ using XivToolsWpf.Math3D.Extensions;
 
 public class CameraMemory : MemoryBase
 {
-	[Bind(0x114)] public float Zoom { get; set; }
-	[Bind(0x118)] public float MinZoom { get; set; }
-	[Bind(0x11C)] public float MaxZoom { get; set; }
-	[Bind(0x12C)] public float FieldOfView { get; set; }
-	[Bind(0x130)] public Vector2 Angle { get; set; }
-	[Bind(0x14C)] public float YMin { get; set; }
-	[Bind(0x148)] public float YMax { get; set; }
-	[Bind(0x150)] public Vector2 Pan { get; set; }
-	[Bind(0x160)] public float Rotation { get; set; }
+	[Bind(0x124)] public float Zoom { get; set; }
+	[Bind(0x128)] public float MinZoom { get; set; }
+	[Bind(0x12C)] public float MaxZoom { get; set; }
+	[Bind(0x13C)] public float FieldOfView { get; set; }
+	[Bind(0x140)] public Vector2 Angle { get; set; }
+	[Bind(0x15C)] public float YMin { get; set; }
+	[Bind(0x158)] public float YMax { get; set; }
+	[Bind(0x160)] public Vector2 Pan { get; set; }
+	[Bind(0x170)] public float Rotation { get; set; }
 
 	[AlsoNotifyFor(nameof(CameraMemory.Angle), nameof(CameraMemory.Rotation))]
 	public Quaternion Rotation3d
