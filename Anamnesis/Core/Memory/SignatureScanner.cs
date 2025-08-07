@@ -205,7 +205,7 @@ public sealed unsafe class SignatureScanner
 					}
 					else
 					{
-						// Otherwise, resolve the static address using by reading the memory displacement and adding it to the instruction address.
+						// Otherwise, resolve the static address by reading the memory displacement and adding it to the instruction address.
 						return IntPtr.Add((nint)instructionAddress, MemoryService.ReadInt32((nint)instructionAddress) + 4);
 					}
 				}

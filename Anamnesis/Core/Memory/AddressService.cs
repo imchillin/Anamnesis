@@ -12,12 +12,12 @@ using XivToolsWpf;
 #pragma warning disable SA1027, SA1025
 public class AddressService : ServiceBase<AddressService>
 {
-	public static readonly int OverworldPlayerTargetOffset = 0x80;
-	public static readonly int GPosePlayerTargetOffset = 0x98;
-
 	private static IntPtr cameraManager;
 
 	// Static offsets
+	public static readonly int OverworldPlayerTargetOffset = 0x80;
+	public static readonly int GPosePlayerTargetOffset = 0x98;
+
 	public static IntPtr ActorTable { get; private set; }
 	public static IntPtr GPoseFilters { get; private set; }
 	public static IntPtr SkeletonFreezeRotation { get; private set; }   // HkaPose::SyncModelSpace
@@ -36,8 +36,8 @@ public class AddressService : ServiceBase<AddressService>
 	public static IntPtr GposeCheck { get; private set; }               // GPoseCheckOffset
 	public static IntPtr GposeCheck2 { get; private set; }              // GPoseCheck2Offset
 	public static IntPtr Territory { get; private set; }
-	public static IntPtr OverworldPlayerTarget => MemoryService.Read<IntPtr>(IntPtr.Add(AddressService.TargetSystem, OverworldPlayerTargetOffset));
-	public static IntPtr GPosePlayerTarget => MemoryService.Read<IntPtr>(IntPtr.Add(AddressService.TargetSystem, GPosePlayerTargetOffset));
+	public static IntPtr OverworldPlayerTarget => MemoryService.Read<IntPtr>(IntPtr.Add(TargetSystem, OverworldPlayerTargetOffset));
+	public static IntPtr GPosePlayerTarget => MemoryService.Read<IntPtr>(IntPtr.Add(TargetSystem, GPosePlayerTargetOffset));
 	public static IntPtr TimeAsm { get; private set; }
 	public static IntPtr Framework { get; set; }
 	public static IntPtr TargetSystem { get; set; }
