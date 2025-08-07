@@ -12,6 +12,9 @@ using XivToolsWpf;
 #pragma warning disable SA1027, SA1025
 public class AddressService : ServiceBase<AddressService>
 {
+	public static readonly int OverworldPlayerTargetOffset = 0x80;
+	public static readonly int GPosePlayerTargetOffset = 0x98;
+
 	private static IntPtr cameraManager;
 
 	// Static offsets
@@ -33,10 +36,11 @@ public class AddressService : ServiceBase<AddressService>
 	public static IntPtr GposeCheck { get; private set; }               // GPoseCheckOffset
 	public static IntPtr GposeCheck2 { get; private set; }              // GPoseCheck2Offset
 	public static IntPtr Territory { get; private set; }
-	public static IntPtr GPoseTarget { get; private set; }
+	public static IntPtr OverworldPlayerTarget => MemoryService.Read<IntPtr>(IntPtr.Add(AddressService.TargetSystem, OverworldPlayerTargetOffset));
+	public static IntPtr GPosePlayerTarget => MemoryService.Read<IntPtr>(IntPtr.Add(AddressService.TargetSystem, GPosePlayerTargetOffset));
 	public static IntPtr TimeAsm { get; private set; }
 	public static IntPtr Framework { get; set; }
-	public static IntPtr PlayerTargetSystem { get; set; }
+	public static IntPtr TargetSystem { get; set; }
 	public static IntPtr AnimationSpeedPatch { get; set; }
 
 	// The kinematic driver is used as an additional measure in freezing the player's position, rotation, and scale.
@@ -74,18 +78,6 @@ public class AddressService : ServiceBase<AddressService>
 
 			// CMTools ForceWeather offset
 			address += 0x27;
-			return address;
-		}
-	}
-
-	public static IntPtr GPoseCamera
-	{
-		get
-		{
-			IntPtr address = MemoryService.ReadPtr(GPoseTarget);
-			if (address == IntPtr.Zero)
-				throw new Exception("Failed to read gpose address");
-
 			return address;
 		}
 	}
@@ -129,11 +121,8 @@ public class AddressService : ServiceBase<AddressService>
 			this.GetAddressFromSignature("GPoseFilters", "48 85 D2 4C 8B 05 ?? ?? ?? ??", 0, (p) => { GPoseFilters = p; }),
 			this.GetAddressFromSignature("GposeCheck", "0F 84 ?? ?? ?? ?? 8B 15 ?? ?? ?? ?? 48 89 6C 24 ??", 0, (p) => { GposeCheck = p; }),
 			this.GetAddressFromSignature("GposeCheck2", "8D 48 FF 48 8D 05 ?? ?? ?? ?? 8B 04 88 83 F8 04 49 8B CA", 3, (p) => { GposeCheck2 = p; }),
-			
-			// Get the GPoseTarget object's address from the TargetSystem Instance.
-			this.GetAddressFromSignature("TargetSystem", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 3B C6 0F 95 C0", 3, (p) => { GPoseTarget = p + 0x98; }),
+			this.GetAddressFromSignature("TargetSystem", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 3B C6 0F 95 C0", 3, (p) => { TargetSystem = p; }),
 			this.GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { cameraManager = p; }),
-			this.GetAddressFromSignature("PlayerTargetSystem", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 3B C3 74 08", 0, (p) => { PlayerTargetSystem = p; }),
 			this.GetAddressFromTextSignature("TimeAsm", "48 89 87 ?? ?? ?? ?? 48 69 C0", (p) => TimeAsm = p),
 			this.GetAddressFromTextSignature("Framework", "48 C7 05 ?? ?? ?? ?? 00 00 00 00 E8 ?? ?? ?? ?? 48 8D ?? ?? ?? 00 00 E8 ?? ?? ?? ?? 48 8D", (p) =>
 				{

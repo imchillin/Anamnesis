@@ -78,10 +78,10 @@ public class CameraService : ServiceBase<CameraService>
 				{
 					// SetAddress will synchronize if addresses are different
 					// so we don't need to call Synchronize() again.
-					if (this.GPoseCamera.Address == AddressService.GPoseCamera)
+					if (this.GPoseCamera.Address == AddressService.GPosePlayerTarget)
 						this.GPoseCamera.Synchronize();
 					else
-						this.GPoseCamera.SetAddress(AddressService.GPoseCamera);
+						this.GPoseCamera.SetAddress(AddressService.GPosePlayerTarget);
 				}
 
 				// Same as above
