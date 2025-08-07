@@ -11,7 +11,7 @@ using System.Linq;
 /// <summary>
 /// Represents the class job category data often associated with items in the game.
 /// </summary>
-[Sheet("ClassJobCategory", 0xFB018ADA)]
+[Sheet("ClassJobCategory", 0x6733E334)]
 public readonly struct ClassJobCategory(ExcelPage page, uint offset, uint row)
 	: IExcelRow<ClassJobCategory>
 {
