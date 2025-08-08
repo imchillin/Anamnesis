@@ -156,6 +156,8 @@ public class FavoritesService : ServiceBase<FavoritesService>
 	/// <inheritdoc/>
 	public override async Task Initialize()
 	{
+		await base.Initialize();
+
 		if (!File.Exists(FilePath))
 		{
 			this.Current = new Favorites();
@@ -185,8 +187,6 @@ public class FavoritesService : ServiceBase<FavoritesService>
 		this.modelIds = [.. this.Current.Models.Select(m => m.RowId)];
 		this.glassesIds = [.. this.Current.Glasses.Select(g => g.RowId)];
 		this.ownedIds = [.. this.Current.Owned.Select(i => i.RowId)];
-
-		await base.Initialize();
 	}
 
 	private static List<T>? GetInstanceCollection<T>(T item)
