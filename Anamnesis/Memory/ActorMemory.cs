@@ -3,7 +3,6 @@
 
 namespace Anamnesis.Memory;
 
-using Anamnesis.Actor;
 using Anamnesis.Core.Extensions;
 using Anamnesis.Services;
 using Anamnesis.Utils;
@@ -54,30 +53,27 @@ public class ActorMemory : ActorBasicMemory
 		VisorToggled = 1 << 4,
 	}
 
-	[Bind(0x008D)] public byte SubKind { get; set; }
-	[Bind(0x00B4)] public float Scale { get; set; }
-	[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
-	[Bind(0x01BA)] public byte ClassJob { get; set; }
-	[Bind(0x0660, BindFlags.Pointer)] public ActorMemory? Mount { get; set; }
-	[Bind(0x0668)] public ushort MountId { get; set; }
-	[Bind(0x06C8, BindFlags.Pointer)] public ActorMemory? Companion { get; set; }
-	[Bind(0x06E8)] public WeaponMemory? MainHand { get; set; }
-	[Bind(0x0758)] public WeaponMemory? OffHand { get; set; }
-	[Bind(0x0838)] public ActorEquipmentMemory? Equipment { get; set; }
-	[Bind(0x0888)] public ActorCustomizeMemory? Customize { get; set; }
-	[Bind(0x08A6, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
-	[Bind(0x08A7, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
-	[Bind(0x08A8)] public GlassesMemory? Glasses { get; set; }
-	[Bind(0x08E0, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
-	[Bind(0x08E8)] public ushort OrnamentId { get; set; }
-	[Bind(0x09B0)] public AnimationMemory? Animation { get; set; }
-	[Bind(0x19C8)] public byte Voice { get; set; }
-	[Bind(0x1AA8, BindFlags.ActorRefresh)] public int ModelType { get; set; }
-	[Bind(0x1B14)] public bool IsMotionDisabled { get; set; }
-	[Bind(0x2258)] public float Transparency { get; set; }
-	[Bind(0x22CC)] public byte CharacterModeRaw { get; set; }
-	[Bind(0x22CD)] public byte CharacterModeInput { get; set; }
-	[Bind(0x22EA)] public byte AttachmentPoint { get; set; }
+	[Bind(0x01CA)] public byte ClassJob { get; set; } // Source: CharacterData; Calculated using GameObject size + ClassJob offset
+	[Bind(0x0670, BindFlags.Pointer)] public ActorMemory? Mount { get; set; } // Targets object within MountContainer
+	[Bind(0x0678)] public ushort MountId { get; set; }
+	[Bind(0x06D8, BindFlags.Pointer)] public ActorMemory? Companion { get; set; } // Targets object within CompanionContainer
+	[Bind(0x06F8)] public WeaponMemory? MainHand { get; set; }
+	[Bind(0x0768)] public WeaponMemory? OffHand { get; set; }
+	[Bind(0x08B8)] public ActorEquipmentMemory? Equipment { get; set; }
+	[Bind(0x0908)] public ActorCustomizeMemory? Customize { get; set; }
+	[Bind(0x0926, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
+	[Bind(0x0927, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
+	[Bind(0x0928)] public GlassesMemory? Glasses { get; set; }
+	[Bind(0x0960, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; } // Targets object within OrnamentContainer
+	[Bind(0x0968)] public ushort OrnamentId { get; set; }
+	[Bind(0x0A20)] public AnimationMemory? Animation { get; set; }
+	[Bind(0x1A48)] public byte Voice { get; set; }
+	[Bind(0x1B28, BindFlags.ActorRefresh)] public int ModelType { get; set; }
+	[Bind(0x1B94)] public bool IsMotionDisabled { get; set; }
+	[Bind(0x22D8)] public float Transparency { get; set; }
+	[Bind(0x2354)] public byte CharacterModeRaw { get; set; }
+	[Bind(0x2355)] public byte CharacterModeInput { get; set; }
+	[Bind(0x2374)] public byte AttachmentPoint { get; set; } // Part of Ornament
 
 	public PinnedActor? Pinned { get; set; }
 

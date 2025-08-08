@@ -37,7 +37,7 @@ public partial class HotkeyPrompt : System.Windows.Controls.TextBlock
 		if (string.IsNullOrEmpty(this.Function))
 			return;
 
-		if (!HotkeyService.Exists)
+		if (!HotkeyService.Instance.IsInitialized)
 			return;
 
 		KeyCombination? keys = HotkeyService.GetBind(this.Function);

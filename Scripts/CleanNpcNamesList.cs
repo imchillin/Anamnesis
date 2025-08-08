@@ -1,4 +1,4 @@
-// © Anamnesis.
+// Â© Anamnesis.
 // Licensed under the MIT license.
 
 using System.Text.Json;

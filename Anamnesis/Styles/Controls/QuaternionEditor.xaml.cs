@@ -441,7 +441,10 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 
 	private bool Rotate(KeyboardKeyStates state, double x, double y, double z)
 	{
-		// only roate on Press or Down events
+		if (!this.IsEnabled)
+			return false;
+
+		// only rotate on Press or Down events
 		if (state == KeyboardKeyStates.Released)
 			return false;
 

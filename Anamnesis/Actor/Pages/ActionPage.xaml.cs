@@ -3,7 +3,6 @@
 
 namespace Anamnesis.Actor.Pages;
 
-using Anamnesis.Actor;
 using Anamnesis.Actor.Views;
 using Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Interfaces;

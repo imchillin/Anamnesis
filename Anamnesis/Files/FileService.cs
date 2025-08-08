@@ -4,6 +4,7 @@
 namespace Anamnesis.Files;
 
 using Anamnesis;
+using Anamnesis.Core;
 using Anamnesis.GUI.Dialogs;
 using Anamnesis.GUI.Views;
 using Anamnesis.Services;
@@ -23,6 +24,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+// TODO: Move this file to Services folder.
 public class FileService : ServiceBase<FileService>
 {
 	public static readonly string StoreDirectory = "%AppData%/Anamnesis/";
