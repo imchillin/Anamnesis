@@ -23,9 +23,6 @@ public delegate void PinnedEvent(PinnedActor actor);
 [AddINotifyPropertyChangedInterface]
 public class TargetService : ServiceBase<TargetService>
 {
-	public static readonly int OverworldPlayerTargetOffset = 0x80;
-	public static readonly int GPosePlayerTargetOffset = 0x98;
-
 	public static event SelectionEvent? ActorSelected;
 	public static event PinnedEvent? ActorPinned;
 	public static event PinnedEvent? ActorUnPinned;
@@ -177,11 +174,11 @@ public class TargetService : ServiceBase<TargetService>
 		{
 			if (GposeService.Instance.IsGpose)
 			{
-				currentPlayerTargetPtr = MemoryService.Read<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, GPosePlayerTargetOffset));
+				currentPlayerTargetPtr = AddressService.GPosePlayerTarget;
 			}
 			else
 			{
-				currentPlayerTargetPtr = MemoryService.Read<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, OverworldPlayerTargetOffset));
+				currentPlayerTargetPtr = AddressService.OverworldPlayerTarget;
 			}
 		}
 		catch
@@ -417,11 +414,11 @@ public class TargetService : ServiceBase<TargetService>
 			{
 				if (GposeService.Instance.IsGpose)
 				{
-					MemoryService.Write<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, GPosePlayerTargetOffset), (IntPtr)ptr, "Update player target");
+					MemoryService.Write(AddressService.GPosePlayerTarget, (IntPtr)ptr, "Update player target");
 				}
 				else
 				{
-					MemoryService.Write<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, OverworldPlayerTargetOffset), (IntPtr)ptr, "Update player target");
+					MemoryService.Write(AddressService.OverworldPlayerTarget, (IntPtr)ptr, "Update player target");
 				}
 			}
 		}

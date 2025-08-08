@@ -4,7 +4,9 @@
 namespace Anamnesis.Memory;
 
 using Anamnesis.Core.Memory;
-using Anamnesis.GUI.Dialogs;
+#if !DEBUG
+	using Anamnesis.GUI.Dialogs;
+#endif
 using Anamnesis.GUI.Windows;
 using Anamnesis.Keyboard;
 using Anamnesis.Services;
@@ -596,14 +598,16 @@ public partial class MemoryService : ServiceBase<MemoryService>
 
 		// checke the game version as soon as we can
 		string file = MemoryService.GamePath + "game/ffxivgame.ver";
-		string gameVer = File.ReadAllText(file);
+		string gameVer = await Task.Run(() => File.ReadAllText(file));
 
 		Log.Information($"Found game version: {gameVer}");
 
 		if (gameVer != VersionInfo.ValidatedGameVersion)
 		{
 			Log.Warning($"Unrecognized game version: {gameVer}. Current validated version is: {VersionInfo.ValidatedGameVersion}");
+#if !DEBUG
 			await GenericDialog.ShowLocalizedAsync("Error_WrongVersion", "Error_WrongVersionTitle");
+#endif
 		}
 
 		Handle = OpenProcess(0x001F0FFF, true, process.Id);

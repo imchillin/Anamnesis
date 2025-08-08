@@ -100,7 +100,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 					}
 					else
 					{
-						weatherId = MemoryService.Read<byte>(AddressService.Weather);
+						weatherId = MemoryService.Read<byte>(AddressService.NextWeatherId);
 					}
 
 					if (weatherId != this.CurrentWeatherId)
@@ -138,11 +138,11 @@ public class TerritoryService : ServiceBase<TerritoryService>
 			}
 			else
 			{
-				current = MemoryService.Read<byte>(AddressService.Weather);
+				current = MemoryService.Read<byte>(AddressService.NextWeatherId);
 
 				if (current != this.CurrentWeatherId)
 				{
-					MemoryService.Write(AddressService.Weather, (byte)this.CurrentWeatherId, "Overworld weather Changed");
+					MemoryService.Write(AddressService.NextWeatherId, (byte)this.CurrentWeatherId, "Overworld weather Changed");
 				}
 			}
 		}
