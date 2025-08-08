@@ -3,19 +3,46 @@
 
 namespace Anamnesis.Services;
 
+using Anamnesis.Core;
 using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using PropertyChanged;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
+/// <summary>
+/// A service that continously checks for changes in the game's state.
+/// </summary>
 [AddINotifyPropertyChangedInterface]
 public class GameService : ServiceBase<GameService>
 {
-	public static bool Ready => Exists && Instance.IsSignedIn;
+	private const int TaskWaitTime = 16; // ms
 
-	public bool IsSignedIn { get; private set; }
+	private int isSignedIn = 0;
 
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GameDataService.Instance];
+
+	/// <summary>
+	/// Gets a value indicating whether the game process is in a ready state.
+	/// </summary>
+	public static bool Ready => (Instance?.IsInitialized ?? false) && Instance.IsSignedIn;
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the user is signed into a character.
+	/// </summary>
+	public bool IsSignedIn
+	{
+		get => Interlocked.CompareExchange(ref this.isSignedIn, 0, 0) == 1;
+		private set => Interlocked.Exchange(ref this.isSignedIn, value ? 1 : 0);
+	}
+
+	/// <summary>
+	/// Checks if the user is signed into a character by probing the game process' memory.
+	/// </summary>
+	/// <returns>True if the user is signed in, false otherwise.</returns>
 	public static bool GetIsSignedIn()
 	{
 #if DEBUG
@@ -45,30 +72,35 @@ public class GameService : ServiceBase<GameService>
 		}
 	}
 
-	public override Task Initialize()
+	/// <summary>
+	/// Periodically updates the signed-in status of the user from the game process.
+	/// </summary>
+	/// <param name="cancellationToken">The cancellation token to cancel the task.</param>
+	/// <returns>The task representing the asynchronous operation.</returns>
+	public async Task CheckIsSignedIn(CancellationToken cancellationToken)
 	{
-		Task.Run(this.CheckSignedIn);
-		return base.Initialize();
+		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
+		{
+			try
+			{
+				this.IsSignedIn = GetIsSignedIn();
+
+				// Property is updated synchronously; No need to resume from the original sync context
+				await Task.Delay(TaskWaitTime, cancellationToken).ConfigureAwait(false);
+			}
+			catch (TaskCanceledException)
+			{
+				// Task was canceled, exit the loop.
+				break;
+			}
+		}
 	}
 
-	public async Task CheckSignedIn()
+	/// <inheritdoc/>
+	protected override async Task OnStart()
 	{
-		while (this.IsAlive)
-		{
-			this.IsSignedIn = GetIsSignedIn();
-
-			/*if (!this.IsSignedIn)
-			{
-				TargetService.Instance.ClearSelection();
-			}*/
-
-			/*else
-			{
-				await Task.Delay(1000);
-				TargetService.Instance.EnsureSelection();
-			}*/
-
-			await Task.Delay(16);
-		}
+		this.CancellationTokenSource = new CancellationTokenSource();
+		this.BackgroundTask = Task.Run(() => this.CheckIsSignedIn(this.CancellationToken));
+		await base.OnStart();
 	}
 }

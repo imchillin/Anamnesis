@@ -84,7 +84,7 @@ public class Equipment : IItem, IRow
 	public bool IsFavorite
 	{
 		get => FavoritesService.IsFavorite<IItem>(this);
-		set => FavoritesService.SetFavorite<IItem>(this, nameof(FavoritesService.Favorites.Items), value);
+		set => FavoritesService.SetFavorite<IItem>(this, value);
 	}
 
 	/// <inheritdoc/>

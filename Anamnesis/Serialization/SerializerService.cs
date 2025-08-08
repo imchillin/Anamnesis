@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Serialization;
 
+using Anamnesis.Core;
 using Anamnesis.Serialization.Converters;
 using System;
 using System.IO;

@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Services;
 
+using Anamnesis.Core;
 using Anamnesis.Files;
 using Anamnesis.Windows;
 using Serilog;
@@ -15,11 +16,14 @@ using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-public class LogService : IService
+/// <summary>
+/// A service that handles logging and error reporting in the application.
+/// </summary>
+public class LogService : ServiceBase<LogService>
 {
 	private const string LogfilePath = "/Logs/";
 
-	private static readonly LoggingLevelSwitch LogLevel = new LoggingLevelSwitch()
+	private static readonly LoggingLevelSwitch LogLevel = new()
 	{
 #if DEBUG
 		MinimumLevel = LogEventLevel.Verbose,
@@ -28,28 +32,25 @@ public class LogService : IService
 #endif
 	};
 
-	private static LogService? instance;
 	private static string? currentLogPath;
 
-	public static LogService Instance
-	{
-		get
-		{
-			if (instance == null)
-				throw new Exception("No logging service found");
-
-			return instance;
-		}
-	}
-
-	public bool IsAlive => true;
-
-	public bool VerboseLogging
+	/// <summary>
+	/// Gets or sets the minimum logging level for the application.
+	/// </summary>
+	/// <remarks>
+	/// Setting this to true will enable verbose logging.
+	/// Otherwise, the minimum level will be set to debug.
+	/// </remarks>
+	public static bool VerboseLogging
 	{
 		get => LogLevel.MinimumLevel == LogEventLevel.Verbose;
 		set => LogLevel.MinimumLevel = value ? LogEventLevel.Verbose : LogEventLevel.Debug;
 	}
 
+	/// <summary>
+	/// Opens the application's logs directory in Windows Explorer.
+	/// </summary>
+	/// <exception cref="Exception">Thrown if the logs directory could not be retrieved.</exception>
 	public static void ShowLogs()
 	{
 		string? dir = Path.GetDirectoryName(FileService.StoreDirectory + LogfilePath);
@@ -61,11 +62,17 @@ public class LogService : IService
 		Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", dir);
 	}
 
+	/// <summary>
+	/// Opens the application's logs directory and selects the current log file.
+	/// </summary>
 	public static void ShowCurrentLog()
 	{
 		Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", $"/select, \"{currentLogPath}\"");
 	}
 
+	/// <summary>
+	/// Creates a new log file in the application's logs directory.
+	/// </summary>
 	public static void CreateLog()
 	{
 		if (!string.IsNullOrEmpty(currentLogPath))
@@ -88,7 +95,7 @@ public class LogService : IService
 
 		currentLogPath = dir + DateTime.Now.ToString(@"yyyy-MM-dd-HH-mm-ss") + ".txt";
 
-		LoggerConfiguration config = new LoggerConfiguration();
+		var config = new LoggerConfiguration();
 		config.MinimumLevel.ControlledBy(LogLevel);
 		config.WriteTo.File(currentLogPath);
 		config.WriteTo.Sink<ErrorDialogLogDestination>();
@@ -103,22 +110,11 @@ public class LogService : IService
 		Log.Information("Anamnesis Version: " + VersionInfo.Date.ToString(@"yyyy-MM-dd HH:mm"), "Info");
 	}
 
-	public Task Initialize()
+	/// <inheritdoc/>
+	public override async Task Initialize()
 	{
-		instance = this;
 		CreateLog();
-
-		return Task.CompletedTask;
-	}
-
-	public Task Shutdown()
-	{
-		return Task.CompletedTask;
-	}
-
-	public Task Start()
-	{
-		return Task.CompletedTask;
+		await base.Initialize();
 	}
 
 	private class ErrorDialogLogDestination : ILogEventSink

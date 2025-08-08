@@ -3,40 +3,58 @@
 
 namespace Anamnesis.Services;
 
+using Anamnesis.Core;
+using Anamnesis.Files;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Anamnesis.Files;
 using XivToolsWpf.DependencyInjection;
 
+/// <summary>
+/// A singleton service that handles the application's localization.
+/// </summary>
 public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProvider
 {
 	public const string FallbackCulture = "EN";
 
-	private static readonly Dictionary<string, Locale> Locales = new Dictionary<string, Locale>();
+	private static readonly Dictionary<string, Locale> Locales = new(StringComparer.OrdinalIgnoreCase);
 
 	private static Locale? fallbackLocale;
 	private static Locale? currentLocale;
 
+	/// <inheritdoc/>
 	public event LocalizationEvent? LocaleChanged;
 
-	public static bool Loaded => Exists && currentLocale != null;
+	/// <summary>
+	/// Gets a value indicating whether the locale provider is loaded.
+	/// </summary>
+	public static bool Loaded => Instance.IsInitialized && currentLocale != null;
 
-	bool ILocaleProvider.Loaded => Loaded;
-
+	/// <summary>
+	/// Adds a single localized string to the specified locale.
+	/// </summary>
+	/// <param name="culture">The two-letter culture code of the target locale.</param>
+	/// <param name="cultureName">The name of the target locale (created if missing).</param>
+	/// <param name="key">The key of the translation.</param>
+	/// <param name="value">The translated string.</param>
 	public static void Add(string culture, string cultureName, string key, string value)
 	{
-		culture = culture.ToUpperInvariant();
+		if (!Locales.TryGetValue(culture, out var locale))
+		{
+			locale = new Locale(culture, cultureName);
+			Locales[culture] = locale;
+		}
 
-		if (!Locales.ContainsKey(culture))
-			Locales.Add(culture, new Locale(culture, cultureName));
-
-		Locale locale = Locales[culture];
-
-		Locales[culture].Add(key, value);
+		locale.Add(key, value);
 	}
 
+	/// <summary>
+	/// Adds multiple localized strings to the specified locale.
+	/// </summary>
+	/// <param name="culture">The two-letter culture code of the target locale.</param>
+	/// <param name="cultureName">The name of the target locale (created if missing).</param>
+	/// <param name="values">The dictionary of key-value pairs to add to the locale.</param>
 	public static void Add(string culture, string cultureName, Dictionary<string, string> values)
 	{
 		foreach ((string key, string value) in values)
@@ -45,29 +63,45 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 		}
 	}
 
-	public static bool HasString(string key)
-	{
-		string val;
-		if (currentLocale?.Get(key, out val) != true)
-			return false;
+	/// <summary>
+	/// Checks if the current locale has an entry with the specified key.
+	/// </summary>
+	/// <param name="key">The key to check for.</param>
+	/// <returns>True if the key exists in the current locale, false otherwise.</returns>
+	public static bool HasString(string key) => currentLocale?.Get(key, out string _) ?? false;
 
-		return true;
-	}
-
+	/// <summary>
+	/// Gets a localized string for the specified key, formatted with the provided parameters.
+	/// </summary>
+	/// <param name="key">The key of the target translation.</param>
+	/// <param name="param">
+	/// An array of parameters to format the string with.
+	/// It must match the number of placeholders in the localized string.
+	/// </param>
+	/// <returns>The formatted localized string.</returns>
+	/// <exception cref="ArgumentException">Thrown if the parameter array is null.</exception>
+	/// <exception cref="KeyNotFoundException">Thrown if the key is missing in the current locale.</exception>
 	public static string GetStringFormatted(string key, params string[] param)
 	{
-		string str = GetString(key);
+		if (param == null)
+			throw new ArgumentException("Parameter array cannot be null", nameof(param));
+
+		string str = GetString(key) ?? throw new KeyNotFoundException($"Missing localized string: \"{key}\" in locale: \"{currentLocale?.Culture}\"");
 		return string.Format(str, param);
 	}
 
+	/// <summary>
+	/// Gets a string for the specified key in all available locales.
+	/// </summary>
+	/// <param name="key">The key of the target translation.</param>
+	/// <returns>The concatenated localized strings from all locales.</returns>
 	public static string GetStringAllLanguages(string key)
 	{
-		StringBuilder builder = new StringBuilder();
+		var builder = new StringBuilder();
 
 		foreach ((string code, Locale locale) in Locales)
 		{
-			string val;
-			if (locale.Get(key, out val))
+			if (locale.Get(key, out string val))
 			{
 				builder.AppendLine(val);
 				builder.AppendLine();
@@ -77,6 +111,12 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 		return builder.ToString().TrimEnd();
 	}
 
+	/// <summary>
+	/// Gets a localized string for the given key from the currently active locale.
+	/// </summary>
+	/// <param name="key">The key of the target translation.</param>
+	/// <param name="silent">A flag indicating whether to suppress warnings for missing keys.</param>
+	/// <returns>The localized string if found; otherwise, an empty string.</returns>
 	public static string GetString(string key, bool silent = false)
 	{
 		string val = string.Empty;
@@ -85,19 +125,19 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 			return val;
 
 		if (!silent)
-			Log.Warning("Missing Localized string: \"" + key + "\" in locale: \"" + currentLocale?.Culture + "\"");
+			Log.Warning($"Missing Localized string: \"{key}\" in locale: \"{currentLocale?.Culture}\"");
 
 		if (fallbackLocale?.Get(key, out val) ?? false)
 			return val;
 
 		if (!silent)
-			Log.Error("Missing Localized string: \"" + key + "\"");
+			Log.Error($"Missing Localized string: \"{key}\"");
 
 		if (!silent)
 		{
-			string erorString = "{" + key + "}";
-			fallbackLocale?.Add(key, erorString);
-			return erorString;
+			string errorString = $"{{{key}}}";
+			fallbackLocale?.Add(key, errorString);
+			return errorString;
 		}
 		else
 		{
@@ -106,41 +146,78 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 		}
 	}
 
-	public static void SetLocale(string locale)
+	/// <summary>
+	/// Gets all entries in the current locale that start with the specified key prefix.
+	/// </summary>
+	/// <param name="prefix">The prefix to search for.</param>
+	/// <returns>A read-only dictionary of entries with the specified key prefix.</returns>
+	/// <exception cref="ArgumentException">Thrown if the provided prefix is null or empty.</exception>
+	public static IReadOnlyDictionary<string, string> GetEntriesWithPrefix(string prefix)
 	{
-		locale = locale.ToUpper();
+		if (string.IsNullOrEmpty(prefix))
+			throw new ArgumentException("Prefix cannot be null or empty. Use GetString() instead.", nameof(prefix));
 
-		if (Locales.ContainsKey(locale))
+		var results = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		if (currentLocale == null)
+			return results;
+
+		foreach (var kvp in currentLocale.Translations)
 		{
-			currentLocale = Locales[locale];
-		}
-		else
-		{
-			currentLocale = fallbackLocale;
-		}
-
-		Instance.LocaleChanged?.Invoke();
-	}
-
-	public static Dictionary<string, string> GetAvailableLocales()
-	{
-		Dictionary<string, string> results = new Dictionary<string, string>();
-		foreach (Locale locale in Locales.Values)
-		{
-			if (results.ContainsKey(locale.Culture))
-				continue;
-
-			results.Add(locale.Culture, locale.Name);
+			if (kvp.Key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+				results[kvp.Key] = kvp.Value;
 		}
 
 		return results;
 	}
 
+	/// <summary>
+	/// Sets the application's active locale by its two-letter culture code.
+	/// </summary>
+	/// <param name="locale">
+	/// The two-letter culture code of the target locale (case-insensitive).
+	/// </param>
+	public static void SetLocale(string locale)
+	{
+		locale = locale.ToUpper();
+
+		if (Locales.TryGetValue(locale, out Locale? value))
+		{
+			if (currentLocale == value)
+				return;
+
+			currentLocale = value;
+		}
+		else
+		{
+			if (currentLocale == fallbackLocale)
+				return;
+
+			currentLocale = fallbackLocale;
+		}
+
+		Instance?.LocaleChanged?.Invoke();
+	}
+
+	/// <summary>
+	/// Returns a disctionary of all available locales, mapping culture codes to their display names.
+	/// </summary>
+	/// <returns>A read-only dictionary of available locales.</returns>
+	public static IReadOnlyDictionary<string, string> GetAvailableLocales()
+	{
+		var results = new Dictionary<string, string>(Locales.Count, StringComparer.OrdinalIgnoreCase);
+		foreach (Locale locale in Locales.Values)
+		{
+			if (!results.TryAdd(locale.Culture, locale.Name))
+				continue; // Duplicate; Skip
+		}
+
+		return results;
+	}
+
+	/// <inheritdoc/>
 	public override async Task Initialize()
 	{
 		DependencyFactory.RegisterDependency<ILocaleProvider>(this);
-
-		await base.Initialize();
 
 		string[] languageFilePaths = EmbeddedFileUtility.GetAllFilesInDirectory("Languages");
 		foreach (string languageFilePath in languageFilePaths)
@@ -150,8 +227,7 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 				string fileName = EmbeddedFileUtility.GetFileName(languageFilePath);
 				Dictionary<string, string> values = EmbeddedFileUtility.Load<Dictionary<string, string>>(languageFilePath);
 
-				string? name;
-				if (!values.TryGetValue("Language", out name))
+				if (!values.TryGetValue("Language", out string? name))
 					name = fileName.ToUpper();
 
 				Add(fileName, name, values);
@@ -163,49 +239,62 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 		}
 
 		fallbackLocale = Locales[FallbackCulture];
+		await base.Initialize();
 		SetLocale(SettingsService.Current.Language);
 	}
 
-	public override async Task Start()
-	{
-		await base.Start();
-	}
+	/// <inheritdoc/>
+	bool ILocaleProvider.Loaded => Loaded;
 
+	/// <inheritdoc/>
 	bool ILocaleProvider.HasString(string key) => HasString(key);
+
+	/// <inheritdoc/>
 	string ILocaleProvider.GetStringFormatted(string key, params string[] param) => GetStringFormatted(key, param);
+
+	/// <inheritdoc/>
 	string ILocaleProvider.GetStringAllLanguages(string key) => GetStringAllLanguages(key);
+
+	/// <inheritdoc/>
 	string ILocaleProvider.GetString(string key, bool silent) => GetString(key, silent);
 
-	private class Locale
+	/// <summary>
+	/// Represents a locale with a culture and name.
+	/// </summary>
+	/// <param name="culture">The two-letter culture code. (e.g., "EN", "FR")</param>
+	/// <param name="name">The name of the culture.</param>
+	private sealed class Locale(string culture, string name)
 	{
-		public readonly string Culture;
-		public string Name;
+		/// <summary>Gets the locale's two-letter culture code.</summary>
+		public readonly string Culture = culture;
 
-		private readonly Dictionary<string, string> values = new Dictionary<string, string>();
+		/// <summary>Gets the given name of the locale.</summary>
+		public readonly string Name = name;
 
-		public Locale(string culture, string name)
+		private readonly Dictionary<string, string> translations = [];
+
+		/// <summary>Gets all translations stored in the locale.</summary>
+		public IReadOnlyDictionary<string, string> Translations => this.translations;
+
+		/// <summary>Adds a key-value translation to the locale.</summary>
+		/// <param name="key">The key of the translation.</param>
+		/// <param name="value">The localized text string.</param>
+		public void Add(string key, string value) => this.translations[key] = value;
+
+		/// <summary>Gets the localized string for the given key.</summary>
+		/// <param name="key">The key of the translation.</param>
+		/// <param name="value">The localized text string.</param>
+		/// <returns>True if the key exists in the locale, false otherwise.</returns>
+		public bool Get(string key, out string value)
 		{
-			this.Culture = culture;
-			this.Name = name;
-		}
+			if (this.translations.TryGetValue(key, out string? strVal))
+			{
+				value = strVal;
+				return true;
+			}
 
-		public virtual void Add(string key, string value)
-		{
-			if (!this.values.ContainsKey(key))
-				this.values.Add(key, value);
-
-			this.values[key] = value;
-		}
-
-		public virtual bool Get(string key, out string value)
-		{
 			value = string.Empty;
-
-			if (!this.values.ContainsKey(key))
-				return false;
-
-			value = this.values[key];
-			return true;
+			return false;
 		}
 	}
 }
