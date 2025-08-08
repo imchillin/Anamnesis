@@ -109,12 +109,12 @@ public class ActorCustomizeMemory : MemoryBase
 	[Bind(0x007, BindFlags.ActorRefresh)] public byte HighlightType { get; set; }
 	[Bind(0x008, BindFlags.ActorRefresh)] public byte Skintone { get; set; }
 	[Bind(0x009, BindFlags.ActorRefresh)] public byte REyeColor { get; set; }
-	[Bind(0x00a, BindFlags.ActorRefresh)] public byte HairTone { get; set; }
-	[Bind(0x00b, BindFlags.ActorRefresh)] public byte Highlights { get; set; }
-	[Bind(0x00c, BindFlags.ActorRefresh)] public FacialFeature FacialFeatures { get; set; }
-	[Bind(0x00d, BindFlags.ActorRefresh)] public byte FacialFeatureColor { get; set; }
-	[Bind(0x00e, BindFlags.ActorRefresh)] public byte Eyebrows { get; set; }
-	[Bind(0x00f, BindFlags.ActorRefresh)] public byte LEyeColor { get; set; }
+	[Bind(0x00A, BindFlags.ActorRefresh)] public byte HairTone { get; set; }
+	[Bind(0x00B, BindFlags.ActorRefresh)] public byte Highlights { get; set; }
+	[Bind(0x00C, BindFlags.ActorRefresh)] public FacialFeature FacialFeatures { get; set; }
+	[Bind(0x00D, BindFlags.ActorRefresh)] public byte FacialFeatureColor { get; set; }
+	[Bind(0x00E, BindFlags.ActorRefresh)] public byte Eyebrows { get; set; }
+	[Bind(0x00F, BindFlags.ActorRefresh)] public byte LEyeColor { get; set; }
 	[Bind(0x010, BindFlags.ActorRefresh)] public byte Eyes { get; set; }
 	[Bind(0x011, BindFlags.ActorRefresh)] public byte Nose { get; set; }
 	[Bind(0x012, BindFlags.ActorRefresh)] public byte Jaw { get; set; }

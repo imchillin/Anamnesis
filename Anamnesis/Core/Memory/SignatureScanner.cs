@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Core.Memory;
 using Anamnesis.Memory;
+using Iced.Intel;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ using System.Runtime.CompilerServices;
 /// https://github.com/goatcorp/Dalamud/blob/master/Dalamud/Game/SigScanner.cs.
 /// </para>
 /// </remarks>
-public unsafe sealed class SignatureScanner
+public sealed unsafe class SignatureScanner
 {
 	/// <summary>The size of each chunk of memory to scan at a time.</summary>
 	private const int ScanChunkSize = 1024; // 1kB
@@ -180,21 +181,42 @@ public unsafe sealed class SignatureScanner
 	/// To create a signature, use IDA to find the function calling the static address.
 	/// Then place your cursor on the line calling the address and create the signature.
 	/// </remarks>
-	public IntPtr GetStaticAddressFromSig(string signature, int offset = 0)
+	public unsafe IntPtr GetStaticAddressFromSig(string signature, int offset = 0)
 	{
-		IntPtr instrAddr = this.ScanText(signature);
-		instrAddr = IntPtr.Add(instrAddr, offset);
-		long bAddr = (long)this.Module.BaseAddress;
-		long num;
-		int steps = 1000;
-		do
+		var instructionAddress = (byte*)this.ScanText(signature);
+		instructionAddress += offset;
+
+		try
 		{
-			instrAddr = IntPtr.Add(instrAddr, 1);
-			num = MemoryService.ReadInt32(instrAddr) + (long)instrAddr + 4 - bAddr;
-			steps--;
+			var reader = new UnsafeCodeReader(instructionAddress, signature.Length + 8);
+			var decoder = Decoder.Create(64, reader, (ulong)instructionAddress, DecoderOptions.AMD);
+			while (reader.CanReadByte)
+			{
+				var instruction = decoder.Decode();
+				if (instruction.IsInvalid)
+					continue;
+
+				if (instruction.Op0Kind is OpKind.Memory || instruction.Op1Kind is OpKind.Memory)
+				{
+					if (instruction.IsIPRelativeMemoryOperand)
+					{
+						// If RIP/EIP relative, we can use the displacement directly.
+						return (IntPtr)instruction.MemoryDisplacement64; // For RIP/EIP, the displacement property represents the static address.
+					}
+					else
+					{
+						// Otherwise, resolve the static address by reading the memory displacement and adding it to the instruction address.
+						return IntPtr.Add((nint)instructionAddress, MemoryService.ReadInt32((nint)instructionAddress) + 4);
+					}
+				}
+			}
 		}
-		while (steps > 0 && !(num >= this.DataSectionOffset && num <= this.DataSectionOffset + this.DataSectionSize));
-		return IntPtr.Add(instrAddr, MemoryService.ReadInt32(instrAddr) + 4);
+		catch
+		{
+			// ignored
+		}
+
+		throw new KeyNotFoundException($"Can't find any referenced address in the given signature {signature}.");
 	}
 
 	/// <summary>
@@ -368,5 +390,27 @@ public unsafe sealed class SignatureScanner
 
 		Debug.Assert(this.TextSectionSize > 0, "Text section size must be greater than 0.");
 		Debug.Assert(this.DataSectionSize > 0, "Data section size must be greater than 0.");
+	}
+
+	private unsafe class UnsafeCodeReader : CodeReader
+	{
+		private readonly int length;
+		private readonly byte* address;
+		private int pos;
+		public UnsafeCodeReader(byte* address, int length)
+		{
+			this.length = length;
+			this.address = address;
+		}
+
+		public bool CanReadByte => this.pos < this.length;
+
+		public override int ReadByte()
+		{
+			if (this.pos >= this.length)
+				return -1;
+
+			return MemoryService.ReadByte((nint)(this.address + this.pos++));
+		}
 	}
 }

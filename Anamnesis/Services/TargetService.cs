@@ -23,8 +23,6 @@ using XivToolsWpf;
 [AddINotifyPropertyChangedInterface]
 public class TargetService : ServiceBase<TargetService>
 {
-	private const int OverworldPlayerTargetOffset = 0x80;
-	private const int GPosePlayerTargetOffset = 0x98;
 	private const int TaskDelay = 32; // ms (~30 fps)
 
 	/// <inheritdoc/>
@@ -479,11 +477,11 @@ public class TargetService : ServiceBase<TargetService>
 			{
 				if (GposeService.Instance.IsGpose)
 				{
-					MemoryService.Write<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, GPosePlayerTargetOffset), (IntPtr)ptr, "Update player target");
+					MemoryService.Write(AddressService.GPosePlayerTarget, (IntPtr)ptr, "Update player target");
 				}
 				else
 				{
-					MemoryService.Write<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, OverworldPlayerTargetOffset), (IntPtr)ptr, "Update player target");
+					MemoryService.Write(AddressService.OverworldPlayerTarget, (IntPtr)ptr, "Update player target");
 				}
 			}
 		}
@@ -497,11 +495,11 @@ public class TargetService : ServiceBase<TargetService>
 		{
 			if (GposeService.Instance.IsGpose)
 			{
-				currentPlayerTargetPtr = MemoryService.Read<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, GPosePlayerTargetOffset));
+				currentPlayerTargetPtr = AddressService.GPosePlayerTarget;
 			}
 			else
 			{
-				currentPlayerTargetPtr = MemoryService.Read<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, OverworldPlayerTargetOffset));
+				currentPlayerTargetPtr = AddressService.OverworldPlayerTarget;
 			}
 		}
 		catch

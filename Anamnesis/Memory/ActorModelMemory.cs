@@ -44,7 +44,7 @@ public class ActorModelMemory : MemoryBase
 	[Bind(0x030, BindFlags.Pointer)] public ExtendedWeaponMemory? Weapons { get; set; }
 	[Bind(0x050)] public TransformMemory? Transform { get; set; }
 	[Bind(0x0A0, BindFlags.Pointer | BindFlags.OnlyInGPose | BindFlags.DontCacheOffsets)] public SkeletonMemory? Skeleton { get; set; }
-	[Bind(0x148, BindFlags.Pointer)] public BustMemory? Bust { get; set; }
+	[Bind(0x150, BindFlags.Pointer)] public BustMemory? Bust { get; set; }
 	[Bind(0x290)] public Color Tint { get; set; }
 	[Bind(0x2A4)] public float Height { get; set; }
 	[Bind(0x2E0)] public float Wetness { get; set; }

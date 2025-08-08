@@ -77,10 +77,10 @@ public partial class SliderInputBox : UserControl
 	public static readonly IBind<string> SuffixDp = Binder.Register<string, SliderInputBox>(nameof(Suffix), OnSuffixChanged, BindMode.OneWay);
 
 	/// <summary>Dependency property for the minimum value.</summary>
-	public static readonly IBind<decimal?> MinDp = Binder.Register<decimal?, SliderInputBox>(nameof(Minimum), OnMinimumChanged, BindMode.TwoWay);
+	public static readonly IBind<string?> MinDp = Binder.Register<string?, SliderInputBox>(nameof(Minimum), OnMinimumChanged, BindMode.TwoWay);
 
 	/// <summary>Dependency property for the maximum value.</summary>
-	public static readonly IBind<decimal?> MaxDp = Binder.Register<decimal?, SliderInputBox>(nameof(Maximum), OnMaximumChanged, BindMode.TwoWay);
+	public static readonly IBind<string?> MaxDp = Binder.Register<string?, SliderInputBox>(nameof(Maximum), OnMaximumChanged, BindMode.TwoWay);
 
 	/// <summary>Dependency property for the number of decimal places.</summary>
 	public static readonly IBind<int?> DecimalPlacesDp = Binder.Register<int?, SliderInputBox>(nameof(DecimalPlaces), OnDecimalPlacesChanged, BindMode.OneWay);
@@ -139,6 +139,17 @@ public partial class SliderInputBox : UserControl
 
 	/// <summary>The starting value of the slider when the mouse drag started.</summary>
 	private double relativeSliderStart;
+
+	/// <summary>Cached minimum of parsed dependency property value.</summary>
+	private decimal? parsedMinimum;
+
+	/// <summary>Cached maximum of parsed dependency property value.</summary>
+	private decimal? parsedMaximum;
+
+	/// <summary>
+	/// Gets a value that indicates whether the user control has valid lower and upper value bounds.
+	/// </summary>
+	private bool HasValidBounds => this.parsedMinimum != null && this.parsedMaximum != null;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SliderInputBox"/> class and sets up default property values and event handlers.
@@ -204,6 +215,7 @@ public partial class SliderInputBox : UserControl
 	{
 		/// <summary>
 		/// The standard slider mode. The minimum and maximum values are true bounds.
+		/// If the user control has no valid bounds, the slider will default to relative mode.
 		/// </summary>
 		/// <remarks>This is the default mode.</remarks>
 		Absolute,
@@ -301,25 +313,49 @@ public partial class SliderInputBox : UserControl
 	}
 
 	/// <summary>Gets or sets the minimum value.</summary>
-	public decimal? Minimum
+	public string? Minimum
 	{
 		get => MinDp.Get(this);
 		set
 		{
 			this.isInternalSet = true;
-			MinDp.Set(this, value);
+
+			var parsed = ParseBoundValue(value);
+			if (parsed != null && this.parsedMaximum != null && parsed > this.parsedMaximum)
+			{
+				this.parsedMinimum = this.parsedMaximum;
+				MinDp.Set(this, this.Maximum);
+			}
+			else
+			{
+				this.parsedMinimum = parsed;
+				MinDp.Set(this, value);
+			}
+
 			this.isInternalSet = false;
 		}
 	}
 
 	/// <summary>Gets or sets the maximum value.</summary>
-	public decimal? Maximum
+	public string? Maximum
 	{
 		get => MaxDp.Get(this);
 		set
 		{
 			this.isInternalSet = true;
-			MaxDp.Set(this, value);
+
+			var parsed = ParseBoundValue(value);
+			if (parsed != null && this.parsedMinimum != null && parsed < this.parsedMinimum)
+			{
+				this.parsedMaximum = this.parsedMinimum;
+				MaxDp.Set(this, this.Minimum);
+			}
+			else
+			{
+				this.parsedMaximum = parsed;
+				MaxDp.Set(this, value);
+			}
+
 			this.isInternalSet = false;
 		}
 	}
@@ -445,36 +481,46 @@ public partial class SliderInputBox : UserControl
 	/// <summary>Handles changes to the minimum value.</summary>
 	/// <param name="sender">The sender.</param>
 	/// <param name="value">The new value.</param>
-	private static void OnMinimumChanged(SliderInputBox sender, decimal? value)
+	private static void OnMinimumChanged(SliderInputBox sender, string? value)
 	{
 		if (sender.isInternalSet)
 			return;
 
-		if (value != null && sender.Maximum != null && value > sender.Maximum)
+		var parsed = ParseBoundValue(value);
+		if (parsed != null && sender.parsedMaximum != null && parsed > sender.parsedMaximum)
 		{
+			sender.parsedMinimum = sender.parsedMaximum;
 			sender.Minimum = sender.Maximum;
-			return;
+		}
+		else
+		{
+			sender.parsedMinimum = parsed;
+			sender.Minimum = value;
 		}
 
-		sender.Minimum = value;
 		sender.UpdateTickPosition();
 	}
 
 	/// <summary>Handles changes to the maximum value.</summary>
 	/// <param name="sender">The sender.</param>
 	/// <param name="value">The new value.</param>
-	private static void OnMaximumChanged(SliderInputBox sender, decimal? value)
+	private static void OnMaximumChanged(SliderInputBox sender, string? value)
 	{
 		if (sender.isInternalSet)
 			return;
 
-		if (value != null && sender.Minimum != null && value < sender.Minimum)
+		var parsed = ParseBoundValue(value);
+		if (parsed != null && sender.parsedMinimum != null && parsed < sender.parsedMinimum)
 		{
+			sender.parsedMaximum = sender.parsedMinimum;
 			sender.Maximum = sender.Minimum;
-			return;
+		}
+		else
+		{
+			sender.parsedMaximum = parsed;
+			sender.Maximum = value;
 		}
 
-		sender.Maximum = value;
 		sender.UpdateTickPosition();
 	}
 
@@ -555,6 +601,49 @@ public partial class SliderInputBox : UserControl
 		return value;
 	}
 
+	/// <summary>
+	/// Parses the lower/upper bound value from the dependency property string.
+	/// </summary>
+	/// <param name="value">The string value to parse.</param>
+	/// <returns>The parsed decimal value, or null if parsing fails.</returns>
+	private static decimal? ParseBoundValue(string? value)
+	{
+		if (string.IsNullOrWhiteSpace(value))
+			return null;
+
+		if (decimal.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var dec))
+			return dec;
+
+		// Attempt to parse symbolic values (e.g., "System.float.MaxValue")
+		var parts = value.Split('.');
+		if (parts.Length != 2)
+			return null; // Invalid format
+
+		try
+		{
+			var type = Type.GetType("System." + parts[0], false, true);
+			if (type != null)
+			{
+				// Assert for unsupported types
+				Debug.Assert(type != typeof(double), "SliderInputBox does not support double min/max range.");
+				Debug.Assert(type != typeof(ulong), "SliderInputBox does not support ulong min/max range.");
+
+				var field = type.GetField(parts[1], System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+				if (field != null)
+				{
+					var val = field.GetValue(null);
+					return Convert.ToDecimal(val, CultureInfo.InvariantCulture);
+				}
+			}
+		}
+		catch
+		{
+			// Ignore exceptions
+		}
+
+		return null; // Fallback
+	}
+
 	/// <summary>Handles the control's loaded event.</summary>
 	/// <param name="sender">The sender.</param>
 	/// <param name="e">The event arguments.</param>
@@ -591,16 +680,16 @@ public partial class SliderInputBox : UserControl
 					}
 					else
 					{
-						if (this.SliderMode == SliderModes.Absolute)
+						if (this.SliderMode == SliderModes.Absolute && this.HasValidBounds)
 						{
 							// Else, calculate the new value based on the tick position
 							double relativePosition = (this.startPoint.X - this.DecreaseButton.ActualWidth - TICK_VISUAL_OFFSET - TICK_RECT_HALF_WIDTH) / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - TICK_RECT_WIDTH);
-							decimal newValue = ((decimal)relativePosition * ((this.Maximum ?? 0) - (this.Minimum ?? 0))) + (this.Minimum ?? 0);
+							decimal newValue = ((decimal)relativePosition * ((decimal)this.parsedMaximum! - (decimal)this.parsedMinimum!)) + (decimal)this.parsedMinimum!;
 
 							this.Value = newValue;
 							this.UpdateTickPosition();
 						}
-						else if (this.SliderMode == SliderModes.Relative)
+						else if (this.SliderMode == SliderModes.Relative || !this.HasValidBounds)
 						{
 							this.relativeSliderStart = (double)this.Value;
 						}
@@ -639,18 +728,18 @@ public partial class SliderInputBox : UserControl
 			{
 				this.isDragging = true;
 
-				if (this.SliderMode == SliderModes.Absolute)
+				if (this.SliderMode == SliderModes.Absolute && this.HasValidBounds)
 				{
 					// Calculate the new value based on the tick position
 					double relativePosition = (currentPoint.X - this.DecreaseButton.ActualWidth - TICK_VISUAL_OFFSET - TICK_RECT_HALF_WIDTH) / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - TICK_RECT_WIDTH);
-					decimal newValue = ((decimal)relativePosition * ((this.Maximum ?? 0) - (this.Minimum ?? 0))) + (this.Minimum ?? 0);
+					decimal newValue = ((decimal)relativePosition * ((decimal)this.parsedMaximum! - (decimal)this.parsedMinimum!)) + (decimal)this.parsedMinimum!;
 
 					this.Value = newValue;
 
 					// Handle cursor overflow for classic slider type
 					this.HandleCursorOverflow();
 				}
-				else if (this.SliderMode == SliderModes.Relative)
+				else if (this.SliderMode == SliderModes.Relative || !this.HasValidBounds)
 				{
 					if (diff.Length >= (double)DRAG_MIN_DISTANCE)
 					{
@@ -960,10 +1049,11 @@ public partial class SliderInputBox : UserControl
 	/// <returns>The validated value.</returns>
 	private decimal Validate(decimal val)
 	{
+		decimal min = this.parsedMinimum ?? decimal.MinValue;
+		decimal max = this.parsedMaximum ?? decimal.MaxValue;
+
 		if (this.OverflowBehavior == OverflowModes.Clamp)
 		{
-			decimal min = this.Minimum ?? decimal.MinValue;
-			decimal max = this.Maximum ?? decimal.MaxValue;
 			val = Math.Clamp(val, min, max);
 
 			this.DecreaseButton.IsEnabled = val > min;
@@ -971,10 +1061,10 @@ public partial class SliderInputBox : UserControl
 		}
 		else if (this.OverflowBehavior == OverflowModes.Loop && this.Minimum != null && this.Maximum != null)
 		{
-			if (val < this.Minimum)
-				val = (decimal)this.Maximum;
-			else if (val > this.Maximum)
-				val = (decimal)this.Minimum;
+			if (val < min)
+				val = max;
+			else if (val > max)
+				val = min;
 		}
 
 		return val;
@@ -1003,10 +1093,10 @@ public partial class SliderInputBox : UserControl
 
 		// Update the tick position based on the value
 		// Skip update if component is hidden
-		if (this.Maximum > this.Minimum && this.TickRectangle.Visibility == Visibility.Visible)
+		if (this.parsedMaximum > this.parsedMinimum && this.TickRectangle.Visibility == Visibility.Visible)
 		{
-			decimal range = (decimal)(this.Maximum - this.Minimum);
-			decimal relativeValue = (decimal)((this.Value - this.Minimum) / range);
+			decimal range = (decimal)(this.parsedMaximum - this.parsedMinimum);
+			decimal relativeValue = (decimal)((this.Value - this.parsedMinimum) / range);
 			double tickPosition = ((double)relativeValue * (this.InputArea.ActualWidth - TICK_RECT_WIDTH - (2 * TICK_VISUAL_OFFSET))) + TICK_RECT_HALF_WIDTH;
 
 			this.TickRectangle.Margin = new Thickness(tickPosition - TICK_RECT_HALF_WIDTH, 0, 0, 0);
@@ -1069,10 +1159,10 @@ public partial class SliderInputBox : UserControl
 	{
 		if (this.OverflowBehavior == OverflowModes.Clamp)
 		{
-			if (this.Minimum != null)
-				this.DecreaseButton.IsEnabled = this.Value > this.Minimum;
-			if (this.Maximum != null)
-				this.IncreaseButton.IsEnabled = this.Value < this.Maximum;
+			if (this.parsedMinimum != null)
+				this.DecreaseButton.IsEnabled = this.Value > this.parsedMinimum;
+			if (this.parsedMaximum != null)
+				this.IncreaseButton.IsEnabled = this.Value < this.parsedMaximum;
 		}
 		else
 		{

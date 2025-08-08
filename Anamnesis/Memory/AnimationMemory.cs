@@ -33,11 +33,11 @@ public class AnimationMemory : MemoryBase
 		Overlay = 12,
 	}
 
-	[Bind(0x0E0)] public AnimationIdArrayMemory? AnimationIds { get; set; }
-	[Bind(0x154)] public AnimationSpeedArrayMemory? Speeds { get; set; }
-	[Bind(0x1E2)] public byte SpeedTrigger { get; set; }
-	[Bind(0x2D6)] public ushort BaseOverride { get; set; }
-	[Bind(0x2D8)] public ushort LipsOverride { get; set; }
+	[Bind(0x0F0)] public AnimationIdArrayMemory? AnimationIds { get; set; }
+	[Bind(0x164)] public AnimationSpeedArrayMemory? Speeds { get; set; }
+	[Bind(0x1F2)] public byte SpeedTrigger { get; set; }
+	[Bind(0x2E6)] public ushort BaseOverride { get; set; }
+	[Bind(0x2E8)] public ushort LipsOverride { get; set; }
 
 	public bool BlendLocked { get; set; } = false;
 
