@@ -78,6 +78,8 @@ public class SettingsService : ServiceBase<SettingsService>
 	/// <inheritdoc/>
 	public override async Task Initialize()
 	{
+		await base.Initialize();
+
 		if (!File.Exists(SettingsPath))
 		{
 			this.FirstTimeUser = true;
@@ -112,8 +114,6 @@ public class SettingsService : ServiceBase<SettingsService>
 				Save();
 			}
 		}
-
-		await base.Initialize();
 
 		this.Settings.PropertyChanged += this.OnSettingsChanged;
 		this.OnSettingsChanged(null, new PropertyChangedEventArgs(null));
