@@ -9,7 +9,6 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,14 +34,13 @@ public abstract class ServiceBase<T> : IService, INotifyPropertyChanged
 	{
 		get
 		{
-			Debug.Assert(instance != null, $"Service {typeof(T)} was accessed before it was initialized.");
-
 			if (instance == null)
 				throw new ServiceNotFoundException(typeof(T));
 
 			return instance;
 		}
 	}
+
 	/// <summary>
 	/// Gets a value indicating whether the service is initialized.
 	/// </summary>
@@ -164,7 +162,20 @@ public abstract class ServiceBase<T> : IService, INotifyPropertyChanged
 		int attempts = 0;
 		while (attempts < maxAttempts)
 		{
-			var notAliveServices = services.Where(service => service == null || !service.IsAlive).ToList();
+			var notAliveServices = new List<IService?>();
+			foreach (var service in services)
+			{
+				try
+				{
+					if (service == null || !service.IsAlive)
+						notAliveServices.Add(service);
+				}
+				catch (ServiceNotFoundException)
+				{
+					notAliveServices.Add(service); // Service instance not yet available, treat as not alive and wait
+				}
+			}
+
 			if (notAliveServices.Count == 0)
 				return;
 
