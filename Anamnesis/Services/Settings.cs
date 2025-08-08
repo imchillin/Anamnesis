@@ -4,6 +4,7 @@
 namespace Anamnesis.Services;
 
 using Anamnesis.Keyboard;
+using Anamnesis.Memory.Exceptions;
 using Anamnesis.Styles.Controls;
 using PropertyChanged;
 using System;
@@ -88,8 +89,15 @@ public class Settings : INotifyPropertyChanged
 
 			this.enableAutoSave = value;
 
-			if (AutoSaveService.Instance != null && AutoSaveService.Instance.IsAlive)
-				AutoSaveService.Instance.RestartUpdateTask();
+			try
+			{
+				if (AutoSaveService.Instance.IsAlive)
+					AutoSaveService.Instance.RestartUpdateTask();
+			}
+			catch (ServiceNotFoundException)
+			{
+				// Silently ignore
+			}
 		}
 	}
 
