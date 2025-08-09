@@ -146,10 +146,17 @@ public partial class SliderInputBox : UserControl
 	/// <summary>Cached maximum of parsed dependency property value.</summary>
 	private decimal? parsedMaximum;
 
+	/// <summary>Preresents the minimum value the user control is using.</summary>
+	private decimal EffectiveMinimum => this.parsedMinimum ?? decimal.MinValue;
+
+	/// <summary>Preresents the maximum value the user control is using.</summary>
+	private decimal EffectiveMaximum => this.parsedMaximum ?? decimal.MaxValue;
+
+
 	/// <summary>
 	/// Gets a value that indicates whether the user control has valid lower and upper value bounds.
 	/// </summary>
-	private bool HasValidBounds => this.parsedMinimum != null && this.parsedMaximum != null;
+	private bool HasValidBounds => this.EffectiveMinimum < this.EffectiveMaximum;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SliderInputBox"/> class and sets up default property values and event handlers.
@@ -321,7 +328,7 @@ public partial class SliderInputBox : UserControl
 			this.isInternalSet = true;
 
 			var parsed = ParseBoundValue(value);
-			if (parsed != null && this.parsedMaximum != null && parsed > this.parsedMaximum)
+			if (parsed != null && parsed > this.EffectiveMaximum)
 			{
 				this.parsedMinimum = this.parsedMaximum;
 				MinDp.Set(this, this.Maximum);
@@ -345,7 +352,7 @@ public partial class SliderInputBox : UserControl
 			this.isInternalSet = true;
 
 			var parsed = ParseBoundValue(value);
-			if (parsed != null && this.parsedMinimum != null && parsed < this.parsedMinimum)
+			if (parsed != null && parsed < this.EffectiveMinimum)
 			{
 				this.parsedMaximum = this.parsedMinimum;
 				MaxDp.Set(this, this.Minimum);
@@ -684,7 +691,7 @@ public partial class SliderInputBox : UserControl
 						{
 							// Else, calculate the new value based on the tick position
 							double relativePosition = (this.startPoint.X - this.DecreaseButton.ActualWidth - TICK_VISUAL_OFFSET - TICK_RECT_HALF_WIDTH) / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - TICK_RECT_WIDTH);
-							decimal newValue = ((decimal)relativePosition * ((decimal)this.parsedMaximum! - (decimal)this.parsedMinimum!)) + (decimal)this.parsedMinimum!;
+							decimal newValue = ((decimal)relativePosition * (this.EffectiveMaximum - this.EffectiveMinimum)) + this.EffectiveMinimum;
 
 							this.Value = newValue;
 							this.UpdateTickPosition();
@@ -732,7 +739,7 @@ public partial class SliderInputBox : UserControl
 				{
 					// Calculate the new value based on the tick position
 					double relativePosition = (currentPoint.X - this.DecreaseButton.ActualWidth - TICK_VISUAL_OFFSET - TICK_RECT_HALF_WIDTH) / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - TICK_RECT_WIDTH);
-					decimal newValue = ((decimal)relativePosition * ((decimal)this.parsedMaximum! - (decimal)this.parsedMinimum!)) + (decimal)this.parsedMinimum!;
+					decimal newValue = ((decimal)relativePosition * (this.EffectiveMaximum - this.EffectiveMinimum)) + this.EffectiveMinimum;
 
 					this.Value = newValue;
 
@@ -1049,8 +1056,8 @@ public partial class SliderInputBox : UserControl
 	/// <returns>The validated value.</returns>
 	private decimal Validate(decimal val)
 	{
-		decimal min = this.parsedMinimum ?? decimal.MinValue;
-		decimal max = this.parsedMaximum ?? decimal.MaxValue;
+		decimal min = this.EffectiveMinimum;
+		decimal max = this.EffectiveMaximum;
 
 		if (this.OverflowBehavior == OverflowModes.Clamp)
 		{
@@ -1093,10 +1100,10 @@ public partial class SliderInputBox : UserControl
 
 		// Update the tick position based on the value
 		// Skip update if component is hidden
-		if (this.parsedMaximum > this.parsedMinimum && this.TickRectangle.Visibility == Visibility.Visible)
+		if (this.EffectiveMaximum > this.EffectiveMinimum && this.TickRectangle.Visibility == Visibility.Visible)
 		{
-			decimal range = (decimal)(this.parsedMaximum - this.parsedMinimum);
-			decimal relativeValue = (decimal)((this.Value - this.parsedMinimum) / range);
+			decimal range = this.EffectiveMaximum - this.EffectiveMinimum;
+			decimal relativeValue = (this.Value - this.EffectiveMinimum) / range;
 			double tickPosition = ((double)relativeValue * (this.InputArea.ActualWidth - TICK_RECT_WIDTH - (2 * TICK_VISUAL_OFFSET))) + TICK_RECT_HALF_WIDTH;
 
 			this.TickRectangle.Margin = new Thickness(tickPosition - TICK_RECT_HALF_WIDTH, 0, 0, 0);
@@ -1159,10 +1166,8 @@ public partial class SliderInputBox : UserControl
 	{
 		if (this.OverflowBehavior == OverflowModes.Clamp)
 		{
-			if (this.parsedMinimum != null)
-				this.DecreaseButton.IsEnabled = this.Value > this.parsedMinimum;
-			if (this.parsedMaximum != null)
-				this.IncreaseButton.IsEnabled = this.Value < this.parsedMaximum;
+			this.DecreaseButton.IsEnabled = this.Value > this.EffectiveMinimum;
+			this.IncreaseButton.IsEnabled = this.Value < this.EffectiveMaximum;
 		}
 		else
 		{
