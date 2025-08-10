@@ -72,7 +72,31 @@ public class ImgRef
 			if (tex == null)
 				return null;
 
-			BitmapSource bmp = BitmapSource.Create(tex.Header.Width, tex.Header.Height, IMG_DPI, IMG_DPI, PixelFormats.Bgra32, null, tex.ImageData, tex.Header.Width * 4);
+			// Workaround: Swap R and B channels (RGBA -> BGRA)
+			byte[] imageData = new byte[tex.ImageData.Length];
+			Buffer.BlockCopy(tex.ImageData, 0, imageData, 0, tex.ImageData.Length);
+
+			switch (tex.Header.Format)
+			{
+				case TexFile.TextureFormat.BC1:
+				case TexFile.TextureFormat.BC2:
+				case TexFile.TextureFormat.BC3:
+				case TexFile.TextureFormat.BC5:
+				case TexFile.TextureFormat.BC7:
+					{
+						for (int i = 0; i < imageData.Length; i += 4)
+						{
+							byte temp = imageData[i];
+							imageData[i] = imageData[i + 2];
+							imageData[i + 2] = temp;
+						}
+						break;
+					}
+				default:
+					break; // For other formats, do not swap
+			}
+
+			BitmapSource bmp = BitmapSource.Create(tex.Header.Width, tex.Header.Height, IMG_DPI, IMG_DPI, PixelFormats.Bgra32, null, imageData, tex.Header.Width * 4);
 			bmp.Freeze();
 			img = bmp;
 
