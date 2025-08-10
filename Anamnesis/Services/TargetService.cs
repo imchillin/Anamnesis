@@ -477,11 +477,11 @@ public class TargetService : ServiceBase<TargetService>
 			{
 				if (GposeService.Instance.IsGpose)
 				{
-					MemoryService.Write(AddressService.GPosePlayerTarget, (IntPtr)ptr, "Update player target");
+					MemoryService.Write(IntPtr.Add(AddressService.TargetSystem, AddressService.GPosePlayerTargetOffset), (IntPtr)ptr, "Update player target");
 				}
 				else
 				{
-					MemoryService.Write(AddressService.OverworldPlayerTarget, (IntPtr)ptr, "Update player target");
+					MemoryService.Write(IntPtr.Add(AddressService.TargetSystem, AddressService.OverworldPlayerTargetOffset), (IntPtr)ptr, "Update player target");
 				}
 			}
 		}
