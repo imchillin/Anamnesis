@@ -64,6 +64,18 @@ public partial class SliderInputBox : UserControl
 	/// <summary>The width of the slider thumb rectangle.</summary>
 	const double TICK_RECT_WIDTH = 10.0;
 
+	/// <summary> The minimum value limit for this user control.</summary>
+	/// <remarks>
+	/// Set to half of the decimal's minimum value to avoid overflow issues.
+	/// </remarks>
+	const decimal MinValueLimit = (decimal.MinValue / 2) + 1;
+
+	/// <summary>The maximum value limit for this user control.</summary>
+	/// <remarks>
+	/// Set to half of the decimal's maximum value to avoid overflow issues.
+	/// </remarks>
+	const decimal MaxValueLimit = (decimal.MaxValue / 2) - 1;
+
 	/// <summary>The half-width of the slider thumb rectangle.</summary>
 	const double TICK_RECT_HALF_WIDTH = TICK_RECT_WIDTH / 2;
 
@@ -147,11 +159,10 @@ public partial class SliderInputBox : UserControl
 	private decimal? parsedMaximum;
 
 	/// <summary>Preresents the minimum value the user control is using.</summary>
-	private decimal EffectiveMinimum => this.parsedMinimum ?? decimal.MinValue;
+	private decimal EffectiveMinimum => this.parsedMinimum ?? MinValueLimit;
 
 	/// <summary>Preresents the maximum value the user control is using.</summary>
-	private decimal EffectiveMaximum => this.parsedMaximum ?? decimal.MaxValue;
-
+	private decimal EffectiveMaximum => this.parsedMaximum ?? MaxValueLimit;
 
 	/// <summary>
 	/// Gets a value that indicates whether the user control has valid lower and upper value bounds.
@@ -1103,10 +1114,17 @@ public partial class SliderInputBox : UserControl
 		if (this.EffectiveMaximum > this.EffectiveMinimum && this.TickRectangle.Visibility == Visibility.Visible)
 		{
 			decimal range = this.EffectiveMaximum - this.EffectiveMinimum;
-			decimal relativeValue = (this.Value - this.EffectiveMinimum) / range;
+
+			// Prevent division by zero or very small range that would result in overflow
+			if (range == 0 || decimal.Abs(range) < 1e-28m)
+				return;
+
+			decimal safeValue = Math.Clamp(this.Value, this.EffectiveMinimum, this.EffectiveMaximum);
+			decimal relativeValue = (safeValue - this.EffectiveMinimum) / range;
 			double tickPosition = ((double)relativeValue * (this.InputArea.ActualWidth - TICK_RECT_WIDTH - (2 * TICK_VISUAL_OFFSET))) + TICK_RECT_HALF_WIDTH;
 
 			this.TickRectangle.Margin = new Thickness(tickPosition - TICK_RECT_HALF_WIDTH, 0, 0, 0);
+			this.TickRectangle.UpdateLayout();
 		}
 	}
 
