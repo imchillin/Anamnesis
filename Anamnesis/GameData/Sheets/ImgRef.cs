@@ -79,10 +79,9 @@ public class ImgRef
 			imageCache.Add(this, img);
 			return img;
 		}
-		catch (Exception)
+		catch (Exception ex)
 		{
-			// Do nothing for now (Waiting for BC5/BC7 support in Lumina)
-			// Log.Warning(ex, $"Failed to load Image: {this.ImageId} form lumina");
+			Log.Warning(ex, $"Failed to load Image: {this.ImageId} form lumina");
 		}
 
 		return null;
