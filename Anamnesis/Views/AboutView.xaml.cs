@@ -3,12 +3,12 @@
 
 namespace Anamnesis.GUI.Views;
 
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
 using Anamnesis.GUI.Dialogs;
 using Anamnesis.Services;
 using Anamnesis.Updater;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Navigation;
 
 public partial class AboutView : UserControl
 {
@@ -22,7 +22,7 @@ public partial class AboutView : UserControl
 		}
 		else
 		{
-			this.VersionLabel.Text = VersionInfo.Date.ToString("yyyy-MM-dd HH:mm");
+			this.VersionLabel.Text = $"v{VersionInfo.ApplicationVersion}";
 		}
 	}
 

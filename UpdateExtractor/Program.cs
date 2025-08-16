@@ -6,7 +6,6 @@ namespace UpdateExtractor
 	using System;
 	using System.Diagnostics;
 	using System.IO;
-	using System.Reflection;
 	using System.Threading;
 
 	public class Program
@@ -124,6 +123,11 @@ namespace UpdateExtractor
 			if (!File.Exists(path))
 				return;
 
+			var fileInfo = new FileInfo(path)
+			{
+				Attributes = FileAttributes.Normal,
+			};
+
 			File.Delete(path);
 		}
 
@@ -132,7 +136,23 @@ namespace UpdateExtractor
 			if (!Directory.Exists(path))
 				return;
 
+			SetAttributesNormal(new DirectoryInfo(path));
 			Directory.Delete(path, true);
+		}
+
+		private static void SetAttributesNormal(DirectoryInfo directory)
+		{
+			directory.Attributes = FileAttributes.Normal;
+
+			foreach (var subDirectory in directory.GetDirectories())
+			{
+				SetAttributesNormal(subDirectory);
+			}
+
+			foreach (var file in directory.GetFiles())
+			{
+				file.Attributes = FileAttributes.Normal;
+			}
 		}
 	}
 }

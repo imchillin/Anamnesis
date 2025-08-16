@@ -37,7 +37,7 @@ jobs:
           echo "BUILD_TIME=$t" >> $env:GITHUB_ENV
 
       # 3. Inject into VersionInfo.cs
-      - name: Replace version info
+      - name: Replace version date
         run: |
           (Get-Content ./Anamnesis/VersionInfo.cs) `
             -replace '2000, 01, 01, 00, 00, 00', "${{ env.BUILD_TIME }}" |
@@ -75,12 +75,33 @@ jobs:
       - name: Create ZIP
         run: Compress-Archive -Path './publish/*' -DestinationPath './Anamnesis.zip'
 
-      # 9. Draft a GitHub release
+      # 9. Extract version from VersionInfo.cs
+      - name: Extract version from application files
+        run: |
+          $content = Get-Content ./Anamnesis/VersionInfo.cs -Raw
+          if ($content -match 'Version\s*\(\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)\s*\)') {
+            $version = "v$($matches[1]).$($matches[2]).$($matches[3]).$($matches[4])"
+            echo "VERSION_TAG=$version" >> $env:GITHUB_ENV
+          } else {
+            Write-Error "Could not extract version from VersionInfo.cs"
+            exit 1
+          }
+
+      # 10. Check if tag already exists
+      - name: Check if tag already exists
+        run: |
+          git fetch --tags
+          if (git tag -l "${{ env.VERSION_TAG }}") {
+            Write-Error "Tag ${{ env.VERSION_TAG }} already exists. Aborting release."
+            exit 1
+          }
+
+      # 11. Draft a GitHub release
       - name: Create draft release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ env.VERSION_DATE }}
-          name: ${{ env.VERSION_DATE }}
+          tag: ${{ env.VERSION_TAG }}
+          name: ${{ env.VERSION_TAG }}
           draft: true
           artifacts: "Anamnesis.zip"
         env:
