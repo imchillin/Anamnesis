@@ -258,12 +258,20 @@ public class PoseService : ServiceBase<PoseService>
 					try
 					{
 						string verText = await File.ReadAllTextAsync(verFile);
-						DateTime standardPoseVersion = DateTime.Parse(verText, CultureInfo.InvariantCulture);
 
-						if (standardPoseVersion == VersionInfo.Date)
+						if (!DateTime.TryParse(verText, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime _))
 						{
-							Log.Information($"Standard pose library up to date");
-							return;
+							if (!Version.TryParse(verText, out Version? standardPoseVer))
+							{
+								Log.Error($"Failed to parse standard pose library version: {verText}");
+								return;
+							}
+
+							if (standardPoseVer == VersionInfo.ApplicationVersion)
+							{
+								Log.Information($"Standard pose library up to date");
+								return;
+							}
 						}
 					}
 					catch (Exception ex)
@@ -276,7 +284,7 @@ public class PoseService : ServiceBase<PoseService>
 			}
 
 			standardPoseDir.Create();
-			await File.WriteAllTextAsync(verFile, VersionInfo.Date.ToString(CultureInfo.InvariantCulture));
+			await File.WriteAllTextAsync(verFile, VersionInfo.ApplicationVersion.ToString());
 
 			string[] poses = EmbeddedFileUtility.GetAllFilesInDirectory("\\Data\\StandardPoses\\");
 			foreach (string posePath in poses)

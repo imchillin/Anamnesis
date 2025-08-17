@@ -16,7 +16,7 @@ public partial class AboutView : UserControl
 	{
 		this.InitializeComponent();
 
-		if (VersionInfo.Date.Year <= 2000)
+		if (VersionInfo.IsDevelopmentBuild)
 		{
 			this.VersionLabel.Text = "Developer";
 		}

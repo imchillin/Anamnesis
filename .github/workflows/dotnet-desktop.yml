@@ -25,38 +25,20 @@ jobs:
           submodules: recursive
           persist-credentials: true
 
-      # 2. Capture dates in env vars
-      - name: Set version date
-        run: |
-          $d = Get-Date -Format 'yyyy-MM-dd'
-          echo "VERSION_DATE=$d" >> $env:GITHUB_ENV
-
-      - name: Set build timestamp
-        run: |
-          $t = Get-Date -Format 'yyyy, MM, dd, HH, mm, ss'
-          echo "BUILD_TIME=$t" >> $env:GITHUB_ENV
-
-      # 3. Inject into VersionInfo.cs
-      - name: Replace version date
-        run: |
-          (Get-Content ./Anamnesis/VersionInfo.cs) `
-            -replace '2000, 01, 01, 00, 00, 00', "${{ env.BUILD_TIME }}" |
-          Set-Content ./Anamnesis/VersionInfo.cs
-
-      # 4. Install .NET SDK
+      # 2. Install .NET SDK
       - name: Setup .NET 9.0
         uses: actions/setup-dotnet@v3.4.2
         with:
           dotnet-version: '9.0.x'
 
-      # 5. Publish projects
+      # 3. Publish projects
       - name: Publish Anamnesis
-        run: dotnet publish Anamnesis/Anamnesis.csproj /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml"
+        run: dotnet publish Anamnesis/Anamnesis.csproj /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml" /p:DefineConstants="CI_BUILD"
 
       - name: Publish UpdateExtractor
-        run: dotnet publish UpdateExtractor/UpdateExtractor.csproj /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml"
+        run: dotnet publish UpdateExtractor/UpdateExtractor.csproj /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml" /p:DefineConstants="CI_BUILD"
 
-      # 6. Attest Build Artifacts
+      # 4. Attest Build Artifacts
       - name: Generate artifact attestation Ana
         uses: actions/attest-build-provenance@v2
         with:
@@ -67,15 +49,15 @@ jobs:
         with:
           subject-path: './publish/Updater/UpdateExtractor.exe'
 
-      # 7. Delete redundant files
+      # 5. Delete redundant files
       - name: Delete pdb and xml
         run: Get-ChildItem -Path './publish/*' -Recurse -Include *.pdb,*.xml -File | Remove-Item -Force
 
-      # 8. Zip up the entire publish folder
+      # 6. Zip up the entire publish folder
       - name: Create ZIP
         run: Compress-Archive -Path './publish/*' -DestinationPath './Anamnesis.zip'
 
-      # 9. Extract version from VersionInfo.cs
+      # 7. Extract version from VersionInfo.cs
       - name: Extract version from application files
         run: |
           $content = Get-Content ./Anamnesis/VersionInfo.cs -Raw
@@ -87,7 +69,7 @@ jobs:
             exit 1
           }
 
-      # 10. Check if tag already exists
+      # 8. Check if tag already exists
       - name: Check if tag already exists
         run: |
           git fetch --tags
@@ -96,7 +78,7 @@ jobs:
             exit 1
           }
 
-      # 11. Draft a GitHub release
+      # 9. Draft a GitHub release
       - name: Create draft release
         uses: ncipollo/release-action@v1
         with:

@@ -40,7 +40,7 @@ public class UpdateService : ServiceBase<UpdateService>
 		bool skipTimeCheck = false;
 
 		// Determine if this is a dev build
-		if (VersionInfo.Date.Year <= 2000)
+		if (VersionInfo.IsDevelopmentBuild)
 		{
 			// Don't show if there is a debugger attached
 			if (Debugger.IsAttached)

@@ -8,12 +8,6 @@ using System;
 public static class VersionInfo
 {
 	/// <summary>
-	/// The time this version was published.
-	/// </summary>
-	// This is written to by the build server. do not change.
-	public static readonly DateTime Date = new DateTime(2000, 01, 01, 00, 00, 00, DateTimeKind.Utc);
-
-	/// <summary>
 	/// Application version.
 	/// </summary>
 	/// <remarks>
@@ -27,6 +21,12 @@ public static class VersionInfo
 	///   - Bump the revision number for hotfixes and urgent patches.
 	/// </remarks>
 	public static readonly Version ApplicationVersion = new Version(7, 30, 0, 0);
+
+#if CI_BUILD
+	public static readonly bool IsDevelopmentBuild = false;
+#else
+	public static readonly bool IsDevelopmentBuild = true;
+#endif
 
 	/// <summary>
 	/// The latest game version that the tool has been validated for.
