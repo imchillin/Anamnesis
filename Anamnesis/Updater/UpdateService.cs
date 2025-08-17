@@ -91,10 +91,22 @@ public class UpdateService : ServiceBase<UpdateService>
 			if (this.currentRelease.TagName == null)
 				throw new Exception("No tag name in GitHub API JSON response");
 
-			if (!Version.TryParse(this.currentRelease.TagName.TrimStart('v'), out Version? latestReleaseVer))
-				throw new Exception("Failed to parse version from tag name");
+			bool update = false;
 
-			bool update = latestReleaseVer > VersionInfo.ApplicationVersion;
+			// Check for old date-based tag format: yyyy-MM-dd(-h#)
+			if (System.Text.RegularExpressions.Regex.IsMatch(this.currentRelease.TagName, @"^\d{4}-\d{2}-\d{2}(-h\d+)?$"))
+			{
+				// Trigger an update if the tag is using the old date format.
+				update = true;
+			}
+			else
+			{
+				if (!Version.TryParse(this.currentRelease.TagName.TrimStart('v'), out Version? latestReleaseVer))
+					throw new Exception("Failed to parse version from tag name");
+
+				update = latestReleaseVer > VersionInfo.ApplicationVersion;
+			}
+
 			if (update)
 			{
 				await Dispatch.MainThread();
