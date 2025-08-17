@@ -115,7 +115,7 @@
 						  Icon="FileExport" Style="{StaticResource ButtonMenuItem}"/>
 			</Menu>
 
-			<XivToolsWpf:InfoControl Key="Scene_Camera_GPoseWarn" Grid.RowSpan="10" Grid.ColumnSpan="2"
+			<XivToolsWpf:InfoControl Key="Scene_Camera_GPoseWarn" Grid.Row="8" Grid.ColumnSpan="2" Margin="-3, 0, -3, -3"
 									 Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}"/>
 		</Grid>
 	</GroupBox>
