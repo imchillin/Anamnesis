@@ -36,7 +36,7 @@
 
 		<Grid Margin="30" MouseDown="OnMouseDown" Cursor="Hand">
 
-			<Border BorderBrush="White" MinHeight="256" MinWidth="256" BorderThickness="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" Background="White" x:Name="Image1Host" Opacity="0"  Visibility="{Binding Image1Path, Converter={StaticResource NotNullToVisibilityConverter}}">
+			<Border BorderBrush="White" BorderThickness="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" Background="White" x:Name="Image1Host" Opacity="0"  Visibility="{Binding Image1Path, Converter={StaticResource NotNullToVisibilityConverter}}">
 				<Border.Effect>
 					<DropShadowEffect ShadowDepth="0" BlurRadius="15" Opacity="0.5"/>
 				</Border.Effect>
