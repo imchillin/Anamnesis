@@ -4,6 +4,7 @@
 namespace Anamnesis.Actor.Views;
 
 using Anamnesis.Memory;
+using Anamnesis.Services;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -25,6 +26,8 @@ public partial class CharacterModelEditor : UserControl
 		Wet,
 		Drenched,
 	}
+
+	public static Settings Settings => SettingsService.Current;
 
 	public ActorModelMemory? Model => (this.DataContext as ActorMemory)?.ModelObject;
 

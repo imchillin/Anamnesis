@@ -73,6 +73,8 @@ public partial class ItemView : UserControl
 		set => WeaponExModelDp.Set(this, value);
 	}
 
+	public static Settings Settings => SettingsService.Current;
+
 	public string SlotName => LocalizationService.GetString("Character_Equipment_" + this.Slot);
 
 	public bool IsWeapon => (this.Slot & ItemSlots.Weapons) != 0;

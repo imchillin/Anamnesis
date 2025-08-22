@@ -7,8 +7,9 @@
 			 xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 xmlns:xtw="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-			 mc:Ignorable="d">
-	<Grid>
+			 mc:Ignorable="d"
+			 x:Name="CharModelEditor">
+	<Grid Width="200">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
@@ -56,8 +57,11 @@
 
 		<!-- Bust Scale -->
 		<xtw:TextBlock Grid.Row="4" Grid.Column="0" Key="Character_Model_BustScale" Style="{StaticResource Label}"/>
-		<ana:VectorEditor Grid.Row="4" Grid.Column="1" Value="{Binding ModelObject.Bust.Scale}" Expanded="False"
-						  CanLink="True" Minimum="0" Maximum="10" IsEnabled="{Binding ModelObject.IsHuman}"/>
+		<ana:VectorEditorNew Grid.Row="4" Grid.Column="1" Value="{Binding ModelObject.Bust.Scale}" Minimum="0" Maximum="float.MaxValue" TickFrequency="0.01"
+							 DefaultValue="1" CanLink="True" Linked="True" DecimalPlaces="{Binding Settings.SliderPrecision, ElementName=CharModelEditor, Mode=OneWay}" SliderMode="Relative"
+							 ShowSliderThumb="{Binding Settings.ShowSliderThumb, ElementName=CharModelEditor, Mode=OneWay}" LayoutStyle="Compact"
+							 SliderType="{Binding Settings.BoneScaleSliderType, ElementName=CharModelEditor, Mode=OneWay}" EnableStepButtons="True"
+							 IsEnabled="{Binding ModelObject.IsHuman}" Margin="-5, 2, -2, -4"/>
 
 	</Grid>
 </UserControl>

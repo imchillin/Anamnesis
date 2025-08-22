@@ -240,8 +240,11 @@
 				</Button>
 			</StackPanel>
 
-			<ana:VectorEditor Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Value="{Binding ExtendedViewModel.Scale}" CanLink="True" Linked="True" Sliders="None"
-							  TickFrequency="0.1" Minimum="-10" Maximum="10" Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}, Mode=OneWay}"/>
-			</Grid>
+			<ana:VectorEditorNew  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Value="{Binding ExtendedViewModel.Scale}" Minimum="0" Maximum="float.MaxValue" TickFrequency="0.01"
+					 DefaultValue="1" CanLink="True" Linked="True" DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" SliderMode="Relative"
+					 ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}" LayoutStyle="Compact"
+					 SliderType="{Binding Settings.BoneScaleSliderType, Mode=OneWay}" EnableStepButtons="True"
+					 Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}, Mode=OneWay}" Margin="-5, 2, -3, -2"/>
+		</Grid>
 	</GroupBox>
 </UserControl>

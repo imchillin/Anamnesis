@@ -304,8 +304,8 @@ public partial class Vector2DEditorNew : UserControl, INotifyPropertyChanged
 
 	private static void OnValueChanged(Vector2DEditorNew sender, Vector2 value)
 	{
-		sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(Vector2DEditor.X)));
-		sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(Vector2DEditor.Y)));
+		sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(Vector2DEditorNew.X)));
+		sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(Vector2DEditorNew.Y)));
 	}
 
 	private void OnPreviewKeyDown(object sender, KeyEventArgs e)
