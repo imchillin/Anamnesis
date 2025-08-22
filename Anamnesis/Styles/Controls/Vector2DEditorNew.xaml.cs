@@ -5,8 +5,10 @@ namespace Anamnesis.Styles.Controls;
 
 using PropertyChanged;
 using System.ComponentModel;
+using System.Linq;
 using System.Numerics;
 using System.Windows.Controls;
+using System.Windows.Input;
 using XivToolsWpf.DependencyProperties;
 
 /// <summary>
@@ -304,5 +306,29 @@ public partial class Vector2DEditorNew : UserControl, INotifyPropertyChanged
 	{
 		sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(Vector2DEditor.X)));
 		sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(Vector2DEditor.Y)));
+	}
+
+	private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+	{
+		if (e.Key == Key.Tab)
+		{
+			var sliders = VisualUtils.FindVisualChildren<SliderInputBox>(this)
+				.Where(s => s.IsVisible && s.IsEnabled)
+				.ToList();
+
+			if (sliders.Count == 0)
+				return;
+
+			int currentIndex = sliders.FindIndex(s => s.IsInputFieldActive);
+
+			if (currentIndex >= 0)
+				sliders[currentIndex].LoseFocus();
+
+			bool backwards = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+			int nextIndex = (currentIndex + (backwards ? sliders.Count - 1 : 1)) % sliders.Count;
+			sliders[nextIndex].GainFocus(true);
+
+			e.Handled = true;
+		}
 	}
 }

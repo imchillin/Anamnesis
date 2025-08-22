@@ -471,6 +471,54 @@ public partial class SliderInputBox : UserControl
 		set => ShowSliderThumbDp.Set(this, value);
 	}
 
+	/// <summary>
+	/// Programmatically gives focus to the control.
+	/// </summary>
+	/// <param name="enableInputField">
+	/// True to activate the input field (editable text mode); false to focus the control without enabling direct text input.
+	/// </param>
+	public void GainFocus(bool enableInputField)
+	{
+		if (!this.IsEnabled)
+			return;
+
+		if (enableInputField)
+		{
+			this.IsInputFieldActive = true;
+			this.InputField.Focus();
+			this.InputField.SelectAll();
+		}
+		else
+		{
+			// Focus the user control without enabling text edit mode
+			this.Focus();
+			Keyboard.Focus(this);
+		}
+
+		this.UpdateMouseCursor();
+	}
+
+	/// <summary>
+	/// Programmatically commits text input (if text field is active) and releases focus.
+	/// </summary>
+	public void LoseFocus()
+	{
+		if (!this.IsEnabled)
+			return;
+
+		if (this.IsInputFieldActive)
+		{
+			this.ParseInputField();
+			this.IsInputFieldActive = false;
+		}
+
+		// Clear focus
+		this.OnWindowEvent(this, EventArgs.Empty);
+
+		// Ensure that we update the cursor state if the mouse leaves the control
+		this.UpdateMouseCursor();
+	}
+
 	/// <summary>Handles changes to the slider value.</summary>
 	/// <param name="sender">The sender.</param>
 	/// <param name="val">The new value.</param>
@@ -542,6 +590,11 @@ public partial class SliderInputBox : UserControl
 		sender.UpdateTickPosition();
 	}
 
+	/// <summary>
+	/// Handles changes to the amount of decimal places that should be visible.
+	/// </summary>
+	/// <param name="sender">The sender.</param>
+	/// <param name="value">The new value.</param>
 	private static void OnDecimalPlacesChanged(SliderInputBox sender, int? value)
 	{
 		if (sender.isInternalSet)
@@ -552,6 +605,11 @@ public partial class SliderInputBox : UserControl
 		sender.OnPropertyChanged(nameof(Label));
 	}
 
+	/// <summary>
+	/// Handles changes to the overflow behavior property.
+	/// </summary>
+	/// <param name="sender">The sender.</param>
+	/// <param name="value">The new value.</param>
 	private static void OnOverflowBehaviorChanged(SliderInputBox sender, OverflowModes value)
 	{
 		if (sender.isInternalSet)
@@ -690,9 +748,7 @@ public partial class SliderInputBox : UserControl
 					// Open the input field if the control key is held down
 					if (Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt))
 					{
-						this.IsInputFieldActive = true;
-						this.InputField.Focus();
-						this.InputField.SelectAll();
+						this.GainFocus(true);
 						e.Handled = true;
 						return;
 					}
@@ -794,18 +850,11 @@ public partial class SliderInputBox : UserControl
 	/// <param name="e">The event arguments.</param>
 	private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
 	{
-		if (!this.isDragging)
+		if (!this.isDragging && !this.IsInputFieldActive && this.SliderType == SliderTypes.Modern)
 		{
-			if (!this.IsInputFieldActive && this.SliderType == SliderTypes.Modern)
-			{
-				this.IsInputFieldActive = true;
-				this.InputField.Focus();
-				this.InputField.SelectAll();
-			}
-
-			this.UpdateMouseCursor();
+			this.GainFocus(true);
 		}
-		else
+		else if (this.isDragging)
 		{
 			this.UpdateMouseCursor();
 			this.ContentArea.Background = new SolidColorBrush((Color)this.FindResource(this.IsMouseHovered ? HOVER_BG_KEY : NORMAL_BG_KEY));
@@ -846,18 +895,7 @@ public partial class SliderInputBox : UserControl
 	/// <summary>Handles the lost focus event for the input field.</summary>
 	/// <param name="sender">The sender.</param>
 	/// <param name="e">The event arguments.</param>
-	private void OnLostFocus(object sender, RoutedEventArgs e)
-	{
-		if (this.IsInputFieldActive)
-		{
-			this.ParseInputField();
-		}
-
-		this.IsInputFieldActive = false;
-
-		// Ensure that we clean up the cursor state changes if the mouse leaves the control
-		this.UpdateMouseCursor();
-	}
+	private void OnLostFocus(object sender, RoutedEventArgs e) => this.LoseFocus();
 
 	/// <summary>Handles the preview key down event.</summary>
 	/// <param name="sender">The sender.</param>

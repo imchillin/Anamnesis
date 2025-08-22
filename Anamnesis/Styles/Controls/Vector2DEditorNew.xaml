@@ -7,7 +7,8 @@
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d"
-			 d:DesignWidth="256">
+			 d:DesignWidth="256"
+			 PreviewKeyDown="OnPreviewKeyDown">
 
 	<UserControl.Resources>
 		<Style x:Key="LinkLineStyle" TargetType="Line">
