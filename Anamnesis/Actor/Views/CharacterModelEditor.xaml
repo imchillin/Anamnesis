@@ -57,7 +57,7 @@
 
 		<!-- Bust Scale -->
 		<xtw:TextBlock Grid.Row="4" Grid.Column="0" Key="Character_Model_BustScale" Style="{StaticResource Label}"/>
-		<ana:VectorEditorNew Grid.Row="4" Grid.Column="1" Value="{Binding ModelObject.Bust.Scale}" Minimum="0" Maximum="float.MaxValue" TickFrequency="0.01"
+		<ana:VectorEditor Grid.Row="4" Grid.Column="1" Value="{Binding ModelObject.Bust.Scale}" Minimum="0" Maximum="float.MaxValue" TickFrequency="0.01"
 							 DefaultValue="1" CanLink="True" Linked="True" DecimalPlaces="{Binding Settings.SliderPrecision, ElementName=CharModelEditor, Mode=OneWay}" SliderMode="Relative"
 							 ShowSliderThumb="{Binding Settings.ShowSliderThumb, ElementName=CharModelEditor, Mode=OneWay}" LayoutStyle="Compact"
 							 SliderType="{Binding Settings.BoneScaleSliderType, ElementName=CharModelEditor, Mode=OneWay}" EnableStepButtons="True"

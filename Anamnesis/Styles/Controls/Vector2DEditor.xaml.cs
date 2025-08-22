@@ -15,61 +15,61 @@ using XivToolsWpf.DependencyProperties;
 /// Interaction logic for Vector2DEditor.xaml.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public partial class Vector2DEditorNew : UserControl, INotifyPropertyChanged
+public partial class Vector2DEditor : UserControl, INotifyPropertyChanged
 {
 	/// <summary>Gets or sets the layout style.</summary>
-	public static readonly IBind<LayoutStyles> LayoutStyleDp = Binder.Register<LayoutStyles, Vector2DEditorNew>(nameof(LayoutStyle));
+	public static readonly IBind<LayoutStyles> LayoutStyleDp = Binder.Register<LayoutStyles, Vector2DEditor>(nameof(LayoutStyle));
 
 	/// <summary>Gets or sets the vector value.</summary>
-	public static readonly IBind<Vector2> ValueDp = Binder.Register<Vector2, Vector2DEditorNew>(nameof(Value), OnValueChanged);
+	public static readonly IBind<Vector2> ValueDp = Binder.Register<Vector2, Vector2DEditor>(nameof(Value), OnValueChanged);
 
 	/// <summary>Gets or sets the default value.</summary>
-	public static readonly IBind<decimal?> DefaultValueDp = Binder.Register<decimal?, Vector2DEditorNew>(nameof(DefaultValue), BindMode.OneWay);
+	public static readonly IBind<decimal?> DefaultValueDp = Binder.Register<decimal?, Vector2DEditor>(nameof(DefaultValue), BindMode.OneWay);
 
 	/// <summary>Gets or sets the tick frequency.</summary>
-	public static readonly IBind<decimal> TickFrequencyDp = Binder.Register<decimal, Vector2DEditorNew>(nameof(TickFrequency));
+	public static readonly IBind<decimal> TickFrequencyDp = Binder.Register<decimal, Vector2DEditor>(nameof(TickFrequency));
 
 	/// <summary>Gets or sets the minimum value.</summary>
-	public static readonly IBind<string?> MinDp = Binder.Register<string?, Vector2DEditorNew>(nameof(Minimum));
+	public static readonly IBind<string?> MinDp = Binder.Register<string?, Vector2DEditor>(nameof(Minimum));
 
 	/// <summary>Gets or sets the maximum value.</summary>
-	public static readonly IBind<string?> MaxDp = Binder.Register<string?, Vector2DEditorNew>(nameof(Maximum));
+	public static readonly IBind<string?> MaxDp = Binder.Register<string?, Vector2DEditor>(nameof(Maximum));
 
 	/// <summary>Gets or sets a value indicating whether linking can be enabled.</summary>
-	public static readonly IBind<bool> CanLinkDp = Binder.Register<bool, Vector2DEditorNew>(nameof(CanLink), BindMode.OneWay);
+	public static readonly IBind<bool> CanLinkDp = Binder.Register<bool, Vector2DEditor>(nameof(CanLink), BindMode.OneWay);
 
 	/// <summary>Gets or sets a value indicating whether the axes are linked.</summary>
-	public static readonly IBind<bool> LinkedDp = Binder.Register<bool, Vector2DEditorNew>(nameof(Linked));
+	public static readonly IBind<bool> LinkedDp = Binder.Register<bool, Vector2DEditor>(nameof(Linked));
 
 	/// <summary>Gets or sets the color mode.</summary>
-	public static readonly IBind<ColorModes> ColorModeDp = Binder.Register<ColorModes, Vector2DEditorNew>(nameof(ColorMode), BindMode.OneWay);
+	public static readonly IBind<ColorModes> ColorModeDp = Binder.Register<ColorModes, Vector2DEditor>(nameof(ColorMode), BindMode.OneWay);
 
 	/// <summary>Gets or sets the suffix.</summary>
-	public static readonly IBind<string> SuffixDp = Binder.Register<string, Vector2DEditorNew>(nameof(Suffix));
+	public static readonly IBind<string> SuffixDp = Binder.Register<string, Vector2DEditor>(nameof(Suffix));
 
 	/// <summary>Gets or sets a value indicating whether step buttons are enabled.</summary>
-	public static readonly IBind<bool> EnableStepButtonsDp = Binder.Register<bool, Vector2DEditorNew>(nameof(EnableStepButtons));
+	public static readonly IBind<bool> EnableStepButtonsDp = Binder.Register<bool, Vector2DEditor>(nameof(EnableStepButtons));
 
 	/// <summary>Gets or sets the number of decimal places.</summary>
-	public static readonly IBind<int> DecimalPlacesDp = Binder.Register<int, Vector2DEditorNew>(nameof(DecimalPlaces));
+	public static readonly IBind<int> DecimalPlacesDp = Binder.Register<int, Vector2DEditor>(nameof(DecimalPlaces));
 
 	/// <summary>Gets or sets the overflow behavior.</summary>
-	public static readonly IBind<SliderInputBox.OverflowModes> OverflowModeDp = Binder.Register<SliderInputBox.OverflowModes, Vector2DEditorNew>(nameof(OverflowBehavior));
+	public static readonly IBind<SliderInputBox.OverflowModes> OverflowModeDp = Binder.Register<SliderInputBox.OverflowModes, Vector2DEditor>(nameof(OverflowBehavior));
 
 	/// <summary>Dependency property for the slider mode.</summary>
-	public static readonly IBind<SliderInputBox.SliderModes> SliderModeDp = Binder.Register<SliderInputBox.SliderModes, Vector2DEditorNew>(nameof(SliderMode), BindMode.OneWay);
+	public static readonly IBind<SliderInputBox.SliderModes> SliderModeDp = Binder.Register<SliderInputBox.SliderModes, Vector2DEditor>(nameof(SliderMode), BindMode.OneWay);
 
 	/// <summary>Dependency property for the classic slider mode.</summary>
-	public static readonly IBind<SliderInputBox.SliderTypes> SliderTypeDp = Binder.Register<SliderInputBox.SliderTypes, Vector2DEditorNew>(nameof(SliderType), BindMode.OneWay);
+	public static readonly IBind<SliderInputBox.SliderTypes> SliderTypeDp = Binder.Register<SliderInputBox.SliderTypes, Vector2DEditor>(nameof(SliderType), BindMode.OneWay);
 
 	/// <summary>Dependency property for the visibility of the tick visualizer.</summary>
 	/// <remarks>Applies only to the standard slider mode.</remarks>
-	public static readonly IBind<bool> ShowSliderThumbDp = Binder.Register<bool, Vector2DEditorNew>(nameof(ShowSliderThumb), BindMode.OneWay);
+	public static readonly IBind<bool> ShowSliderThumbDp = Binder.Register<bool, Vector2DEditor>(nameof(ShowSliderThumb), BindMode.OneWay);
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="Vector2DEditorNew"/> class.
+	/// Initializes a new instance of the <see cref="Vector2DEditor"/> class.
 	/// </summary>
-	public Vector2DEditorNew()
+	public Vector2DEditor()
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
@@ -302,10 +302,10 @@ public partial class Vector2DEditorNew : UserControl, INotifyPropertyChanged
 		}
 	}
 
-	private static void OnValueChanged(Vector2DEditorNew sender, Vector2 value)
+	private static void OnValueChanged(Vector2DEditor sender, Vector2 value)
 	{
-		sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(Vector2DEditorNew.X)));
-		sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(Vector2DEditorNew.Y)));
+		sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(Vector2DEditor.X)));
+		sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(Vector2DEditor.Y)));
 	}
 
 	private void OnPreviewKeyDown(object sender, KeyEventArgs e)

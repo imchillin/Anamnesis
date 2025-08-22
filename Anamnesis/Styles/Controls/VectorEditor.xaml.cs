@@ -14,66 +14,66 @@ using XivToolsWpf.DependencyProperties;
 using XivToolsWpf.Math3D.Extensions;
 
 /// <summary>
-/// Interaction logic for Vector3DEditor.xaml.
+/// Interaction logic for VectorEditor.xaml.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public partial class VectorEditorNew : UserControl, INotifyPropertyChanged
+public partial class VectorEditor : UserControl, INotifyPropertyChanged
 {
 	/// <summary>Gets or sets the layout style.</summary>
-	public static readonly IBind<LayoutStyles> LayoutStyleDp = Binder.Register<LayoutStyles, VectorEditorNew>(nameof(LayoutStyle));
+	public static readonly IBind<LayoutStyles> LayoutStyleDp = Binder.Register<LayoutStyles, VectorEditor>(nameof(LayoutStyle));
 
 	/// <summary>Gets or sets the vector value.</summary>
-	public static readonly IBind<Vector3> ValueDp = Binder.Register<Vector3, VectorEditorNew>(nameof(Value), OnValueChanged);
+	public static readonly IBind<Vector3> ValueDp = Binder.Register<Vector3, VectorEditor>(nameof(Value), OnValueChanged);
 
 	/// <summary>Gets or sets the default value.</summary>
-	public static readonly IBind<decimal?> DefaultValueDp = Binder.Register<decimal?, VectorEditorNew>(nameof(DefaultValue), BindMode.OneWay);
+	public static readonly IBind<decimal?> DefaultValueDp = Binder.Register<decimal?, VectorEditor>(nameof(DefaultValue), BindMode.OneWay);
 
 	/// <summary>Gets or sets the tick frequency.</summary>
-	public static readonly IBind<decimal> TickFrequencyDp = Binder.Register<decimal, VectorEditorNew>(nameof(TickFrequency));
+	public static readonly IBind<decimal> TickFrequencyDp = Binder.Register<decimal, VectorEditor>(nameof(TickFrequency));
 
 	/// <summary>Gets or sets the minimum value.</summary>
-	public static readonly IBind<string?> MinDp = Binder.Register<string?, VectorEditorNew>(nameof(Minimum));
+	public static readonly IBind<string?> MinDp = Binder.Register<string?, VectorEditor>(nameof(Minimum));
 
 	/// <summary>Gets or sets the maximum value.</summary>
-	public static readonly IBind<string?> MaxDp = Binder.Register<string?, VectorEditorNew>(nameof(Maximum));
+	public static readonly IBind<string?> MaxDp = Binder.Register<string?, VectorEditor>(nameof(Maximum));
 
 	/// <summary>Gets or sets a value indicating whether linking can be enabled.</summary>
-	public static readonly IBind<bool> CanLinkDp = Binder.Register<bool, VectorEditorNew>(nameof(CanLink), BindMode.OneWay);
+	public static readonly IBind<bool> CanLinkDp = Binder.Register<bool, VectorEditor>(nameof(CanLink), BindMode.OneWay);
 
 	/// <summary>Gets or sets a value indicating whether the axes are linked.</summary>
-	public static readonly IBind<bool> LinkedDp = Binder.Register<bool, VectorEditorNew>(nameof(Linked));
+	public static readonly IBind<bool> LinkedDp = Binder.Register<bool, VectorEditor>(nameof(Linked));
 
 	/// <summary>Gets or sets the color mode.</summary>
-	public static readonly IBind<ColorModes> ColorModeDp = Binder.Register<ColorModes, VectorEditorNew>(nameof(ColorMode), BindMode.OneWay);
+	public static readonly IBind<ColorModes> ColorModeDp = Binder.Register<ColorModes, VectorEditor>(nameof(ColorMode), BindMode.OneWay);
 
 	/// <summary>Gets or sets the suffix.</summary>
-	public static readonly IBind<string> SuffixDp = Binder.Register<string, VectorEditorNew>(nameof(Suffix));
+	public static readonly IBind<string> SuffixDp = Binder.Register<string, VectorEditor>(nameof(Suffix));
 
 	/// <summary>Gets or sets a value indicating whether step buttons are enabled.</summary>
-	public static readonly IBind<bool> EnableStepButtonsDp = Binder.Register<bool, VectorEditorNew>(nameof(EnableStepButtons));
+	public static readonly IBind<bool> EnableStepButtonsDp = Binder.Register<bool, VectorEditor>(nameof(EnableStepButtons));
 
 	/// <summary>Gets or sets the number of decimal places.</summary>
-	public static readonly IBind<int> DecimalPlacesDp = Binder.Register<int, VectorEditorNew>(nameof(DecimalPlaces));
+	public static readonly IBind<int> DecimalPlacesDp = Binder.Register<int, VectorEditor>(nameof(DecimalPlaces));
 
 	/// <summary>Gets or sets the overflow behavior.</summary>
-	public static readonly IBind<SliderInputBox.OverflowModes> OverflowModeDp = Binder.Register<SliderInputBox.OverflowModes, VectorEditorNew>(nameof(OverflowBehavior));
+	public static readonly IBind<SliderInputBox.OverflowModes> OverflowModeDp = Binder.Register<SliderInputBox.OverflowModes, VectorEditor>(nameof(OverflowBehavior));
 
 	/// <summary>Dependency property for the slider mode.</summary>
-	public static readonly IBind<SliderInputBox.SliderModes> SliderModeDp = Binder.Register<SliderInputBox.SliderModes, VectorEditorNew>(nameof(SliderMode), BindMode.OneWay);
+	public static readonly IBind<SliderInputBox.SliderModes> SliderModeDp = Binder.Register<SliderInputBox.SliderModes, VectorEditor>(nameof(SliderMode), BindMode.OneWay);
 
 	/// <summary>Dependency property for the classic slider mode.</summary>
-	public static readonly IBind<SliderInputBox.SliderTypes> SliderTypeDp = Binder.Register<SliderInputBox.SliderTypes, VectorEditorNew>(nameof(SliderType), BindMode.OneWay);
+	public static readonly IBind<SliderInputBox.SliderTypes> SliderTypeDp = Binder.Register<SliderInputBox.SliderTypes, VectorEditor>(nameof(SliderType), BindMode.OneWay);
 
 	/// <summary>Dependency property for the visibility of the tick visualizer.</summary>
 	/// <remarks>Applies only to the standard slider mode.</remarks>
-	public static readonly IBind<bool> ShowSliderThumbDp = Binder.Register<bool, VectorEditorNew>(nameof(ShowSliderThumb), BindMode.OneWay);
+	public static readonly IBind<bool> ShowSliderThumbDp = Binder.Register<bool, VectorEditor>(nameof(ShowSliderThumb), BindMode.OneWay);
 
 	private bool lockChangedEvent = false;
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="VectorEditorNew"/> class.
+	/// Initializes a new instance of the <see cref="VectorEditor"/> class.
 	/// </summary>
-	public VectorEditorNew()
+	public VectorEditor()
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
@@ -331,7 +331,7 @@ public partial class VectorEditorNew : UserControl, INotifyPropertyChanged
 		}
 	}
 
-	private static void OnValueChanged(VectorEditorNew sender, Vector3 oldValue, Vector3 newValue)
+	private static void OnValueChanged(VectorEditor sender, Vector3 oldValue, Vector3 newValue)
 	{
 		if (sender.Linked && !sender.lockChangedEvent)
 		{

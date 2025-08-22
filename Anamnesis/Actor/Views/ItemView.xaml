@@ -240,7 +240,7 @@
 				</Button>
 			</StackPanel>
 
-			<ana:VectorEditorNew  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Value="{Binding ExtendedViewModel.Scale}" Minimum="0" Maximum="float.MaxValue" TickFrequency="0.01"
+			<ana:VectorEditor Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Value="{Binding ExtendedViewModel.Scale}" Minimum="0" Maximum="float.MaxValue" TickFrequency="0.01"
 					 DefaultValue="1" CanLink="True" Linked="True" DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" SliderMode="Relative"
 					 ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}" LayoutStyle="Compact"
 					 SliderType="{Binding Settings.BoneScaleSliderType, Mode=OneWay}" EnableStepButtons="True"
