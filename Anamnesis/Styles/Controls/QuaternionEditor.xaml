@@ -58,7 +58,7 @@
 			</materialDesign:ToggleButtonAssist.OnContent>
 		</ToggleButton>
 
-		<cm3:VectorEditorNew Grid.Row="1" VerticalAlignment="Top" Value="{Binding Euler}" Minimum="0" Maximum="360" DefaultValue="0" TickFrequency="{Binding TickFrequency, Mode=OneWay}"
+		<cm3:VectorEditor Grid.Row="1" VerticalAlignment="Top" Value="{Binding Euler}" Minimum="0" Maximum="360" DefaultValue="0" TickFrequency="{Binding TickFrequency, Mode=OneWay}"
 							 Suffix="°" EnableStepButtons="True" DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" OverflowBehavior="{Binding RotationOverflowBehavior, Mode=OneWay}" ColorMode="Rotation"
 							 SliderType="{Binding Settings.BoneRotationSliderType, Mode=OneWay}" ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}" Margin="-6, 0, 1, 0"/>
 	</Grid>

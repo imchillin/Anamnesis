@@ -240,8 +240,19 @@
 				</Button>
 			</StackPanel>
 
-			<ana:VectorEditor Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Value="{Binding ExtendedViewModel.Scale}" CanLink="True" Linked="True" Sliders="None"
-							  TickFrequency="0.1" Minimum="-10" Maximum="10" Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}, Mode=OneWay}"/>
-			</Grid>
+			<ContentControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="-5,2,-3,-2" Content="{Binding ExtendedViewModel}"
+							Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}, Mode=OneWay}">
+				<ContentControl.ContentTemplate>
+					<DataTemplate>
+						<ana:VectorEditor Value="{Binding Scale}" Minimum="0" Maximum="float.MaxValue" TickFrequency="0.01"
+										  DefaultValue="1" CanLink="True" Linked="True" SliderMode="Relative"
+										  DecimalPlaces="{Binding Settings.SliderPrecision, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
+										  ShowSliderThumb="{Binding Settings.ShowSliderThumb, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
+										  LayoutStyle="Compact" EnableStepButtons="True"
+										  SliderType="{Binding Settings.BoneScaleSliderType, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"/>
+					</DataTemplate>
+				</ContentControl.ContentTemplate>
+			</ContentControl>
+		</Grid>
 	</GroupBox>
 </UserControl>

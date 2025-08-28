@@ -32,7 +32,7 @@
     </PackageReference>
     <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
     <PackageReference Include="Iced" Version="1.21.0" />
-    <PackageReference Include="Lumina" Version="6.5.0" />
+    <PackageReference Include="Lumina" Version="6.5.1" />
     <PackageReference Include="Lumina.Excel" Version="7.3.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
       <PrivateAssets>all</PrivateAssets>
