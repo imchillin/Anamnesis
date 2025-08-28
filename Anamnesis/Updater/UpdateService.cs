@@ -4,6 +4,7 @@
 namespace Anamnesis.Updater;
 
 using Anamnesis.Core;
+using Anamnesis.Files;
 using Anamnesis.GUI.Dialogs;
 using Anamnesis.Services;
 using System;
@@ -22,10 +23,15 @@ public class UpdateService : ServiceBase<UpdateService>
 {
 	private const string Repository = "imchillin/Anamnesis";
 
+	// GitHub API rate limits requests to 60/h for unauthenticated users.
+	// The requests are associated with the originating IP address.
+	// Choose a reasonable update interval to avoid hitting the limit.
+	private const int UpdateIntervalMinutes = 10;
+
 	private readonly HttpClient httpClient = new HttpClient();
 	private Release? currentRelease;
 
-	private static string UpdateTempDir => Path.GetTempPath() + "/AnamnesisUpdateLatest/";
+	private static string UpdateTempDir => Path.Combine(Path.GetTempPath(), "AnamnesisUpdateLatest");
 
 	public override async Task Initialize()
 	{
@@ -34,7 +40,7 @@ public class UpdateService : ServiceBase<UpdateService>
 		bool skipTimeCheck = false;
 
 		// Determine if this is a dev build
-		if (VersionInfo.Date.Year <= 2000)
+		if (VersionInfo.IsDevelopmentBuild)
 		{
 			// Don't show if there is a debugger attached
 			if (Debugger.IsAttached)
@@ -51,9 +57,10 @@ public class UpdateService : ServiceBase<UpdateService>
 
 		DateTimeOffset lastCheck = SettingsService.Current.LastUpdateCheck;
 		TimeSpan elapsed = DateTimeOffset.Now - lastCheck;
-		if (elapsed.TotalHours < 6 && !skipTimeCheck)
+
+		if (elapsed.TotalMinutes < UpdateIntervalMinutes && !skipTimeCheck)
 		{
-			Log.Information("Last update check was less than 6 hours ago. Skipping.");
+			Log.Information($"Last update check was less than {UpdateIntervalMinutes} minutes ago. Skipping.");
 			return;
 		}
 
@@ -63,7 +70,11 @@ public class UpdateService : ServiceBase<UpdateService>
 	public async Task<bool> CheckForUpdates()
 	{
 		if (Directory.Exists(UpdateTempDir))
+		{
+			var dirInfo = new DirectoryInfo(UpdateTempDir);
+			FileService.SetAttributesNormal(dirInfo);
 			Directory.Delete(UpdateTempDir, true);
+		}
 
 		if (!this.httpClient.DefaultRequestHeaders.Contains("User-Agent"))
 			this.httpClient.DefaultRequestHeaders.Add("User-Agent", "AutoUpdater");
@@ -75,18 +86,26 @@ public class UpdateService : ServiceBase<UpdateService>
 			this.currentRelease = JsonSerializer.Deserialize<Release>(result);
 
 			if (this.currentRelease == null)
-				throw new Exception("Failed to deserialize json response");
+				throw new Exception("Failed to deserialize GitHub API JSON response");
 
-			if (this.currentRelease.Published == null)
-				throw new Exception("No published timestamp in update json");
+			if (this.currentRelease.TagName == null)
+				throw new Exception("No tag name in GitHub API JSON response");
 
-			DateTimeOffset published = (DateTimeOffset)this.currentRelease.Published;
-			published = published.ToUniversalTime();
+			bool update = false;
 
-			// Bump the published time down by a few hours to account for release upload times.
-			published = published.AddHours(-4);
+			// Check for old date-based tag format: yyyy-MM-dd(-h#)
+			if (System.Text.RegularExpressions.Regex.IsMatch(this.currentRelease.TagName, @"^\d{4}-\d{2}-\d{2}(-h\d+)?$"))
+			{
+				// Trigger an update if the tag is using the old date format.
+				update = true;
+			}
+			else
+			{
+				if (!Version.TryParse(this.currentRelease.TagName.TrimStart('v'), out Version? latestReleaseVer))
+					throw new Exception("Failed to parse version from tag name");
 
-			bool update = published > VersionInfo.Date;
+				update = latestReleaseVer > VersionInfo.ApplicationVersion;
+			}
 
 			if (update)
 			{
@@ -108,6 +127,12 @@ public class UpdateService : ServiceBase<UpdateService>
 			{
 				SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
 				SettingsService.Save();
+				return false;
+			}
+
+			if (ex.StatusCode == HttpStatusCode.Forbidden || ex.StatusCode == HttpStatusCode.TooManyRequests)
+			{
+				await GenericDialog.ShowLocalizedAsync("Update_RateLimit", "Update_Check_Fail_Title", System.Windows.MessageBoxButton.OK);
 				return false;
 			}
 
@@ -161,10 +186,9 @@ public class UpdateService : ServiceBase<UpdateService>
 			// Download asset to temp file
 			string zipFilePath = Path.GetTempFileName();
 			{
-				using HttpClient client = new HttpClient();
-				using HttpResponseMessage response = await client.GetAsync(asset.Url);
-				using Stream streamToReadFrom = await response.Content.ReadAsStreamAsync();
-				using FileStream fileStream = new FileStream(zipFilePath, FileMode.OpenOrCreate, FileAccess.Write);
+				using HttpResponseMessage response = await this.httpClient.GetAsync(asset.Url);
+				await using Stream streamToReadFrom = await response.Content.ReadAsStreamAsync();
+				await using FileStream fileStream = new(zipFilePath, FileMode.OpenOrCreate, FileAccess.Write);
 				await streamToReadFrom.CopyToAsync(fileStream);
 			}
 
@@ -187,13 +211,18 @@ public class UpdateService : ServiceBase<UpdateService>
 			if (File.Exists(zipFilePath))
 			{
 				// Remove temp file
+				var fileInfo = new FileInfo(zipFilePath);
+				fileInfo.Attributes = FileAttributes.Normal;
 				File.Delete(zipFilePath);
 			}
 
 			// While testing, do not copy the update files over our working files.
 			if (Debugger.IsAttached)
 			{
+				var dirInfo = new DirectoryInfo(UpdateTempDir);
+				FileService.SetAttributesNormal(dirInfo);
 				Directory.Delete(UpdateTempDir, true);
+
 				string[] paths = Directory.GetFiles(".", "*.*", SearchOption.AllDirectories);
 				foreach (string path in paths)
 				{
@@ -210,7 +239,7 @@ public class UpdateService : ServiceBase<UpdateService>
 			// Start the update extractor
 			string currentDir = Directory.GetCurrentDirectory();
 			string procName = Process.GetCurrentProcess().ProcessName;
-			ProcessStartInfo start = new(UpdateTempDir + "/Updater/UpdateExtractor.exe", $"\"{currentDir}\" {procName}");
+			ProcessStartInfo start = new(Path.Combine(UpdateTempDir, "Updater", "UpdateExtractor.exe"), $"\"{currentDir}\" {procName}");
 			Process.Start(start);
 
 			// Shutdown anamnesis
@@ -227,9 +256,6 @@ public class UpdateService : ServiceBase<UpdateService>
 	{
 		[JsonPropertyName("tag_name")]
 		public string? TagName { get; set; }
-
-		[JsonPropertyName("published_at")]
-		public DateTimeOffset? Published { get; set; }
 
 		[JsonPropertyName("body")]
 		public string? Changes { get; set; }
