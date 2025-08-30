@@ -6,6 +6,7 @@ namespace Anamnesis.Updater;
 using Anamnesis.Core;
 using Anamnesis.Files;
 using Anamnesis.GUI.Dialogs;
+using Anamnesis.Memory.Exceptions;
 using Anamnesis.Services;
 using System;
 using System.Collections.Generic;
@@ -67,7 +68,9 @@ public class UpdateService : ServiceBase<UpdateService>
 			return;
 		}
 
-		await this.CheckForUpdates();
+		bool updateTriggered = await this.CheckForUpdates();
+		if (updateTriggered)
+			throw new UpdateTriggeredException();
 	}
 
 	public async Task<bool> CheckForUpdates()
