@@ -313,7 +313,7 @@
 								VerticalContentAlignment="Center"
 								IsChecked="{Binding PoseService.FreezePhysics}"
 								IsEnabled="{Binding PoseService.IsEnabled}">
-								<XivToolsWpf:TextBlock Key="Pose_FreezePhysics" />
+								<XivToolsWpf:TextBlock Key="Pose_FreezePhysics" Margin="0, 0, 0, 3"/>
 							</CheckBox>
 
 							<CheckBox Margin="3,0,6,0"
@@ -324,7 +324,7 @@
 									<XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositionsTooltip"/>
 								</ToggleButton.ToolTip>
 
-								<XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositions" />
+								<XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositions" Margin="0, 0, 0, 3"/>
 							</CheckBox>
 
 							<CheckBox
@@ -332,7 +332,7 @@
 								VerticalContentAlignment="Center"
 								IsChecked="{Binding PoseService.EnableParenting}"
 								IsEnabled="{Binding PoseService.IsEnabled}">
-								<XivToolsWpf:TextBlock Key="Pose_Parenting" />
+								<XivToolsWpf:TextBlock Key="Pose_Parenting" Margin="0, 0, 0, 3"/>
 							</CheckBox>
 
 							<Button

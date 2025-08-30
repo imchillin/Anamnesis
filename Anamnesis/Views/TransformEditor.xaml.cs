@@ -431,7 +431,21 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 			Application.Current?.Dispatcher.Invoke(() =>
 			{
 				this.SetInitialValues();
-				this.ScaleVectorEditor.Minimum = this.Skeleton != null && this.Skeleton.SelectedBones.Count() > 1 ? "" : "0";
+
+				if (this.Skeleton != null)
+				{
+					if (this.Skeleton.SelectedBones.Count() > 1)
+					{
+						this.ScaleVectorEditor.Minimum = "";
+						this.ScaleVectorEditor.DefaultValue = 0;
+					}
+					else
+					{
+						this.ScaleVectorEditor.Minimum = "0";
+						this.ScaleVectorEditor.DefaultValue = 1;
+					}
+				}
+
 				this.RaisePropertyChanged(string.Empty);
 			});
 		}

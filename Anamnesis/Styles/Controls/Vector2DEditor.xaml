@@ -4,30 +4,32 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d"
-			 d:DesignWidth="256">
+			 d:DesignWidth="256"
+			 PreviewKeyDown="OnPreviewKeyDown">
+
+	<UserControl.Resources>
+		<Style x:Key="LinkLineStyle" TargetType="Line">
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding Linked}" Value="True">
+					<Setter Property="Stroke" Value="{DynamicResource PrimaryHueMidBrush}"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding Linked}" Value="False">
+					<Setter Property="Stroke" Value="{DynamicResource MaterialDesignBodyLight}"/>
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>
+	</UserControl.Resources>
+
 	<Grid x:Name="ContentArea">
-
-		<Grid Visibility="{Binding Expanded, Converter={StaticResource !B2V}}">
+		<!-- Standard layout -->
+		<Grid Visibility="{Binding IsStandardLayout, Converter={StaticResource B2V}}">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition/>
+				<ColumnDefinition Width="*"/>
 				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition/>
-			</Grid.ColumnDefinitions>
-
-			<TextBlock Grid.Column="0" Text="X:" Style="{StaticResource Label}"/>
-			<XivToolsWpf:NumberBox Value="{Binding X, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="{Binding Wrap}" Grid.Column="1" Margin="-3, 0, 0, 2"/>
-
-			<TextBlock Grid.Column="2" Text="Y:" Style="{StaticResource Label}"/>
-			<XivToolsWpf:NumberBox Value="{Binding Y, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="{Binding Wrap}" Grid.Column="3" Margin="-3, 0, 0, 2"/>
-		</Grid>
-
-		<Grid Visibility="{Binding Expanded, Converter={StaticResource B2V}}">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 
 			<Grid.RowDefinitions>
@@ -35,10 +37,142 @@
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 
-			<TextBlock Grid.Column="0" Grid.Row="0" Text="X:" Style="{StaticResource Label}"/>
-			<XivToolsWpf:NumberBox Grid.Column="1" Grid.Row="0" Value="{Binding X, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Slider="Absolute" Buttons="True" Wrap="{Binding Wrap}" Margin="0, 0, 0, 2"/>
-			<TextBlock Grid.Column="0" Grid.Row="1" Text="Y:" Style="{StaticResource Label}"/>
-			<XivToolsWpf:NumberBox Grid.Column="1" Grid.Row="1"  Value="{Binding Y, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Slider="Absolute" Buttons="True" Wrap="{Binding Wrap}" Margin="0, 0, 0, 2"/>
+			<!-- Input control (X) -->
+			<Label Grid.Column="0" Grid.Row="0" Content="X" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Foreground="{StaticResource MaterialDesignBodyLight}" Width="20" FontSize="10" Margin="0, 0, 0, 2"/>
+			<local:SliderInputBox Grid.Column="1" Grid.Row="0" Value="{Binding X, Mode=TwoWay}" Minimum="{Binding Minimum, Mode=OneWay}" Maximum="{Binding Maximum, Mode=OneWay}" DefaultValue="{Binding DefaultValue, Mode=OneWay}" TickFrequency="{Binding TickFrequency, Mode=OneWay}"
+								  Suffix="{Binding Suffix, Mode=OneWay}" EnableStepButtons="{Binding EnableStepButtons, Mode=OneWay}" DecimalPlaces="{Binding DecimalPlaces, Mode=OneWay}" Margin="0, 0, 0, 2" BorderColor="{Binding XColor, Mode=OneWay}"
+								  OverflowBehavior="{Binding OverflowBehavior, Mode=OneWay}" ShowSliderThumb="{Binding ShowSliderThumb, Mode=OneWay}" SliderMode="{Binding SliderMode, Mode=OneWay}" SliderType="{Binding SliderType, Mode=OneWay}"/>
+
+			<!-- Input control (Y) -->
+			<Label Grid.Column="0" Grid.Row="1" Content="Y" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Foreground="{StaticResource MaterialDesignBodyLight}" Width="20" FontSize="10" Margin="0, 0, 0, 2"/>
+			<local:SliderInputBox Grid.Column="1" Grid.Row="1" Value="{Binding Y, Mode=TwoWay}" Minimum="{Binding Minimum, Mode=OneWay}" Maximum="{Binding Maximum, Mode=OneWay}" DefaultValue="{Binding DefaultValue, Mode=OneWay}" TickFrequency="{Binding TickFrequency, Mode=OneWay}"
+								  Suffix="{Binding Suffix, Mode=OneWay}" EnableStepButtons="{Binding EnableStepButtons, Mode=OneWay}" DecimalPlaces="{Binding DecimalPlaces, Mode=OneWay}" Margin="0, 0, 0, 2" BorderColor="{Binding YColor, Mode=OneWay}"
+								  OverflowBehavior="{Binding OverflowBehavior, Mode=OneWay}" ShowSliderThumb="{Binding ShowSliderThumb, Mode=OneWay}" SliderMode="{Binding SliderMode, Mode=OneWay}" SliderType="{Binding SliderType, Mode=OneWay}"/>
+
+			<!-- Link button -->
+			<Grid  Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Width="28" Visibility="{Binding CanLink, Converter={StaticResource B2V}}">
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+
+				<Line Grid.Row="0" X1="0" X2="14" VerticalAlignment="Top" HorizontalAlignment="Center" Style="{StaticResource LinkLineStyle}" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeThickness="2" SnapsToDevicePixels="True" Margin="0, 3, 0, 0"/>
+				<Line Grid.Row="0" X1="14" X2="14" Y1="2" Y2="8" Style="{StaticResource LinkLineStyle}" StrokeStartLineCap="Square" StrokeEndLineCap="Round" StrokeThickness="2" SnapsToDevicePixels="True" Margin="0, 3, 0, 0"/>
+
+				<ToggleButton Grid.Row="1" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding Linked}">
+					<ToggleButton.ToolTip>
+						<XivToolsWpf:TextBlock Key="Common_LinkVector"/>
+					</ToggleButton.ToolTip>
+
+					<Grid>
+						<fa:IconBlock Icon="Link" FontSize="11"/>
+					</Grid>
+				</ToggleButton>
+
+				<Line Grid.Row="2" X1="0" X2="14" VerticalAlignment="Bottom" HorizontalAlignment="Center"  Style="{StaticResource LinkLineStyle}" StrokeStartLineCap="Round" StrokeEndLineCap="Square" StrokeThickness="2" SnapsToDevicePixels="True" Margin="0, 0, 0, 3"/>
+				<Line Grid.Row="2" X1="14" X2="14" Y1="4" Y2="11" Style="{StaticResource LinkLineStyle}" StrokeStartLineCap="Round" StrokeEndLineCap="Square" StrokeThickness="2" SnapsToDevicePixels="True" Margin="0, 0, 0, 3"/>
+			</Grid>
+		</Grid>
+
+		<!-- Inline layout -->
+		<Grid Visibility="{Binding IsInlineLayout, Converter={StaticResource B2V}}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<!-- Input control (X) -->
+			<Label Grid.Column="0" Grid.Row="0" Content="X" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="{StaticResource MaterialDesignBodyLight}" FontSize="10" Margin="0, 0, 0, 2"/>
+			<local:SliderInputBox Grid.Column="0" Grid.Row="1" Value="{Binding X, Mode=TwoWay}" Minimum="{Binding Minimum, Mode=OneWay}" Maximum="{Binding Maximum, Mode=OneWay}" DefaultValue="{Binding DefaultValue, Mode=OneWay}" TickFrequency="{Binding TickFrequency, Mode=OneWay}"
+								  Suffix="{Binding Suffix, Mode=OneWay}" EnableStepButtons="{Binding EnableStepButtons, Mode=OneWay}" DecimalPlaces="{Binding DecimalPlaces, Mode=OneWay}" Margin="2, 0, 2, 2" BorderColor="{Binding XColor, Mode=OneWay}"
+								  OverflowBehavior="{Binding OverflowBehavior, Mode=OneWay}" ShowSliderThumb="{Binding ShowSliderThumb, Mode=OneWay}" SliderMode="{Binding SliderMode, Mode=OneWay}" SliderType="{Binding SliderType, Mode=OneWay}"/>
+
+			<!-- Input control (Y) -->
+			<Label Grid.Column="1" Grid.Row="0" Content="Y" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="{StaticResource MaterialDesignBodyLight}" FontSize="10" Margin="0, 0, 0, 2"/>
+			<local:SliderInputBox Grid.Column="1" Grid.Row="1" Value="{Binding Y, Mode=TwoWay}" Minimum="{Binding Minimum, Mode=OneWay}" Maximum="{Binding Maximum, Mode=OneWay}" DefaultValue="{Binding DefaultValue, Mode=OneWay}" TickFrequency="{Binding TickFrequency, Mode=OneWay}"
+								  Suffix="{Binding Suffix, Mode=OneWay}" EnableStepButtons="{Binding EnableStepButtons, Mode=OneWay}" DecimalPlaces="{Binding DecimalPlaces, Mode=OneWay}" Margin="2, 0, 2, 2" BorderColor="{Binding YColor, Mode=OneWay}"
+								  OverflowBehavior="{Binding OverflowBehavior, Mode=OneWay}" ShowSliderThumb="{Binding ShowSliderThumb, Mode=OneWay}" SliderMode="{Binding SliderMode, Mode=OneWay}" SliderType="{Binding SliderType, Mode=OneWay}"/>
+
+			<!-- Link button -->
+			<Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Height="22" Visibility="{Binding CanLink, Converter={StaticResource B2V}}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+
+				<Line Grid.Column="0" Y1="0" Y2="15" HorizontalAlignment="Left" Style="{StaticResource LinkLineStyle}" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeThickness="2" SnapsToDevicePixels="True" Margin="4, 4, 0, 0"/>
+				<Line Grid.Column="0" Y1="8" Y2="8" X1="1" X2="200" HorizontalAlignment="Left" Style="{StaticResource LinkLineStyle}" StrokeStartLineCap="Square" StrokeEndLineCap="Round" StrokeThickness="2" SnapsToDevicePixels="True" Margin="4, 4, 0, 0"/>
+
+				<ToggleButton Grid.Column="1" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding Linked}">
+					<ToggleButton.ToolTip>
+						<XivToolsWpf:TextBlock Key="Common_LinkVector"/>
+					</ToggleButton.ToolTip>
+
+					<Grid>
+						<fa:IconBlock Icon="Link" FontSize="13"/>
+					</Grid>
+				</ToggleButton>
+
+				<Line Grid.Column="2" Y1="0" Y2="15" HorizontalAlignment="Right" Style="{StaticResource LinkLineStyle}" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeThickness="2" SnapsToDevicePixels="True" Margin="0, 4, 3, 0"/>
+				<Line Grid.Column="2" Y1="8" Y2="8" X1="0" X2="200" HorizontalAlignment="Left" Style="{StaticResource LinkLineStyle}" StrokeStartLineCap="Round" StrokeEndLineCap="Square" StrokeThickness="2" SnapsToDevicePixels="True" Margin="0, 4, 4, 0"/>
+			</Grid>
+		</Grid>
+
+		<!-- Compact layout -->
+		<Grid Visibility="{Binding IsCompactLayout, Converter={StaticResource B2V}}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+
+			<!-- Linked component for all axes -->
+			<Grid Grid.Column="0" Visibility="{Binding Linked, Converter={StaticResource B2V}}">
+				<local:SliderInputBox Value="{Binding X, Mode=TwoWay}" Minimum="{Binding Minimum, Mode=OneWay}" Maximum="{Binding Maximum, Mode=OneWay}" DefaultValue="{Binding DefaultValue, Mode=OneWay}" TickFrequency="{Binding TickFrequency, Mode=OneWay}"
+									  Suffix="{Binding Suffix, Mode=OneWay}" EnableStepButtons="{Binding EnableStepButtons, Mode=OneWay}" DecimalPlaces="{Binding DecimalPlaces, Mode=OneWay}" Margin="2, 0, 2, 2" BorderColor="{Binding XColor, Mode=OneWay}"
+									  OverflowBehavior="{Binding OverflowBehavior, Mode=OneWay}" ShowSliderThumb="{Binding ShowSliderThumb, Mode=OneWay}" SliderMode="{Binding SliderMode, Mode=OneWay}" SliderType="{Binding SliderType, Mode=OneWay}"/>
+			</Grid>
+
+			<!-- Separate axis components -->
+			<Grid Grid.Column="0" Visibility="{Binding Linked, Converter={StaticResource !B2V}}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+
+				<!-- Input control (X) -->
+				<Label Grid.Column="0" Content="X:" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="{StaticResource MaterialDesignBodyLight}" FontSize="10" Margin="0, 0, -5, 2"/>
+				<local:SliderInputBox Grid.Column="1" Value="{Binding X, Mode=TwoWay}" Minimum="{Binding Minimum, Mode=OneWay}" Maximum="{Binding Maximum, Mode=OneWay}" DefaultValue="{Binding DefaultValue, Mode=OneWay}" TickFrequency="{Binding TickFrequency, Mode=OneWay}"
+									  Suffix="{Binding Suffix, Mode=OneWay}" EnableStepButtons="False" DecimalPlaces="{Binding DecimalPlaces, Mode=OneWay}" Margin="0, 0, 2, 2" BorderColor="{Binding XColor, Mode=OneWay}"
+									  OverflowBehavior="{Binding OverflowBehavior, Mode=OneWay}" ShowSliderThumb="{Binding ShowSliderThumb, Mode=OneWay}" SliderMode="{Binding SliderMode, Mode=OneWay}" SliderType="{Binding SliderType, Mode=OneWay}"/>
+
+				<!-- Input control (Y) -->
+				<Label Grid.Column="2" Content="Y:" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="{StaticResource MaterialDesignBodyLight}" FontSize="10" Margin="0, 0, -5, 2"/>
+				<local:SliderInputBox Grid.Column="3" Value="{Binding Y, Mode=TwoWay}" Minimum="{Binding Minimum, Mode=OneWay}" Maximum="{Binding Maximum, Mode=OneWay}" DefaultValue="{Binding DefaultValue, Mode=OneWay}" TickFrequency="{Binding TickFrequency, Mode=OneWay}"
+									  Suffix="{Binding Suffix, Mode=OneWay}" EnableStepButtons="False" DecimalPlaces="{Binding DecimalPlaces, Mode=OneWay}" Margin="0, 0, 2, 2" BorderColor="{Binding YColor, Mode=OneWay}"
+									  OverflowBehavior="{Binding OverflowBehavior, Mode=OneWay}" ShowSliderThumb="{Binding ShowSliderThumb, Mode=OneWay}" SliderMode="{Binding SliderMode, Mode=OneWay}" SliderType="{Binding SliderType, Mode=OneWay}"/>
+			</Grid>
+
+			<!-- Link button -->
+			<ToggleButton Grid.Column="1" Style="{StaticResource TransparentIconToggleButton}" Visibility="{Binding CanLink, Converter={StaticResource B2V}}" IsChecked="{Binding Linked}" Margin="0, 0, 0, 2">
+				<ToggleButton.ToolTip>
+					<XivToolsWpf:TextBlock Key="Common_LinkVector"/>
+				</ToggleButton.ToolTip>
+
+				<Grid>
+					<fa:IconBlock Icon="Link" FontSize="13" Margin="-2.5, 0, -1, 0"/>
+				</Grid>
+			</ToggleButton>
 		</Grid>
 	</Grid>
 </UserControl>

@@ -53,7 +53,7 @@
 					<XivToolsWpf:IconBlock Icon="User"/>
 				</Button>
 
-				<cm3:VectorEditorNew Grid.Column="1" Value="{Binding CameraService.GPoseCamera.Position}" Minimum="-4096" Maximum="4096" TickFrequency="0.05"
+				<cm3:VectorEditor Grid.Column="1" Value="{Binding CameraService.GPoseCamera.Position}" Minimum="-4096" Maximum="4096" TickFrequency="0.05"
 									 DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" LayoutStyle="Standard" EnableStepButtons="True" SliderMode="Relative"
 									 SliderType="{Binding Settings.CameraSliderType, Mode=OneWay}" ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 			</Grid>
@@ -78,7 +78,7 @@
 					</materialdesign:ToggleButtonAssist.OnContent>
 				</ToggleButton>
 
-				<cm3:Vector2DEditorNew Grid.Column="1" Value="{Binding CameraService.Camera.Angle, Converter={StaticResource Vec2DRad2Deg}}" LayoutStyle="Standard" Minimum="-180" Maximum="180" DefaultValue="0"
+				<cm3:Vector2DEditor Grid.Column="1" Value="{Binding CameraService.Camera.Angle, Converter={StaticResource Vec2DRad2Deg}}" LayoutStyle="Standard" Minimum="-180" Maximum="180" DefaultValue="0"
 									   TickFrequency="0.1" DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" EnableStepButtons="True" OverflowBehavior="Loop"
 									   SliderType="{Binding Settings.CameraSliderType, Mode=OneWay}" ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 			</Grid>
@@ -91,7 +91,7 @@
 
 			<XivToolsWpf:TextBlock Key="Scene_Camera_Pan" Grid.Row="4" Grid.Column="0" Style="{StaticResource Label}"/>
 
-			<cm3:Vector2DEditorNew Grid.Row="4" Grid.Column="1" Value="{Binding CameraService.Camera.Pan, Converter={StaticResource Vec2DRad2Deg}}" LayoutStyle="Standard" Minimum="-180" Maximum="180" DefaultValue="0"
+			<cm3:Vector2DEditor Grid.Row="4" Grid.Column="1" Value="{Binding CameraService.Camera.Pan, Converter={StaticResource Vec2DRad2Deg}}" LayoutStyle="Standard" Minimum="-180" Maximum="180" DefaultValue="0"
 								   TickFrequency="0.1" DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" EnableStepButtons="True" OverflowBehavior="Loop"
 								   SliderType="{Binding Settings.CameraSliderType, Mode=OneWay}" ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 
@@ -115,7 +115,7 @@
 						  Icon="FileExport" Style="{StaticResource ButtonMenuItem}"/>
 			</Menu>
 
-			<XivToolsWpf:InfoControl Key="Scene_Camera_GPoseWarn" Grid.RowSpan="10" Grid.ColumnSpan="2"
+			<XivToolsWpf:InfoControl Key="Scene_Camera_GPoseWarn" Grid.Row="8" Grid.ColumnSpan="2" Margin="-3, 0, -3, -3"
 									 Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}"/>
 		</Grid>
 	</GroupBox>

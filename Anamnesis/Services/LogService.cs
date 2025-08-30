@@ -107,7 +107,7 @@ public class LogService : ServiceBase<LogService>
 		Log.Information("Framework: " + RuntimeInformation.FrameworkDescription, "Info");
 		Log.Information("OS Architecture: " + RuntimeInformation.OSArchitecture.ToString(), "Info");
 		Log.Information("Process Architecture: " + RuntimeInformation.ProcessArchitecture.ToString(), "Info");
-		Log.Information("Anamnesis Version: " + VersionInfo.Date.ToString(@"yyyy-MM-dd HH:mm"), "Info");
+		Log.Information($"Anamnesis Version: v{VersionInfo.ApplicationVersion}", "Info");
 	}
 
 	/// <inheritdoc/>

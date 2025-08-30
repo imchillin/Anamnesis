@@ -31,7 +31,7 @@ public static class ErrorDialog
 			SplashWindow.HideWindow();
 
 			Dialog dlg = new Dialog();
-			dlg.TitleText.Text = "Anamnesis v" + VersionInfo.Date.ToString("yyyy-MM-dd HH:mm");
+			dlg.TitleText.Text = $"Anamnesis v{VersionInfo.ApplicationVersion}";
 			XivToolsErrorDialog errorDialog = new XivToolsErrorDialog(dlg, ex, isCriticial);
 			errorDialog.OnQuitRequested = HandleFatalErrorShutdown;
 
