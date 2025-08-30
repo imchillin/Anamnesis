@@ -41,7 +41,7 @@ public partial class App : Application
 
 	private void OnExit(object sender, ExitEventArgs e)
 	{
-		Task.Run(async () => { await Services.ShutdownServices(); });
+		Task.Run(Services.ShutdownServices);
 	}
 
 	private void TaskSchedulerOnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
