@@ -4,7 +4,6 @@
 namespace Anamnesis.Services;
 
 using Anamnesis.Core;
-using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using PropertyChanged;
 using System;
@@ -32,6 +31,7 @@ public class AnimationService : ServiceBase<AnimationService>
 	/// <inheritdoc/>
 	protected override IEnumerable<IService> Dependencies =>
 	[
+		ActorService.Instance,
 		TargetService.Instance,
 		GposeService.Instance,
 		GameDataService.Instance

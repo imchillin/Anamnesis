@@ -6,6 +6,7 @@ namespace Anamnesis.Services;
 using Anamnesis.Core;
 using Anamnesis.Keyboard;
 using Anamnesis.Memory;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,6 +16,9 @@ using System.Threading.Tasks;
 public class HistoryService : ServiceBase<HistoryService>
 {
 	private int isRestoring = 0;
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [TargetService.Instance];
 
 	/// <summary>Lock object for thread synchronization.</summary>
 	/// <remarks>
@@ -57,7 +61,7 @@ public class HistoryService : ServiceBase<HistoryService>
 	/// <param name="context">The new history context.</param>
 	public static void SetContext(HistoryContext context)
 	{
-		ActorMemory? actor = TargetService.Instance?.SelectedActor;
+		ActorMemory? actor = TargetService.Instance.SelectedActor;
 		if (actor is null)
 			return;
 
@@ -88,7 +92,7 @@ public class HistoryService : ServiceBase<HistoryService>
 	/// </summary>
 	public void Clear()
 	{
-		ActorMemory? actor = TargetService.Instance?.SelectedActor;
+		ActorMemory? actor = TargetService.Instance.SelectedActor;
 
 		if (actor is null)
 			return;
@@ -101,7 +105,7 @@ public class HistoryService : ServiceBase<HistoryService>
 
 	private void Step(bool forward)
 	{
-		ActorMemory? actor = TargetService.Instance?.SelectedActor;
+		ActorMemory? actor = TargetService.Instance.SelectedActor;
 
 		if (actor is null)
 			return;

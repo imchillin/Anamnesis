@@ -493,7 +493,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 		// Propagate the property changed event to the rest of the application after write to memory
 		var origin = PropertyChange.Origins.User;
-		if (!bind.Flags.HasFlagUnsafe(BindFlags.DontRecordHistory) && HistoryService.Instance.IsRestoring)
+		if (!bind.Flags.HasFlagUnsafe(BindFlags.DontRecordHistory) && HistoryService.InstanceOrNull?.IsRestoring == true)
 		{
 			origin = PropertyChange.Origins.History;
 		}
@@ -574,7 +574,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		if (bind.IsWriting)
 			throw new Exception("Cannot read memory while we're writing to it");
 
-		if (bind.Flags.HasFlagUnsafe(BindFlags.OnlyInGPose) && !GposeService.Instance.IsGpose)
+		if (bind.Flags.HasFlagUnsafe(BindFlags.OnlyInGPose) && GposeService.InstanceOrNull?.IsGpose != true)
 			return;
 
 		bind.IsReading = true;
@@ -776,7 +776,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 						continue;
 
 					// If the child is a bind but only applies in gpose and we are not in gpose, then skip it.
-					if (child.parentBind.Flags.HasFlagUnsafe(BindFlags.OnlyInGPose) && !GposeService.Instance.IsGpose)
+					if (child.parentBind.Flags.HasFlagUnsafe(BindFlags.OnlyInGPose) && GposeService.InstanceOrNull?.IsGpose != true)
 						continue;
 
 					stack.Push(child);
@@ -828,7 +828,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 					// Propagate property changed event to the rest of the application after writing to memory
 					var origin = PropertyChange.Origins.User;
-					if (!propertyBind.Flags.HasFlagUnsafe(BindFlags.DontRecordHistory) && HistoryService.Instance.IsRestoring)
+					if (!propertyBind.Flags.HasFlagUnsafe(BindFlags.DontRecordHistory) && HistoryService.InstanceOrNull?.IsRestoring == true)
 					{
 						origin = PropertyChange.Origins.History;
 					}

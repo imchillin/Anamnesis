@@ -5,6 +5,8 @@ namespace Anamnesis.Views;
 
 using Anamnesis.Core.Extensions;
 using Anamnesis.Keyboard;
+using Anamnesis.Memory.Exceptions;
+using Serilog;
 using System.Text;
 using System.Windows.Input;
 using XivToolsWpf.DependencyProperties;
@@ -37,34 +39,41 @@ public partial class HotkeyPrompt : System.Windows.Controls.TextBlock
 		if (string.IsNullOrEmpty(this.Function))
 			return;
 
-		if (!HotkeyService.Instance.IsInitialized)
-			return;
-
-		KeyCombination? keys = HotkeyService.GetBind(this.Function);
-		if (keys == null)
-			return;
-
-		StringBuilder str = new StringBuilder();
-
-		if (keys.Modifiers.HasFlagUnsafe(ModifierKeys.Control))
+		try
 		{
-			str.Append("[CTRL] +");
-		}
+			if (!HotkeyService.Instance.IsInitialized)
+				return;
 
-		if (keys.Modifiers.HasFlagUnsafe(ModifierKeys.Alt))
+			KeyCombination? keys = HotkeyService.GetBind(this.Function);
+			if (keys == null)
+				return;
+
+			StringBuilder str = new StringBuilder();
+
+			if (keys.Modifiers.HasFlagUnsafe(ModifierKeys.Control))
+			{
+				str.Append("[CTRL] +");
+			}
+
+			if (keys.Modifiers.HasFlagUnsafe(ModifierKeys.Alt))
+			{
+				str.Append("[ALT] +");
+			}
+
+			if (keys.Modifiers.HasFlagUnsafe(ModifierKeys.Shift))
+			{
+				str.Append("[SHIFT] +");
+			}
+
+			str.Append('[');
+			str.Append(keys.Key);
+			str.Append(']');
+
+			this.Text = str.ToString();
+		}
+		catch (ServiceNotFoundException)
 		{
-			str.Append("[ALT] +");
+			Log.Warning("Attempted to load hotkey prompt string before hotkey service was available.");
 		}
-
-		if (keys.Modifiers.HasFlagUnsafe(ModifierKeys.Shift))
-		{
-			str.Append("[SHIFT] +");
-		}
-
-		str.Append('[');
-		str.Append(keys.Key);
-		str.Append(']');
-
-		this.Text = str.ToString();
 	}
 }

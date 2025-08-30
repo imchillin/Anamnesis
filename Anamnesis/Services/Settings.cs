@@ -96,7 +96,7 @@ public class Settings : INotifyPropertyChanged
 			}
 			catch (ServiceNotFoundException)
 			{
-				// Silently ignore
+				// Service not instantiated yet, nothing to restart
 			}
 		}
 	}
@@ -116,8 +116,15 @@ public class Settings : INotifyPropertyChanged
 
 			this.autoSaveIntervalMinutes = value;
 
-			if (AutoSaveService.Instance != null && AutoSaveService.Instance.IsAlive)
-				AutoSaveService.Instance.RestartUpdateTask();
+			try
+			{
+				if (AutoSaveService.Instance != null && AutoSaveService.Instance.IsAlive)
+					AutoSaveService.Instance.RestartUpdateTask();
+			}
+			catch (ServiceNotFoundException)
+			{
+				// Service not instantiated yet, nothing to restart
+			}
 		}
 	}
 	public bool AutoSaveOnlyInGpose { get; set; } = true;
