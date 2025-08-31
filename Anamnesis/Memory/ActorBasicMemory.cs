@@ -89,7 +89,7 @@ public class ActorBasicMemory : MemoryBase
 	[DependsOn(nameof(ObjectIndex), nameof(Address))]
 	public bool IsValid
 	{
-		get => this.Address != IntPtr.Zero && ActorService.Instance.GetActorTableIndex(this.Address) == this.ObjectIndex;
+		get => this.Address != IntPtr.Zero && ActorService.InstanceOrNull?.GetActorTableIndex(this.Address) == this.ObjectIndex;
 	}
 
 	/// <summary>

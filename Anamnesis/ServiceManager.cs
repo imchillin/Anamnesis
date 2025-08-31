@@ -3,9 +3,9 @@
 
 namespace Anamnesis.Services;
 
-using Anamnesis.Core.Memory;
 using Anamnesis.Files;
 using Anamnesis.Memory;
+using Anamnesis.Memory.Exceptions;
 using Anamnesis.Serialization;
 using Anamnesis.TexTools;
 using Serilog;
@@ -36,6 +36,10 @@ public class ServiceManager
 			Services.Add(service);
 			await InitializeService(service);
 		}
+		catch (UpdateTriggeredException)
+		{
+			throw; // Do not log as fatal, just rethrow so its handled gracefully
+		}
 		catch (Exception ex)
 		{
 			Log.Fatal(ex, $"{typeof(T).Name} Error: {ex.Message}");
@@ -46,32 +50,40 @@ public class ServiceManager
 	{
 		StartupTimer.Start();
 
-		await Add<LogService>();
-		await Add<SerializerService>();
-		await Add<SettingsService>();
-		await Add<LocalizationService>();
-		await Add<Updater.UpdateService>();
-		await Add<ViewService>();
-		await Add<MemoryService>();
-		await Add<AddressService>();
-		await Add<ActorService>();
-		await Add<GameDataService>();
-		await Add<GameService>();
-		await Add<FileService>();
-		await Add<TimeService>();
-		await Add<GposeService>();
-		await Add<TerritoryService>();
-		await Add<TargetService>();
-		await Add<CameraService>();
-		await Add<PoseService>();
-		await Add<TipService>();
-		await Add<TexToolsService>();
-		await Add<FavoritesService>();
-		await Add<AnimationService>();
-		await Add<Keyboard.HotkeyService>();
-		await Add<HistoryService>();
-		await Add<CustomBoneNameService>();
-		await Add<AutoSaveService>();
+		try
+		{
+			await Add<LogService>();
+			await Add<SerializerService>();
+			await Add<SettingsService>();
+			await Add<LocalizationService>();
+			await Add<Updater.UpdateService>();
+			await Add<ViewService>();
+			await Add<MemoryService>();
+			await Add<AddressService>();
+			await Add<ActorService>();
+			await Add<GameDataService>();
+			await Add<GameService>();
+			await Add<FileService>();
+			await Add<TimeService>();
+			await Add<GposeService>();
+			await Add<TerritoryService>();
+			await Add<TargetService>();
+			await Add<CameraService>();
+			await Add<PoseService>();
+			await Add<TipService>();
+			await Add<TexToolsService>();
+			await Add<FavoritesService>();
+			await Add<AnimationService>();
+			await Add<Keyboard.HotkeyService>();
+			await Add<HistoryService>();
+			await Add<CustomBoneNameService>();
+			await Add<AutoSaveService>();
+		}
+		catch (UpdateTriggeredException)
+		{
+			Log.Information("Application update has been triggered, halting further service initialization...");
+			return;
+		}
 
 		IsInitialized = true;
 
@@ -84,7 +96,7 @@ public class ServiceManager
 		CheckWindowsVersion();
 
 		StartupTimer.Stop();
-		Log.Information($"took {StartupTimer.ElapsedMilliseconds}ms to check windows version");
+		Log.Information($"Took {StartupTimer.ElapsedMilliseconds}ms to check windows version");
 	}
 
 	public async Task StartServices()

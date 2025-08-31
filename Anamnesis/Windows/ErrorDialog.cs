@@ -4,6 +4,7 @@
 namespace Anamnesis.Windows;
 
 using Anamnesis.GUI.Windows;
+using Anamnesis.Memory.Exceptions;
 using Anamnesis.Services;
 using Serilog;
 using System;
@@ -35,8 +36,15 @@ public static class ErrorDialog
 			XivToolsErrorDialog errorDialog = new XivToolsErrorDialog(dlg, ex, isCriticial);
 			errorDialog.OnQuitRequested = HandleFatalErrorShutdown;
 
-			if (SettingsService.Instance.IsInitialized && SettingsService.Instance.Settings != null)
-				dlg.Topmost = SettingsService.Current.AlwaysOnTop;
+			try
+			{
+				if (SettingsService.Instance.IsInitialized && SettingsService.Instance.Settings != null)
+					dlg.Topmost = SettingsService.Current.AlwaysOnTop;
+			}
+			catch (ServiceNotFoundException)
+			{
+				dlg.Topmost = true;
+			}
 
 			dlg.ContentArea.Content = errorDialog;
 			dlg.ShowDialog();
@@ -59,7 +67,16 @@ public static class ErrorDialog
 			return false;
 
 		Log.Verbose($"Shutting down app on critical error");
-		TargetService.Instance.ClearSelection();
+
+		try
+		{
+			TargetService.Instance.ClearSelection();
+		}
+		catch (ServiceNotFoundException)
+		{
+			// Ignore if service is not instantiated yet
+		}
+
 		await App.Services.ShutdownServices();
 		Application.Current?.Shutdown(2);
 		return true; // Indicate that quit was handled to prevent forced shutdown

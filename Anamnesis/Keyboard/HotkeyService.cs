@@ -23,6 +23,14 @@ public class HotkeyService : ServiceBase<HotkeyService>
 
 	private static readonly HashSet<Key> KeyDownSentToGame = new();
 
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies =>
+	[
+		SettingsService.Instance,
+		MemoryService.Instance,
+		GposeService.Instance
+	];
+
 	public static void RegisterHotkeyHandler(string function, Action callback)
 	{
 		RegisterHotkeyHandler(function, new Handler(callback));

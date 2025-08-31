@@ -89,7 +89,7 @@ public class ActorMemory : ActorBasicMemory
 	public bool IsWeaponDirty { get; set; } = false;
 
 	[DependsOn(nameof(IsValid), nameof(IsOverworldActor), nameof(Name), nameof(RenderMode))]
-	public bool CanRefresh => ActorService.Instance.CanRefreshActor(this);
+	public bool CanRefresh => ActorService.InstanceOrNull?.CanRefreshActor(this) == true;
 
 	public bool IsHuman => this.ModelObject != null && this.ModelObject.IsHuman;
 
@@ -232,7 +232,7 @@ public class ActorMemory : ActorBasicMemory
 			return;
 
 		// Only record changes that originate from the user
-		if (!change.OriginBind.Flags.HasFlagUnsafe(BindFlags.DontRecordHistory) && !HistoryService.Instance.IsRestoring)
+		if (!change.OriginBind.Flags.HasFlagUnsafe(BindFlags.DontRecordHistory) && !HistoryService.InstanceOrNull?.IsRestoring == true)
 		{
 			if (change.Origin == PropertyChange.Origins.User)
 			{

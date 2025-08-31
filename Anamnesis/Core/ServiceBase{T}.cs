@@ -42,6 +42,11 @@ public abstract class ServiceBase<T> : IService, INotifyPropertyChanged
 	}
 
 	/// <summary>
+	/// Gets the singleton instance of the service, or null if it has not been instantiated.
+	/// </summary>
+	public static T? InstanceOrNull => instance;
+
+	/// <summary>
 	/// Gets a value indicating whether the service is initialized.
 	/// </summary>
 	/// <remarks>

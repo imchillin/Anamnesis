@@ -6,6 +6,7 @@ namespace Anamnesis.Updater;
 using Anamnesis.Core;
 using Anamnesis.Files;
 using Anamnesis.GUI.Dialogs;
+using Anamnesis.Memory.Exceptions;
 using Anamnesis.Services;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows;
 using XivToolsWpf;
 
 public class UpdateService : ServiceBase<UpdateService>
@@ -27,6 +29,8 @@ public class UpdateService : ServiceBase<UpdateService>
 	// The requests are associated with the originating IP address.
 	// Choose a reasonable update interval to avoid hitting the limit.
 	private const int UpdateIntervalMinutes = 10;
+
+	private const int ForceShutdownTimeout = 10000; // ms (10 seconds)
 
 	private readonly HttpClient httpClient = new HttpClient();
 	private Release? currentRelease;
@@ -64,7 +68,9 @@ public class UpdateService : ServiceBase<UpdateService>
 			return;
 		}
 
-		await this.CheckForUpdates();
+		bool updateTriggered = await this.CheckForUpdates();
+		if (updateTriggered)
+			throw new UpdateTriggeredException();
 	}
 
 	public async Task<bool> CheckForUpdates()
@@ -243,7 +249,27 @@ public class UpdateService : ServiceBase<UpdateService>
 			Process.Start(start);
 
 			// Shutdown anamnesis
-			App.Current.Shutdown();
+			// Note: Ensure shutdown call takes place on the UI thread
+			App.Current.Dispatcher.Invoke(() =>
+			{
+				// Application may not exit if any windows are still open
+				foreach (Window window in App.Current.Windows)
+				{
+					window.Close();
+				}
+
+				Log.Information("Attempting graceful shutdown after update.");
+				App.Current.Shutdown();
+
+				// Force shutdown if application doesn't shutdown gracefully within the timeout.
+				_ = Task.Run(async () =>
+				{
+					await Task.Delay(ForceShutdownTimeout);
+					Log.Warning("Forceful shutdown triggered after update (timeout reached).");
+					Environment.Exit(0);
+				});
+			});
+
 			return;
 		}
 		catch (Exception ex)
