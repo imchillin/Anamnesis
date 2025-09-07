@@ -7,7 +7,7 @@ namespace Scripts;
 
 public class CleanNpcNames : ScriptBase
 {
-	const string filePath = "../../../../Anamnesis/Data/NpcNames.json";
+	const string FILE_PATH = "../../../../Anamnesis/Data/NpcNames.json";
 
 	public override string Name => "Clean NPC names";
 
@@ -19,7 +19,7 @@ public class CleanNpcNames : ScriptBase
 			WriteIndented = true,
 		};
 
-		string json = File.ReadAllText(filePath);
+		string json = File.ReadAllText(FILE_PATH);
 		var entries = JsonSerializer.Deserialize<Dictionary<string, string>>(json, op);
 		var results = new Dictionary<string, string>();
 		var keys = new List<string>();
@@ -60,7 +60,7 @@ public class CleanNpcNames : ScriptBase
 		}
 
 		json = JsonSerializer.Serialize(entries, op);
-		File.WriteAllText(filePath, json);
+		File.WriteAllText(FILE_PATH, json);
 	}
 
 	public class Entry

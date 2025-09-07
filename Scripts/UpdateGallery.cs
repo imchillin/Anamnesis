@@ -11,6 +11,7 @@ public class UpdateGallery : ScriptBase
 {
 	private const int MAX_THUMBNAIL_SIZE = 720;
 	private const string FILE_PATH = "../../../../Anamnesis/Data/Images.json";
+	private static readonly HttpClient s_httpClient = new();
 
 	public override string Name => "Update Gallery";
 
@@ -35,15 +36,13 @@ public class UpdateGallery : ScriptBase
 			if (entry.Url == null)
 				return;
 
-			HttpWebResponse? response = null;
-			HttpWebRequest? request = null;
+			HttpResponseMessage? response = null;
 
 			// Check that Url is valid
 			try
 			{
-				request = (HttpWebRequest)WebRequest.Create(entry.Url);
-				request.Method = "HEAD";
-				response = (HttpWebResponse)request.GetResponse();
+				var request = new HttpRequestMessage(HttpMethod.Head, entry.Url);
+				response = s_httpClient.Send(request);
 			}
 			catch (WebException)
 			{
@@ -56,7 +55,7 @@ public class UpdateGallery : ScriptBase
 				return;
 			}
 
-			response?.Close();
+			response?.Dispose();
 
 			// Generte thumbnail url
 			if (entry.Thumbnail == null)
@@ -66,11 +65,10 @@ public class UpdateGallery : ScriptBase
 
 				try
 				{
-					request = (HttpWebRequest)WebRequest.Create(entry.Url);
-					response = (HttpWebResponse)request.GetResponse();
+					var imageResponse = s_httpClient.GetAsync(entry.Url).Result;
+					imageResponse.EnsureSuccessStatusCode();
 
-					Stream responseStream = response.GetResponseStream();
-
+					using var responseStream = imageResponse.Content.ReadAsStream();
 					using var fileStream = new FileStream(imagePath, FileMode.Create, FileAccess.Write);
 					responseStream.CopyTo(fileStream);
 					fileStream.Close();
@@ -137,18 +135,17 @@ public class UpdateGallery : ScriptBase
 
 		try
 		{
-			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uriBuilder.ToString());
-			request.Method = "HEAD";
-			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+			var request = new HttpRequestMessage(HttpMethod.Head, uriBuilder.ToString());
+			var response = s_httpClient.Send(request);
 
 			if (response.StatusCode != HttpStatusCode.OK)
 			{
 				Log($"Failed to get samaller thumbnail from url: {uriBuilder}: {response.StatusCode}");
-				response.Close();
+				response.Dispose();
 				return url;
 			}
 
-			response.Close();
+			response.Dispose();
 		}
 		catch (Exception ex)
 		{
