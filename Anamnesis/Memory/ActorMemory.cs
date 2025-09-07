@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 public class ActorMemory : ActorBasicMemory
 {
-	private static readonly int RefreshDebounceTimeout = 200;
+	private const int REFRESH_DEBOUNCE_TIMEOUT = 200;
 	private readonly System.Timers.Timer refreshDebounceTimer;
 	private readonly FuncQueue backupQueue;
 	private int isRefreshing = 0;
@@ -26,7 +26,7 @@ public class ActorMemory : ActorBasicMemory
 		this.PropertyChanged += this.HandlePropertyChanged;
 
 		// Initialize the debounce timer
-		this.refreshDebounceTimer = new(RefreshDebounceTimeout) { AutoReset = false };
+		this.refreshDebounceTimer = new(REFRESH_DEBOUNCE_TIMEOUT) { AutoReset = false };
 		this.refreshDebounceTimer.Elapsed += async (s, e) => { await this.Refresh(); };
 	}
 

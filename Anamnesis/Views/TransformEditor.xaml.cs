@@ -63,6 +63,8 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	/// <inheritdoc/>
 	public event PropertyChangedEventHandler? PropertyChanged;
 
+	public static Settings Settings => SettingsService.Current;
+
 	/// <summary>Gets or sets the skeleton entity.</summary>
 	public SkeletonEntity? Skeleton
 	{
@@ -83,8 +85,6 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 		get => CanTranslateOverrideDp.Get(this);
 		set => CanTranslateOverrideDp.Set(this, value);
 	}
-
-	public static Settings Settings => SettingsService.Current;
 
 	/// <summary>Gets the selected actor.</summary>
 	public ActorMemory? SelectedActor => this.currentActor;
@@ -436,7 +436,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 				{
 					if (this.Skeleton.SelectedBones.Count() > 1)
 					{
-						this.ScaleVectorEditor.Minimum = "";
+						this.ScaleVectorEditor.Minimum = string.Empty;
 						this.ScaleVectorEditor.DefaultValue = 0;
 					}
 					else

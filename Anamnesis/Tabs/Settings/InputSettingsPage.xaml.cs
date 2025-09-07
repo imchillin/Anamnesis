@@ -90,7 +90,6 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 	public IEnumerable<GizmoDragModeOption> GizmoDragModes { get; }
 	public IEnumerable<SliderType> SliderTypes { get; }
 
-
 	[DependsOn(nameof(this.GizmoDragModes))]
 	public GizmoDragModeOption SelectedGizmoDragMode
 	{

@@ -36,9 +36,6 @@ public class PoseService : ServiceBase<PoseService>
 
 	private bool isEnabled;
 
-	/// <inheritdoc/>
-	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GposeService.Instance];
-
 	public delegate void PoseEvent(bool value);
 
 	public static event PoseEvent? EnabledChanged;
@@ -178,6 +175,9 @@ public class PoseService : ServiceBase<PoseService>
 	public bool EnableParenting { get; set; } = true;
 
 	public bool CanEdit { get; set; }
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GposeService.Instance];
 
 	public override async Task Initialize()
 	{

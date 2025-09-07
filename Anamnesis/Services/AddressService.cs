@@ -16,11 +16,10 @@ using XivToolsWpf;
 #pragma warning disable SA1027, SA1025
 public class AddressService : ServiceBase<AddressService>
 {
-	private static IntPtr cameraManager;
+	public const int OVERWORLD_PLAYER_TARGET_OFFSET = 0x80;
+	public const int GPOSE_PLAYER_TARGET_OFFSET = 0x98;
 
-	// Static offsets
-	public static readonly int OverworldPlayerTargetOffset = 0x80;
-	public static readonly int GPosePlayerTargetOffset = 0x98;
+	private static IntPtr s_cameraManager;
 
 	public static IntPtr ActorTable { get; private set; }
 	public static IntPtr GPoseFilters { get; private set; }
@@ -40,8 +39,8 @@ public class AddressService : ServiceBase<AddressService>
 	public static IntPtr GposeCheck { get; private set; }               // GPoseCheckOffset
 	public static IntPtr GposeCheck2 { get; private set; }              // GPoseCheck2Offset
 	public static IntPtr Territory { get; private set; }
-	public static IntPtr OverworldPlayerTarget => MemoryService.Read<IntPtr>(IntPtr.Add(TargetSystem, OverworldPlayerTargetOffset));
-	public static IntPtr GPosePlayerTarget => MemoryService.Read<IntPtr>(IntPtr.Add(TargetSystem, GPosePlayerTargetOffset));
+	public static IntPtr OverworldPlayerTarget => MemoryService.Read<IntPtr>(IntPtr.Add(TargetSystem, OVERWORLD_PLAYER_TARGET_OFFSET));
+	public static IntPtr GPosePlayerTarget => MemoryService.Read<IntPtr>(IntPtr.Add(TargetSystem, GPOSE_PLAYER_TARGET_OFFSET));
 	public static IntPtr TimeAsm { get; private set; }
 	public static IntPtr Framework { get; set; }
 	public static IntPtr TargetSystem { get; set; }
@@ -61,7 +60,7 @@ public class AddressService : ServiceBase<AddressService>
 	{
 		get
 		{
-			IntPtr address = MemoryService.ReadPtr(cameraManager);
+			IntPtr address = MemoryService.ReadPtr(s_cameraManager);
 
 			if (address == IntPtr.Zero)
 				throw new Exception("Failed to read camera address");
@@ -126,7 +125,7 @@ public class AddressService : ServiceBase<AddressService>
 		KineDriverPosition = IntPtr.Zero;
 		KineDriverRotation = IntPtr.Zero;
 		KineDriverScale = IntPtr.Zero;
-		cameraManager = IntPtr.Zero;
+		s_cameraManager = IntPtr.Zero;
 		ServerWeather = IntPtr.Zero;
 		await base.Shutdown();
 	}
@@ -172,7 +171,7 @@ public class AddressService : ServiceBase<AddressService>
 			this.GetAddressFromSignature("GposeCheck", "0F 84 ?? ?? ?? ?? 8B 15 ?? ?? ?? ?? 48 89 6C 24 ??", 0, (p) => { GposeCheck = p; }),
 			this.GetAddressFromSignature("GposeCheck2", "8D 48 FF 48 8D 05 ?? ?? ?? ?? 8B 04 88 83 F8 04 49 8B CA", 3, (p) => { GposeCheck2 = p; }),
 			this.GetAddressFromSignature("TargetSystem", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 3B C6 0F 95 C0", 3, (p) => { TargetSystem = p; }),
-			this.GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { cameraManager = p; }),
+			this.GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { s_cameraManager = p; }),
 			this.GetAddressFromTextSignature("TimeAsm", "48 89 87 ?? ?? ?? ?? 48 69 C0", (p) => TimeAsm = p),
 			this.GetAddressFromTextSignature("Framework", "48 C7 05 ?? ?? ?? ?? 00 00 00 00 E8 ?? ?? ?? ?? 48 8D ?? ?? ?? 00 00 E8 ?? ?? ?? ?? 48 8D", (p) =>
 				{

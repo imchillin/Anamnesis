@@ -23,14 +23,14 @@ using XivToolsWpf;
 
 public class UpdateService : ServiceBase<UpdateService>
 {
-	private const string Repository = "imchillin/Anamnesis";
+	private const string REPOSITORY_NAME = "imchillin/Anamnesis";
 
 	// GitHub API rate limits requests to 60/h for unauthenticated users.
 	// The requests are associated with the originating IP address.
 	// Choose a reasonable update interval to avoid hitting the limit.
-	private const int UpdateIntervalMinutes = 10;
+	private const int UPDATE_INTERVAL_MINS = 10;
 
-	private const int ForceShutdownTimeout = 10000; // ms (10 seconds)
+	private const int FORCE_SHUTDOWN_TIMEOUT = 10000; // ms (10 seconds)
 
 	private readonly HttpClient httpClient = new HttpClient();
 	private Release? currentRelease;
@@ -62,9 +62,9 @@ public class UpdateService : ServiceBase<UpdateService>
 		DateTimeOffset lastCheck = SettingsService.Current.LastUpdateCheck;
 		TimeSpan elapsed = DateTimeOffset.Now - lastCheck;
 
-		if (elapsed.TotalMinutes < UpdateIntervalMinutes && !skipTimeCheck)
+		if (elapsed.TotalMinutes < UPDATE_INTERVAL_MINS && !skipTimeCheck)
 		{
-			Log.Information($"Last update check was less than {UpdateIntervalMinutes} minutes ago. Skipping.");
+			Log.Information($"Last update check was less than {UPDATE_INTERVAL_MINS} minutes ago. Skipping.");
 			return;
 		}
 
@@ -87,7 +87,7 @@ public class UpdateService : ServiceBase<UpdateService>
 
 		try
 		{
-			string url = $"https://api.github.com/repos/{Repository}/releases/latest";
+			string url = $"https://api.github.com/repos/{REPOSITORY_NAME}/releases/latest";
 			string result = await this.httpClient.GetStringAsync(url);
 			this.currentRelease = JsonSerializer.Deserialize<Release>(result);
 
@@ -264,7 +264,7 @@ public class UpdateService : ServiceBase<UpdateService>
 				// Force shutdown if application doesn't shutdown gracefully within the timeout.
 				_ = Task.Run(async () =>
 				{
-					await Task.Delay(ForceShutdownTimeout);
+					await Task.Delay(FORCE_SHUTDOWN_TIMEOUT);
 					Log.Warning("Forceful shutdown triggered after update (timeout reached).");
 					Environment.Exit(0);
 				});

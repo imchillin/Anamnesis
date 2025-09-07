@@ -16,6 +16,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
+public interface ISettingSection
+{
+	Dictionary<string, SettingCategory> SettingCategories { get; }
+}
+
 /// <summary>
 /// Interaction logic for SettingsTab.xaml.
 /// </summary>
@@ -192,9 +197,4 @@ public class SettingCategory
 		this.Element.Visibility = anyVisible ? Visibility.Visible : Visibility.Collapsed;
 		this.Settings.ForEach(setting => setting.Element.Visibility = categoryMatches || setting.Text.Contains(query, StringComparison.OrdinalIgnoreCase) ? Visibility.Visible : Visibility.Collapsed);
 	}
-}
-
-public interface ISettingSection
-{
-	Dictionary<string, SettingCategory> SettingCategories { get; }
 }

@@ -3,17 +3,17 @@
 
 namespace Anamnesis.Actor.Utilities;
 
-using System;
-using System.Collections.Generic;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Serilog;
+using System;
+using System.Collections.Generic;
 using cmColor = Anamnesis.Memory.Color;
 using wpfColor = System.Windows.Media.Color;
 
 public static class ColorData
 {
-	private static readonly Entry[] Colors;
+	private static readonly Entry[] s_colors = [];
 
 	static ColorData()
 	{
@@ -53,7 +53,7 @@ public static class ColorData
 			Log.Error(ex, "Failed to read game color data.");
 		}
 
-		Colors = colors.ToArray();
+		s_colors = colors.ToArray();
 	}
 
 	public static Entry[] GetSkin(ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
@@ -109,10 +109,10 @@ public static class ColorData
 	{
 		Entry[] entries = new Entry[count];
 
-		if (Colors.Length <= 0)
+		if (s_colors.Length <= 0)
 			return entries;
 
-		Array.Copy(Colors, from, entries, 0, count);
+		Array.Copy(s_colors, from, entries, 0, count);
 		return entries;
 	}
 

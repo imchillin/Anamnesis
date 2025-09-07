@@ -15,8 +15,8 @@ using System.Threading.Tasks;
 /// </summary>
 public class CustomBoneNameService : ServiceBase<CustomBoneNameService>
 {
-	private static readonly string SavePath = FileService.ParseToFilePath(FileService.StoreDirectory + "/CustomBoneNames.json");
-	private static Dictionary<string, string> customBoneNames = [];
+	private static readonly string s_savePath = FileService.ParseToFilePath(FileService.StoreDirectory + "/CustomBoneNames.json");
+	private static Dictionary<string, string> s_customBoneNames = [];
 
 	/// <summary>
 	/// Gets the custom name for a bone (if it exists).
@@ -25,7 +25,7 @@ public class CustomBoneNameService : ServiceBase<CustomBoneNameService>
 	/// <returns>The custom name for the bone if found, or null if no custom name exists.</returns>
 	public static string? GetBoneName(string bone)
 	{
-		if (customBoneNames.TryGetValue(bone, out var customName))
+		if (s_customBoneNames.TryGetValue(bone, out var customName))
 			return customName;
 
 		return null;
@@ -43,13 +43,13 @@ public class CustomBoneNameService : ServiceBase<CustomBoneNameService>
 
 		if (string.IsNullOrEmpty(customName))
 		{
-			changed = customBoneNames.Remove(bone);
+			changed = s_customBoneNames.Remove(bone);
 		}
 		else
 		{
-			changed = !customBoneNames.TryGetValue(bone, out var existing) || existing != customName;
+			changed = !s_customBoneNames.TryGetValue(bone, out var existing) || existing != customName;
 			if (changed)
-				customBoneNames[bone] = customName;
+				s_customBoneNames[bone] = customName;
 		}
 
 		if (changed)
@@ -61,8 +61,8 @@ public class CustomBoneNameService : ServiceBase<CustomBoneNameService>
 	/// </summary>
 	public static void Save()
 	{
-		string json = SerializerService.Serialize(customBoneNames);
-		File.WriteAllText(SavePath, json);
+		string json = SerializerService.Serialize(s_customBoneNames);
+		File.WriteAllText(s_savePath, json);
 	}
 
 	/// <inheritdoc/>
@@ -70,16 +70,16 @@ public class CustomBoneNameService : ServiceBase<CustomBoneNameService>
 	{
 		try
 		{
-			if (File.Exists(SavePath))
+			if (File.Exists(s_savePath))
 			{
-				string json = File.ReadAllText(SavePath);
-				customBoneNames = SerializerService.Deserialize<Dictionary<string, string>>(json);
+				string json = File.ReadAllText(s_savePath);
+				s_customBoneNames = SerializerService.Deserialize<Dictionary<string, string>>(json);
 			}
 		}
 		catch (Exception ex)
 		{
 			Log.Warning(ex, "Failed to load custom bone names.");
-			customBoneNames = [];   // Reset to empty dictionary on error
+			s_customBoneNames = [];   // Reset to empty dictionary on error
 			Save();                 // Wipe the file to avoid future errors
 		}
 

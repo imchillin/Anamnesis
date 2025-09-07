@@ -26,14 +26,14 @@ public abstract class EquipmentSelectorDrawer : SelectorDrawer<IItem>
 /// </summary>
 public partial class EquipmentSelector : EquipmentSelectorDrawer
 {
-	private static Classes classFilter = Classes.All;
-	private static ItemCategories categoryFilter = ItemCategories.All;
-	private static bool showLocked = true;
-	private static bool autoOffhand = true;
-	private static bool showFilters = false;
-	private static bool forceMainModel = false;
-	private static bool forceOffModel = false;
-	private static SortModes sortMode = SortModes.Row;
+	private static Classes s_classFilter = Classes.All;
+	private static ItemCategories s_categoryFilter = ItemCategories.All;
+	private static bool s_showLocked = true;
+	private static bool s_autoOffhand = true;
+	private static bool s_showFilters = false;
+	private static bool s_forceMainModel = false;
+	private static bool s_forceOffModel = false;
+	private static SortModes s_sortMode = SortModes.Row;
 
 	private readonly Memory.ActorMemory? actor;
 
@@ -45,7 +45,7 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
 
-		this.JobFilterText.Text = classFilter.Describe();
+		this.JobFilterText.Text = s_classFilter.Describe();
 
 		HotkeyService.RegisterHotkeyHandler("AppearancePage.ClearEquipment", this.ClearSlot);
 	}
@@ -59,8 +59,8 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 
 	public bool ShowFilters
 	{
-		get => showFilters;
-		set => showFilters = value;
+		get => s_showFilters;
+		set => s_showFilters = value;
 	}
 
 	public ItemSlots Slot { get; set; }
@@ -71,10 +71,10 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 
 	public SortModes SortMode
 	{
-		get => sortMode;
+		get => s_sortMode;
 		set
 		{
-			sortMode = value;
+			s_sortMode = value;
 			this.FilterItems();
 		}
 	}
@@ -87,10 +87,10 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 
 	public Classes ClassFilter
 	{
-		get => classFilter;
+		get => s_classFilter;
 		set
 		{
-			classFilter = value;
+			s_classFilter = value;
 			this.JobFilterText.Text = value.Describe();
 			this.FilterItems();
 		}
@@ -98,46 +98,46 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 
 	public ItemCategories CategoryFilter
 	{
-		get => categoryFilter;
+		get => s_categoryFilter;
 		set
 		{
-			categoryFilter = value;
+			s_categoryFilter = value;
 			this.FilterItems();
 		}
 	}
 
 	public bool ShowLocked
 	{
-		get => showLocked;
+		get => s_showLocked;
 		set
 		{
-			showLocked = value;
+			s_showLocked = value;
 			this.FilterItems();
 		}
 	}
 
 	public bool AutoOffhand
 	{
-		get => autoOffhand;
-		set => autoOffhand = value;
+		get => s_autoOffhand;
+		set => s_autoOffhand = value;
 	}
 
 	public bool ForceMainModel
 	{
-		get => forceMainModel;
+		get => s_forceMainModel;
 		set
 		{
-			forceMainModel = value;
+			s_forceMainModel = value;
 			this.FilterItems();
 		}
 	}
 
 	public bool ForceOffModel
 	{
-		get => forceOffModel;
+		get => s_forceOffModel;
 		set
 		{
-			forceOffModel = value;
+			s_forceOffModel = value;
 			this.FilterItems();
 		}
 	}

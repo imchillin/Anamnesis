@@ -3,11 +3,11 @@
 
 namespace Anamnesis.Actor.Views;
 
-using System.Collections.Generic;
-using System.Windows.Controls;
 using Anamnesis.Actor.Utilities;
 using Anamnesis.Services;
 using PropertyChanged;
+using System.Collections.Generic;
+using System.Windows.Controls;
 
 /// <summary>
 /// Interaction logic for FxivColorSelectorDrawer.xaml.

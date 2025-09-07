@@ -19,7 +19,7 @@ public enum Roles
 
 public static class RolesExtensions
 {
-	private static Dictionary<Roles, List<Classes>>? classLookupCache;
+	private static Dictionary<Roles, List<Classes>>? s_classLookupCache;
 
 	/// <summary>
 	/// Gets all classes that are part of this role.
@@ -28,9 +28,9 @@ public static class RolesExtensions
 	/// <returns>A collection of classes that are part of this role.</returns>
 	public static List<Classes> GetClasses(this Roles role)
 	{
-		if (classLookupCache == null)
+		if (s_classLookupCache == null)
 		{
-			classLookupCache = [];
+			s_classLookupCache = [];
 
 			foreach (Classes? job in Enum.GetValues<Classes>().Select(v => (Classes?)v))
 			{
@@ -42,13 +42,13 @@ public static class RolesExtensions
 				if (classRole == null)
 					continue;
 
-				if (!classLookupCache.ContainsKey((Roles)classRole))
-					classLookupCache.Add((Roles)classRole, []);
+				if (!s_classLookupCache.ContainsKey((Roles)classRole))
+					s_classLookupCache.Add((Roles)classRole, []);
 
-				classLookupCache[(Roles)classRole].Add((Classes)job);
+				s_classLookupCache[(Roles)classRole].Add((Classes)job);
 			}
 		}
 
-		return classLookupCache[role];
+		return s_classLookupCache[role];
 	}
 }

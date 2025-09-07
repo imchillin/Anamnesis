@@ -46,6 +46,8 @@ public partial class ItemView : UserControl
 		this.ContentArea.DataContext = this;
 	}
 
+	public static Settings Settings => SettingsService.Current;
+
 	public ItemSlots Slot
 	{
 		get => SlotDp.Get(this);
@@ -72,8 +74,6 @@ public partial class ItemView : UserControl
 		get => WeaponExModelDp.Get(this);
 		set => WeaponExModelDp.Set(this, value);
 	}
-
-	public static Settings Settings => SettingsService.Current;
 
 	public string SlotName => LocalizationService.GetString("Character_Equipment_" + this.Slot);
 

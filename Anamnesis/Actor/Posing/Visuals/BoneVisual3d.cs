@@ -20,13 +20,13 @@ using XivToolsWpf.Math3D.Extensions;
 /// </summary>
 public class BoneVisual3D : ModelVisual3D, IDisposable
 {
-	protected const float EqualityTolerance = 0.00001f;
-	private static readonly double SphereRadius = 0.015;
-	private static readonly Material SelectedMaterial = CreateMaterial(Colors.Orange);
-	private static readonly Material HoveredMaterial = CreateMaterial(Colors.DarkOrange);
-	private static readonly Material NormalMaterialLightTheme = CreateMaterial(Colors.Black, 128);
-	private static readonly Material NormalMaterialDarkTheme = CreateMaterial(Colors.White, 128);
-	private static readonly Sphere PrecomputedSphere = CreatePrecomputedSphere();
+	private const double SPHERE_RADIUS = 0.015;
+
+	private static readonly Material s_selectedMaterial = CreateMaterial(Colors.Orange);
+	private static readonly Material s_hoveredMaterial = CreateMaterial(Colors.DarkOrange);
+	private static readonly Material s_normalMaterialLightTheme = CreateMaterial(Colors.Black, 128);
+	private static readonly Material s_normalMaterialDarkTheme = CreateMaterial(Colors.White, 128);
+	private static readonly Sphere s_precomputedSphere = CreatePrecomputedSphere();
 	private readonly PrsTransform sphereTransform = new();
 
 	private readonly Sphere sphere;
@@ -61,7 +61,7 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 
 		this.Initialize(bone);
 
-		this.sphere = new Sphere(PrecomputedSphere)
+		this.sphere = new Sphere(s_precomputedSphere)
 		{
 			Transform = this.sphereTransform.Transform,
 		};
@@ -134,8 +134,8 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 
 		var currentPosition = this.Bone.Position;
 		var currentRotation = this.Bone.Rotation;
-		bool positionChanged = !(this.lastPosition?.IsApproximately(currentPosition, EqualityTolerance) ?? false);
-		bool rotationChanged = !(this.lastRotation?.IsApproximately(currentRotation, EqualityTolerance) ?? false);
+		bool positionChanged = !(this.lastPosition?.IsApproximately(currentPosition, Core.Bone.EQUALITY_TOLERANCE) ?? false);
+		bool rotationChanged = !(this.lastRotation?.IsApproximately(currentRotation, Core.Bone.EQUALITY_TOLERANCE) ?? false);
 
 		if (positionChanged)
 		{
@@ -183,11 +183,11 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 	internal void UpdateMaterial()
 	{
 		if (this.Bone.IsHovered)
-			this.sphere.Material = HoveredMaterial;
+			this.sphere.Material = s_hoveredMaterial;
 		else if (this.Bone.IsSelected)
-			this.sphere.Material = SelectedMaterial;
+			this.sphere.Material = s_selectedMaterial;
 		else
-			this.sphere.Material = Themes.IsLightTheme ? NormalMaterialLightTheme : NormalMaterialDarkTheme;
+			this.sphere.Material = Themes.IsLightTheme ? s_normalMaterialLightTheme : s_normalMaterialDarkTheme;
 
 		// Handle child bones
 		foreach (BoneVisual3D bone in this.Children.OfType<BoneVisual3D>())
@@ -233,8 +233,8 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 	{
 		var sphere = new Sphere
 		{
-			Radius = SphereRadius,
-			Material = Themes.IsLightTheme ? NormalMaterialLightTheme : NormalMaterialDarkTheme,
+			Radius = SPHERE_RADIUS,
+			Material = Themes.IsLightTheme ? s_normalMaterialLightTheme : s_normalMaterialDarkTheme,
 		};
 
 		return sphere;

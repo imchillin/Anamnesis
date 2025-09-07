@@ -7,8 +7,8 @@ using System.Collections.Generic;
 
 public static class LegacyBoneNameConverter
 {
-	private static readonly Dictionary<string, string> ModernToLegacy = new();
-	private static readonly Dictionary<string, string> LegacyToModern = new()
+	private static readonly Dictionary<string, string> s_modernToLegacy = new();
+	private static readonly Dictionary<string, string> s_legacyToModern = new()
 		{
 			// Body
 			{ "Root", "n_root" },
@@ -182,25 +182,25 @@ public static class LegacyBoneNameConverter
 
 	static LegacyBoneNameConverter()
 	{
-		foreach ((string legacy, string modern) in LegacyToModern)
+		foreach ((string legacy, string modern) in s_legacyToModern)
 		{
 			// Skip over duplicate modern keys, since Hroth and Viera both duplicate bones.
-			if (ModernToLegacy.ContainsKey(modern))
+			if (s_modernToLegacy.ContainsKey(modern))
 				continue;
 
-			ModernToLegacy.Add(modern, legacy);
+			s_modernToLegacy.Add(modern, legacy);
 		}
 	}
 
 	public static string? GetModernName(string legacyName)
 	{
-		LegacyToModern.TryGetValue(legacyName, out string? name);
+		s_legacyToModern.TryGetValue(legacyName, out string? name);
 		return name;
 	}
 
 	public static string? GetLegacyName(string modernName)
 	{
-		ModernToLegacy.TryGetValue(modernName, out string? name);
+		s_modernToLegacy.TryGetValue(modernName, out string? name);
 		return name;
 	}
 }

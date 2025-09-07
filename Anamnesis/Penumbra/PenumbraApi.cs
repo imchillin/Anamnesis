@@ -14,12 +14,12 @@ using System.Threading.Tasks;
 
 internal static class PenumbraApi
 {
-	private const string Url = "http://localhost:42069/api";
-	private const int TimeoutMs = 500;
+	private const string URL = "http://localhost:42069/api";
+	private const int TIMEOUT_MS = 500;
 
-	private static readonly HttpClient Client = new()
+	private static readonly HttpClient s_client = new()
 	{
-		Timeout = TimeSpan.FromMilliseconds(TimeoutMs),
+		Timeout = TimeSpan.FromMilliseconds(TIMEOUT_MS),
 	};
 
 	public static async Task<string> Post(string route, object content)
@@ -42,7 +42,7 @@ internal static class PenumbraApi
 			byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 			HttpContent httpContent = byteContent;
 
-			using var response = await Client.PostAsync(Url + route, httpContent);
+			using var response = await s_client.PostAsync(URL + route, httpContent);
 			response.EnsureSuccessStatusCode();
 
 			using var responseContent = await response.Content.ReadAsStreamAsync();

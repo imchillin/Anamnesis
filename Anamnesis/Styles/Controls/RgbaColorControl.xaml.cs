@@ -57,7 +57,7 @@ public partial class RgbaColorControl : UserControl
 		ColorSelectorDrawer selector = new()
 		{
 			EnableAlpha = true,
-			Value = this.Value
+			Value = this.Value,
 		};
 
 		selector.ValueChanged += (v) => { this.Value = v; };

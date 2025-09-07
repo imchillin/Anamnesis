@@ -5,7 +5,7 @@ namespace System.Collections.Generic;
 
 public static class DictionaryExtensions
 {
-	public static (TKey, TValue) Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> self)
+	public static (TKey Key, TValue Value) Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> self)
 	{
 		return (self.Key, self.Value);
 	}

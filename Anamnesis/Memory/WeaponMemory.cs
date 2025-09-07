@@ -65,7 +65,7 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 	{
 		bool useEmperorsFists = true;
 
-		if (this.parent is ActorMemory actor)
+		if (this.Parent is ActorMemory actor)
 		{
 			if (actor.OffHand == this && actor.MainHand != null)
 			{

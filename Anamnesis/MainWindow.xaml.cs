@@ -32,14 +32,14 @@ using XivToolsWpf.Windows;
 [AddINotifyPropertyChangedInterface]
 public partial class MainWindow : ChromedWindow
 {
-	private static MainWindow? instance;
+	private static MainWindow? s_instance;
 	private MiniWindow? mini;
 	private bool hasSetPosition = false;
 	private Tabs tab = Tabs.Home;
 
 	public MainWindow()
 	{
-		instance = this;
+		s_instance = this;
 
 		this.InitializeComponent();
 
@@ -62,7 +62,7 @@ public partial class MainWindow : ChromedWindow
 		Actor,
 	}
 
-	public static new bool IsActive => instance?.GetIsActive() ?? false;
+	public static new bool IsActive => s_instance?.GetIsActive() ?? false;
 
 	public bool IsClosing { get; private set; } = false;
 	public bool IsDrawerOpen { get; private set; } = false;
@@ -123,7 +123,7 @@ public partial class MainWindow : ChromedWindow
 
 	public static DpiScale GetDpi()
 	{
-		return VisualTreeHelper.GetDpi(instance);
+		return VisualTreeHelper.GetDpi(s_instance);
 	}
 
 	protected override void OnActivated(EventArgs e)

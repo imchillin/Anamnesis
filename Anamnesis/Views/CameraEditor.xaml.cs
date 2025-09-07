@@ -20,8 +20,8 @@ using static Anamnesis.Styles.Controls.SliderInputBox;
 [AddINotifyPropertyChangedInterface]
 public partial class CameraEditor : UserControl
 {
-	private static DirectoryInfo? lastLoadDir;
-	private static DirectoryInfo? lastSaveDir;
+	private static DirectoryInfo? s_lastLoadDir;
+	private static DirectoryInfo? s_lastSaveDir;
 
 	public CameraEditor()
 	{
@@ -65,12 +65,12 @@ public partial class CameraEditor : UserControl
 				typeof(CameraShotFile),
 			};
 
-			OpenResult result = await FileService.Open(lastLoadDir, shortcuts, types);
+			OpenResult result = await FileService.Open(s_lastLoadDir, shortcuts, types);
 
 			if (result.File == null)
 				return;
 
-			lastLoadDir = result.Directory;
+			s_lastLoadDir = result.Directory;
 
 			if (result.File is CameraShotFile camFile)
 			{
@@ -91,12 +91,12 @@ public partial class CameraEditor : UserControl
 		ActorMemory actorMemory = new ActorMemory();
 		actorMemory.SetAddress(targetActor.Address);
 
-		SaveResult result = await FileService.Save<CameraShotFile>(lastSaveDir, FileService.DefaultCameraDirectory);
+		SaveResult result = await FileService.Save<CameraShotFile>(s_lastSaveDir, FileService.DefaultCameraDirectory);
 
 		if (result.Path == null)
 			return;
 
-		lastSaveDir = result.Directory;
+		s_lastSaveDir = result.Directory;
 
 		CameraShotFile file = new CameraShotFile();
 		file.WriteToFile(CameraService.Instance, actorMemory);

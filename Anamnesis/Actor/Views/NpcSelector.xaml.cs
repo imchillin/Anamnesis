@@ -179,6 +179,20 @@ public partial class NpcSelector : NpcSelectorDrawer
 		return matches;
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static int GetNpcSortPriority(INpcBase npc)
+	{
+		return npc switch
+		{
+			ResidentNpc => 0,
+			Mount => 1,
+			Companion => 2,
+			BattleNpc => 3,
+			Ornament => 4,
+			_ => 5,
+		};
+	}
+
 	private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
 		if (e.PropertyName == nameof(this.CurrentFilter))
@@ -193,20 +207,6 @@ public partial class NpcSelector : NpcSelectorDrawer
 			return;
 
 		await ClipboardUtility.CopyToClipboardAsync(this.Value.ToStringKey());
-	}
-
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static int GetNpcSortPriority(INpcBase npc)
-	{
-		return npc switch
-		{
-			ResidentNpc => 0,
-			Mount => 1,
-			Companion => 2,
-			BattleNpc => 3,
-			Ornament => 4,
-			_ => 5,
-		};
 	}
 
 	[AddINotifyPropertyChangedInterface]

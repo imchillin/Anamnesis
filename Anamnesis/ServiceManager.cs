@@ -17,9 +17,9 @@ using XivToolsWpf;
 
 public class ServiceManager
 {
-	private static readonly Stopwatch AddTimer = new();
-	private static readonly Stopwatch StartupTimer = new();
-	private static readonly List<IService> Services = new List<IService>();
+	private static readonly Stopwatch s_addTimer = new();
+	private static readonly Stopwatch s_startupTimer = new();
+	private static readonly List<IService> s_services = new List<IService>();
 
 	public static bool IsInitialized { get; private set; } = false;
 	public static bool IsStarted { get; private set; } = false;
@@ -33,7 +33,7 @@ public class ServiceManager
 				throw new Exception("Attempt to add service after services have started");
 
 			IService service = Activator.CreateInstance<T>();
-			Services.Add(service);
+			s_services.Add(service);
 			await InitializeService(service);
 		}
 		catch (UpdateTriggeredException)
@@ -48,7 +48,7 @@ public class ServiceManager
 
 	public async Task InitializeServices()
 	{
-		StartupTimer.Start();
+		s_startupTimer.Start();
 
 		try
 		{
@@ -87,43 +87,43 @@ public class ServiceManager
 
 		IsInitialized = true;
 
-		Log.Information($"Services intialized in {StartupTimer.ElapsedMilliseconds}ms");
+		Log.Information($"Services intialized in {s_startupTimer.ElapsedMilliseconds}ms");
 
 		await this.StartServices();
 
-		StartupTimer.Restart();
+		s_startupTimer.Restart();
 
 		CheckWindowsVersion();
 
-		StartupTimer.Stop();
-		Log.Information($"Took {StartupTimer.ElapsedMilliseconds}ms to check windows version");
+		s_startupTimer.Stop();
+		Log.Information($"Took {s_startupTimer.ElapsedMilliseconds}ms to check windows version");
 	}
 
 	public async Task StartServices()
 	{
-		StartupTimer.Restart();
+		s_startupTimer.Restart();
 
 		await Dispatch.MainThread();
 
-		foreach (IService service in Services)
+		foreach (IService service in s_services)
 		{
-			AddTimer.Restart();
+			s_addTimer.Restart();
 			await service.Start();
-			AddTimer.Stop();
+			s_addTimer.Stop();
 
-			Log.Information($"Started service: {service.GetType().Name} in {AddTimer.ElapsedMilliseconds}ms");
+			Log.Information($"Started service: {service.GetType().Name} in {s_addTimer.ElapsedMilliseconds}ms");
 		}
 
 		IsStarted = true;
 
-		StartupTimer.Stop();
-		Log.Information($"Services started in {StartupTimer.ElapsedMilliseconds}ms");
+		s_startupTimer.Stop();
+		Log.Information($"Services started in {s_startupTimer.ElapsedMilliseconds}ms");
 	}
 
 	public async Task ShutdownServices()
 	{
 		// Shutdown services in reverse order (local copy so that we don't mess up order on restart)
-		var reversedServices = new List<IService>(Services);
+		var reversedServices = new List<IService>(s_services);
 		reversedServices.Reverse();
 
 		foreach (IService service in reversedServices)
@@ -132,11 +132,11 @@ public class ServiceManager
 			{
 				// If this throws an exception we should keep trying to shut down the rest
 				// not doing so can leave the game memory in a corrupt state
-				AddTimer.Restart();
+				s_addTimer.Restart();
 				await service.Shutdown();
-				AddTimer.Stop();
+				s_addTimer.Stop();
 
-				Log.Information($"Shutdown service: {service.GetType().Name} in {AddTimer.ElapsedMilliseconds}ms");
+				Log.Information($"Shutdown service: {service.GetType().Name} in {s_addTimer.ElapsedMilliseconds}ms");
 			}
 			catch (Exception ex)
 			{
@@ -159,11 +159,11 @@ public class ServiceManager
 
 	private static async Task InitializeService(IService service)
 	{
-		AddTimer.Restart();
+		s_addTimer.Restart();
 		await Dispatch.NonUiThread();
 		await service.Initialize();
-		AddTimer.Stop();
+		s_addTimer.Stop();
 
-		Log.Information($"Initialized service: {service.GetType().Name} in {AddTimer.ElapsedMilliseconds}ms");
+		Log.Information($"Initialized service: {service.GetType().Name} in {s_addTimer.ElapsedMilliseconds}ms");
 	}
 }

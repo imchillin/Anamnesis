@@ -32,27 +32,27 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// <summary>
 	/// The memory protection constant for read, write, and execute permissions.
 	/// </summary>
-	private const uint VirtualProtectReadWriteExecute = 0x40;
+	private const uint VIRTUAL_PROTECT_READ_WRITE_EXECUTE = 0x40;
 
 	/// <summary>
 	/// The maximum number of attempts to read from memory before failing.
 	/// </summary>
-	private const int MaxReadAttempts = 10;
+	private const int MAX_READ_ATTEMPTS = 10;
 
 	/// <summary>
 	/// The number of milliseconds to wait between read attempts.
 	/// </summary>
-	private const int TimeBetweenReadAttempts = 10;
+	private const int TIME_BETWEEN_READ_ATTEMPTS = 10;
 
 	/// <summary>
 	/// The interval in milliseconds to wait for process refresh checks.
 	/// </summary>
-	private const int ProcessRefreshTimerInterval = 100;
+	private const int PROCESS_REFRESH_TIMER_INTERVAL = 100;
 
 	/// <summary>
 	/// The interval in milliseconds to wait for before doing a process recovery attempt.
 	/// </summary>
-	private const int ProcessWatchdogInterval = 10000;
+	private const int PROCESS_WATCHDOG_INTERVAL = 10000;
 
 	/// <summary>
 	/// A dictionary to store the base addresses of loaded modules by their names.
@@ -175,7 +175,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 		int size = Marshal.SizeOf<T>();
 		Span<byte> buffer = stackalloc byte[size];
 
-		while (attempt < MaxReadAttempts)
+		while (attempt < MAX_READ_ATTEMPTS)
 		{
 			unsafe
 			{
@@ -189,7 +189,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 			}
 
 			attempt++;
-			Thread.Sleep(TimeBetweenReadAttempts);
+			Thread.Sleep(TIME_BETWEEN_READ_ATTEMPTS);
 		}
 
 		throw new InvalidOperationException($"Failed to read memory {typeof(T)} from address {address}");
@@ -218,7 +218,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 		int size = Marshal.SizeOf(readType);
 		Span<byte> buffer = stackalloc byte[size];
 
-		while (attempt < MaxReadAttempts)
+		while (attempt < MAX_READ_ATTEMPTS)
 		{
 			unsafe
 			{
@@ -243,7 +243,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 			}
 
 			attempt++;
-			Thread.Sleep(TimeBetweenReadAttempts);
+			Thread.Sleep(TIME_BETWEEN_READ_ATTEMPTS);
 		}
 
 		throw new InvalidOperationException($"Failed to read memory {type} from address {address}");
@@ -427,7 +427,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// </remarks>
 	public static bool WriteExecutable(IntPtr address, byte[] buffer)
 	{
-		VirtualProtectEx(Handle, address, buffer.Length, VirtualProtectReadWriteExecute, out _);
+		VirtualProtectEx(Handle, address, buffer.Length, VIRTUAL_PROTECT_READ_WRITE_EXECUTE, out _);
 
 		unsafe
 		{
@@ -449,7 +449,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// </remarks>
 	public static bool WriteExecutable(IntPtr address, Span<byte> buffer)
 	{
-		VirtualProtectEx(Handle, address, buffer.Length, VirtualProtectReadWriteExecute, out _);
+		VirtualProtectEx(Handle, address, buffer.Length, VIRTUAL_PROTECT_READ_WRITE_EXECUTE, out _);
 
 		unsafe
 		{
@@ -745,7 +745,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 
 		while (this.IsInitialized && Process != null)
 		{
-			await Task.Delay(ProcessRefreshTimerInterval);
+			await Task.Delay(PROCESS_REFRESH_TIMER_INTERVAL);
 
 			if (!IsProcessAlive)
 			{
@@ -760,7 +760,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 					}
 
 					Log.Information("FFXIV Process has terminated");
-					await Task.Delay(ProcessWatchdogInterval);
+					await Task.Delay(PROCESS_WATCHDOG_INTERVAL);
 					await this.GetProcess();
 
 					// If process is restored, start all services again

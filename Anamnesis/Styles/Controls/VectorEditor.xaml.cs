@@ -81,7 +81,7 @@ public partial class VectorEditor : UserControl, INotifyPropertyChanged
 		this.LayoutStyle = LayoutStyles.Standard;
 		this.TickFrequency = 0.01m;
 		this.ColorMode = ColorModes.Standard;
-		this.Suffix = "";
+		this.Suffix = string.Empty;
 		this.EnableStepButtons = true;
 		this.DecimalPlaces = 0;
 		this.OverflowBehavior = SliderInputBox.OverflowModes.Clamp;
@@ -261,15 +261,15 @@ public partial class VectorEditor : UserControl, INotifyPropertyChanged
 
 	/// <summary>Gets the X-axis color based on the color mode.</summary>
 	[DependsOn(nameof(ColorMode))]
-	public string XColor => (this.ColorMode == ColorModes.Rotation) ? "#2861FD" : "";
+	public string XColor => (this.ColorMode == ColorModes.Rotation) ? "#2861FD" : string.Empty;
 
 	/// <summary>Gets the Y-axis color based on the color mode.</summary>
 	[DependsOn(nameof(ColorMode))]
-	public string YColor => (this.ColorMode == ColorModes.Rotation) ? "#8DDB04" : "";
+	public string YColor => (this.ColorMode == ColorModes.Rotation) ? "#8DDB04" : string.Empty;
 
 	/// <summary>Gets the Z-axis color based on the color mode.</summary>
 	[DependsOn(nameof(ColorMode))]
-	public string ZColor => (this.ColorMode == ColorModes.Rotation) ? "#FF1746" : "";
+	public string ZColor => (this.ColorMode == ColorModes.Rotation) ? "#FF1746" : string.Empty;
 
 	/// <summary>Gets or sets the X value of the vector.</summary>
 	[AlsoNotifyFor(nameof(Value))]

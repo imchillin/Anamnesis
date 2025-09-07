@@ -472,11 +472,6 @@ public class CharacterFile : JsonFileBase
 		Log.Information("Finished reading appearance from file");
 	}
 
-	private bool IncludeSection(SaveModes section, SaveModes mode)
-	{
-		return this.SaveMode.HasFlagUnsafe(section) && mode.HasFlagUnsafe(section);
-	}
-
 	private static void WriteEquipment(ItemSave? itemSave, ItemMemory? itemMemory)
 	{
 		if (itemSave != null)
@@ -490,6 +485,11 @@ public class CharacterFile : JsonFileBase
 			itemMemory.Dye = (byte)ItemUtility.NoneDye.RowId;
 			itemMemory.Dye2 = (byte)ItemUtility.NoneDye.RowId;
 		}
+	}
+
+	private bool IncludeSection(SaveModes section, SaveModes mode)
+	{
+		return this.SaveMode.HasFlagUnsafe(section) && mode.HasFlagUnsafe(section);
 	}
 
 	[Serializable]

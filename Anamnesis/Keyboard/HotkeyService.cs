@@ -16,12 +16,10 @@ using System.Windows.Input;
 
 public class HotkeyService : ServiceBase<HotkeyService>
 {
-	private static readonly Hook Hook = new();
-
-	private static readonly Dictionary<string, List<Handler>> FunctionToHandlers = new();
-	private static readonly Dictionary<(Key, ModifierKeys), string> KeyToFunction = new();
-
-	private static readonly HashSet<Key> KeyDownSentToGame = new();
+	private static readonly Hook s_hotkeyHook = new();
+	private static readonly Dictionary<string, List<Handler>> s_functionToHandlers = new();
+	private static readonly Dictionary<(Key, ModifierKeys), string> s_keyToFunction = new();
+	private static readonly HashSet<Key> s_keyDownSentToGame = new();
 
 	/// <inheritdoc/>
 	protected override IEnumerable<IService> Dependencies =>
@@ -48,29 +46,29 @@ public class HotkeyService : ServiceBase<HotkeyService>
 
 	public static void RegisterHotkeyHandler(string function, Handler handler)
 	{
-		lock (FunctionToHandlers)
+		lock (s_functionToHandlers)
 		{
-			if (!FunctionToHandlers.ContainsKey(function))
-				FunctionToHandlers.Add(function, new());
+			if (!s_functionToHandlers.ContainsKey(function))
+				s_functionToHandlers.Add(function, new());
 
-			FunctionToHandlers[function].Insert(0, handler);
+			s_functionToHandlers[function].Insert(0, handler);
 			Log.Verbose($"Adding hotkey binding: {function} for {handler.Owner}");
 		}
 	}
 
 	public static void ClearHotkeyHandler(string function, object owner)
 	{
-		lock (FunctionToHandlers)
+		lock (s_functionToHandlers)
 		{
-			if (!FunctionToHandlers.ContainsKey(function))
+			if (!s_functionToHandlers.ContainsKey(function))
 				return;
 
-			for (int i = FunctionToHandlers[function].Count - 1; i >= 0; i--)
+			for (int i = s_functionToHandlers[function].Count - 1; i >= 0; i--)
 			{
-				if (FunctionToHandlers[function][i].Owner != owner)
+				if (s_functionToHandlers[function][i].Owner != owner)
 					continue;
 
-				FunctionToHandlers[function].RemoveAt(i);
+				s_functionToHandlers[function].RemoveAt(i);
 			}
 
 			Log.Verbose($"Clearing hotkey binding: {function} for {owner}");
@@ -81,15 +79,15 @@ public class HotkeyService : ServiceBase<HotkeyService>
 	{
 		var dicKey = (key, modifiers);
 
-		if (KeyToFunction.ContainsKey(dicKey))
+		if (s_keyToFunction.ContainsKey(dicKey))
 			throw new Exception($"Duplicate key binding: {key} - {modifiers} - {function}");
 
-		KeyToFunction.Add(dicKey, function);
+		s_keyToFunction.Add(dicKey, function);
 	}
 
 	public static KeyCombination? GetBind(string function)
 	{
-		foreach ((var keys, string func) in KeyToFunction)
+		foreach ((var keys, string func) in s_keyToFunction)
 		{
 			if (func == function)
 			{
@@ -112,16 +110,16 @@ public class HotkeyService : ServiceBase<HotkeyService>
 	/// <inheritdoc/>
 	public override Task Shutdown()
 	{
-		Hook.OnKeyboardInput -= this.OnKeyboardInput;
-		Hook.Stop();
+		s_hotkeyHook.OnKeyboardInput -= this.OnKeyboardInput;
+		s_hotkeyHook.Stop();
 		return base.Shutdown();
 	}
 
 	/// <inheritdoc/>
 	protected override Task OnStart()
 	{
-		Hook.OnKeyboardInput += this.OnKeyboardInput;
-		Hook.Start();
+		s_hotkeyHook.OnKeyboardInput += this.OnKeyboardInput;
+		s_hotkeyHook.Start();
 		return base.OnStart();
 	}
 
@@ -140,14 +138,14 @@ public class HotkeyService : ServiceBase<HotkeyService>
 			{
 				if (MainWindow.IsActive && state == KeyboardKeyStates.Pressed)
 				{
-					KeyDownSentToGame.Add(key);
+					s_keyDownSentToGame.Add(key);
 					MemoryService.SendKey(key, state);
 				}
 			}
 
-			if (state == KeyboardKeyStates.Released && KeyDownSentToGame.Contains(key))
+			if (state == KeyboardKeyStates.Released && s_keyDownSentToGame.Contains(key))
 			{
-				KeyDownSentToGame.Remove(key);
+				s_keyDownSentToGame.Remove(key);
 				MemoryService.SendKey(key, state);
 			}
 		}
@@ -172,15 +170,15 @@ public class HotkeyService : ServiceBase<HotkeyService>
 
 		var dicKey = (key, modifiers);
 
-		if (!KeyToFunction.ContainsKey(dicKey))
+		if (!s_keyToFunction.ContainsKey(dicKey))
 			return false;
 
-		string func = KeyToFunction[dicKey];
+		string func = s_keyToFunction[dicKey];
 
-		if (!FunctionToHandlers.ContainsKey(func))
+		if (!s_functionToHandlers.ContainsKey(func))
 			return false;
 
-		foreach (Handler handler in FunctionToHandlers[func])
+		foreach (Handler handler in s_functionToHandlers[func])
 		{
 			if (handler.Invoke(state))
 			{

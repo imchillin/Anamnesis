@@ -3,12 +3,12 @@
 
 namespace Anamnesis.Actor.Views;
 
-using System;
-using System.Collections.ObjectModel;
-using System.Windows.Controls;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
+using System;
+using System.Collections.ObjectModel;
+using System.Windows.Controls;
 using XivToolsWpf.DependencyProperties;
 
 /// <summary>

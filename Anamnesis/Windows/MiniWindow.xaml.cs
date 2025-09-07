@@ -3,14 +3,14 @@
 
 namespace Anamnesis.Windows;
 
+using Anamnesis.GUI;
+using Anamnesis.Services;
+using Anamnesis.Utils;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using Anamnesis.GUI;
-using Anamnesis.Services;
-using Anamnesis.Utils;
 using XivToolsWpf;
 
 /// <summary>
@@ -124,7 +124,7 @@ public partial class MiniWindow : Window
 			tl.X = centerX - iconRadius - this.main.Width;
 
 		if (!ScreenUtils.IsOnScreen(bl))
-			tl.Y = (centerY + iconRadius) - this.main.Height;
+			tl.Y = centerY + iconRadius - this.main.Height;
 
 		this.main.Left = tl.X;
 		this.main.Top = tl.Y;

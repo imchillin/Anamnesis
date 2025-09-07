@@ -39,11 +39,11 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 
 	private readonly RotationGizmo rotationGizmo;
 	private readonly bool isInitialized = false;
+	private readonly Sphere pivotSphere;
 	private bool lockdp = false;
 
 	private CmQuaternion worldSpaceDelta;
 	private bool worldSpace;
-	private readonly Sphere pivotSphere;
 
 	// [FOR DEBUGGING]
 	//// Represents the tangent along which the mouse is moving for the linear drag
@@ -165,6 +165,8 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 	/// <inheritdoc/>
 	public event PropertyChangedEventHandler? PropertyChanged;
 
+	public static Settings Settings => SettingsService.Current;
+
 	public decimal TickFrequency
 	{
 		get => TickDp.Get(this);
@@ -196,8 +198,6 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 	}
 
 	public OverflowModes RotationOverflowBehavior => Settings.WrapRotationSliders ? OverflowModes.Loop : OverflowModes.Clamp;
-
-	public static Settings Settings => SettingsService.Current;
 
 	public CmQuaternion Root
 	{
@@ -232,6 +232,22 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 				this.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(Quaternion.Identity));
 			}
 		}
+	}
+
+	public static Matrix3D GetWorldMatrixFor(Visual3D? visual)
+	{
+		Matrix3D worldMatrix = Matrix3D.Identity;
+
+		// Traverse up the visual tree to accumulate transformations
+		while (visual != null)
+		{
+			if (visual.Transform != null)
+				worldMatrix.Append(visual.Transform.Value);
+
+			visual = VisualTreeHelper.GetParent(visual) as Visual3D;
+		}
+
+		return worldMatrix;
 	}
 
 	private static void OnValueChanged(QuaternionEditor sender, CmQuaternion value)
@@ -635,10 +651,9 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 		public readonly CmVector Axis;
 		private readonly Circle circle;
 		private readonly Cylinder cylinder;
-		private Color color;
-
 		private readonly RotationGizmo rotationGizmo;
 		private readonly QuaternionEditor target;
+		private Color color;
 		private Point3D? lastPoint;
 		private Point3D pivotPoint;
 		private Vector3D planeNormal;
@@ -761,6 +776,7 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 				if (axisProjected.LengthSquared < 1e-6)
 					axisProjected = new Vector3D(0, 1, 0);
 			}
+
 			axisProjected.Normalize();
 
 			this.dragTangent = Vector3D.CrossProduct(centerToPivot, axisProjected);
@@ -863,6 +879,35 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 			}
 		}
 
+		private static Point3D Unproject(Point3D point, PerspectiveCamera camera, double viewportWidth, double viewportHeight)
+		{
+			// Get the view matrix and include the camera's transform
+			Matrix3D viewMatrix = MathUtils.GetViewMatrix(camera);
+
+			if (camera.Transform != null)
+			{
+				Matrix3D transformMatrix = camera.Transform.Value;
+				transformMatrix.Invert();
+				viewMatrix = transformMatrix * viewMatrix;
+			}
+
+			// Get the projection matrix
+			Matrix3D projectionMatrix = MathUtils.GetProjectionMatrix(camera, viewportWidth / viewportHeight);
+
+			// Combine view and projection matrices
+			Matrix3D viewProjectionMatrix = viewMatrix * projectionMatrix;
+
+			if (!viewProjectionMatrix.HasInverse)
+				return new Point3D(double.NaN, double.NaN, double.NaN);
+
+			// Invert the combined matrix
+			viewProjectionMatrix.Invert();
+
+			// Transform the point using the inverted matrix
+			Point3D unprojectedPoint = viewProjectionMatrix.Transform(point);
+			return unprojectedPoint;
+		}
+
 		private Point3D? RaycastOnPlane(Point screenPos, Point3D pivotPoint, Vector3D planeNormal)
 		{
 			// Get camera and viewport dimensions
@@ -897,51 +942,6 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 
 			return nearPoint + (rayDirection * t);
 		}
-
-		private static Point3D Unproject(Point3D point, PerspectiveCamera camera, double viewportWidth, double viewportHeight)
-		{
-			// Get the view matrix and include the camera's transform
-			Matrix3D viewMatrix = MathUtils.GetViewMatrix(camera);
-
-			if (camera.Transform != null)
-			{
-				Matrix3D transformMatrix = camera.Transform.Value;
-				transformMatrix.Invert();
-				viewMatrix = transformMatrix * viewMatrix;
-			}
-
-			// Get the projection matrix
-			Matrix3D projectionMatrix = MathUtils.GetProjectionMatrix(camera, viewportWidth / viewportHeight);
-
-			// Combine view and projection matrices
-			Matrix3D viewProjectionMatrix = viewMatrix * projectionMatrix;
-
-			if (!viewProjectionMatrix.HasInverse)
-				return new Point3D(double.NaN, double.NaN, double.NaN);
-
-			// Invert the combined matrix
-			viewProjectionMatrix.Invert();
-
-			// Transform the point using the inverted matrix
-			Point3D unprojectedPoint = viewProjectionMatrix.Transform(point);
-			return unprojectedPoint;
-		}
-	}
-
-	public static Matrix3D GetWorldMatrixFor(Visual3D? visual)
-	{
-		Matrix3D worldMatrix = Matrix3D.Identity;
-
-		// Traverse up the visual tree to accumulate transformations
-		while (visual != null)
-		{
-			if (visual.Transform != null)
-				worldMatrix.Append(visual.Transform.Value);
-
-			visual = VisualTreeHelper.GetParent(visual) as Visual3D;
-		}
-
-		return worldMatrix;
 	}
 }
 

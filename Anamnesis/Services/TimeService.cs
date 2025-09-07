@@ -4,7 +4,6 @@
 namespace Anamnesis;
 
 using Anamnesis.Core;
-using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
@@ -19,18 +18,15 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class TimeService : ServiceBase<TimeService>
 {
-	private const int TaskSuccessDelay = 16; // ms
-	private const int TaskFailureDelay = 1000; // ms
+	private const int TASK_SUCCESS_DELAY = 16; // ms
+	private const int TASK_FAILURE_DELAY = 1000; // ms
 
 	private FrameworkMemory? frameworkMemory;
 	private NopHook? timeAsmHook;
 
-	/// <inheritdoc/>
-	protected override IEnumerable<IService> Dependencies => [AddressService.Instance];
-
 	/// <summary>Gets the time of day as formatted string.</summary>
 	public string TimeString { get; private set; } = "00:00";
-	
+
 	/// <summary>Gets or sets the time of day in Eorzea time.</summary>
 	public long TimeOfDay { get; set; }
 
@@ -45,6 +41,9 @@ public class TimeService : ServiceBase<TimeService>
 		get => this.timeAsmHook?.Enabled ?? false;
 		set => this.timeAsmHook?.SetEnabled(value);
 	}
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [AddressService.Instance];
 
 	/// <inheritdoc/>
 	public override async Task Shutdown()
@@ -81,7 +80,7 @@ public class TimeService : ServiceBase<TimeService>
 						if (this.Freeze)
 							this.Freeze = false;
 
-						await Task.Delay(TaskSuccessDelay, cancellationToken);
+						await Task.Delay(TASK_SUCCESS_DELAY, cancellationToken);
 						continue;
 					}
 
@@ -119,7 +118,7 @@ public class TimeService : ServiceBase<TimeService>
 						previousTimeString = newTimeString;
 					}
 
-					await Task.Delay(TaskSuccessDelay, cancellationToken);
+					await Task.Delay(TASK_SUCCESS_DELAY, cancellationToken);
 				}
 				catch (TaskCanceledException)
 				{
@@ -129,7 +128,7 @@ public class TimeService : ServiceBase<TimeService>
 				catch (Exception ex)
 				{
 					Log.Error(ex, "Failed to update time");
-					await Task.Delay(TaskFailureDelay, cancellationToken);
+					await Task.Delay(TASK_FAILURE_DELAY, cancellationToken);
 				}
 			}
 			catch (TaskCanceledException)

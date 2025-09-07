@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class AutoSaveService : ServiceBase<AutoSaveService>
 {
-	private const int MinuteToMilliseconds = 60 * 1000;
+	private const int MINUTE_TO_MILLISECONDS = 60 * 1000;
 
 	/// <inheritdoc/>
 	protected override IEnumerable<IService> Dependencies => [TargetService.Instance, PoseService.Instance];
@@ -46,28 +46,6 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 	{
 		this.RestartUpdateTask();
 		await base.OnStart();
-	}
-
-	/// <summary>
-	/// The update task that will be executed every <see cref="Settings.AutoSaveIntervalMinutes"/> minutes.
-	/// </summary>
-	/// <param name="cancellationToken">A <see cref="CancellationToken"/> to cancel the task.</param>
-	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-	private async Task Update(CancellationToken cancellationToken)
-	{
-		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
-		{
-			try
-			{
-				await Task.Delay(SettingsService.Current.AutoSaveIntervalMinutes * MinuteToMilliseconds, cancellationToken);
-				PerformAutoSave();
-			}
-			catch (TaskCanceledException)
-			{
-				// Task was canceled, exit the loop
-				break;
-			}
-		}
 	}
 
 	/// <summary>
@@ -198,6 +176,28 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 
 					Directory.Delete(autoSaveDirectories[i], true);
 				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// The update task that will be executed every <see cref="Settings.AutoSaveIntervalMinutes"/> minutes.
+	/// </summary>
+	/// <param name="cancellationToken">A <see cref="CancellationToken"/> to cancel the task.</param>
+	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+	private async Task Update(CancellationToken cancellationToken)
+	{
+		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
+		{
+			try
+			{
+				await Task.Delay(SettingsService.Current.AutoSaveIntervalMinutes * MINUTE_TO_MILLISECONDS, cancellationToken);
+				PerformAutoSave();
+			}
+			catch (TaskCanceledException)
+			{
+				// Task was canceled, exit the loop
+				break;
 			}
 		}
 	}

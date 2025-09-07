@@ -30,8 +30,8 @@ public class FileService : ServiceBase<FileService>
 	public static readonly string StoreDirectory = "%AppData%/Anamnesis/";
 	public static readonly string CacheDirectory = "%AppData%/Anamnesis/RemoteCache/";
 
-	private static readonly Dictionary<Type, string> TypeNameLookup = new Dictionary<Type, string>();
-	private static readonly Dictionary<Type, FileFilter> FileTypeFilterLookup = new Dictionary<Type, FileFilter>();
+	private static readonly Dictionary<Type, string> s_typeNameLookup = new Dictionary<Type, string>();
+	private static readonly Dictionary<Type, FileFilter> s_fileTypeFilterLookup = new Dictionary<Type, FileFilter>();
 
 	public static Shortcut Desktop => new Shortcut(
 		new DirectoryInfo(ParseToFilePath("%Desktop%")),
@@ -508,7 +508,7 @@ public class FileService : ServiceBase<FileService>
 	private static string GetFileTypeName(Type fileType)
 	{
 		string? name;
-		if (!TypeNameLookup.TryGetValue(fileType, out name))
+		if (!s_typeNameLookup.TryGetValue(fileType, out name))
 		{
 			FileBase? file = Activator.CreateInstance(fileType) as FileBase;
 
@@ -516,7 +516,7 @@ public class FileService : ServiceBase<FileService>
 				throw new Exception($"Failed to create instance of file type: {fileType}");
 
 			name = file.TypeName;
-			TypeNameLookup.Add(fileType, name);
+			s_typeNameLookup.Add(fileType, name);
 		}
 
 		return name;
@@ -525,7 +525,7 @@ public class FileService : ServiceBase<FileService>
 	private static FileFilter GetFileTypeFilter(Type fileType)
 	{
 		FileFilter? filter;
-		if (!FileTypeFilterLookup.TryGetValue(fileType, out filter))
+		if (!s_fileTypeFilterLookup.TryGetValue(fileType, out filter))
 		{
 			FileBase? file = Activator.CreateInstance(fileType) as FileBase;
 
@@ -533,7 +533,7 @@ public class FileService : ServiceBase<FileService>
 				throw new Exception($"Failed to create instance of file type: {fileType}");
 
 			filter = file.GetFilter();
-			FileTypeFilterLookup.Add(fileType, filter);
+			s_fileTypeFilterLookup.Add(fileType, filter);
 		}
 
 		return filter;

@@ -11,28 +11,28 @@ using System.Windows.Input;
 /// </summary>
 public partial class SplashWindow
 {
-	private static SplashWindow? instance;
+	private static SplashWindow? s_instance;
 
 	public SplashWindow()
 	{
 		this.InitializeComponent();
-		instance = this;
+		s_instance = this;
 	}
 
 	public static void HideWindow()
 	{
-		instance?.Hide();
+		s_instance?.Hide();
 	}
 
 	public static void ShowWindow()
 	{
-		instance?.Show();
+		s_instance?.Show();
 	}
 
 	protected override void OnClosing(CancelEventArgs e)
 	{
 		base.OnClosing(e);
-		instance = null;
+		s_instance = null;
 	}
 
 	private void OnMouseDown(object sender, MouseButtonEventArgs e)

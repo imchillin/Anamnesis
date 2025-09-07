@@ -34,23 +34,23 @@ using CmQuaternion = System.Numerics.Quaternion;
 [AddINotifyPropertyChangedInterface]
 public partial class PosePage : UserControl, INotifyPropertyChanged
 {
-	public const double DragThreshold = 20;
+	public const double DRAG_THRESHOLD = 20;
 
-	private static readonly Type[] PoseFileTypes = new[]
+	private static readonly Type[] s_poseFileTypes = new[]
 	{
 		typeof(PoseFile),
 		typeof(CmToolPoseFile),
 	};
 
-	private static readonly Shortcut[] PoseDirShortcuts = new[]
+	private static readonly Shortcut[] s_poseDirShortcuts = new[]
 	{
 		FileService.DefaultPoseDirectory,
 		FileService.StandardPoseDirectory,
 		FileService.CMToolPoseSaveDir,
 	};
 
-	private static DirectoryInfo? lastLoadDir;
-	private static DirectoryInfo? lastSaveDir;
+	private static DirectoryInfo? s_lastLoadDir;
+	private static DirectoryInfo? s_lastSaveDir;
 	private readonly System.Timers.Timer refreshDebounceTimer;
 
 	private bool isLeftMouseButtonDownOnWindow;
@@ -452,11 +452,11 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		try
 		{
 			// Open and load pose file
-			OpenResult result = await FileService.Open(lastLoadDir, PoseDirShortcuts, PoseFileTypes);
+			OpenResult result = await FileService.Open(s_lastLoadDir, s_poseDirShortcuts, s_poseFileTypes);
 			if (result.File == null)
 				return;
 
-			lastLoadDir = result.Directory;
+			s_lastLoadDir = result.Directory;
 
 			bool isLegacyFile = false;
 			if (result.File is CmToolPoseFile legacyFile)
@@ -603,7 +603,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		if (this.Actor == null || this.Skeleton == null)
 			return;
 
-		lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton);
+		s_lastSaveDir = await PoseFile.Save(s_lastSaveDir, this.Actor, this.Skeleton);
 	}
 
 	private async void OnExportMetaClicked(object sender, RoutedEventArgs e)
@@ -611,7 +611,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		if (this.Actor == null || this.Skeleton == null)
 			return;
 
-		lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton, null, true);
+		s_lastSaveDir = await PoseFile.Save(s_lastSaveDir, this.Actor, this.Skeleton, null, true);
 	}
 
 	private async void OnExportSelectedClicked(object sender, RoutedEventArgs e)
@@ -625,7 +625,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			bones.Add(bone.Name);
 		}
 
-		lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton, bones);
+		s_lastSaveDir = await PoseFile.Save(s_lastSaveDir, this.Actor, this.Skeleton, bones);
 	}
 
 	private void OnViewChanged(object sender, SelectionChangedEventArgs e)
@@ -814,7 +814,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		{
 			System.Windows.Vector dragDelta = curMouseDownPoint - this.origMouseDownPoint;
 			double dragDistance = Math.Abs(dragDelta.Length);
-			if (dragDistance > DragThreshold)
+			if (dragDistance > DRAG_THRESHOLD)
 			{
 				this.isDragging = true;
 				this.MouseCanvas.CaptureMouse();
@@ -964,7 +964,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			0 => (this.TargetService.SelectedActor != null) ? this.TargetService.SelectedActor.DisplayName : string.Empty,
 			1 => selectedBones.First().Tooltip,
 			<= 3 => string.Join(", ", selectedBones.Select(b => b.Tooltip)),
-			_ => string.Join(", ", selectedBones.Take(3).Select(b => b.Tooltip)) + LocalizationService.GetStringFormatted("Pose_SelectedBones_TooltipTrimmed", (count - 3).ToString())
+			_ => string.Join(", ", selectedBones.Take(3).Select(b => b.Tooltip)) + LocalizationService.GetStringFormatted("Pose_SelectedBones_TooltipTrimmed", (count - 3).ToString()),
 		};
 
 		this.selectedBoneNameCache = count == 1 ? selectedBones.First().Name : string.Empty;

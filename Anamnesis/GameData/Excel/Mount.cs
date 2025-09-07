@@ -56,7 +56,7 @@ public readonly struct Mount(ExcelPage page, uint offset, uint row)
 	/// <summary>Gets the ModelChara object reference of the mount.</summary>
 	public readonly RowRef<ModelChara> ModelChara => new(page.Module, (uint)page.ReadInt32(offset + 28), page.Language);
 
-	/// <summary>Gets the mount customization row identifier</summary>
+	/// <summary>Gets the mount customization row identifier.</summary>
 	public uint MountCustomizeRow => this.MountCustomize.RowId;
 
 	/// <summary>Gets the mount customization data for player characters.</summary>

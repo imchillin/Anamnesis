@@ -10,7 +10,7 @@ using System.ComponentModel;
 [AddINotifyPropertyChangedInterface]
 public class AnimationMemory : MemoryBase
 {
-	public const int AnimationSlotCount = 14;
+	public const int ANIMATION_SLOT_COUNT = 14;
 
 	private bool linkSpeeds = true;
 
@@ -82,7 +82,7 @@ public class AnimationMemory : MemoryBase
 
 	private void ApplyAnimationLink(float value)
 	{
-		for (int i = 1; i < AnimationSlotCount; i++)
+		for (int i = 1; i < ANIMATION_SLOT_COUNT; i++)
 		{
 			this.Speeds![i].Value = value;
 		}
@@ -91,12 +91,12 @@ public class AnimationMemory : MemoryBase
 	public class AnimationIdArrayMemory : InplaceFixedArrayMemory<ValueMemory<ushort>>
 	{
 		public override int ElementSize => sizeof(ushort);
-		public override int Length => AnimationSlotCount;
+		public override int Length => ANIMATION_SLOT_COUNT;
 	}
 
 	public class AnimationSpeedArrayMemory : InplaceFixedArrayMemory<ValueMemory<float>>
 	{
 		public override int ElementSize => sizeof(float);
-		public override int Length => AnimationSlotCount;
+		public override int Length => ANIMATION_SLOT_COUNT;
 	}
 }

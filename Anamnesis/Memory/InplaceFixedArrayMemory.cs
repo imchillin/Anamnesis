@@ -14,7 +14,7 @@ using System.Collections.Generic;
 /// <typeparam name="TValue">The array element type.</typeparam>
 public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<TValue>, IArrayMemory
 {
-	private static readonly bool IsMemoryObject = typeof(MemoryBase).IsAssignableFrom(typeof(TValue));
+	private static readonly bool s_isMemoryObject = typeof(MemoryBase).IsAssignableFrom(typeof(TValue));
 	private readonly List<TValue> items = new();
 
 	private int lastLength = -1;
@@ -131,7 +131,7 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 				IntPtr address = this.ArrayAddress;
 				for (int i = 0; i < this.Length; i++)
 				{
-					if (IsMemoryObject)
+					if (s_isMemoryObject)
 					{
 						TValue instance = Activator.CreateInstance<TValue>();
 						if (instance is not MemoryBase memory)

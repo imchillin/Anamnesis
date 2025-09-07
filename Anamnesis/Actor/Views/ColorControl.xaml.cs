@@ -3,13 +3,13 @@
 
 namespace Anamnesis.Actor.Views;
 
-using System;
-using System.Windows;
-using System.Windows.Controls;
 using Anamnesis.Actor.Utilities;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
+using System;
+using System.Windows;
+using System.Windows.Controls;
 using XivToolsWpf.DependencyProperties;
 using WpfColor = System.Windows.Media.Color;
 

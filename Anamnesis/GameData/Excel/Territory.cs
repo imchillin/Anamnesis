@@ -13,7 +13,7 @@ public readonly struct Territory(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Territory>
 {
 	/// <summary>Collection of housing territories.</summary>
-	private static readonly HashSet<uint> HousingTerritories =
+	private static readonly HashSet<uint> s_housingTerritories =
 	[
 		282, 283, 284, 342, 343, 344, 345, 346, 347, 384, 385, 386, 608, 609, 610, 649, 650, 651, 652,
 	];
@@ -41,7 +41,7 @@ public readonly struct Territory(ExcelPage page, uint offset, uint row)
 	/// <summary>
 	/// Gets a value indicating whether the territory is a housing territory.
 	/// </summary>
-	public readonly bool IsHouse => HousingTerritories.Contains(row);
+	public readonly bool IsHouse => s_housingTerritories.Contains(row);
 
 	/// <summary>
 	/// Creates a new instance of the <see cref="Territory"/> struct.

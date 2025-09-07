@@ -19,23 +19,14 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class AnimationService : ServiceBase<AnimationService>
 {
-	private const int TickDelay = 1000;
-	private const ushort DrawWeaponAnimationId = 34;
-	private const ushort IdleAnimationId = 3;
+	private const int TICK_DELAY = 1000;
+	private const ushort DRAW_WEAPON_ANIMATION_ID = 34;
+	private const ushort IDLE_ANIMATION_ID = 3;
 
 	private readonly HashSet<ActorMemory> overriddenActors = [];
 
 	private NopHook? animationSpeedHook;
 	private bool speedControlEnabled = false;
-
-	/// <inheritdoc/>
-	protected override IEnumerable<IService> Dependencies =>
-	[
-		ActorService.Instance,
-		TargetService.Instance,
-		GposeService.Instance,
-		GameDataService.Instance
-	];
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the animation speed control is enabled.
@@ -52,6 +43,15 @@ public class AnimationService : ServiceBase<AnimationService>
 				this.SetSpeedControlEnabled(value && GposeService.Instance.IsGpose);
 		}
 	}
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies =>
+	[
+		ActorService.Instance,
+		TargetService.Instance,
+		GposeService.Instance,
+		GameDataService.Instance
+	];
 
 	/// <inheritdoc/>
 	public override async Task Shutdown()
@@ -136,13 +136,13 @@ public class AnimationService : ServiceBase<AnimationService>
 	/// Applies the idle animation override to the specified actor.
 	/// </summary>
 	/// <param name="memory">The actor's memory.</param>
-	public void ApplyIdle(ActorMemory memory) => this.ApplyAnimationOverride(memory, IdleAnimationId, true);
+	public void ApplyIdle(ActorMemory memory) => this.ApplyAnimationOverride(memory, IDLE_ANIMATION_ID, true);
 
 	/// <summary>
 	/// Applies the draw weapon animation override to the specified actor.
 	/// </summary>
 	/// <param name="memory">The actor's memory.</param>
-	public void DrawWeapon(ActorMemory memory) => this.ApplyAnimationOverride(memory, DrawWeaponAnimationId, true);
+	public void DrawWeapon(ActorMemory memory) => this.ApplyAnimationOverride(memory, DRAW_WEAPON_ANIMATION_ID, true);
 
 	/// <summary>
 	/// Pauses the animation of all pinned actors. This will set their animation speed to 0.
@@ -186,7 +186,7 @@ public class AnimationService : ServiceBase<AnimationService>
 			try
 			{
 				this.CleanupInvalidActors();
-				await Task.Delay(TickDelay, cancellationToken);
+				await Task.Delay(TICK_DELAY, cancellationToken);
 			}
 			catch (TaskCanceledException)
 			{

@@ -3,8 +3,8 @@
 
 namespace Anamnesis.Utils;
 
-using System.Windows.Forms;
 using System.Windows;
+using System.Windows.Forms;
 
 public static class ScreenUtils
 {

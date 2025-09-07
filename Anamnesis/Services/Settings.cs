@@ -19,7 +19,7 @@ using System.Windows.Media;
 [AddINotifyPropertyChangedInterface]
 public class Settings : INotifyPropertyChanged
 {
-	private const int MinAutoSaveIntervalMinutes = 1;
+	private const int MIN_AUTOSAVE_INTERVAL_MINS = 1;
 	private int autoSaveIntervalMinutes = 5;
 	private bool enableAutoSave = true;
 
@@ -104,15 +104,15 @@ public class Settings : INotifyPropertyChanged
 	public int AutoSaveFileCount { get; set; } = 12;
 	public int AutoSaveIntervalMinutes
 	{
-		get => Math.Max(this.autoSaveIntervalMinutes, MinAutoSaveIntervalMinutes);
+		get => Math.Max(this.autoSaveIntervalMinutes, MIN_AUTOSAVE_INTERVAL_MINS);
 		set
 		{
 			if (value == this.autoSaveIntervalMinutes)
 				return;
 
 			// Limit the minimum value
-			if (value < MinAutoSaveIntervalMinutes)
-				value = MinAutoSaveIntervalMinutes;
+			if (value < MIN_AUTOSAVE_INTERVAL_MINS)
+				value = MIN_AUTOSAVE_INTERVAL_MINS;
 
 			this.autoSaveIntervalMinutes = value;
 
@@ -127,6 +127,7 @@ public class Settings : INotifyPropertyChanged
 			}
 		}
 	}
+
 	public bool AutoSaveOnlyInGpose { get; set; } = true;
 
 	public GizmoDragModes GizmoDragMode { get; set; } = GizmoDragModes.Linear;

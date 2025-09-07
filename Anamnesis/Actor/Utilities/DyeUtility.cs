@@ -8,6 +8,8 @@ using System;
 
 public static class DyeUtility
 {
+	public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
+
 	[Flags]
 	public enum DyeTarget
 	{
@@ -26,8 +28,6 @@ public static class DyeUtility
 		First = 1,
 		Second = 2,
 
-		All = First | Second
+		All = First | Second,
 	}
-
-	public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
 }

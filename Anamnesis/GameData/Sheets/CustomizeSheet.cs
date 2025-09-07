@@ -15,25 +15,13 @@ public static class CustomizeSheet
 	/// <summary>
 	/// The excel sheet table length for all hair options.
 	/// </summary>
-	private const uint HairOptionsLength = 130;
-	private const uint FacePaintOptionsLength = 50;
-
-	/// <summary>
-	/// Represents the supported character customization features.
-	/// </summary>
-	public enum Features
-	{
-		/// <summary>Represents the hair feature.</summary>
-		Hair,
-
-		/// <summary>Represents the face paint feature.</summary>
-		FacePaint,
-	}
+	private const uint HAIR_OPTIONS_LENGTH = 130;
+	private const uint FACE_PAINT_OPTIONS_LENGTH = 50;
 
 	/// <summary>
 	/// A lookup table for the start indices for all supported character customization features.
 	/// </summary>
-	private static readonly Dictionary<(Features, ActorCustomizeMemory.Tribes, ActorCustomizeMemory.Genders), uint> FeatureStartIndexMap = new()
+	private static readonly Dictionary<(Features, ActorCustomizeMemory.Tribes, ActorCustomizeMemory.Genders), uint> s_featureStartIndexMap = new()
 	{
 		// Hyur (Hair)
 		{ (Features.Hair, ActorCustomizeMemory.Tribes.Midlander, ActorCustomizeMemory.Genders.Masculine), 0 },
@@ -133,6 +121,18 @@ public static class CustomizeSheet
 	};
 
 	/// <summary>
+	/// Represents the supported character customization features.
+	/// </summary>
+	public enum Features
+	{
+		/// <summary>Represents the hair feature.</summary>
+		Hair,
+
+		/// <summary>Represents the face paint feature.</summary>
+		FacePaint,
+	}
+
+	/// <summary>
 	/// Retrieves all feature options for a provided feature type, tribe, and gender.
 	/// </summary>
 	/// <param name="self">The Excel sheet.</param>
@@ -145,7 +145,7 @@ public static class CustomizeSheet
 	{
 		List<CharaMakeCustomize> results = [];
 
-		if (!FeatureStartIndexMap.TryGetValue((featureType, tribe, gender), out uint startIndex))
+		if (!s_featureStartIndexMap.TryGetValue((featureType, tribe, gender), out uint startIndex))
 			throw new Exception("Unrecognized feature type, tribe, and gender combination");
 
 		uint count = GetFeatureLength(featureType);
@@ -194,8 +194,8 @@ public static class CustomizeSheet
 	{
 		return featureType switch
 		{
-			Features.Hair => HairOptionsLength,
-			Features.FacePaint => FacePaintOptionsLength,
+			Features.Hair => HAIR_OPTIONS_LENGTH,
+			Features.FacePaint => FACE_PAINT_OPTIONS_LENGTH,
 			_ => throw new Exception("Unrecognized feature: " + featureType),
 		};
 	}

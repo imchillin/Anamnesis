@@ -31,8 +31,8 @@ public abstract class FileBrowserDrawer : SelectorDrawer<FileBrowserView.EntryWr
 /// </summary>
 public partial class FileBrowserView : FileBrowserDrawer
 {
-	private static bool isFlattened;
-	private static Sort sortMode;
+	private static bool s_isFlattened;
+	private static Sort s_sortMode;
 
 	private readonly Modes mode;
 	private readonly IEnumerable<FileFilter> filters;
@@ -143,10 +143,10 @@ public partial class FileBrowserView : FileBrowserDrawer
 
 	public Sort SortMode
 	{
-		get => sortMode;
+		get => s_sortMode;
 		set
 		{
-			sortMode = value;
+			s_sortMode = value;
 			this.UpdateEntriesThreaded();
 		}
 	}
@@ -177,12 +177,12 @@ public partial class FileBrowserView : FileBrowserDrawer
 	{
 		get
 		{
-			return isFlattened;
+			return s_isFlattened;
 		}
 
 		set
 		{
-			isFlattened = value;
+			s_isFlattened = value;
 			this.UpdateEntriesThreaded();
 		}
 	}
@@ -249,18 +249,18 @@ public partial class FileBrowserView : FileBrowserDrawer
 		if (itemA.Entry is FileInfo && itemB.Entry is DirectoryInfo)
 			return 1;
 
-		if (sortMode == Sort.None)
+		if (s_sortMode == Sort.None)
 		{
 			return 0;
 		}
-		else if (sortMode == Sort.AlphaNumeric)
+		else if (s_sortMode == Sort.AlphaNumeric)
 		{
 			if (itemA.Name == null || itemB.Name == null)
 				return 0;
 
 			return itemA.Name.CompareTo(itemB.Name);
 		}
-		else if (sortMode == Sort.Date)
+		else if (s_sortMode == Sort.Date)
 		{
 			if (itemA.DateModified == null || itemB.DateModified == null)
 				return 0;

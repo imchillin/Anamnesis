@@ -3,9 +3,9 @@
 
 namespace Anamnesis;
 
+using Serilog;
 using System;
 using System.Diagnostics;
-using Serilog;
 
 public static class UrlUtility
 {
@@ -26,7 +26,8 @@ public static class UrlUtility
 	/// </summary>
 	/// <param name="path">Path to check.</param>
 	/// <returns>true if its a URL matching UriSchemeHttp or UriSchemeHttps, false otherwise.</returns>
-	public static bool IsUrl(string path) {
+	public static bool IsUrl(string path)
+	{
 		if (Uri.TryCreate(path, UriKind.Absolute, out Uri? uriResult))
 		{
 			return uriResult?.Scheme == Uri.UriSchemeHttp || uriResult?.Scheme == Uri.UriSchemeHttps;
@@ -34,5 +35,4 @@ public static class UrlUtility
 
 		return false;
 	}
-
 }

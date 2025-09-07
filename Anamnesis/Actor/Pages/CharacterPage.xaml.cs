@@ -35,8 +35,8 @@ using static Anamnesis.Actor.Utilities.DyeUtility;
 [AddINotifyPropertyChangedInterface]
 public partial class CharacterPage : UserControl
 {
-	private static DirectoryInfo? lastLoadDir;
-	private static DirectoryInfo? lastSaveDir;
+	private static DirectoryInfo? s_lastLoadDir;
+	private static DirectoryInfo? s_lastSaveDir;
 
 	public CharacterPage()
 	{
@@ -55,17 +55,6 @@ public partial class CharacterPage : UserControl
 	public ActorMemory? Actor { get; private set; }
 	public ListCollectionView VoiceEntries { get; private set; }
 	public PoseService PoseService => PoseService.Instance;
-
-	private void OnLoaded(object sender, RoutedEventArgs e)
-	{
-		this.OnActorChanged(this.DataContext as ActorMemory);
-	}
-
-	private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-	{
-		this.OnActorChanged(this.DataContext as ActorMemory);
-	}
-
 	public bool CanDyeEquipment => this.Actor != null && this.Actor.Equipment != null;
 
 	public bool CanDyeWeapons
@@ -102,7 +91,7 @@ public partial class CharacterPage : UserControl
 				{
 					VoiceName = $"Voice #{i + 1} ({voiceId})",
 					VoiceCategory = $"{makeType.Race.Value.Name}, {tribe.Value.Masculine} ({makeType.Gender})",
-					VoiceId = voiceId
+					VoiceId = voiceId,
 				};
 
 				entries.Add(entry);
@@ -112,6 +101,16 @@ public partial class CharacterPage : UserControl
 		ListCollectionView voices = new ListCollectionView(entries);
 		voices.GroupDescriptions.Add(new PropertyGroupDescription("VoiceCategory"));
 		return voices;
+	}
+
+	private void OnLoaded(object sender, RoutedEventArgs e)
+	{
+		this.OnActorChanged(this.DataContext as ActorMemory);
+	}
+
+	private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+	{
+		this.OnActorChanged(this.DataContext as ActorMemory);
 	}
 
 	private void OnClearClicked(object? sender = null, RoutedEventArgs? e = null)
@@ -303,7 +302,7 @@ public partial class CharacterPage : UserControl
 	{
 		this.ShowDyeDrawerAndApplyDyeToEquipment(DyeTarget.Accessories, DyeSlot.Second);
 	}
-	 
+
 	// Dye2 - Clear on ALL equipment
 	private void OnClearDye2OnAllEquipmentClicked(object sender, RoutedEventArgs e)
 	{
@@ -364,7 +363,7 @@ public partial class CharacterPage : UserControl
 		});
 	}
 
-	// Applies a dye to a specified slot on the specified targets, whether they be weapons, clothing, 
+	// Applies a dye to a specified slot on the specified targets, whether they be weapons or clothing.
 	private void ApplyDyeToEquipment(IDye dye, DyeTarget dyeTarget, DyeSlot dyeSlot)
 	{
 		if (this.Actor == null || dye == null)
@@ -507,12 +506,12 @@ public partial class CharacterPage : UserControl
 				typeof(CharacterFile),
 			};
 
-			OpenResult result = await FileService.Open(lastLoadDir, shortcuts, types);
+			OpenResult result = await FileService.Open(s_lastLoadDir, shortcuts, types);
 
 			if (result.File == null)
 				return;
 
-			lastLoadDir = result.Directory;
+			s_lastLoadDir = result.Directory;
 
 			if (result.File is IUpgradeCharacterFile legacyFile)
 				result.File = legacyFile.Upgrade();
@@ -569,7 +568,7 @@ public partial class CharacterPage : UserControl
 		if (this.Actor == null)
 			return;
 
-		SaveResult result = await FileService.Save<CharacterFile>(lastSaveDir, FileService.DefaultCharacterDirectory);
+		SaveResult result = await FileService.Save<CharacterFile>(s_lastSaveDir, FileService.DefaultCharacterDirectory);
 
 		if (result.Path == null)
 			return;
@@ -580,7 +579,7 @@ public partial class CharacterPage : UserControl
 		using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
 		file.Serialize(stream);
 
-		lastSaveDir = result.Directory;
+		s_lastSaveDir = result.Directory;
 
 		if (editMeta)
 		{
@@ -593,7 +592,7 @@ public partial class CharacterPage : UserControl
 		if (this.Actor == null)
 			return;
 
-		SaveResult result = await FileService.Save<DatCharacterFile>(lastSaveDir, FileService.DefaultCharacterDirectory);
+		SaveResult result = await FileService.Save<DatCharacterFile>(s_lastSaveDir, FileService.DefaultCharacterDirectory);
 
 		if (result.Path == null)
 			return;
@@ -604,7 +603,7 @@ public partial class CharacterPage : UserControl
 		using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
 		file.Serialize(stream);
 
-		lastSaveDir = result.Directory;
+		s_lastSaveDir = result.Directory;
 	}
 
 	private void OnActorChanged(ActorMemory? actor)

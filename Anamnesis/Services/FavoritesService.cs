@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class FavoritesService : ServiceBase<FavoritesService>
 {
-	private static readonly string FilePath = FileService.ParseToFilePath(FileService.StoreDirectory + "/Favorites.json");
+	private static readonly string s_filePath = FileService.ParseToFilePath(FileService.StoreDirectory + "/Favorites.json");
 
 	private HashSet<uint>? itemIds;
 	private HashSet<uint>? dyeIds;
@@ -41,10 +41,10 @@ public class FavoritesService : ServiceBase<FavoritesService>
 	public Favorites? Current { get; set; }
 
 	/// <summary>
-	/// Check if the target item is marked as owned
+	/// Check if the target item is marked as owned.
 	/// </summary>
-	/// <param name="item">The item to check</param>
-	/// <returns>True if the item is owned, false otherwise</returns>
+	/// <param name="item">The item to check.</param>
+	/// <returns>True if the item is owned, false otherwise.</returns>
 	public static bool IsOwned(Item item)
 	{
 		if (Instance.Current == null)
@@ -56,8 +56,8 @@ public class FavoritesService : ServiceBase<FavoritesService>
 	/// <summary>
 	/// Changes the owned status of the target item.
 	/// </summary>
-	/// <param name="item">The item to change the owned status of</param>
-	/// <param name="owned">The new owned status</param>
+	/// <param name="item">The item to change the owned status of.</param>
+	/// <param name="owned">The new owned status.</param>
 	public static void SetOwned(Item item, bool owned)
 	{
 		if (Instance.Current == null)
@@ -85,8 +85,8 @@ public class FavoritesService : ServiceBase<FavoritesService>
 	/// Checks if the target component is marked as a favorite.
 	/// </summary>
 	/// <typeparam name="T">The type of the item (e.g., item, dyes, NPC, etc.)</typeparam>
-	/// <param name="item">The component to check</param>
-	/// <returns>True if the item is a favorite, false otherwise</returns>
+	/// <param name="item">The component to check.</param>
+	/// <returns>True if the item is a favorite, false otherwise.</returns>
 	public static bool IsFavorite<T>(T item)
 	{
 		HashSet<uint>? lookupTable = GetLookupTable(item);
@@ -113,8 +113,8 @@ public class FavoritesService : ServiceBase<FavoritesService>
 	/// Changes the favorite status of the target item.
 	/// </summary>
 	/// <typeparam name="T">The type of the item (e.g., item, dyes, NPC, etc.)</typeparam>
-	/// <param name="item">The component to change the favorite status of</param>
-	/// <param name="favorite">The new favorite status</param>
+	/// <param name="item">The component to change the favorite status of.</param>
+	/// <param name="favorite">The new favorite status.</param>
 	public static void SetFavorite<T>(T item, bool favorite)
 	{
 		List<T>? curInstCollection = GetInstanceCollection<T>(item);
@@ -150,7 +150,7 @@ public class FavoritesService : ServiceBase<FavoritesService>
 			return;
 
 		string json = SerializerService.Serialize(Instance.Current);
-		File.WriteAllText(FilePath, json);
+		File.WriteAllText(s_filePath, json);
 	}
 
 	/// <inheritdoc/>
@@ -158,7 +158,7 @@ public class FavoritesService : ServiceBase<FavoritesService>
 	{
 		await base.Initialize();
 
-		if (!File.Exists(FilePath))
+		if (!File.Exists(s_filePath))
 		{
 			this.Current = new Favorites();
 			Save();
@@ -167,15 +167,15 @@ public class FavoritesService : ServiceBase<FavoritesService>
 		{
 			try
 			{
-				string json = File.ReadAllText(FilePath);
+				string json = File.ReadAllText(s_filePath);
 				this.Current = SerializerService.Deserialize<Favorites>(json);
 			}
 			catch (Exception ex)
 			{
 				Log.Error(ex, LocalizationService.GetString("Error_FavoritesFail"));
 
-				if (File.Exists(FilePath))
-					File.Copy(FilePath, FilePath + ".old", true);
+				if (File.Exists(s_filePath))
+					File.Copy(s_filePath, s_filePath + ".old", true);
 
 				this.Current = new Favorites();
 				Save();
@@ -200,7 +200,7 @@ public class FavoritesService : ServiceBase<FavoritesService>
 			IDye => Instance.Current.Dyes as List<T>,
 			INpcBase => Instance.Current.Models as List<T>,
 			IItem => Instance.Current.Items as List<T>,
-			_ => null
+			_ => null,
 		};
 	}
 
@@ -215,7 +215,7 @@ public class FavoritesService : ServiceBase<FavoritesService>
 			IDye _ => Instance.dyeIds,
 			INpcBase _ => Instance.modelIds,
 			IItem => Instance.itemIds,
-			_ => null
+			_ => null,
 		};
 	}
 
@@ -269,7 +269,7 @@ public class FavoritesService : ServiceBase<FavoritesService>
 			IDye => nameof(Favorites.Dyes),
 			INpcBase => nameof(Favorites.Models),
 			IItem => nameof(Favorites.Items),
-			_ => throw new NotImplementedException("Unsupported favorites type")
+			_ => throw new NotImplementedException("Unsupported favorites type"),
 		};
 	}
 

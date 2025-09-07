@@ -3,6 +3,11 @@
 
 namespace Anamnesis.Views;
 
+using Anamnesis.Core.Extensions;
+using Anamnesis.Files;
+using Anamnesis.Services;
+using PropertyChanged;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,11 +18,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using Anamnesis.Core.Extensions;
-using Anamnesis.Files;
-using Anamnesis.Services;
-using PropertyChanged;
-using Serilog;
 using XivToolsWpf;
 
 /// <summary>
@@ -26,7 +26,7 @@ using XivToolsWpf;
 [AddINotifyPropertyChangedInterface]
 public partial class Gallery : UserControl
 {
-	private const int ImageDelay = 5000;
+	private const int IMG_DELAY = 5000;
 
 	private bool isImage1 = true;
 	private bool isRunning = false;
@@ -127,7 +127,7 @@ public partial class Gallery : UserControl
 				}
 
 				int delay = 0;
-				while (!this.forceUpdate && delay < ImageDelay)
+				while (!this.forceUpdate && delay < IMG_DELAY)
 				{
 					delay += 100;
 					await Task.Delay(100);

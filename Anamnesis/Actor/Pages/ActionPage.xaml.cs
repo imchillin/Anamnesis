@@ -43,6 +43,13 @@ public partial class ActionPage : UserControl
 
 	public ConditionalWeakTable<ActorMemory, UserAnimationOverride> UserAnimationOverrides { get; private set; } = new();
 
+	private static IEnumerable<ActionTimeline> GenerateLipList()
+	{
+		// Grab "no animation" and all "speak/" animations, which are the only ones valid in this slot
+		IEnumerable<ActionTimeline> lips = GameDataService.ActionTimelines.Where(x => x.AnimationId == 0 || (x.Key?.StartsWith("speak/") ?? false));
+		return lips;
+	}
+
 	private void OnLoaded(object sender, RoutedEventArgs e)
 	{
 		this.OnActorChanged(this.DataContext as ActorMemory);
@@ -79,13 +86,6 @@ public partial class ActionPage : UserControl
 				this.AnimationOverride.BlendAnimationId = 0;
 			}
 		}
-	}
-
-	private static IEnumerable<ActionTimeline> GenerateLipList()
-	{
-		// Grab "no animation" and all "speak/" animations, which are the only ones valid in this slot
-		IEnumerable<ActionTimeline> lips = GameDataService.ActionTimelines.Where(x => x.AnimationId == 0 || (x.Key?.StartsWith("speak/") ?? false));
-		return lips;
 	}
 
 	private void OnBaseAnimationSearchClicked(object sender, RoutedEventArgs e)

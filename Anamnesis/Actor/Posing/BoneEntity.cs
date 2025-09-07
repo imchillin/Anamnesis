@@ -57,7 +57,7 @@ public class BoneEntity : Bone
 			3 => BoneCategory.Met,
 			4 => BoneCategory.Top,
 			_ => BoneCategory.Uncategorized,
-		}
+		},
 	};
 
 	/// <summary>

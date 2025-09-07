@@ -26,7 +26,7 @@ using System.Runtime.CompilerServices;
 public sealed unsafe class SignatureScanner
 {
 	/// <summary>The size of each chunk of memory to scan at a time.</summary>
-	private const int ScanChunkSize = 1024; // 1kB
+	private const int SCAN_CHUNK_SIZE = 1024; // 1kB
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SignatureScanner"/> class.
@@ -110,7 +110,7 @@ public sealed unsafe class SignatureScanner
 			for (long offset = 0; offset < size;)
 			{
 				// Calculate the number of bytes to read in the current chunk
-				int bytesToRead = Math.Min(ScanChunkSize, size - (int)offset);
+				int bytesToRead = Math.Min(SCAN_CHUNK_SIZE, size - (int)offset);
 				Span<byte> chunkBuffer = new byte[bytesToRead + overlap];
 
 				// Read memory into the chunk buffer, including the overlap
@@ -280,7 +280,7 @@ public sealed unsafe class SignatureScanner
 	/// <param name="signature">The byte signature to parse (IDA format).</param>
 	/// <returns>The parsed byte signature, mask, and bad character shift table.</returns>
 	/// <exception cref="ArgumentException">The signature is not even in length.</exception>
-	private static (byte[] needle, bool[] mask, int[] badCharShift) ParseSignature(string signature)
+	private static (byte[] Needle, bool[] Mask, int[] BadCharShift) ParseSignature(string signature)
 	{
 		// Strip all whitespaces
 		signature = signature.Replace(" ", string.Empty);
@@ -397,6 +397,7 @@ public sealed unsafe class SignatureScanner
 		private readonly int length;
 		private readonly byte* address;
 		private int pos;
+
 		public UnsafeCodeReader(byte* address, int length)
 		{
 			this.length = length;

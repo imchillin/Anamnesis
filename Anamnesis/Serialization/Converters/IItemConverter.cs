@@ -12,7 +12,7 @@ using System.Text.Json.Serialization;
 
 public class IItemConverter : JsonConverter<IItem>
 {
-	public static (ushort modelSet, ushort modelBase, ushort modelVariant) SplitString(string str)
+	public static (ushort ModelSet, ushort ModelBase, ushort ModelVariant) SplitString(string str)
 	{
 		string[] parts = str.Split(",", StringSplitOptions.RemoveEmptyEntries);
 
