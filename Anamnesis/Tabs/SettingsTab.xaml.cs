@@ -108,28 +108,18 @@ public partial class SettingsTab : System.Windows.Controls.UserControl
 	}
 
 	[AddINotifyPropertyChangedInterface]
-	public abstract class SettingsPage : Page
+	public abstract class SettingsPage(IconChar icon, string context, string name) : Page(icon, context, name)
 	{
-		public SettingsPage(IconChar icon, string context, string name)
-			: base(icon, context, name)
-		{
-		}
-
 		public abstract Dictionary<string, SettingCategory> SettingCategories { get; }
 		public bool HasVisibleSettings => this.SettingCategories.Any(category => category.Value.Element.Visibility == Visibility.Visible);
 
 		public abstract void FilterContent(string query);
 	}
 
-	public class SettingsPage<T> : SettingsPage
+	public class SettingsPage<T>(IconChar icon, string context, string name) : SettingsPage(icon, context, name)
 		where T : System.Windows.Controls.UserControl, ISettingSection
 	{
 		private T? content;
-
-		public SettingsPage(IconChar icon, string context, string name)
-			: base(icon, context, name)
-		{
-		}
 
 		public override Dictionary<string, SettingCategory> SettingCategories => this.content?.SettingCategories ?? new Dictionary<string, SettingCategory>();
 
@@ -153,32 +143,18 @@ public partial class SettingsTab : System.Windows.Controls.UserControl
 	}
 }
 
-public class Setting
+public class Setting(string key, UIElement element)
 {
-	public Setting(string key, UIElement element)
-	{
-		this.Key = key;
-		this.Element = element;
-		this.Text = LocalizationService.GetString(key) ?? key;
-	}
-
-	public string Key { get; }
-	public string Text { get; }
-	public UIElement Element { get; }
+	public string Key { get; } = key;
+	public string Text { get; } = LocalizationService.GetString(key) ?? key;
+	public UIElement Element { get; } = element;
 }
 
-public class SettingCategory
+public class SettingCategory(string key, UIElement element)
 {
-	public SettingCategory(string key, UIElement element)
-	{
-		this.Key = key;
-		this.Element = element;
-		this.Settings = new List<Setting>();
-	}
-
-	public string Key { get; }
-	public UIElement Element { get; }
-	public List<Setting> Settings { get; set; }
+	public string Key { get; } = key;
+	public UIElement Element { get; } = element;
+	public List<Setting> Settings { get; set; } = new List<Setting>();
 
 	public void UpdateVisibility(string query)
 	{

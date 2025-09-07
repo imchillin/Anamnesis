@@ -300,16 +300,14 @@ public class PoseService : ServiceBase<PoseService>
 
 				destPath = standardPoseDir.FullName + destPath;
 
-				string? destDir = Path.GetDirectoryName(destPath);
-
-				if (destDir == null)
-					throw new Exception($"Failed to get directory name from path: {destPath}");
+				string? destDir = Path.GetDirectoryName(destPath)
+					?? throw new Exception($"Failed to get directory name from path: {destPath}");
 
 				if (!Directory.Exists(destDir))
 					Directory.CreateDirectory(destDir);
 
 				using Stream contents = EmbeddedFileUtility.Load(posePath);
-				using FileStream fileStream = new FileStream(destPath, FileMode.Create);
+				using var fileStream = new FileStream(destPath, FileMode.Create);
 				await contents.CopyToAsync(fileStream);
 			}
 

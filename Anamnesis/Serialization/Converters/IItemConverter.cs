@@ -37,7 +37,7 @@ public class IItemConverter : JsonConverter<IItem>
 
 	public static IItem FromString(string str)
 	{
-		if (str.Contains(","))
+		if (str.Contains(','))
 		{
 			(ushort modelSet, ushort modelBase, ushort modelVariant) = SplitString(str);
 			return ItemUtility.GetDummyItem(modelSet, modelBase, modelVariant);
@@ -53,11 +53,7 @@ public class IItemConverter : JsonConverter<IItem>
 
 	public override IItem Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
-		string? str = reader.GetString();
-
-		if (str == null)
-			throw new Exception($"Invalid serialized item value");
-
+		string? str = reader.GetString() ?? throw new Exception($"Invalid serialized item value");
 		return FromString(str);
 	}
 

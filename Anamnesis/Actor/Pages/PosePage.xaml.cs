@@ -187,9 +187,9 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		if (shouldFlip && targetBone.Name.EndsWith("_l"))
 		{
 			string rightBoneString = string.Concat(targetBone.Name.AsSpan(0, targetBone.Name.Length - 2), "_r"); // removes the "_l" and replaces it with "_r"
-			/*	Useful debug lines to make sure the correct bones are grabbed...
-				*	Log.Information("flipping: " + targetBone.BoneName);
-				*	Log.Information("right flip target: " + rightBoneString); */
+			/*  Useful debug lines to make sure the correct bones are grabbed...
+				*  Log.Information("flipping: " + targetBone.BoneName);
+				*  Log.Information("right flip target: " + rightBoneString); */
 			Bone? rightBone = targetBone.Skeleton.GetBone(rightBoneString);
 			if (rightBone != null && rightBone.TransformMemory != null)
 			{

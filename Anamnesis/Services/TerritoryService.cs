@@ -183,7 +183,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 
 				if (current != this.CurrentWeatherId)
 				{
-					MemoryService.Write(AddressService.GPoseWeather, this.CurrentWeatherId, "Gpose weather Changed");
+					MemoryService.Write(AddressService.GPoseWeather, this.CurrentWeatherId);
 				}
 			}
 			else
@@ -192,7 +192,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 
 				if (current != this.CurrentWeatherId)
 				{
-					MemoryService.Write(AddressService.NextWeatherId, (byte)this.CurrentWeatherId, "Overworld weather Changed");
+					MemoryService.Write(AddressService.NextWeatherId, (byte)this.CurrentWeatherId);
 				}
 			}
 		}

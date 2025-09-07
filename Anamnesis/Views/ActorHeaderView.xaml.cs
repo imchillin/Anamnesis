@@ -3,10 +3,10 @@
 
 namespace Anamnesis.GUI.Views;
 
-using System.Windows;
-using System.Windows.Controls;
 using Anamnesis.Memory;
 using Anamnesis.Styles;
+using System.Windows;
+using System.Windows.Controls;
 
 /// <summary>
 /// Interaction logic for ActorHeaderView.xaml.
@@ -20,9 +20,7 @@ public partial class ActorHeaderView : UserControl
 
 	private void UserControl_Loaded(object sender, RoutedEventArgs e)
 	{
-		ActorMemory? actor = this.DataContext as ActorMemory;
-
-		if (actor == null)
+		if (this.DataContext is not ActorMemory actor)
 			return;
 
 		this.Icon.Icon = actor.ObjectKind.GetIcon();

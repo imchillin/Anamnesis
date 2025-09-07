@@ -3,6 +3,7 @@
 
 namespace Anamnesis.GUI.Windows;
 
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,7 +14,6 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using PropertyChanged;
 using XivToolsWpf;
 
 /// <summary>
@@ -56,9 +56,12 @@ public partial class ProcessSelector : UserControl
 		if (processes.Length == 1)
 			return processes[0];
 
-		Dialog dlg = new Dialog();
-		ProcessSelector proc = new ProcessSelector();
-		proc.window = dlg;
+		var dlg = new Dialog();
+		var proc = new ProcessSelector
+		{
+			window = dlg,
+		};
+
 		dlg.ContentArea.Content = proc;
 		dlg.ShowDialog();
 		return proc.Selected;
@@ -67,7 +70,7 @@ public partial class ProcessSelector : UserControl
 	private static Process[] GetTargetProcesses()
 	{
 		Process[] processes = Process.GetProcesses();
-		List<Process> results = new List<Process>();
+		var results = new List<Process>();
 		foreach (Process process in processes)
 		{
 			if (IsTargetProcess(process.ProcessName))
@@ -81,17 +84,17 @@ public partial class ProcessSelector : UserControl
 
 	private static bool IsTargetProcess(string name)
 	{
-		return name.ToLower().Contains("ffxiv_dx11");
+		return name.Contains("ffxiv_dx11", StringComparison.CurrentCultureIgnoreCase);
 	}
 
-	private static ImageSource IconToImageSource(Icon icon)
+	private static BitmapSource IconToImageSource(Icon icon)
 	{
 		return Imaging.CreateBitmapSourceFromHIcon(icon.Handle, new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
 	}
 
 	private void OnRefreshClicked(object? sender, RoutedEventArgs? e)
 	{
-		List<Option> options = new List<Option>();
+		var options = new List<Option>();
 		Process[] processes = Process.GetProcesses();
 		foreach (Process process in processes)
 		{

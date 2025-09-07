@@ -3,21 +3,16 @@
 
 namespace Anamnesis.Serialization.Converters;
 
+using Anamnesis.GameData;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Anamnesis.Actor;
-using Anamnesis.GameData;
 
 public class INpcBaseConverter : JsonConverter<INpcBase>
 {
 	public override INpcBase Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
-		string? str = reader.GetString();
-
-		if (str == null)
-			throw new Exception($"Invalid serialized item value");
-
+		string? str = reader.GetString() ?? throw new Exception($"Invalid serialized item value");
 		return INpcBaseExtensions.FromStringKey(str);
 	}
 

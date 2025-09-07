@@ -13,14 +13,16 @@ public class CleanNpcNames : ScriptBase
 
 	public override void Run()
 	{
-		JsonSerializerOptions op = new();
-		op.AllowTrailingCommas = true;
-		op.WriteIndented = true;
+		var op = new JsonSerializerOptions
+		{
+			AllowTrailingCommas = true,
+			WriteIndented = true,
+		};
 
 		string json = File.ReadAllText(filePath);
-		Dictionary<string, string>? entries = JsonSerializer.Deserialize<Dictionary<string, string>>(json, op);
-		Dictionary<string, string> results = new Dictionary<string, string>();
-		List<string> keys = new List<string>();
+		var entries = JsonSerializer.Deserialize<Dictionary<string, string>>(json, op);
+		var results = new Dictionary<string, string>();
+		var keys = new List<string>();
 
 		if (entries == null)
 			throw new Exception("Failed to deserialize npc names");

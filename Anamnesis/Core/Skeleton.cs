@@ -36,11 +36,11 @@ public class Skeleton : INotifyPropertyChanged
 	/// </remarks>
 	protected readonly Dictionary<string, Tuple<string, string>> HairNameToSuffixMap = new()
 	{
-		{ "HairAutoFrontLeft", new("l", "j_kami_f_l") },	// Hair, Front Left
-		{ "HairAutoFrontRight", new("r", "j_kami_f_r") },	// Hair, Front Right
-		{ "HairAutoA", new("a", "j_kami_a") },				// Hair, Back Up
-		{ "HairAutoB", new("b", "j_kami_b") },				// Hair, Back Down
-		{ "HairFront", new("f", string.Empty) },			// Hair, Front (Custom Bone Name)
+		{ "HairAutoFrontLeft", new("l", "j_kami_f_l") },    // Hair, Front Left
+		{ "HairAutoFrontRight", new("r", "j_kami_f_r") },   // Hair, Front Right
+		{ "HairAutoA", new("a", "j_kami_a") },              // Hair, Back Up
+		{ "HairAutoB", new("b", "j_kami_b") },              // Hair, Back Down
+		{ "HairFront", new("f", string.Empty) },            // Hair, Front (Custom Bone Name)
 	};
 
 	/// <summary>

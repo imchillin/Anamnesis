@@ -158,27 +158,15 @@ public partial class GeneralSettingsPage : System.Windows.Controls.UserControl, 
 		e.Handled = true;
 	}
 
-	public class FontOption
+	public class FontOption(Settings.Fonts font)
 	{
-		public FontOption(Settings.Fonts font)
-		{
-			this.Key = "Settings_Font_" + font.ToString();
-			this.Font = font;
-		}
-
-		public string Key { get; }
-		public Settings.Fonts Font { get; }
+		public string Key { get; } = "Settings_Font_" + font.ToString();
+		public Settings.Fonts Font { get; } = font;
 	}
 
-	public class LanguageOption
+	public class LanguageOption(string key, string display)
 	{
-		public LanguageOption(string key, string display)
-		{
-			this.Key = key;
-			this.Display = display;
-		}
-
-		public string Key { get; }
-		public string Display { get; }
+		public string Key { get; } = key;
+		public string Display { get; } = display;
 	}
 }

@@ -17,14 +17,12 @@ public static class HashUtility
 		string finalString = inputString;
 		if (salt)
 			finalString += Salt;
-
-		using HashAlgorithm algorithm = SHA256.Create();
-		return algorithm.ComputeHash(Encoding.UTF8.GetBytes(finalString));
+		return SHA256.HashData(Encoding.UTF8.GetBytes(finalString));
 	}
 
 	public static string GetHashString(string inputString, bool salt = false)
 	{
-		StringBuilder sb = new StringBuilder();
+		var sb = new StringBuilder();
 
 		foreach (byte b in GetHash(inputString, salt))
 		{
@@ -36,10 +34,10 @@ public static class HashUtility
 
 	private static string GenerateRandomString(int length)
 	{
-		Random rand = new Random();
+		var rand = new Random();
 
 		int randValue;
-		StringBuilder builder = new StringBuilder();
+		var builder = new StringBuilder();
 		char letter;
 		for (int i = 0; i < length; i++)
 		{

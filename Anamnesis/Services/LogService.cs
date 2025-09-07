@@ -53,10 +53,8 @@ public class LogService : ServiceBase<LogService>
 	/// <exception cref="Exception">Thrown if the logs directory could not be retrieved.</exception>
 	public static void ShowLogs()
 	{
-		string? dir = Path.GetDirectoryName(FileService.StoreDirectory + LOG_FILE_PATH);
-
-		if (dir == null)
-			throw new Exception("Failed to get directory name for path");
+		string? dir = Path.GetDirectoryName(FileService.StoreDirectory + LOG_FILE_PATH)
+			?? throw new Exception("Failed to get directory name for path");
 
 		dir = FileService.ParseToFilePath(dir);
 		Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", dir);

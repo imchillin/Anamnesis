@@ -716,7 +716,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 			IntPtr bindAddress = bind.GetAddress();
 			object? val = bind.Property.GetValue(this) ?? throw new Exception("Attempt to write null value to memory");
-			MemoryService.Write(bindAddress, val, $"memory: {this} bind: {bind} changed");
+			MemoryService.Write(bindAddress, val);
 			bind.LastValue = val;
 		}
 		finally

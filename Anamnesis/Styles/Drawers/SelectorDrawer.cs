@@ -194,10 +194,8 @@ public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChan
 
 	private void OnLoaded(object sender, RoutedEventArgs e)
 	{
-		var selector = this.FindChild<Selector>();
-
-		if (selector == null)
-			throw new Exception("Selector drawer missing selector component");
+		var selector = this.FindChild<Selector>()
+			?? throw new Exception("Selector drawer missing selector component");
 
 		this.selector = selector;
 		this.Selector.ObjectType = this.objectType;

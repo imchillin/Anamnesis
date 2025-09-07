@@ -10,37 +10,28 @@ public static class ActorTypesExtensions
 {
 	public static bool IsSupportedType(this ActorTypes actorType)
 	{
-		switch (actorType)
+		return actorType switch
 		{
-			case ActorTypes.Player:
-			case ActorTypes.BattleNpc:
-			case ActorTypes.EventNpc:
-			case ActorTypes.Companion:
-			case ActorTypes.Mount:
-			case ActorTypes.Ornament:
-			case ActorTypes.Retainer:
-				return true;
-		}
-
-		return false;
+			ActorTypes.Player or ActorTypes.BattleNpc or ActorTypes.EventNpc or ActorTypes.Companion or ActorTypes.Mount or ActorTypes.Ornament or ActorTypes.Retainer => true,
+			_ => false,
+		};
 	}
 
 	public static IconChar GetIcon(this ActorTypes type)
 	{
-		switch (type)
+		return type switch
 		{
-			case ActorTypes.Player: return IconChar.UserAlt;
-			case ActorTypes.BattleNpc: return IconChar.UserShield;
-			case ActorTypes.EventNpc: return IconChar.UserNinja;
-			case ActorTypes.Treasure: return IconChar.Coins;
-			case ActorTypes.Aetheryte: return IconChar.Gem;
-			case ActorTypes.Companion: return IconChar.Cat;
-			case ActorTypes.Retainer: return IconChar.ConciergeBell;
-			case ActorTypes.Housing: return IconChar.Chair;
-			case ActorTypes.Mount: return IconChar.Horse;
-			case ActorTypes.Ornament: return IconChar.HatCowboy;
-		}
-
-		return IconChar.Question;
+			ActorTypes.Player => IconChar.UserAlt,
+			ActorTypes.BattleNpc => IconChar.UserShield,
+			ActorTypes.EventNpc => IconChar.UserNinja,
+			ActorTypes.Treasure => IconChar.Coins,
+			ActorTypes.Aetheryte => IconChar.Gem,
+			ActorTypes.Companion => IconChar.Cat,
+			ActorTypes.Retainer => IconChar.ConciergeBell,
+			ActorTypes.Housing => IconChar.Chair,
+			ActorTypes.Mount => IconChar.Horse,
+			ActorTypes.Ornament => IconChar.HatCowboy,
+			_ => IconChar.Question,
+		};
 	}
 }

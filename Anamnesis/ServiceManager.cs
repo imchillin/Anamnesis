@@ -19,7 +19,7 @@ public class ServiceManager
 {
 	private static readonly Stopwatch s_addTimer = new();
 	private static readonly Stopwatch s_startupTimer = new();
-	private static readonly List<IService> s_services = new List<IService>();
+	private static readonly List<IService> s_services = new();
 
 	public static bool IsInitialized { get; private set; } = false;
 	public static bool IsStarted { get; private set; } = false;
@@ -46,7 +46,7 @@ public class ServiceManager
 		}
 	}
 
-	public async Task InitializeServices()
+	public static async Task InitializeServices()
 	{
 		s_startupTimer.Start();
 
@@ -89,7 +89,7 @@ public class ServiceManager
 
 		Log.Information($"Services intialized in {s_startupTimer.ElapsedMilliseconds}ms");
 
-		await this.StartServices();
+		await StartServices();
 
 		s_startupTimer.Restart();
 
@@ -99,7 +99,7 @@ public class ServiceManager
 		Log.Information($"Took {s_startupTimer.ElapsedMilliseconds}ms to check windows version");
 	}
 
-	public async Task StartServices()
+	public static async Task StartServices()
 	{
 		s_startupTimer.Restart();
 
@@ -120,7 +120,7 @@ public class ServiceManager
 		Log.Information($"Services started in {s_startupTimer.ElapsedMilliseconds}ms");
 	}
 
-	public async Task ShutdownServices()
+	public static async Task ShutdownServices()
 	{
 		// Shutdown services in reverse order (local copy so that we don't mess up order on restart)
 		var reversedServices = new List<IService>(s_services);

@@ -3,10 +3,10 @@
 
 namespace Anamnesis.Styles.Controls;
 
-using System.Windows;
-using System.Windows.Controls;
 using Anamnesis.GameData;
 using PropertyChanged;
+using System.Windows;
+using System.Windows.Controls;
 using XivToolsWpf.DependencyProperties;
 
 /// <summary>
@@ -15,8 +15,8 @@ using XivToolsWpf.DependencyProperties;
 [AddINotifyPropertyChangedInterface]
 public partial class ItemCategoryFilter : UserControl
 {
-	public static DependencyProperty<ItemCategories> ValueDp = Binder.Register<ItemCategories, ItemCategoryFilter>(nameof(ItemCategoryFilter.Value));
-	public static DependencyProperty<bool> IsWeaponSlotDp = Binder.Register<bool, ItemCategoryFilter>(nameof(ItemCategoryFilter.IsWeaponSlot));
+	public static readonly DependencyProperty<ItemCategories> ValueDp = Binder.Register<ItemCategories, ItemCategoryFilter>(nameof(ItemCategoryFilter.Value));
+	public static readonly DependencyProperty<bool> IsWeaponSlotDp = Binder.Register<bool, ItemCategoryFilter>(nameof(ItemCategoryFilter.IsWeaponSlot));
 
 	public ItemCategoryFilter()
 	{

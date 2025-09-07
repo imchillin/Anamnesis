@@ -106,36 +106,36 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 		// [FOR DEBUGGING]
 		// this.intersectionSphere = new Sphere
 		// {
-		//	 Radius = 0.03,
-		//	 Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red)),
+		//   Radius = 0.03,
+		//   Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red)),
 		// };
 		// this.Viewport.Children.Add(this.intersectionSphere);
 
 		// this.nearSphere = new Sphere
 		// {
-		//	 Radius = 0.02,
-		//	 Material = new DiffuseMaterial(new SolidColorBrush(Colors.Magenta)),
+		//   Radius = 0.02,
+		//   Material = new DiffuseMaterial(new SolidColorBrush(Colors.Magenta)),
 		// };
 		// this.Viewport.Children.Add(this.nearSphere);
 
 		// this.farSphere = new Sphere
 		// {
-		//	 Radius = 0.02,
-		//	 Material = new DiffuseMaterial(new SolidColorBrush(Colors.Cyan)),
+		//   Radius = 0.02,
+		//   Material = new DiffuseMaterial(new SolidColorBrush(Colors.Cyan)),
 		// };
 		// this.Viewport.Children.Add(this.farSphere);
 
 		// this.axisProjectionLine = new Line
 		// {
-		//	 Thickness = 2,
-		//	 Color = Colors.Red,
+		//   Thickness = 2,
+		//   Color = Colors.Red,
 		// };
 		// this.Viewport.Children.Add(this.axisProjectionLine);
 
 		// this.planeNormalLine = new Line
 		// {
-		//	 Thickness = 2,
-		//	 Color = Colors.Green,
+		//   Thickness = 2,
+		//   Color = Colors.Green,
 		// };
 		// this.Viewport.Children.Add(this.planeNormalLine);
 
@@ -167,6 +167,8 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 
 	public static Settings Settings => SettingsService.Current;
 
+	public static OverflowModes RotationOverflowBehavior => Settings.WrapRotationSliders ? OverflowModes.Loop : OverflowModes.Clamp;
+
 	public decimal TickFrequency
 	{
 		get => TickDp.Get(this);
@@ -196,8 +198,6 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 		get => EulerDp.Get(this);
 		set => EulerDp.Set(this, value);
 	}
-
-	public OverflowModes RotationOverflowBehavior => Settings.WrapRotationSliders ? OverflowModes.Loop : OverflowModes.Clamp;
 
 	public CmQuaternion Root
 	{
@@ -392,7 +392,7 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 
 			// [FOR DEBUGGING]
 			// if (this.Viewport.Children.Contains(this.tangentPlaneVisual))
-			//	 this.Viewport.Children.Remove(this.tangentPlaneVisual);
+			//   this.Viewport.Children.Remove(this.tangentPlaneVisual);
 
 			// this.Viewport.Children.Add(this.tangentPlaneVisual);
 		}
@@ -521,7 +521,7 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 	/// <param name="e">The event arguments.</param>
 	private void OnSettingsChanged(object? sender, EventArgs e)
 	{
-		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.RotationOverflowBehavior)));
+		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RotationOverflowBehavior)));
 	}
 
 	private class RotationGizmo : ModelVisual3D
@@ -857,9 +857,9 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 				// [FOR DEBUGGING]
 				// Visualize the intersection point of the mouse ray on the plane
 				// this.target.intersectionSphere.Transform = new TranslateTransform3D(
-				//	 currentIntersection.Value.X,
-				//	 currentIntersection.Value.Y,
-				//	 currentIntersection.Value.Z);
+				//   currentIntersection.Value.X,
+				//   currentIntersection.Value.Y,
+				//   currentIntersection.Value.Z);
 
 				Vector3D movement = (Vector3D)(currentIntersection - prevIntersection);
 				this.lastPoint = mousePosition;

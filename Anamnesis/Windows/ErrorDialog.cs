@@ -79,7 +79,7 @@ public static class ErrorDialog
 			// Ignore if service is not instantiated yet
 		}
 
-		await App.Services.ShutdownServices();
+		await ServiceManager.ShutdownServices();
 		Application.Current?.Shutdown(2);
 		return true; // Indicate that quit was handled to prevent forced shutdown
 	}

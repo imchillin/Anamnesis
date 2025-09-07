@@ -3,15 +3,15 @@
 
 namespace Anamnesis.Styles.Controls;
 
+using Anamnesis.Memory;
+using Anamnesis.Services;
+using Anamnesis.Styles.Drawers;
+using PropertyChanged;
 using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Anamnesis.Memory;
-using Anamnesis.Services;
-using Anamnesis.Styles.Drawers;
-using PropertyChanged;
 using XivToolsWpf.DependencyProperties;
 using Color = Anamnesis.Memory.Color;
 using WpfColor = System.Windows.Media.Color;
@@ -121,8 +121,11 @@ public partial class ColorEditor : UserControl, INotifyPropertyChanged
 
 	private async void OnClick(object sender, RoutedEventArgs e)
 	{
-		ColorSelectorDrawer selector = new ColorSelectorDrawer();
-		selector.Value = new Color4(this.Value);
+		var selector = new ColorSelectorDrawer
+		{
+			Value = new Color4(this.Value),
+		};
+
 		await ViewService.ShowDrawer(selector);
 		this.Value = selector.Value.Color;
 	}

@@ -101,7 +101,7 @@ public class HotkeyService : ServiceBase<HotkeyService>
 	/// <inheritdoc/>
 	public override async Task Initialize()
 	{
-		foreach ((string function, KeyCombination key) in SettingsService.Current.KeyboardBindings.GetBinds())
+		foreach ((string function, KeyCombination key) in Settings.Binds.GetBinds())
 			RegisterHotkey(key.Key, key.Modifiers, function);
 
 		await base.Initialize();

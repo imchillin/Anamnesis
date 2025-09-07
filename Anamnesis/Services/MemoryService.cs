@@ -466,12 +466,11 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// <typeparam name="T">The type of the value to write. Must be a struct.</typeparam>
 	/// <param name="address">The memory address to write to.</param>
 	/// <param name="value">The value to write.</param>
-	/// <param name="reason">The reason for writing the value.</param>
 	/// <returns>True if the write operation was successful, otherwise False.</returns>
-	public static bool Write<T>(IntPtr address, T value, string reason)
+	public static bool Write<T>(IntPtr address, T value)
 		where T : struct
 	{
-		return Write(address, value, typeof(T), reason);
+		return Write(address, value, typeof(T));
 	}
 
 	/// <summary>
@@ -479,11 +478,10 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// </summary>
 	/// <param name="address">The memory address to write to.</param>
 	/// <param name="value">The object value to write.</param>
-	/// <param name="reason">The reason for writing the value.</param>
 	/// <returns>True if the write operation was successful, otherwise False.</returns>
-	public static bool Write(IntPtr address, object value, string reason)
+	public static bool Write(IntPtr address, object value)
 	{
-		return Write(address, value, value.GetType(), reason);
+		return Write(address, value, value.GetType());
 	}
 
 	/// <summary>
@@ -492,9 +490,8 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// <param name="address">The memory address to write to.</param>
 	/// <param name="value">The object value to write.</param>
 	/// <param name="type">The type of the value to write.</param>
-	/// <param name="reason">The reason for writing the value.</param>
 	/// <returns>True if the write operation was successful, otherwise False.</returns>
-	public static bool Write(IntPtr address, object value, Type type, string reason)
+	public static bool Write(IntPtr address, object value, Type type)
 	{
 		if (address == IntPtr.Zero)
 			return false;
@@ -755,7 +752,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 					if (!servicesWereShutdown)
 					{
 						TargetService.Instance.ClearSelection();
-						await App.Services.ShutdownServices();
+						await ServiceManager.ShutdownServices();
 						servicesWereShutdown = true;
 					}
 
@@ -766,7 +763,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 					// If process is restored, start all services again
 					if (IsProcessAlive && servicesWereShutdown)
 					{
-						await App.Services.StartServices();
+						await ServiceManager.StartServices();
 						servicesWereShutdown = false;
 					}
 				}

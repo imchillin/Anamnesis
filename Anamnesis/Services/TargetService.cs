@@ -134,18 +134,18 @@ public class TargetService : ServiceBase<TargetService>
 				memory = actorMemory;
 
 			memory.SetAddress(basicActor.Address);
-			PinnedActor pined = new PinnedActor(memory);
+			var pinned = new PinnedActor(memory);
 
-			Log.Information($"Pinning actor: {pined}");
+			Log.Information($"Pinning actor: {pinned}");
 
 			await Dispatch.MainThread();
-			Instance.PinnedActors.Add(pined);
+			Instance.PinnedActors.Add(pinned);
 			Instance.PinnedActorCount = Instance.PinnedActors.Count;
 
 			if (select)
-				Instance.SelectActor(pined);
+				Instance.SelectActor(pinned);
 
-			ActorPinned?.Invoke(pined);
+			ActorPinned?.Invoke(pinned);
 		}
 		catch (Exception ex)
 		{
@@ -477,11 +477,11 @@ public class TargetService : ServiceBase<TargetService>
 			{
 				if (GposeService.Instance.IsGpose)
 				{
-					MemoryService.Write(IntPtr.Add(AddressService.TargetSystem, AddressService.GPOSE_PLAYER_TARGET_OFFSET), (IntPtr)ptr, "Update player target");
+					MemoryService.Write(IntPtr.Add(AddressService.TargetSystem, AddressService.GPOSE_PLAYER_TARGET_OFFSET), (IntPtr)ptr);
 				}
 				else
 				{
-					MemoryService.Write(IntPtr.Add(AddressService.TargetSystem, AddressService.OVERWORLD_PLAYER_TARGET_OFFSET), (IntPtr)ptr, "Update player target");
+					MemoryService.Write(IntPtr.Add(AddressService.TargetSystem, AddressService.OVERWORLD_PLAYER_TARGET_OFFSET), (IntPtr)ptr);
 				}
 			}
 		}

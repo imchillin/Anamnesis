@@ -3,20 +3,16 @@
 
 namespace Anamnesis.Serialization.Converters;
 
+using Anamnesis.Memory;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Anamnesis.Memory;
 
 public class Color4Converter : JsonConverter<Color4>
 {
 	public override Color4 Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
-		string? str = reader.GetString();
-
-		if (str == null)
-			throw new Exception("Cannot convert null to Color4");
-
+		string? str = reader.GetString() ?? throw new Exception("Cannot convert null to Color4");
 		return Color4.FromString(str);
 	}
 

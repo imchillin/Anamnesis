@@ -3,9 +3,9 @@
 
 namespace Anamnesis.Styles.Controls;
 
+using Anamnesis.GameData;
 using System.Windows;
 using System.Windows.Controls;
-using Anamnesis.GameData;
 using XivToolsWpf.DependencyProperties;
 
 /// <summary>
@@ -13,7 +13,7 @@ using XivToolsWpf.DependencyProperties;
 /// </summary>
 public partial class ClassFilter : UserControl
 {
-	public static DependencyProperty<Classes> ValueDp = Binder.Register<Classes, ClassFilter>(nameof(ClassFilter.Value), OnValueChanged);
+	public static readonly DependencyProperty<Classes> ValueDp = Binder.Register<Classes, ClassFilter>(nameof(ClassFilter.Value), OnValueChanged);
 
 	public ClassFilter()
 	{

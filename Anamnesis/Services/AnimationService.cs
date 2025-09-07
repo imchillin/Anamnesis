@@ -53,6 +53,35 @@ public class AnimationService : ServiceBase<AnimationService>
 		GameDataService.Instance
 	];
 
+	/// <summary>
+	/// Blends the specified animation to the actor's current animation.
+	/// </summary>
+	/// <param name="memory">The actor's memory.</param>
+	/// <param name="animationId">The animation ID to blend.</param>
+	/// <returns>True if the animation was successfully blended; otherwise, false.</returns>
+	public static async Task<bool> BlendAnimation(ActorMemory memory, ushort animationId)
+	{
+		if (!memory.IsValid)
+			return false;
+
+		if (memory.Animation!.BlendLocked)
+			return false;
+
+		if (!memory.CanAnimate)
+			return false;
+
+		memory.Animation!.BlendLocked = true;
+
+		ushort oldAnim = memory.Animation!.BaseOverride;
+		memory.Animation!.BaseOverride = animationId;
+		await Task.Delay(66);
+		memory.Animation!.BaseOverride = oldAnim;
+
+		memory.Animation!.BlendLocked = false;
+
+		return true;
+	}
+
 	/// <inheritdoc/>
 	public override async Task Shutdown()
 	{
@@ -77,37 +106,8 @@ public class AnimationService : ServiceBase<AnimationService>
 		if (!memory.CanAnimate)
 			return false;
 
-		this.ApplyBaseAnimationInternal(memory, animationId, interrupt, ActorMemory.CharacterModes.AnimLock, 0);
+		ApplyBaseAnimationInternal(memory, animationId, interrupt, ActorMemory.CharacterModes.AnimLock, 0);
 		this.overriddenActors.Add(memory);
-
-		return true;
-	}
-
-	/// <summary>
-	/// Blends the specified animation to the actor's current animation.
-	/// </summary>
-	/// <param name="memory">The actor's memory.</param>
-	/// <param name="animationId">The animation ID to blend.</param>
-	/// <returns>True if the animation was successfully blended; otherwise, false.</returns>
-	public async Task<bool> BlendAnimation(ActorMemory memory, ushort animationId)
-	{
-		if (!memory.IsValid)
-			return false;
-
-		if (memory.Animation!.BlendLocked)
-			return false;
-
-		if (!memory.CanAnimate)
-			return false;
-
-		memory.Animation!.BlendLocked = true;
-
-		ushort oldAnim = memory.Animation!.BaseOverride;
-		memory.Animation!.BaseOverride = animationId;
-		await Task.Delay(66);
-		memory.Animation!.BaseOverride = oldAnim;
-
-		memory.Animation!.BlendLocked = false;
 
 		return true;
 	}
@@ -121,7 +121,7 @@ public class AnimationService : ServiceBase<AnimationService>
 		if (!memory.IsValid)
 			return;
 
-		this.ApplyBaseAnimationInternal(memory, 0, true, ActorMemory.CharacterModes.Normal, 0);
+		ApplyBaseAnimationInternal(memory, 0, true, ActorMemory.CharacterModes.Normal, 0);
 
 		AnimationMemory animation = memory.Animation!;
 
@@ -179,6 +179,35 @@ public class AnimationService : ServiceBase<AnimationService>
 		return base.OnStart();
 	}
 
+	private static void ApplyBaseAnimationInternal(ActorMemory memory, ushort? animationId, bool interrupt, ActorMemory.CharacterModes? mode, byte? modeInput)
+	{
+		if (animationId != null && memory.Animation!.BaseOverride != animationId)
+		{
+			if (animationId < GameDataService.ActionTimelines.Count)
+			{
+				memory.Animation!.BaseOverride = (ushort)animationId;
+			}
+		}
+
+		// Always set the input before the mode
+		if (modeInput != null && memory.CharacterModeInput != modeInput)
+		{
+			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterModeInput)), modeInput);
+		}
+
+		if (mode != null && memory.CharacterMode != mode)
+		{
+			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterModeRaw)), mode);
+		}
+
+		if (interrupt)
+		{
+			memory.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody].Value = 0;
+		}
+
+		memory.Synchronize();
+	}
+
 	private async Task CheckThread(CancellationToken cancellationToken)
 	{
 		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
@@ -194,35 +223,6 @@ public class AnimationService : ServiceBase<AnimationService>
 				break;
 			}
 		}
-	}
-
-	private void ApplyBaseAnimationInternal(ActorMemory memory, ushort? animationId, bool interrupt, ActorMemory.CharacterModes? mode, byte? modeInput)
-	{
-		if (animationId != null && memory.Animation!.BaseOverride != animationId)
-		{
-			if (animationId < GameDataService.ActionTimelines.Count)
-			{
-				memory.Animation!.BaseOverride = (ushort)animationId;
-			}
-		}
-
-		// Always set the input before the mode
-		if (modeInput != null && memory.CharacterModeInput != modeInput)
-		{
-			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterModeInput)), modeInput, "Animation Mode Input Override");
-		}
-
-		if (mode != null && memory.CharacterMode != mode)
-		{
-			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterModeRaw)), mode, "Animation Mode Override");
-		}
-
-		if (interrupt)
-		{
-			memory.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody].Value = 0;
-		}
-
-		memory.Synchronize();
 	}
 
 	private void SetSpeedControlEnabled(bool enabled)

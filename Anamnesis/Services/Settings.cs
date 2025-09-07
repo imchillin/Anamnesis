@@ -194,15 +194,13 @@ public class Settings : INotifyPropertyChanged
 		public KeyCombination ActionPage_ResumeAll { get; set; } = new(Key.P, ModifierKeys.Control | ModifierKeys.Shift);
 		public KeyCombination ActionPage_PauseAll { get; set; } = new(Key.S, ModifierKeys.Control | ModifierKeys.Shift);
 
-		public Dictionary<string, KeyCombination> GetBinds()
+		public static Dictionary<string, KeyCombination> GetBinds()
 		{
 			Dictionary<string, KeyCombination> results = new();
 			PropertyInfo[]? properties = typeof(Binds).GetProperties();
 			foreach (PropertyInfo property in properties)
 			{
-				KeyCombination? key = property.GetValue(SettingsService.Current.KeyboardBindings) as KeyCombination;
-
-				if (key == null)
+				if (property.GetValue(SettingsService.Current.KeyboardBindings) is not KeyCombination key)
 					continue;
 
 				string function = property.Name.Replace('_', '.');

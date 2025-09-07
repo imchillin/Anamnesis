@@ -84,7 +84,7 @@ public partial class App : Application
 
 	private void OnExit(object sender, ExitEventArgs e)
 	{
-		Task.Run(Services.ShutdownServices);
+		Task.Run(ServiceManager.ShutdownServices);
 	}
 
 	private void TaskSchedulerOnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
@@ -128,7 +128,7 @@ public partial class App : Application
 			CheckWorkingDirectory();
 			CheckForProcesses();
 
-			await Services.InitializeServices();
+			await ServiceManager.InitializeServices();
 
 			SettingsService.ApplyTheme();
 

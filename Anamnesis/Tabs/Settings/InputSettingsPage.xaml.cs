@@ -60,7 +60,7 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 		this.SettingCategories["Hotkeys"].Settings.Add(new Setting("Settings_KeysHeader", this.Input_Hotkeys_List));
 
 		// Set up hotkey options
-		this.Hotkeys = SettingsService.Current.KeyboardBindings.GetBinds()
+		this.Hotkeys = Settings.Binds.GetBinds()
 			.Select(bind => new HotkeyOption(bind.Key, bind.Value))
 			.ToList();
 
