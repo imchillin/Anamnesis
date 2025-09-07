@@ -63,7 +63,7 @@ public partial class Hook
 		return SetWindowsHookEx(WH_KEYBOARD_LL, proc, userLibrary, 0);
 	}
 
-	[LibraryImport("user32.dll", SetLastError = true)]
+	[LibraryImport("user32.dll", SetLastError = true, EntryPoint = "SetWindowsHookExW")]
 	private static partial IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
 
 	[LibraryImport("user32.dll", SetLastError = true)]
