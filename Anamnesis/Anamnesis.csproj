@@ -24,6 +24,7 @@
     <Platforms>x64</Platforms>
     <PublishTrimmed>false</PublishTrimmed>
     <CETCompat>false</CETCompat>
+    <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Fody" Version="6.9.1">
