@@ -16,6 +16,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 /// <summary>
@@ -58,7 +59,7 @@ public class Skeleton : INotifyPropertyChanged
 	/// <summary>
 	/// A lock object used to synchronize access to the snapshot dictionary.
 	/// </summary>
-	private readonly object snapshotLock = new();
+	private readonly Lock snapshotLock = new();
 
 	/// <summary>Initializes a new instance of the <see cref="Skeleton"/> class.</summary>
 	/// <param name="actor">The actor memory associated with this skeleton.</param>

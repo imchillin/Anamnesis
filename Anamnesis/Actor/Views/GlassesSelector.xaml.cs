@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Actor.Views;
 
+using Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;

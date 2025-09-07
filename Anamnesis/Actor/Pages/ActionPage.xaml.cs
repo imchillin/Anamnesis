@@ -29,19 +29,19 @@ public partial class ActionPage : UserControl
 
 		this.LipSyncTypes = GenerateLipList();
 
-		HotkeyService.RegisterHotkeyHandler("ActionPage.ResumeAll", () => this.OnResumeAll());
-		HotkeyService.RegisterHotkeyHandler("ActionPage.PauseAll", () => this.OnPauseAll());
+		HotkeyService.RegisterHotkeyHandler("ActionPage.ResumeAll", this.OnResumeAll);
+		HotkeyService.RegisterHotkeyHandler("ActionPage.PauseAll", this.OnPauseAll);
 	}
 
-	public GposeService GposeService => GposeService.Instance;
-	public AnimationService AnimationService => AnimationService.Instance;
-	public PoseService PoseService => PoseService.Instance;
+	public static GposeService GposeService => GposeService.Instance;
+	public static AnimationService AnimationService => AnimationService.Instance;
+	public static PoseService PoseService => PoseService.Instance;
 	public ActorMemory? Actor { get; private set; }
 	public IEnumerable<ActionTimeline> LipSyncTypes { get; private set; }
 
 	public UserAnimationOverride AnimationOverride { get; private set; } = new();
 
-	public ConditionalWeakTable<ActorMemory, UserAnimationOverride> UserAnimationOverrides { get; private set; } = new();
+	public ConditionalWeakTable<ActorMemory, UserAnimationOverride> UserAnimationOverrides { get; private set; } = [];
 
 	private static IEnumerable<ActionTimeline> GenerateLipList()
 	{
@@ -81,9 +81,11 @@ public partial class ActionPage : UserControl
 			}
 			else
 			{
-				this.AnimationOverride = new();
-				this.AnimationOverride.BaseAnimationId = actor.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody].Value;
-				this.AnimationOverride.BlendAnimationId = 0;
+				this.AnimationOverride = new()
+				{
+					BaseAnimationId = actor.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody].Value,
+					BlendAnimationId = 0,
+				};
 			}
 		}
 	}
@@ -135,7 +137,7 @@ public partial class ActionPage : UserControl
 		if (this.Actor?.IsValid != true)
 			return;
 
-		this.AnimationService.ApplyAnimationOverride(this.Actor, this.AnimationOverride.BaseAnimationId, this.AnimationOverride.Interrupt);
+		AnimationService.ApplyAnimationOverride(this.Actor, this.AnimationOverride.BaseAnimationId, this.AnimationOverride.Interrupt);
 	}
 
 	private void OnDrawWeaponOverrideAnimation(object sender, RoutedEventArgs e)
@@ -143,7 +145,7 @@ public partial class ActionPage : UserControl
 		if (this.Actor?.IsValid != true)
 			return;
 
-		this.AnimationService.DrawWeapon(this.Actor);
+		AnimationService.DrawWeapon(this.Actor);
 	}
 
 	private async void OnBlendAnimation(object sender, RoutedEventArgs e)
@@ -151,7 +153,7 @@ public partial class ActionPage : UserControl
 		if (this.Actor?.IsValid != true)
 			return;
 
-		await this.AnimationService.BlendAnimation(this.Actor, this.AnimationOverride.BlendAnimationId);
+		await AnimationService.BlendAnimation(this.Actor, this.AnimationOverride.BlendAnimationId);
 		this.AnimationBlendButton.Focus(); // Refocus on the button as the blend lock changes state in the function call above
 	}
 
@@ -160,7 +162,7 @@ public partial class ActionPage : UserControl
 		if (this.Actor?.IsValid != true)
 			return;
 
-		this.AnimationService.ApplyIdle(this.Actor);
+		AnimationService.ApplyIdle(this.Actor);
 	}
 
 	private void OnResetOverrideAnimation(object sender, RoutedEventArgs e)
@@ -168,7 +170,7 @@ public partial class ActionPage : UserControl
 		if (this.Actor?.IsValid != true)
 			return;
 
-		this.AnimationService.ResetAnimationOverride(this.Actor);
+		AnimationService.ResetAnimationOverride(this.Actor);
 	}
 
 	private void OnResumeAll(object sender, RoutedEventArgs e) => this.OnResumeAll();

@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using XivToolsWpf;
 
-public class UpdateService : ServiceBase<UpdateService>
+public partial class UpdateService : ServiceBase<UpdateService>
 {
 	private const string REPOSITORY_NAME = "imchillin/Anamnesis";
 
@@ -32,7 +32,7 @@ public class UpdateService : ServiceBase<UpdateService>
 
 	private const int FORCE_SHUTDOWN_TIMEOUT = 10000; // ms (10 seconds)
 
-	private readonly HttpClient httpClient = new HttpClient();
+	private readonly HttpClient httpClient = new();
 	private Release? currentRelease;
 
 	private static string UpdateTempDir => Path.Combine(Path.GetTempPath(), "AnamnesisUpdateLatest");
@@ -100,7 +100,7 @@ public class UpdateService : ServiceBase<UpdateService>
 			bool update = false;
 
 			// Check for old date-based tag format: yyyy-MM-dd(-h#)
-			if (System.Text.RegularExpressions.Regex.IsMatch(this.currentRelease.TagName, @"^\d{4}-\d{2}-\d{2}(-h\d+)?$"))
+			if (ReleaseTagRegex().IsMatch(this.currentRelease.TagName))
 			{
 				// Trigger an update if the tag is using the old date format.
 				update = true;
@@ -117,8 +117,10 @@ public class UpdateService : ServiceBase<UpdateService>
 			{
 				await Dispatch.MainThread();
 
-				UpdateDialog dlg = new();
-				dlg.Changes = this.currentRelease.Changes;
+				UpdateDialog dlg = new()
+				{
+					Changes = this.currentRelease.Changes,
+				};
 				await ViewService.ShowDialog<UpdateDialog, bool?>("Update", dlg);
 			}
 
@@ -217,8 +219,11 @@ public class UpdateService : ServiceBase<UpdateService>
 			if (File.Exists(zipFilePath))
 			{
 				// Remove temp file
-				var fileInfo = new FileInfo(zipFilePath);
-				fileInfo.Attributes = FileAttributes.Normal;
+				var fileInfo = new FileInfo(zipFilePath)
+				{
+					Attributes = FileAttributes.Normal,
+				};
+
 				File.Delete(zipFilePath);
 			}
 
@@ -277,6 +282,9 @@ public class UpdateService : ServiceBase<UpdateService>
 			Log.Error(ex, "Failed to perform update");
 		}
 	}
+
+	[System.Text.RegularExpressions.GeneratedRegex(@"^\d{4}-\d{2}-\d{2}(-h\d+)?$")]
+	private static partial System.Text.RegularExpressions.Regex ReleaseTagRegex();
 
 	public class Release
 	{

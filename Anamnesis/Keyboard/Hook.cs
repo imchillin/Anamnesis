@@ -14,9 +14,10 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Input;
 
-public class Hook
+public partial class Hook
 {
 	private const int WH_KEYBOARD_LL = 13;
 	private const int WM_KEY_DOWN = 0x0100;
@@ -26,8 +27,8 @@ public class Hook
 
 	private static IntPtr s_hookId = IntPtr.Zero;
 
-	private readonly HashSet<int> downKeys = new HashSet<int>();
-	private readonly object modifiersLock = new object();
+	private readonly HashSet<int> downKeys = new();
+	private readonly Lock modifiersLock = new();
 	private ModifierKeys modifiers = ModifierKeys.None;
 	private LowLevelKeyboardProc? hook;
 	private bool isStarted;
@@ -62,23 +63,23 @@ public class Hook
 		return SetWindowsHookEx(WH_KEYBOARD_LL, proc, userLibrary, 0);
 	}
 
-	[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-	private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+	[LibraryImport("user32.dll", SetLastError = true)]
+	private static partial IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
 
-	[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+	[LibraryImport("user32.dll", SetLastError = true)]
 	[return: MarshalAs(UnmanagedType.Bool)]
-	private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+	private static partial bool UnhookWindowsHookEx(IntPtr hhk);
 
-	[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-	private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+	[LibraryImport("user32.dll", SetLastError = true)]
+	private static partial IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
 
 	/// <summary>
 	/// Loads the library.
 	/// </summary>
 	/// <param name="lpFileName">Name of the library.</param>
 	/// <returns>A handle to the library.</returns>
-	[DllImport("kernel32.dll")]
-	private static extern IntPtr LoadLibrary(string lpFileName);
+	[LibraryImport("kernel32.dll", EntryPoint = "LoadLibraryW", StringMarshalling = StringMarshalling.Utf16)]
+	private static partial IntPtr LoadLibrary(string lpFileName);
 
 	private bool HandleKeyPress(Key key, KeyboardKeyStates state)
 	{
@@ -165,15 +166,9 @@ public class Hook
 		return used;
 	}
 
-	internal struct KeyboardParams
+	internal struct KeyboardParams(IntPtr wParam, int vkCode)
 	{
-		public IntPtr Param;
-		public int VKeyCode;
-
-		public KeyboardParams(IntPtr wParam, int vkCode)
-		{
-			this.Param = wParam;
-			this.VKeyCode = vkCode;
-		}
+		public IntPtr Param = wParam;
+		public int VKeyCode = vkCode;
 	}
 }

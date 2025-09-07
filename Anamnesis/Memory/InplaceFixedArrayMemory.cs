@@ -170,21 +170,15 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 	/// <summary>
 	/// Represents binding information for an array element.
 	/// </summary>
-	public sealed class ArrayBindInfo : BindInfo
+	/// <remarks>
+	/// Initializes a new instance of the <see cref="ArrayBindInfo"/> class.
+	/// </remarks>
+	/// <param name="memory">The memory object instance.</param>
+	/// <param name="index">The index of the array element.</param>
+	public sealed class ArrayBindInfo(MemoryBase memory, int index) : BindInfo(memory)
 	{
 		/// <summary>Gets the index of the array element.</summary>
-		public readonly int Index;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ArrayBindInfo"/> class.
-		/// </summary>
-		/// <param name="memory">The memory object instance.</param>
-		/// <param name="index">The index of the array element.</param>
-		public ArrayBindInfo(MemoryBase memory, int index)
-			: base(memory)
-		{
-			this.Index = index;
-		}
+		public readonly int Index = index;
 
 		/// <inheritdoc/>
 		public override string Name => this.Index.ToString();

@@ -32,14 +32,14 @@ public partial class CameraEditor : UserControl
 		SettingsService.SettingsChanged += this.OnSettingsChanged;
 	}
 
+	public static GameService GameService => GameService.Instance;
+	public static TargetService TargetService => TargetService.Instance;
+	public static GposeService GposeService => GposeService.Instance;
+	public static TerritoryService TerritoryService => TerritoryService.Instance;
+	public static TimeService TimeService => TimeService.Instance;
+	public static CameraService CameraService => CameraService.Instance;
+	public static SettingsService SettingsService => SettingsService.Instance;
 	public static Settings Settings => SettingsService.Current;
-	public GameService GameService => GameService.Instance;
-	public TargetService TargetService => TargetService.Instance;
-	public GposeService GposeService => GposeService.Instance;
-	public TerritoryService TerritoryService => TerritoryService.Instance;
-	public TimeService TimeService => TimeService.Instance;
-	public CameraService CameraService => CameraService.Instance;
-	public SettingsService SettingsService => SettingsService.Instance;
 
 	public OverflowModes RotationOverflowBehavior => Settings.WrapRotationSliders ? OverflowModes.Loop : OverflowModes.Clamp;
 
@@ -47,23 +47,18 @@ public partial class CameraEditor : UserControl
 
 	private async void OnImportCamera(object sender, RoutedEventArgs e)
 	{
-		ActorBasicMemory? targetActor = this.TargetService.PlayerTarget;
+		ActorBasicMemory? targetActor = TargetService.PlayerTarget;
 		if (targetActor == null || !targetActor.IsValid)
 			return;
-		ActorMemory actorMemory = new ActorMemory();
+
+		var actorMemory = new ActorMemory();
 		actorMemory.SetAddress(targetActor.Address);
 
 		try
 		{
-			Shortcut[]? shortcuts = new[]
-			{
-				FileService.DefaultCameraDirectory,
-			};
+			Shortcut[]? shortcuts = [FileService.DefaultCameraDirectory];
 
-			Type[] types = new[]
-			{
-				typeof(CameraShotFile),
-			};
+			Type[] types = [typeof(CameraShotFile)];
 
 			OpenResult result = await FileService.Open(s_lastLoadDir, shortcuts, types);
 
@@ -85,10 +80,11 @@ public partial class CameraEditor : UserControl
 
 	private async void OnExportCamera(object sender, RoutedEventArgs e)
 	{
-		ActorBasicMemory? targetActor = this.TargetService.PlayerTarget;
+		ActorBasicMemory? targetActor = TargetService.PlayerTarget;
 		if (targetActor == null || !targetActor.IsValid)
 			return;
-		ActorMemory actorMemory = new ActorMemory();
+
+		var actorMemory = new ActorMemory();
 		actorMemory.SetAddress(targetActor.Address);
 
 		SaveResult result = await FileService.Save<CameraShotFile>(s_lastSaveDir, FileService.DefaultCameraDirectory);
@@ -98,26 +94,26 @@ public partial class CameraEditor : UserControl
 
 		s_lastSaveDir = result.Directory;
 
-		CameraShotFile file = new CameraShotFile();
+		var file = new CameraShotFile();
 		file.WriteToFile(CameraService.Instance, actorMemory);
 
-		using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
+		using var stream = new FileStream(result.Path.FullName, FileMode.Create);
 		file.Serialize(stream);
 	}
 
 	private void OnTargetActor(object sender, RoutedEventArgs e)
 	{
-		ActorBasicMemory? targetActor = this.TargetService.PlayerTarget;
+		ActorBasicMemory? targetActor = TargetService.PlayerTarget;
 		if (targetActor == null || !targetActor.IsValid)
 			return;
 
-		ActorMemory actorMemory = new ActorMemory();
+		var actorMemory = new ActorMemory();
 		actorMemory.SetAddress(targetActor.Address);
 
 		if (actorMemory?.ModelObject?.Transform == null)
 			return;
 
-		this.CameraService.GPoseCamera.Position = actorMemory.ModelObject.Transform.Position;
+		CameraService.GPoseCamera.Position = actorMemory.ModelObject.Transform.Position;
 	}
 
 	private void OnSettingsChanged(object? sender, EventArgs e)

@@ -109,7 +109,7 @@ public partial class ColorControl : UserControl
 		if (this.colors == null)
 			return;
 
-		FxivColorSelectorDrawer selector = new FxivColorSelectorDrawer(this.colors, this.Value);
+		var selector = new FxivColorSelectorDrawer(this.colors, this.Value);
 
 		selector.SelectionChanged += (v) =>
 		{
@@ -127,16 +127,15 @@ public partial class ColorControl : UserControl
 		if (!Enum.IsDefined(this.Tribe))
 			return null;
 
-		switch (this.Type)
+		return this.Type switch
 		{
-			case ColorType.Skin: return ColorData.GetSkin(this.Tribe, this.Gender);
-			case ColorType.Eyes: return ColorData.GetEyeColors();
-			case ColorType.Lips: return ColorData.GetLipColors();
-			case ColorType.FacePaint: return ColorData.GetFacePaintColor();
-			case ColorType.Hair: return ColorData.GetHair(this.Tribe, this.Gender);
-			case ColorType.HairHighlights: return ColorData.GetHairHighlights();
-		}
-
-		throw new Exception("Unsupported color type: " + this.Type);
+			ColorType.Skin => ColorData.GetSkin(this.Tribe, this.Gender),
+			ColorType.Eyes => ColorData.GetEyeColors(),
+			ColorType.Lips => ColorData.GetLipColors(),
+			ColorType.FacePaint => ColorData.GetFacePaintColor(),
+			ColorType.Hair => ColorData.GetHair(this.Tribe, this.Gender),
+			ColorType.HairHighlights => ColorData.GetHairHighlights(),
+			_ => throw new Exception("Unsupported color type: " + this.Type),
+		};
 	}
 }

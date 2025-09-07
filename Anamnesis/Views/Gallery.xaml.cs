@@ -72,7 +72,7 @@ public partial class Gallery : UserControl
 		while (!this.IsVisible)
 			await Task.Delay(500);
 
-		Random rnd = new Random();
+		var rnd = new Random();
 
 		this.forceUpdate = true;
 
@@ -104,9 +104,12 @@ public partial class Gallery : UserControl
 					if (ext != ".jpg" && ext != ".png" && ext != ".jpeg" && ext != ".bmp")
 						continue;
 
-					Entry entry = new Entry();
-					entry.Url = filePath;
-					entry.Author = Path.GetFileNameWithoutExtension(filePath);
+					var entry = new Entry
+					{
+						Url = filePath,
+						Author = Path.GetFileNameWithoutExtension(filePath),
+					};
+
 					entries.Add(entry);
 				}
 			}
@@ -244,10 +247,8 @@ public partial class Gallery : UserControl
 
 		host.Opacity = 0.0;
 
-		Storyboard? sb = this.Resources[this.isImage1 ? "StoryboardImage1" : "StoryboardImage2"] as Storyboard;
-
-		if (sb == null)
-			throw new System.Exception("Missing gallery storyboard");
+		if (this.Resources[this.isImage1 ? "StoryboardImage1" : "StoryboardImage2"] is not Storyboard sb)
+			throw new Exception("Missing gallery storyboard");
 
 		sb.SpeedRatio = this.forceUpdate ? 10 : 1;
 		sb.Begin();

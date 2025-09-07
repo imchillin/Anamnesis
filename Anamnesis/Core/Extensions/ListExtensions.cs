@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 public static class ListExtensions
 {
-	private static readonly Random s_random = new Random();
+	private static readonly Random s_random = new();
 
 	public static void Shuffle<T>(this IList<T> list)
 	{

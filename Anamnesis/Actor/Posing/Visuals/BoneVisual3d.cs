@@ -22,10 +22,10 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 {
 	private const double SPHERE_RADIUS = 0.015;
 
-	private static readonly Material s_selectedMaterial = CreateMaterial(Colors.Orange);
-	private static readonly Material s_hoveredMaterial = CreateMaterial(Colors.DarkOrange);
-	private static readonly Material s_normalMaterialLightTheme = CreateMaterial(Colors.Black, 128);
-	private static readonly Material s_normalMaterialDarkTheme = CreateMaterial(Colors.White, 128);
+	private static readonly DiffuseMaterial s_selectedMaterial = CreateMaterial(Colors.Orange);
+	private static readonly DiffuseMaterial s_hoveredMaterial = CreateMaterial(Colors.DarkOrange);
+	private static readonly DiffuseMaterial s_normalMaterialLightTheme = CreateMaterial(Colors.Black, 128);
+	private static readonly DiffuseMaterial s_normalMaterialDarkTheme = CreateMaterial(Colors.White, 128);
 	private static readonly Sphere s_precomputedSphere = CreatePrecomputedSphere();
 	private readonly PrsTransform sphereTransform = new();
 
@@ -246,7 +246,7 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 	/// <param name="color">The color of the material.</param>
 	/// <param name="alpha">The alpha value of the material.</param>
 	/// <returns>The created material.</returns>
-	private static Material CreateMaterial(Color color, byte alpha = 255)
+	private static DiffuseMaterial CreateMaterial(Color color, byte alpha = 255)
 	{
 		color.A = alpha;
 		return new DiffuseMaterial(new SolidColorBrush(color));

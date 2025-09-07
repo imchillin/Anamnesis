@@ -245,8 +245,7 @@ public class CharacterFile : JsonFileBase
 		if (actor.Customize == null)
 			return;
 
-		if (this.Glasses == null)
-			this.Glasses = new GlassesSave();
+		this.Glasses ??= new GlassesSave();
 
 		Log.Information("Reading appearance from file");
 

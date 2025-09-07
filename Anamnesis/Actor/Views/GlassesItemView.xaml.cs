@@ -4,6 +4,7 @@
 namespace Anamnesis.Actor.Views;
 
 using Anamnesis.GameData;
+using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;

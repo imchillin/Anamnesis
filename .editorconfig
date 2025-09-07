@@ -109,6 +109,7 @@ dotnet_diagnostic.CA2201.severity = none
 dotnet_diagnostic.SA1000.severity = none
 dotnet_diagnostic.SA1005.severity = none
 dotnet_diagnostic.SA1011.severity = none
+dotnet_diagnostic.SA1025.severity = none
 dotnet_diagnostic.SA1027.severity = none
 
 ## Readability rules
@@ -224,12 +225,12 @@ dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = warning
 
 ## Constant fields: UPPER_CASE_WITH_UNDERSCORES
 dotnet_naming_rule.constants_with_underscores.symbols  = constant_fields
-dotnet_naming_rule.constants_with_underscores.style    = all_upper_style
+dotnet_naming_rule.constants_with_underscores.style = all_upper_style
 dotnet_naming_rule.constants_with_underscores.severity = warning
 
 ## Non-private fields: PascalCase
 dotnet_naming_rule.nonprivate_fields_pascal.symbols  = nonprivate_fields
-dotnet_naming_rule.nonprivate_fields_pascal.style    = pascal_style
+dotnet_naming_rule.nonprivate_fields_pascal.style = pascal_style
 dotnet_naming_rule.nonprivate_fields_pascal.severity = warning
 
 ## Private fields: camelCase
@@ -244,7 +245,7 @@ dotnet_naming_rule.static_private_fields_should_begin_with_s_.severity = warning
 
 ## Static fields: PascalCase for non-private
 dotnet_naming_rule.static_nonprivate_fields_should_begin_with_s_.symbols = static_nonprivate_fields
-dotnet_naming_rule.static_nonprivate_fields_should_begin_with_s_.style = static_field_nonprivate_style
+dotnet_naming_rule.static_nonprivate_fields_should_begin_with_s_.style = pascal_style
 dotnet_naming_rule.static_nonprivate_fields_should_begin_with_s_.severity = warning
 
 ## Thread static fields: begins with 't_'

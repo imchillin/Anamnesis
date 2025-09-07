@@ -3,11 +3,11 @@
 
 namespace Anamnesis.GUI.Dialogs;
 
+using Anamnesis.Services;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Anamnesis.Services;
 using XivToolsWpf;
 
 /// <summary>
@@ -51,8 +51,10 @@ public partial class GenericDialog : UserControl, IDialog<bool?>
 	{
 		await Dispatch.MainThread();
 
-		GenericDialog dlg = new GenericDialog();
-		dlg.Message = message;
+		var dlg = new GenericDialog
+		{
+			Message = message,
+		};
 
 		switch (buttons)
 		{

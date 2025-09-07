@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Serialization.Converters;
 
+using Anamnesis.GameData.Excel;
 using Anamnesis.Services;
 using System;
 using System.Text.Json;

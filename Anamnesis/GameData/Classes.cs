@@ -345,12 +345,7 @@ public static class ClassesExtensions
 		}
 		else if (selected.Count == 1)
 		{
-			string? name = selected[0].GetName();
-
-			if (name == null)
-				throw new Exception("Failed to get name of class: " + selected[0]);
-
-			return (string)name;
+			return selected[0].GetName() ?? throw new Exception("Failed to get name of class: " + selected[0]);
 		}
 
 		// Get all the roles that are entirely included

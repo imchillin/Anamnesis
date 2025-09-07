@@ -28,19 +28,18 @@ public abstract class FileBase
 
 	public virtual void Serialize(Stream stream)
 	{
-		if (this.Author == null)
-		{
-			this.Author = SettingsService.Current.DefaultAuthor;
-		}
+		this.Author ??= SettingsService.Current.DefaultAuthor;
 	}
 
 	public abstract FileBase Deserialize(Stream stream);
 
 	public FileFilter GetFilter()
 	{
-		FileFilter filter = new FileFilter(this.GetType(), this.FileExtension, this.FileRegex);
-		filter.GetNameCallback = this.GetFilename;
-		filter.GetFullNameCallback = this.GetFullFilename;
+		var filter = new FileFilter(this.GetType(), this.FileExtension, this.FileRegex)
+		{
+			GetNameCallback = this.GetFilename,
+			GetFullNameCallback = this.GetFullFilename,
+		};
 
 		return filter;
 	}
@@ -52,7 +51,7 @@ public abstract class FileBase
 
 		byte[] binaryData = Convert.FromBase64String(this.Base64Image);
 
-		BitmapImage bi = new BitmapImage();
+		var bi = new BitmapImage();
 		bi.BeginInit();
 		bi.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
 		bi.StreamSource = new MemoryStream(binaryData);
@@ -67,7 +66,6 @@ public abstract class FileBase
 	}
 }
 
-#pragma warning disable SA1402
 [Serializable]
 public abstract class JsonFileBase : FileBase
 {

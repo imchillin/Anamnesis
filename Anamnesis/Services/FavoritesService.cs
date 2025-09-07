@@ -182,11 +182,11 @@ public class FavoritesService : ServiceBase<FavoritesService>
 			}
 		}
 
-		this.itemIds = [.. this.Current.Items.Select(i => i.RowId)];
-		this.dyeIds = [.. this.Current.Dyes.Select(d => d.RowId)];
-		this.modelIds = [.. this.Current.Models.Select(m => m.RowId)];
-		this.glassesIds = [.. this.Current.Glasses.Select(g => g.RowId)];
-		this.ownedIds = [.. this.Current.Owned.Select(i => i.RowId)];
+		this.itemIds = this.Current.Items.Select(i => i.RowId).ToHashSet();
+		this.dyeIds = this.Current.Dyes.Select(d => d.RowId).ToHashSet();
+		this.modelIds = this.Current.Models.Select(m => m.RowId).ToHashSet();
+		this.glassesIds = this.Current.Glasses.Select(g => g.RowId).ToHashSet();
+		this.ownedIds = this.Current.Owned.Select(i => i.RowId).ToHashSet();
 	}
 
 	private static List<T>? GetInstanceCollection<T>(T item)

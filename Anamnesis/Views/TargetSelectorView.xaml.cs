@@ -44,47 +44,47 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 		this.PropertyChanged += this.OnSelfPropertyChanged;
 	}
 
-	public TargetService TargetService => TargetService.Instance;
-	public GposeService GPoseService => GposeService.Instance;
-	public SettingsService SettingsService => SettingsService.Instance;
+	public static TargetService TargetService => TargetService.Instance;
+	public static GposeService GPoseService => GposeService.Instance;
+	public static SettingsService SettingsService => SettingsService.Instance;
 
-	public bool IncludePlayers
+	public static bool IncludePlayers
 	{
 		get => s_includePlayers;
 		set => s_includePlayers = value;
 	}
 
-	public bool IncludeCompanions
+	public static bool IncludeCompanions
 	{
 		get => s_includeCompanions;
 		set => s_includeCompanions = value;
 	}
 
-	public bool IncludeNPCs
+	public static bool IncludeNPCs
 	{
 		get => s_includeNPCs;
 		set => s_includeNPCs = value;
 	}
 
-	public bool IncludeMounts
+	public static bool IncludeMounts
 	{
 		get => s_includeMounts;
 		set => s_includeMounts = value;
 	}
 
-	public bool IncludeOrnaments
+	public static bool IncludeOrnaments
 	{
 		get => s_includeOrnaments;
 		set => s_includeOrnaments = value;
 	}
 
-	public bool IncludeOther
+	public static bool IncludeOther
 	{
 		get => s_includeOther;
 		set => s_includeOther = value;
 	}
 
-	public bool IncludeHidden
+	public static bool IncludeHidden
 	{
 		get => s_includeHidden;
 		set => s_includeHidden = value;
@@ -92,7 +92,7 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 
 	public static void Show(Action<ActorBasicMemory> sectionChanged)
 	{
-		TargetSelectorView view = new TargetSelectorView();
+		var view = new TargetSelectorView();
 		view.SelectionChanged += (b) =>
 		{
 			if (view.Value == null)

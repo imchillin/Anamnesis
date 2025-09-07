@@ -117,16 +117,10 @@ public partial class DataPathSelector : UserControl
 		this.DataHead = this.selectedPath.GetHead(this.Tribe);
 	}
 
-	public class DataPathOption
+	public class DataPathOption(string name, ActorModelMemory.DataPaths path)
 	{
-		public DataPathOption(string name, ActorModelMemory.DataPaths path)
-		{
-			this.Name = name;
-			this.PathValue = (short)path;
-		}
-
-		public short PathValue { get; private set; }
-		public string Name { get; private set; }
+		public short PathValue { get; private set; } = (short)path;
+		public string Name { get; private set; } = name;
 
 		public byte GetHead(ActorCustomizeMemory.Tribes tribe)
 		{

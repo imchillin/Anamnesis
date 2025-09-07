@@ -49,7 +49,7 @@ public partial class FileBrowserView : FileBrowserDrawer
 		if (defaultDir != null && !defaultDir.Exists)
 			defaultDir = null;
 
-		List<Shortcut> finalShortcuts = new List<Shortcut>();
+		var finalShortcuts = new List<Shortcut>();
 		finalShortcuts.AddRange(shortcuts);
 		finalShortcuts.Add(FileService.Desktop);
 
@@ -63,8 +63,8 @@ public partial class FileBrowserView : FileBrowserDrawer
 			{
 				string defaultDirName = defaultDir.FullName;
 
-				if (!defaultDirName.EndsWith("\\"))
-					defaultDirName += "\\";
+				if (!defaultDirName.EndsWith('\\'))
+					defaultDirName += '\\';
 
 				if (defaultDirName.Contains(shortcut.Directory.FullName))
 				{
@@ -81,8 +81,7 @@ public partial class FileBrowserView : FileBrowserDrawer
 			defaultDir = null;
 		}
 
-		if (defaultDir == null)
-			defaultDir = defaultShortcut.Directory;
+		defaultDir ??= defaultShortcut.Directory;
 
 		this.BaseDir = defaultShortcut;
 		this.CurrentDir = defaultDir;
@@ -129,6 +128,8 @@ public partial class FileBrowserView : FileBrowserDrawer
 		Date,
 	}
 
+	public static SettingsService SettingsService => SettingsService.Instance;
+
 	public bool IsOpen
 	{
 		get;
@@ -151,7 +152,6 @@ public partial class FileBrowserView : FileBrowserDrawer
 		}
 	}
 
-	public SettingsService SettingsService => SettingsService.Instance;
 	public ObservableCollection<Shortcut> Shortcuts { get; } = new ObservableCollection<Shortcut>();
 
 	public bool UseFileBrowser { get; set; }
@@ -543,7 +543,7 @@ public partial class FileBrowserView : FileBrowserDrawer
 
 	private void Select(FileSystemInfo entry)
 	{
-		foreach (EntryWrapper? wrapper in this.Entries)
+		foreach (EntryWrapper? wrapper in this.Entries.Cast<EntryWrapper?>())
 		{
 			if (wrapper == null)
 				continue;
@@ -561,20 +561,13 @@ public partial class FileBrowserView : FileBrowserDrawer
 	}
 
 	[AddINotifyPropertyChangedInterface]
-	public class EntryWrapper
+	public class EntryWrapper(FileSystemInfo entry, FileBrowserView view, FileFilter? filter)
 	{
-		public readonly FileSystemInfo Entry;
-		public readonly FileBrowserView View;
-		public readonly FileFilter? Filter;
+		public readonly FileSystemInfo Entry = entry;
+		public readonly FileBrowserView View = view;
+		public readonly FileFilter? Filter = filter;
 
 		private FileBase? file;
-
-		public EntryWrapper(FileSystemInfo entry, FileBrowserView view, FileFilter? filter)
-		{
-			this.Entry = entry;
-			this.View = view;
-			this.Filter = filter;
-		}
 
 		public FileBase? File
 		{
@@ -699,12 +692,12 @@ public partial class FileBrowserView : FileBrowserDrawer
 				if (this.Entry == null)
 					return null;
 
-				StringBuilder b = new StringBuilder();
+				var b = new StringBuilder();
 
 				if (!string.IsNullOrEmpty(this.Directory))
 				{
 					b.Append(this.Directory);
-					b.Append(" ");
+					b.Append(' ');
 				}
 
 				b.Append(this.Entry.LastWriteTime);
@@ -724,9 +717,9 @@ public partial class FileBrowserView : FileBrowserDrawer
 
 				if (relativePath != null)
 				{
-					while (relativePath.StartsWith("\\") && relativePath.Length > 0)
+					while (relativePath.StartsWith('\\') && relativePath.Length > 0)
 					{
-						relativePath = relativePath.Substring(1);
+						relativePath = relativePath[1..];
 					}
 				}
 

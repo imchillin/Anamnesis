@@ -21,7 +21,7 @@ using Application = System.Windows.Application;
 /// </summary>
 public partial class App : Application
 {
-	public static readonly ServiceManager Services = new ServiceManager();
+	public static readonly ServiceManager Services = new();
 
 	protected override void OnStartup(StartupEventArgs e)
 	{
@@ -37,6 +37,49 @@ public partial class App : Application
 		this.MainWindow.Show();
 
 		Task.Run(this.Start);
+	}
+
+	private static void CheckWorkingDirectory()
+	{
+		string name = Process.GetCurrentProcess().ProcessName;
+
+		string currentDir = Directory.GetCurrentDirectory();
+		Log.Information($"Check Working Directory: \"{currentDir}\" for executable: {name}");
+
+		if (!File.Exists($"{currentDir}/{name}.exe"))
+		{
+			string? currentPath = AppContext.BaseDirectory;
+
+			if (string.IsNullOrEmpty(currentPath))
+				throw new Exception($"Failed to get current path");
+
+			string? newDir = Path.GetDirectoryName(currentPath);
+
+			if (string.IsNullOrEmpty(newDir))
+				throw new Exception($"Failed to get current directory");
+
+			currentDir = Path.GetFullPath(newDir);
+
+			if (!File.Exists($"{currentDir}/{name}.exe"))
+				throw new Exception($"Incorrect new working directory: {currentDir}");
+
+			Directory.SetCurrentDirectory(currentDir);
+			Log.Information($"Set Working Directory: \"{currentDir}\"");
+		}
+	}
+
+	private static void CheckForProcesses()
+	{
+		string name = Process.GetCurrentProcess().ProcessName;
+		Process[] processes = Process.GetProcessesByName(name);
+
+		if (processes.Length < 1)
+			throw new Exception($"Unable to locate {name} process.");
+
+		if (processes.Length > 1)
+		{
+			throw new Exception($"Multiple {name} processes found. Please close all other instances.");
+		}
 	}
 
 	private void OnExit(object sender, ExitEventArgs e)
@@ -64,9 +107,7 @@ public partial class App : Application
 
 	private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 	{
-		Exception? ex = e.ExceptionObject as Exception;
-
-		if (ex == null)
+		if (e.ExceptionObject is not Exception ex)
 			return;
 
 		Log.Fatal(ex, ex.Message);
@@ -74,7 +115,7 @@ public partial class App : Application
 
 	private async Task Start()
 	{
-		Stopwatch sw = new Stopwatch();
+		var sw = new Stopwatch();
 		sw.Start();
 
 		try
@@ -84,8 +125,8 @@ public partial class App : Application
 
 			LogService.CreateLog();
 
-			this.CheckWorkingDirectory();
-			this.CheckForProcesses();
+			CheckWorkingDirectory();
+			CheckForProcesses();
 
 			await Services.InitializeServices();
 
@@ -132,52 +173,9 @@ public partial class App : Application
 		Log.Information($"Started application in {sw.ElapsedMilliseconds}ms");
 	}
 
-	private void CheckWorkingDirectory()
-	{
-		string name = Process.GetCurrentProcess().ProcessName;
-
-		string currentDir = Directory.GetCurrentDirectory();
-		Log.Information($"Check Working Directory: \"{currentDir}\" for executable: {name}");
-
-		if (!File.Exists($"{currentDir}/{name}.exe"))
-		{
-			string? currentPath = AppContext.BaseDirectory;
-
-			if (string.IsNullOrEmpty(currentPath))
-				throw new Exception($"Failed to get current path");
-
-			string? newDir = Path.GetDirectoryName(currentPath);
-
-			if (string.IsNullOrEmpty(newDir))
-				throw new Exception($"Failed to get current directory");
-
-			currentDir = Path.GetFullPath(newDir);
-
-			if (!File.Exists($"{currentDir}/{name}.exe"))
-				throw new Exception($"Incorrect new working directory: {currentDir}");
-
-			Directory.SetCurrentDirectory(currentDir);
-			Log.Information($"Set Working Directory: \"{currentDir}\"");
-		}
-	}
-
-	private void CheckForProcesses()
-	{
-		string name = Process.GetCurrentProcess().ProcessName;
-		Process[] processes = Process.GetProcessesByName(name);
-
-		if (processes.Length < 1)
-			throw new Exception($"Unable to locate {name} process.");
-
-		if (processes.Length > 1)
-		{
-			throw new Exception($"Multiple {name} processes found. Please close all other instances.");
-		}
-	}
-
 	private async Task PerformanceWatcher()
 	{
-		Stopwatch sw = new Stopwatch();
+		var sw = new Stopwatch();
 		while (this._contentLoaded)
 		{
 			await Task.Delay(500);

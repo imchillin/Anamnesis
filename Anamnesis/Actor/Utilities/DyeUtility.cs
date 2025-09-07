@@ -8,7 +8,7 @@ using System;
 
 public static class DyeUtility
 {
-	public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
+	public static readonly DummyNoneDye NoneDye = new();
 
 	[Flags]
 	public enum DyeTarget

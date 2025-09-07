@@ -9,7 +9,7 @@ using System.Numerics;
 
 public static class DefaultCharacterFile
 {
-	public static CharacterFile Default = new CharacterFile()
+	public static readonly CharacterFile Default = new()
 	{
 		SaveMode = CharacterFile.SaveModes.All,
 

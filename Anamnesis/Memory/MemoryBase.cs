@@ -20,21 +20,15 @@ using System.Threading;
 /// Provides data for the PropertyChanged event, including additional change context information
 /// of type <see cref="PropertyChange"/>.
 /// </summary>
-public class MemObjPropertyChangedEventArgs : PropertyChangedEventArgs
+/// <remarks>
+/// Initializes a new instance of the <see cref="MemObjPropertyChangedEventArgs"/> class.
+/// </remarks>
+/// <param name="propertyName">The name of the property that changed.</param>
+/// <param name="context">The context of the property change.</param>
+public class MemObjPropertyChangedEventArgs(string propertyName, PropertyChange context) : PropertyChangedEventArgs(propertyName)
 {
-	/// <summary>
-	/// Initializes a new instance of the <see cref="MemObjPropertyChangedEventArgs"/> class.
-	/// </summary>
-	/// <param name="propertyName">The name of the property that changed.</param>
-	/// <param name="context">The context of the property change.</param>
-	public MemObjPropertyChangedEventArgs(string propertyName, PropertyChange context)
-		: base(propertyName)
-	{
-		this.Context = context;
-	}
-
 	/// <summary>Gets the context of the property change.</summary>
-	public PropertyChange Context { get; }
+	public PropertyChange Context { get; } = context;
 }
 
 /// <summary>

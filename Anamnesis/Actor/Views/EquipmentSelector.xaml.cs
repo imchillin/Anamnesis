@@ -57,10 +57,16 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		Level,
 	}
 
-	public bool ShowFilters
+	public static bool ShowFilters
 	{
 		get => s_showFilters;
 		set => s_showFilters = value;
+	}
+
+	public static bool AutoOffhand
+	{
+		get => s_autoOffhand;
+		set => s_autoOffhand = value;
 	}
 
 	public ItemSlots Slot { get; set; }
@@ -114,12 +120,6 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 			s_showLocked = value;
 			this.FilterItems();
 		}
-	}
-
-	public bool AutoOffhand
-	{
-		get => s_autoOffhand;
-		set => s_autoOffhand = value;
 	}
 
 	public bool ForceMainModel
@@ -233,7 +233,7 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 				return false;
 		}
 
-		if (!this.HasClass(this.ClassFilter, item.EquipableClasses))
+		if (!HasClass(this.ClassFilter, item.EquipableClasses))
 			return false;
 
 		if (!this.ValidCategory(item))
@@ -242,10 +242,10 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		if (!this.ShowLocked && item is Item ivm && !this.CanEquip(ivm))
 			return false;
 
-		return this.MatchesSearch(item, search);
+		return MatchesSearch(item, search);
 	}
 
-	private bool HasClass(Classes a, Classes b)
+	private static bool HasClass(Classes a, Classes b)
 	{
 		foreach (Classes? job in Enum.GetValues<Classes>().Select(v => (Classes?)v))
 		{
@@ -259,6 +259,33 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		}
 
 		return false;
+	}
+
+	private static bool MatchesSearch(IItem item, string[]? search = null)
+	{
+		bool matches = false;
+
+		matches |= SearchUtility.Matches(item.Name, search);
+		matches |= SearchUtility.Matches(item.Description, search);
+		matches |= SearchUtility.Matches(item.ModelSet.ToString(), search);
+		matches |= SearchUtility.Matches(item.ModelBase.ToString(), search);
+		matches |= SearchUtility.Matches(item.ModelVariant.ToString(), search);
+
+		if (item.HasSubModel)
+		{
+			matches |= SearchUtility.Matches(item.SubModelSet.ToString(), search);
+			matches |= SearchUtility.Matches(item.SubModelBase.ToString(), search);
+			matches |= SearchUtility.Matches(item.SubModelVariant.ToString(), search);
+		}
+
+		matches |= SearchUtility.Matches(item.RowId.ToString(), search);
+
+		if (item.Mod != null && item.Mod.ModPack != null)
+		{
+			matches |= SearchUtility.Matches(item.Mod.ModPack.Name, search);
+		}
+
+		return matches;
 	}
 
 	private bool ValidCategory(IItem item)
@@ -286,33 +313,6 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 			return true;
 
 		return item.EquipRestriction.Value.CanEquip(this.actor.Customize.Race, this.actor.Customize.Gender);
-	}
-
-	private bool MatchesSearch(IItem item, string[]? search = null)
-	{
-		bool matches = false;
-
-		matches |= SearchUtility.Matches(item.Name, search);
-		matches |= SearchUtility.Matches(item.Description, search);
-		matches |= SearchUtility.Matches(item.ModelSet.ToString(), search);
-		matches |= SearchUtility.Matches(item.ModelBase.ToString(), search);
-		matches |= SearchUtility.Matches(item.ModelVariant.ToString(), search);
-
-		if (item.HasSubModel)
-		{
-			matches |= SearchUtility.Matches(item.SubModelSet.ToString(), search);
-			matches |= SearchUtility.Matches(item.SubModelBase.ToString(), search);
-			matches |= SearchUtility.Matches(item.SubModelVariant.ToString(), search);
-		}
-
-		matches |= SearchUtility.Matches(item.RowId.ToString(), search);
-
-		if (item.Mod != null && item.Mod.ModPack != null)
-		{
-			matches |= SearchUtility.Matches(item.Mod.ModPack.Name, search);
-		}
-
-		return matches;
 	}
 
 	private void ClearSlot()

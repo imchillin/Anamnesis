@@ -52,9 +52,10 @@ public partial class CharacterPage : UserControl
 		Log.Verbose($"Voice list generation time: {stopwatch.ElapsedMilliseconds} ms");
 	}
 
+	public static PoseService PoseService => PoseService.Instance;
+
 	public ActorMemory? Actor { get; private set; }
 	public ListCollectionView VoiceEntries { get; private set; }
-	public PoseService PoseService => PoseService.Instance;
 	public bool CanDyeEquipment => this.Actor != null && this.Actor.Equipment != null;
 
 	public bool CanDyeWeapons
@@ -98,7 +99,7 @@ public partial class CharacterPage : UserControl
 			}
 		}
 
-		ListCollectionView voices = new ListCollectionView(entries);
+		var voices = new ListCollectionView(entries);
 		voices.GroupDescriptions.Add(new PropertyGroupDescription("VoiceCategory"));
 		return voices;
 	}
@@ -489,22 +490,22 @@ public partial class CharacterPage : UserControl
 
 		try
 		{
-			Shortcut[]? shortcuts = new[]
-			{
+			Shortcut[]? shortcuts =
+			[
 				FileService.DefaultCharacterDirectory,
 				FileService.FFxivDatCharacterDirectory,
 				FileService.CMToolAppearanceSaveDir,
-			};
+			];
 
-			Type[] types = new[]
-			{
+			Type[] types =
+			[
 				typeof(CmToolAppearanceFile),
 				typeof(CmToolAppearanceJsonFile),
 				typeof(CmToolGearsetFile),
 				typeof(CmToolLegacyAppearanceFile),
 				typeof(DatCharacterFile),
 				typeof(CharacterFile),
-			};
+			];
 
 			OpenResult result = await FileService.Open(s_lastLoadDir, shortcuts, types);
 
@@ -573,10 +574,10 @@ public partial class CharacterPage : UserControl
 		if (result.Path == null)
 			return;
 
-		CharacterFile file = new CharacterFile();
+		var file = new CharacterFile();
 		file.WriteToFile(this.Actor, mode);
 
-		using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
+		using var stream = new FileStream(result.Path.FullName, FileMode.Create);
 		file.Serialize(stream);
 
 		s_lastSaveDir = result.Directory;
@@ -597,10 +598,10 @@ public partial class CharacterPage : UserControl
 		if (result.Path == null)
 			return;
 
-		DatCharacterFile file = new DatCharacterFile();
+		var file = new DatCharacterFile();
 		file.WriteToFile(this.Actor);
 
-		using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
+		using var stream = new FileStream(result.Path.FullName, FileMode.Create);
 		file.Serialize(stream);
 
 		s_lastSaveDir = result.Directory;

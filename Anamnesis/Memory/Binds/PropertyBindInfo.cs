@@ -117,7 +117,7 @@ public class PropertyBindInfo : BindInfo
 					return offsetInts;
 
 				if (offsetValue is int offset)
-					return new int[] { offset };
+					return [offset];
 
 				throw new InvalidOperationException($"Unknown offset type: {offsetValue} bind: {this}");
 			}

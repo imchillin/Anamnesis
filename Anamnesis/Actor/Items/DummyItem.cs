@@ -8,15 +8,8 @@ using Anamnesis.Services;
 using Anamnesis.TexTools;
 using System.Runtime.CompilerServices;
 
-public class DummyItem : IItem
+public class DummyItem(ushort modelSet, ushort modelBase, ushort modelVariant) : IItem
 {
-	public DummyItem(ushort modelSet, ushort modelBase, ushort modelVariant)
-	{
-		this.ModelSet = modelSet;
-		this.ModelBase = modelBase;
-		this.ModelVariant = modelVariant;
-	}
-
 	public uint RowId => 0;
 	public bool IsWeapon => true;
 	public bool HasSubModel => false;
@@ -28,9 +21,9 @@ public class DummyItem : IItem
 	public byte EquipLevel => 0;
 
 	public ulong Model => ExcelPageExtensions.ConvertToModel(this.ModelSet, this.ModelBase, this.ModelVariant);
-	public ushort ModelBase { get; private set; }
-	public ushort ModelVariant { get; private set; }
-	public ushort ModelSet { get; private set; }
+	public ushort ModelBase { get; private set; } = modelBase;
+	public ushort ModelVariant { get; private set; } = modelVariant;
+	public ushort ModelSet { get; private set; } = modelSet;
 
 	public ulong SubModel => ExcelPageExtensions.ConvertToModel(this.SubModelSet, this.SubModelBase, this.SubModelVariant);
 	public ushort SubModelBase { get; }

@@ -60,15 +60,15 @@ public class HotkeyService : ServiceBase<HotkeyService>
 	{
 		lock (s_functionToHandlers)
 		{
-			if (!s_functionToHandlers.ContainsKey(function))
+			if (!s_functionToHandlers.TryGetValue(function, out List<Handler>? value))
 				return;
 
-			for (int i = s_functionToHandlers[function].Count - 1; i >= 0; i--)
+			for (int i = value.Count - 1; i >= 0; i--)
 			{
 				if (s_functionToHandlers[function][i].Owner != owner)
 					continue;
 
-				s_functionToHandlers[function].RemoveAt(i);
+				value.RemoveAt(i);
 			}
 
 			Log.Verbose($"Clearing hotkey binding: {function} for {owner}");
@@ -123,18 +123,52 @@ public class HotkeyService : ServiceBase<HotkeyService>
 		return base.OnStart();
 	}
 
+	private static bool HandleKey(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
+	{
+		if (!SettingsService.Current.EnableHotkeys)
+			return false;
+
+		// Only process the hotkeys if we have focus but not to a text box.
+		bool processInputs = MainWindow.IsActive && Keyboard.FocusedElement is not TextBoxBase;
+
+		// Or if FFXIV has focus, the hooks are enabled, and the user is in gpose.
+		if (MemoryService.DoesProcessHaveFocus && SettingsService.Current.EnableGameHotkeyHooks && GposeService.Instance.IsGpose)
+			processInputs = true;
+
+		if (!processInputs)
+			return false;
+
+		var dicKey = (key, modifiers);
+
+		if (!s_keyToFunction.TryGetValue(dicKey, out string? func))
+			return false;
+
+		if (!s_functionToHandlers.TryGetValue(func, out List<Handler>? value))
+			return false;
+
+		foreach (Handler handler in value)
+		{
+			if (handler.Invoke(state))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private bool OnKeyboardInput(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
 	{
 		// Do not intercept or forward these keys.
 		if (key == Key.Tab || key == Key.Return || key == Key.Escape)
 			return false;
 
-		bool handled = this.HandleKey(key, state, modifiers);
+		bool handled = HandleKey(key, state, modifiers);
 
 		if (SettingsService.Current.ForwardKeys)
 		{
 			// Forward any unused keys to ffxiv if Anamnesis has focus
-			if (!handled && !(Keyboard.FocusedElement is TextBoxBase))
+			if (!handled && Keyboard.FocusedElement is not TextBoxBase)
 			{
 				if (MainWindow.IsActive && state == KeyboardKeyStates.Pressed)
 				{
@@ -151,42 +185,6 @@ public class HotkeyService : ServiceBase<HotkeyService>
 		}
 
 		return handled;
-	}
-
-	private bool HandleKey(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
-	{
-		if (!SettingsService.Current.EnableHotkeys)
-			return false;
-
-		// Only process the hotkeys if we have focus but not to a text box.
-		bool processInputs = MainWindow.IsActive && !(Keyboard.FocusedElement is TextBoxBase);
-
-		// Or if FFXIV has focus, the hooks are enabled, and the user is in gpose.
-		if (MemoryService.DoesProcessHaveFocus && SettingsService.Current.EnableGameHotkeyHooks && GposeService.Instance.IsGpose)
-			processInputs = true;
-
-		if (!processInputs)
-			return false;
-
-		var dicKey = (key, modifiers);
-
-		if (!s_keyToFunction.ContainsKey(dicKey))
-			return false;
-
-		string func = s_keyToFunction[dicKey];
-
-		if (!s_functionToHandlers.ContainsKey(func))
-			return false;
-
-		foreach (Handler handler in s_functionToHandlers[func])
-		{
-			if (handler.Invoke(state))
-			{
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	public class Handler

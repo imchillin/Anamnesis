@@ -120,7 +120,7 @@ public class GameDataService : ServiceBase<GameDataService>
 			if (BattleNpcNames == null)
 				return name;
 
-			uint bNpcNameKey = uint.Parse(name.Remove(0, 2));
+			uint bNpcNameKey = uint.Parse(name[2..]);
 
 			BattleNpcName? row = BattleNpcNames.GetRow(bNpcNameKey);
 			if (row == null || string.IsNullOrEmpty(row.Value.Name))

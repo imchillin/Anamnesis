@@ -116,9 +116,9 @@ public partial class MiniWindow : Window
 		double centerY = this.Top + (this.Width / 2);
 		double iconRadius = 22;
 
-		Point tl = new Point(centerX + iconRadius, centerY - iconRadius);
-		Point tr = new Point(centerX + iconRadius + this.main.Width, centerY - iconRadius);
-		Point bl = new Point(centerX + iconRadius, centerY - iconRadius + this.main.Height);
+		var tl = new Point(centerX + iconRadius, centerY - iconRadius);
+		var tr = new Point(centerX + iconRadius + this.main.Width, centerY - iconRadius);
+		var bl = new Point(centerX + iconRadius, centerY - iconRadius + this.main.Height);
 
 		if (!ScreenUtils.IsOnScreen(tr))
 			tl.X = centerX - iconRadius - this.main.Width;

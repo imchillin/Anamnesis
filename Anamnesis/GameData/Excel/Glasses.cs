@@ -1,6 +1,8 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
+namespace Anamnesis.GameData.Excel;
+
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Lumina.Excel;
