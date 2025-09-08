@@ -152,7 +152,7 @@ public class GameDataService : ServiceBase<GameDataService>
 		Language defaultLuminaLaunguage = Language.English;
 		Region = ClientRegion.Global;
 
-		if (File.Exists(Path.Combine(MemoryService.GamePath, "FFXIVBoot.exe")) || File.Exists(Path.Combine(MemoryService.GamePath, "rail_files", "rail_game_identify.json")))
+		if (File.Exists(Path.Combine(MemoryService.GamePath, "FFXIVBoot.exe")) || File.Exists(Path.Combine(MemoryService.GamePath, "FFXIVBoot3.exe")) || File.Exists(Path.Combine(MemoryService.GamePath, "rail_files", "rail_game_identify.json")))
 		{
 			Region = ClientRegion.Chinese;
 			defaultLuminaLaunguage = Language.ChineseSimplified;
