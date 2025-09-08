@@ -65,7 +65,7 @@ public class HotkeyService : ServiceBase<HotkeyService>
 
 			for (int i = value.Count - 1; i >= 0; i--)
 			{
-				if (s_functionToHandlers[function][i].Owner != owner)
+				if (value[i].Owner != owner)
 					continue;
 
 				value.RemoveAt(i);

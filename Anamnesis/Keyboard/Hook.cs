@@ -147,7 +147,7 @@ public partial class Hook
 		}
 
 		// If the keyboard event is a KeyUp event (i.e. key released)
-		if (wParam == (IntPtr)WM_KEY_DOWN || wParam == (IntPtr)WM_SYS_KEY_DOWN)
+		if (wParam == (IntPtr)WM_KEY_UP || wParam == (IntPtr)WM_SYS_KEY_UP)
 		{
 			used = this.HandleKeyPress(key, KeyboardKeyStates.Released);
 

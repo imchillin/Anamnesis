@@ -53,12 +53,8 @@ public partial class FileMetaEditor : UserControl
 
 	private void OnImageBrowseClicked(object sender, RoutedEventArgs e)
 	{
-		string? fileDir = Path.GetDirectoryName(this.Info.FullName);
-
-#pragma warning disable IDE0270
-		if (fileDir == null)
-			throw new Exception($"Failed to get file directory: {this.Info.FullName}");
-#pragma warning restore IDE0270
+		string? fileDir = Path.GetDirectoryName(this.Info.FullName)
+			?? throw new Exception($"Failed to get file directory: {this.Info.FullName}");
 
 		var dlg = new OpenFileDialog
 		{
