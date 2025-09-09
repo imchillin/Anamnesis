@@ -55,14 +55,14 @@ public partial class SliderInputBox : UserControl
 	/// <summary>The delay before the key repeat starts in milliseconds.</summary>
 	const int KEY_REPEAT_WAIT_DELAY = 250;
 
-	/// <summary>Margin for the tick marks to be drawn on the slider.</summary>
-	const int TICK_VISUAL_OFFSET = 2;
+	/// <summary>Margin for the slider thumb to be drawn on the slider.</summary>
+	const int THUMB_VISUAL_MARGIN = 2;
 
 	/// <summary>Constant for floating-point number rounding to a whole number.</summary>
 	const int INT_ROUNDING = 0;
 
 	/// <summary>The width of the slider thumb rectangle.</summary>
-	const double TICK_RECT_WIDTH = 10.0;
+	const double THUMB_RECT_WIDTH = 10.0;
 
 	/// <summary> The minimum value limit for this user control.</summary>
 	/// <remarks>
@@ -77,7 +77,7 @@ public partial class SliderInputBox : UserControl
 	const decimal MaxValueLimit = (decimal.MaxValue / 2) - 1;
 
 	/// <summary>The half-width of the slider thumb rectangle.</summary>
-	const double TICK_RECT_HALF_WIDTH = TICK_RECT_WIDTH / 2;
+	const double THUMB_RECT_HALF_WIDTH = THUMB_RECT_WIDTH / 2;
 
 	/// <summary>Dependency property for the slider value.</summary>
 	public static readonly IBind<decimal> ValueDp = Binder.Register<decimal, SliderInputBox>(nameof(Value), OnValueChanged, BindMode.TwoWay);
@@ -184,7 +184,7 @@ public partial class SliderInputBox : UserControl
 		this.BorderColor = "#00000000";
 		this.SliderType = SliderTypes.Modern;
 		this.ShowSliderThumb = false;
-		this.TickRectangle.Visibility = Visibility.Collapsed;
+		this.SliderThumb.Visibility = Visibility.Collapsed;
 		this.SliderMode = SliderModes.Absolute;
 
 		this.InputField.IsReadOnly = true;
@@ -258,8 +258,8 @@ public partial class SliderInputBox : UserControl
 		Classic
 	}
 
-	/// <summary>Gets the width of the tick rectangle.</summary>
-	public static double TickRectangleWidth => TICK_RECT_WIDTH;
+	/// <summary>Gets the width of the slider thumb rectangle.</summary>
+	public static double SliderThumbWidth => THUMB_RECT_WIDTH;
 
 	/// <summary>Gets or sets the slider value.</summary>
 	public decimal Value
@@ -759,8 +759,8 @@ public partial class SliderInputBox : UserControl
 							Point relPointInputArea = this.TranslatePoint(this.startPoint, this.InputArea);
 
 							// Else, calculate the new value based on the tick position
-							double clampedMouseX = Math.Max(0, relPointInputArea.X - TICK_VISUAL_OFFSET - TICK_RECT_HALF_WIDTH);
-							double relVal = clampedMouseX / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - TICK_RECT_WIDTH);
+							double clampedMouseX = Math.Max(0, relPointInputArea.X - THUMB_VISUAL_MARGIN - THUMB_RECT_HALF_WIDTH);
+							double relVal = clampedMouseX / (this.InputArea.ActualWidth - (2 * THUMB_VISUAL_MARGIN) - THUMB_RECT_WIDTH);
 							this.Value = Math.Clamp(((decimal)relVal * (this.EffectiveMaximum - this.EffectiveMinimum)) + this.EffectiveMinimum, this.EffectiveMinimum, this.EffectiveMaximum);
 
 							this.UpdateTickPosition();
@@ -809,8 +809,8 @@ public partial class SliderInputBox : UserControl
 					Point relPointInputArea = this.TranslatePoint(currentPoint, this.InputArea);
 
 					// Calculate the new value based on the tick position
-					double clampedMouseX = Math.Max(0, relPointInputArea.X - TICK_VISUAL_OFFSET - TICK_RECT_HALF_WIDTH);
-					double relVal = clampedMouseX / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - TICK_RECT_WIDTH);
+					double clampedMouseX = Math.Max(0, relPointInputArea.X - THUMB_VISUAL_MARGIN - THUMB_RECT_HALF_WIDTH);
+					double relVal = clampedMouseX / (this.InputArea.ActualWidth - (2 * THUMB_VISUAL_MARGIN) - THUMB_RECT_WIDTH);
 					this.Value = Math.Clamp(((decimal)relVal * (this.EffectiveMaximum - this.EffectiveMinimum)) + this.EffectiveMinimum, this.EffectiveMinimum, this.EffectiveMaximum);
 
 					// Handle cursor overflow for classic slider type
@@ -1148,11 +1148,11 @@ public partial class SliderInputBox : UserControl
 	private void UpdateTickPosition()
 	{
 		// Update visibility based on the slider thumb property and IsClassicSliderMode
-		this.TickRectangle.Visibility = this.ShowSliderThumb || this.SliderType == SliderTypes.Classic ? Visibility.Visible : Visibility.Collapsed;
+		this.SliderThumb.Visibility = this.ShowSliderThumb || this.SliderType == SliderTypes.Classic ? Visibility.Visible : Visibility.Collapsed;
 
 		// Update the tick position based on the value
 		// Skip update if component is hidden
-		if (this.EffectiveMaximum > this.EffectiveMinimum && this.TickRectangle.Visibility == Visibility.Visible)
+		if (this.EffectiveMaximum > this.EffectiveMinimum && this.SliderThumb.Visibility == Visibility.Visible)
 		{
 			decimal range = this.EffectiveMaximum - this.EffectiveMinimum;
 
@@ -1162,10 +1162,11 @@ public partial class SliderInputBox : UserControl
 
 			decimal safeValue = Math.Clamp(this.Value, this.EffectiveMinimum, this.EffectiveMaximum);
 			decimal relativeValue = (safeValue - this.EffectiveMinimum) / range;
-			double tickPosition = TICK_VISUAL_OFFSET + ((double)relativeValue * (this.InputArea.ActualWidth - TICK_RECT_WIDTH - (2 * TICK_VISUAL_OFFSET)));
+			double tickPosition = THUMB_VISUAL_MARGIN + ((double)relativeValue * (this.InputArea.ActualWidth - THUMB_RECT_WIDTH - (2 * THUMB_VISUAL_MARGIN)));
 
-			this.TickRectangle.Margin = new Thickness(tickPosition, 0, 0, 0);
-			this.TickRectangle.UpdateLayout();
+
+			this.SliderThumb.Margin = new Thickness(tickPosition, 0, 0, 0);
+			this.SliderThumb.UpdateLayout();
 		}
 	}
 
@@ -1176,8 +1177,8 @@ public partial class SliderInputBox : UserControl
 	{
 		if (this.SliderType == SliderTypes.Classic && this.OverflowBehavior == OverflowModes.Loop)
 		{
-			Point rightEdge = this.InputArea.PointToScreen(new Point(this.InputArea.ActualWidth - TICK_RECT_HALF_WIDTH, this.InputArea.ActualHeight / 2));
-			Point leftEdge = this.InputArea.PointToScreen(new Point(TICK_RECT_HALF_WIDTH, this.InputArea.ActualHeight / 2));
+			Point rightEdge = this.InputArea.PointToScreen(new Point(this.InputArea.ActualWidth - THUMB_RECT_HALF_WIDTH, this.InputArea.ActualHeight / 2));
+			Point leftEdge = this.InputArea.PointToScreen(new Point(THUMB_RECT_HALF_WIDTH, this.InputArea.ActualHeight / 2));
 
 			if (WindowsCursor.Position.X > rightEdge.X)
 			{

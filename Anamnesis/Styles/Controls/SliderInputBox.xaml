@@ -69,7 +69,7 @@
 				</Grid>
 
 				<Grid Margin="0, 2">
-					<Border x:Name="TickRectangle" Width="{Binding TickRectangleWidth, Mode=OneTime}" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="Black" Opacity="0.5" CornerRadius="2" Panel.ZIndex="1"/>
+					<Border x:Name="SliderThumb" Width="{Binding SliderThumbWidth, Mode=OneTime}" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="Black" Opacity="0.5" CornerRadius="2" Panel.ZIndex="1"/>
 				</Grid>
 			</Grid>
 
