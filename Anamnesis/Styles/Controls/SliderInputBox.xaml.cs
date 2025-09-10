@@ -5,6 +5,7 @@ namespace Anamnesis.Styles.Controls;
 
 using Anamnesis.Services;
 using PropertyChanged;
+using Serilog;
 using System;
 using System.Data;
 using System.Diagnostics;
@@ -19,6 +20,10 @@ using System.Windows.Threading;
 using XivToolsWpf.DependencyProperties;
 using DrawPoint = System.Drawing.Point;
 using WindowsCursor = System.Windows.Forms.Cursor;
+
+// TODO:
+// BUG 1: If you scroll let's say to 31 on the day counter, the step buttons are still available as it seems that internally we do not round up to the min/max values.
+// BUG 2: On text field commit, as the actual width is bigger, the slider thumb will go outside of the visible area. Perhaps calculate the area without the side buttons and base if off of that?
 
 /// <summary>
 /// Represents an interactive input box that allows the user to slide horizontally to change the value.
@@ -60,6 +65,9 @@ public partial class SliderInputBox : UserControl
 
 	/// <summary>Constant for floating-point number rounding to a whole number.</summary>
 	const int INT_ROUNDING = 0;
+
+	/// <summary>Constant for floating-point number rounding to two decimal places.</summary>
+	const int FLOAT_POINT_ROUNDING = 3;
 
 	/// <summary>The width of the slider thumb rectangle.</summary>
 	const double THUMB_RECT_WIDTH = 10.0;
@@ -133,6 +141,11 @@ public partial class SliderInputBox : UserControl
 
 	/// <summary>Timer for repeating the decrease button action.</summary>
 	private readonly DispatcherTimer decreaseButtonRepeatTimer;
+
+	/// <summary>
+	/// The type of the source binding for the <see cref="ValueDp"/> dependency property.
+	/// </summary>
+	private TypeCode? valueBindingSrcType;
 
 	/// <summary>The starting point of the mouse drag.</summary>
 	private Point startPoint;
@@ -526,6 +539,18 @@ public partial class SliderInputBox : UserControl
 	{
 		if (sender.isInternalSet)
 			return;
+
+		// Detect the bound value type if not already set
+		if (sender.valueBindingSrcType == null)
+		{
+			var binding = sender.GetBindingExpression(ValueDp.Property);
+			Type? type = null;
+			if (binding?.ResolvedSourcePropertyName != null)
+				type = binding.ResolvedSource.GetType().GetProperty(binding.ResolvedSourcePropertyName)?.PropertyType;
+
+			sender.valueBindingSrcType = type != null ? Type.GetTypeCode(type) : TypeCode.Decimal;
+			Log.Verbose($"Detected bound value type: {sender.valueBindingSrcType}, resolved source property name: {binding?.ResolvedSourcePropertyName}");
+		}
 
 		sender.Value = sender.Validate(val);
 		sender.UpdateTickPosition();
@@ -1099,7 +1124,33 @@ public partial class SliderInputBox : UserControl
 	/// </summary>
 	/// <param name="val">The value to round.</param>
 	/// <returns>The rounded value.</returns>
-	private decimal RoundValue(decimal val) => Math.Round(val, this.DecimalPlaces ?? INT_ROUNDING, MidpointRounding.AwayFromZero);
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private decimal RoundValue(decimal val)
+	{
+		if (this.valueBindingSrcType == null)
+			return Math.Round(val, this.DecimalPlaces ?? INT_ROUNDING, MidpointRounding.AwayFromZero);
+
+#pragma warning disable IDE0066
+		switch (this.valueBindingSrcType.Value)
+		{
+			case TypeCode.Boolean:
+			case TypeCode.Byte:
+			case TypeCode.SByte:
+			case TypeCode.Int16:
+			case TypeCode.UInt16:
+			case TypeCode.Int32:
+			case TypeCode.UInt32:
+			case TypeCode.Int64:
+			case TypeCode.UInt64:
+				return Math.Round(val, INT_ROUNDING, MidpointRounding.AwayFromZero);
+			case TypeCode.Single:
+			case TypeCode.Double:
+				return Math.Round(val, this.DecimalPlaces ?? FLOAT_POINT_ROUNDING, MidpointRounding.AwayFromZero);
+			default:
+				return Math.Round(val, this.DecimalPlaces ?? INT_ROUNDING, MidpointRounding.AwayFromZero);
+		}
+#pragma warning restore IDE0066
+	}
 
 	/// <summary>
 	/// Validates and adjusts the new value based on the overflow behavior and decimal places.
@@ -1114,9 +1165,10 @@ public partial class SliderInputBox : UserControl
 		if (this.OverflowBehavior == OverflowModes.Clamp)
 		{
 			val = Math.Clamp(val, min, max);
+			decimal roundedVal = this.RoundValue(val);
 
-			this.DecreaseButton.IsEnabled = val > min;
-			this.IncreaseButton.IsEnabled = val < max;
+			this.DecreaseButton.IsEnabled = roundedVal > min;
+			this.IncreaseButton.IsEnabled = roundedVal < max;
 		}
 		else if (this.OverflowBehavior == OverflowModes.Loop && this.Minimum != null && this.Maximum != null)
 		{
