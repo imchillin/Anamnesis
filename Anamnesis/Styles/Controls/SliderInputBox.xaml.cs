@@ -5,7 +5,6 @@ namespace Anamnesis.Styles.Controls;
 
 using Anamnesis.Services;
 using PropertyChanged;
-using Serilog;
 using System;
 using System.Data;
 using System.Diagnostics;
@@ -20,10 +19,6 @@ using System.Windows.Threading;
 using XivToolsWpf.DependencyProperties;
 using DrawPoint = System.Drawing.Point;
 using WindowsCursor = System.Windows.Forms.Cursor;
-
-// TODO:
-// BUG 1: If you scroll let's say to 31 on the day counter, the step buttons are still available as it seems that internally we do not round up to the min/max values.
-// BUG 2: On text field commit, as the actual width is bigger, the slider thumb will go outside of the visible area. Perhaps calculate the area without the side buttons and base if off of that?
 
 /// <summary>
 /// Represents an interactive input box that allows the user to slide horizontally to change the value.
@@ -170,6 +165,15 @@ public partial class SliderInputBox : UserControl
 
 	/// <summary>Cached maximum of parsed dependency property value.</summary>
 	private decimal? parsedMaximum;
+
+	/// <summary>
+	/// Stores the input area width right before the text field is activated.
+	/// </summary>
+	/// <remarks>
+	/// Necessary to accurately calculate the slider thumb position as using ActualWidth is not
+	/// reliable due to the step buttons.
+	/// </remarks>
+	private double? inputAreaWidth;
 
 	/// <summary>Preresents the minimum value the user control is using.</summary>
 	private decimal EffectiveMinimum => this.parsedMinimum ?? MinValueLimit;
@@ -497,6 +501,7 @@ public partial class SliderInputBox : UserControl
 
 		if (enableInputField)
 		{
+			this.inputAreaWidth = this.InputArea.ActualWidth;
 			this.IsInputFieldActive = true;
 			this.InputField.Focus();
 			this.InputField.SelectAll();
@@ -549,7 +554,6 @@ public partial class SliderInputBox : UserControl
 				type = binding.ResolvedSource.GetType().GetProperty(binding.ResolvedSourcePropertyName)?.PropertyType;
 
 			sender.valueBindingSrcType = type != null ? Type.GetTypeCode(type) : TypeCode.Decimal;
-			Log.Verbose($"Detected bound value type: {sender.valueBindingSrcType}, resolved source property name: {binding?.ResolvedSourcePropertyName}");
 		}
 
 		sender.Value = sender.Validate(val);
@@ -1214,8 +1218,10 @@ public partial class SliderInputBox : UserControl
 
 			decimal safeValue = Math.Clamp(this.Value, this.EffectiveMinimum, this.EffectiveMaximum);
 			decimal relativeValue = (safeValue - this.EffectiveMinimum) / range;
-			double tickPosition = THUMB_VISUAL_MARGIN + ((double)relativeValue * (this.InputArea.ActualWidth - THUMB_RECT_WIDTH - (2 * THUMB_VISUAL_MARGIN)));
 
+			// Calculate the available width for the input area
+			double inputAreaWidth = this.inputAreaWidth ?? this.InputArea.ActualWidth;
+			double tickPosition = THUMB_VISUAL_MARGIN + ((double)relativeValue * Math.Max(0, inputAreaWidth - THUMB_RECT_WIDTH - (2 * THUMB_VISUAL_MARGIN)));
 
 			this.SliderThumb.Margin = new Thickness(tickPosition, 0, 0, 0);
 			this.SliderThumb.UpdateLayout();
