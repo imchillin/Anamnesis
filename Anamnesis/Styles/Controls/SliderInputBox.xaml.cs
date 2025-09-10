@@ -1308,12 +1308,7 @@ public partial class SliderInputBox : UserControl
 	/// </summary>
 	/// <param name="sender">The sender.</param>
 	/// <param name="e">The event arguments.</param>
-	private void OnPromptInputFieldClick(object sender, RoutedEventArgs e)
-	{
-		this.IsInputFieldActive = true;
-		this.InputField.Focus();
-		this.InputField.SelectAll();
-	}
+	private void OnPromptInputFieldClick(object sender, RoutedEventArgs e) => this.GainFocus(true);
 
 	/// <summary>
 	/// Handles the input field size changed event to update the tick position.
