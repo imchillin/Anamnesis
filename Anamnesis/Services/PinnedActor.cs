@@ -95,6 +95,8 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 			this.Memory.Pinned = null;
 			this.Memory = null;
 		}
+
+		GC.SuppressFinalize(this);
 	}
 
 	public void SelectionChanged()
@@ -175,16 +177,12 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 		if (mode == BackupModes.Original)
 		{
-			if (this.OriginalCharacterBackup == null)
-				this.OriginalCharacterBackup = new();
-
+			this.OriginalCharacterBackup ??= new();
 			this.OriginalCharacterBackup.WriteToFile(this.Memory, CharacterFile.SaveModes.All);
 		}
 		else if (mode == BackupModes.Gpose)
 		{
-			if (this.GposeCharacterBackup == null)
-				this.GposeCharacterBackup = new();
-
+			this.GposeCharacterBackup ??= new();
 			this.GposeCharacterBackup.WriteToFile(this.Memory, CharacterFile.SaveModes.All);
 		}
 	}
@@ -300,8 +298,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 			if (newBasic != null)
 			{
-				if (this.Memory != null)
-					this.Memory.Dispose();
+				this.Memory?.Dispose();
 
 				// Reusing the old actor can cause issues so we always recreate when retargeting.
 				this.Memory = new ActorMemory();
@@ -325,7 +322,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 				this.IsRetargeting = false;
 
-				this.OnRetargetedActor(oldPointer, this.Pointer);
+				this.OnRetargetedActor();
 
 				return;
 			}
@@ -406,7 +403,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		}
 	}
 
-	private void OnRetargetedActor(IntPtr? oldPointer, IntPtr? newPointer)
+	private void OnRetargetedActor()
 	{
 		// If we need to apply the appearance thanks to a GPose boundary changes?
 		if (SettingsService.Current.ReapplyAppearance || GposeService.GetIsGPose())

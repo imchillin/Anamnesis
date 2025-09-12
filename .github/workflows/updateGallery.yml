@@ -6,6 +6,8 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # needed to push changes back to the repo
     steps:
       # 1. Check out the repo, with full history and write‑access
       - name: Checkout repository

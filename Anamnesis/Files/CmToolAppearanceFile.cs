@@ -22,65 +22,87 @@ public class CmToolAppearanceFile : JsonFileBase, IUpgradeCharacterFile
 
 	public CharacterFile Upgrade()
 	{
-		CharacterFile file = new CharacterFile();
-		file.SaveMode = CharacterFile.SaveModes.All;
-		file.MainHand = this.MainHand?.Upgrade();
-		file.OffHand = this.OffHand?.Upgrade();
+		var file = new CharacterFile
+		{
+			SaveMode = CharacterFile.SaveModes.All,
+			MainHand = this.MainHand?.Upgrade(),
+			OffHand = this.OffHand?.Upgrade(),
+		};
 
 		if (this.EquipmentBytes != null)
 		{
-			byte[] data = this.StringtoBytes(this.EquipmentBytes);
+			byte[] data = StringtoBytes(this.EquipmentBytes);
 
 			// From CM2: CharacterDetailsView2.xaml.cs line 801
-			file.HeadGear = new CharacterFile.ItemSave();
-			file.HeadGear.ModelBase = (ushort)(data[0] + (data[1] * 256));
-			file.HeadGear.ModelVariant = data[2];
-			file.HeadGear.DyeId = data[3];
+			file.HeadGear = new CharacterFile.ItemSave
+			{
+				ModelBase = (ushort)(data[0] + (data[1] * 256)),
+				ModelVariant = data[2],
+				DyeId = data[3],
+			};
 
-			file.Body = new CharacterFile.ItemSave();
-			file.Body.ModelBase = (ushort)(data[4] + (data[5] * 256));
-			file.Body.ModelVariant = data[6];
-			file.Body.DyeId = data[7];
+			file.Body = new CharacterFile.ItemSave
+			{
+				ModelBase = (ushort)(data[4] + (data[5] * 256)),
+				ModelVariant = data[6],
+				DyeId = data[7],
+			};
 
-			file.Hands = new CharacterFile.ItemSave();
-			file.Hands.ModelBase = (ushort)(data[8] + (data[9] * 256));
-			file.Hands.ModelVariant = data[10];
-			file.Hands.DyeId = data[11];
+			file.Hands = new CharacterFile.ItemSave
+			{
+				ModelBase = (ushort)(data[8] + (data[9] * 256)),
+				ModelVariant = data[10],
+				DyeId = data[11],
+			};
 
-			file.Legs = new CharacterFile.ItemSave();
-			file.Legs.ModelBase = (ushort)(data[12] + (data[13] * 256));
-			file.Legs.ModelVariant = data[14];
-			file.Legs.DyeId = data[15];
+			file.Legs = new CharacterFile.ItemSave
+			{
+				ModelBase = (ushort)(data[12] + (data[13] * 256)),
+				ModelVariant = data[14],
+				DyeId = data[15],
+			};
 
-			file.Feet = new CharacterFile.ItemSave();
-			file.Feet.ModelBase = (ushort)(data[16] + (data[17] * 256));
-			file.Feet.ModelVariant = data[18];
-			file.Feet.DyeId = data[19];
+			file.Feet = new CharacterFile.ItemSave
+			{
+				ModelBase = (ushort)(data[16] + (data[17] * 256)),
+				ModelVariant = data[18],
+				DyeId = data[19],
+			};
 
-			file.Ears = new CharacterFile.ItemSave();
-			file.Ears.ModelBase = (ushort)(data[20] + (data[21] * 256));
-			file.Ears.ModelVariant = data[22];
+			file.Ears = new CharacterFile.ItemSave
+			{
+				ModelBase = (ushort)(data[20] + (data[21] * 256)),
+				ModelVariant = data[22],
+			};
 
-			file.Neck = new CharacterFile.ItemSave();
-			file.Neck.ModelBase = (ushort)(data[24] + (data[25] * 256));
-			file.Neck.ModelVariant = data[26];
+			file.Neck = new CharacterFile.ItemSave
+			{
+				ModelBase = (ushort)(data[24] + (data[25] * 256)),
+				ModelVariant = data[26],
+			};
 
-			file.Wrists = new CharacterFile.ItemSave();
-			file.Wrists.ModelBase = (ushort)(data[28] + (data[29] * 256));
-			file.Wrists.ModelVariant = data[30];
+			file.Wrists = new CharacterFile.ItemSave
+			{
+				ModelBase = (ushort)(data[28] + (data[29] * 256)),
+				ModelVariant = data[30],
+			};
 
-			file.RightRing = new CharacterFile.ItemSave();
-			file.RightRing.ModelBase = (ushort)(data[32] + (data[33] * 256));
-			file.RightRing.ModelVariant = data[34];
+			file.RightRing = new CharacterFile.ItemSave
+			{
+				ModelBase = (ushort)(data[32] + (data[33] * 256)),
+				ModelVariant = data[34],
+			};
 
-			file.LeftRing = new CharacterFile.ItemSave();
-			file.LeftRing.ModelBase = (ushort)(data[36] + (data[37] * 256));
-			file.LeftRing.ModelVariant = data[38];
+			file.LeftRing = new CharacterFile.ItemSave
+			{
+				ModelBase = (ushort)(data[36] + (data[37] * 256)),
+				ModelVariant = data[38],
+			};
 		}
 
 		if (this.CharacterBytes != null)
 		{
-			byte[] data = this.StringtoBytes(this.CharacterBytes);
+			byte[] data = StringtoBytes(this.CharacterBytes);
 
 			// From CM2: MainWindow.xaml.cs line 708
 			file.Race = (ActorCustomizeMemory.Races)data[0];
@@ -147,7 +169,7 @@ public class CmToolAppearanceFile : JsonFileBase, IUpgradeCharacterFile
 		return file;
 	}
 
-	protected byte[] StringtoBytes(string str)
+	protected static byte[] StringtoBytes(string str)
 	{
 		string[] parts = str.Split(' ');
 		byte[] data = new byte[parts.Length];
@@ -176,13 +198,15 @@ public class CmToolAppearanceFile : JsonFileBase, IUpgradeCharacterFile
 
 		public CharacterFile.WeaponSave Upgrade()
 		{
-			CharacterFile.WeaponSave item = new CharacterFile.WeaponSave();
-			item.ModelSet = this.Item1;
-			item.ModelBase = this.Item2;
-			item.ModelVariant = (byte)this.Item3;
-			item.DyeId = (byte)this.Item4;
-			item.Scale = Vector3.One;
-			item.Color = Color.White;
+			var item = new CharacterFile.WeaponSave
+			{
+				ModelSet = this.Item1,
+				ModelBase = this.Item2,
+				ModelVariant = (byte)this.Item3,
+				DyeId = (byte)this.Item4,
+				Scale = Vector3.One,
+				Color = Color.White,
+			};
 			return item;
 		}
 	}

@@ -123,87 +123,93 @@ public class CmToolLegacyAppearanceFile : JsonFileBase, IUpgradeCharacterFile
 
 	public CharacterFile Upgrade()
 	{
-		CharacterFile file = new CharacterFile();
-		file.SaveMode = CharacterFile.SaveModes.All;
+		var file = new CharacterFile
+		{
+			SaveMode = CharacterFile.SaveModes.All,
 
-		file.Race = (Races?)this.Race?.value;
-		file.Gender = (Genders?)this.Gender?.value;
-		file.Age = (Ages?)this.BodyType?.value;
-		file.Height = (byte?)this.Height?.value;
-		file.Tribe = (Tribes?)this.Clan?.value;
-		file.Head = (byte?)this.Head?.value;
-		file.Hair = (byte?)this.Hair?.value;
-		file.EnableHighlights = this.Highlights?.value > 0;
-		file.Skintone = (byte?)this.Skintone?.value;
-		file.REyeColor = (byte?)this.RightEye?.value;
-		file.HairTone = (byte?)this.HairTone?.value;
-		file.Highlights = (byte?)this.Highlights?.value;
-		file.FacialFeatures = (FacialFeature?)this.FacialFeatures?.value;
-		file.LimbalEyes = (byte?)this.LimbalEyes?.value;
-		file.Eyebrows = (byte?)this.EyeBrowType?.value;
-		file.LEyeColor = (byte?)this.LeftEye?.value;
-		file.Eyes = (byte?)this.Eye?.value;
-		file.Nose = (byte?)this.Nose?.value;
-		file.Jaw = (byte?)this.Jaw?.value;
-		file.Mouth = (byte?)this.Lips?.value;
-		file.LipsToneFurPattern = (byte?)this.LipsTone?.value;
-		file.EarMuscleTailSize = (byte?)this.TailSize?.value;
-		file.TailEarsType = (byte?)this.TailType?.value;
-		file.Bust = (byte?)this.RBust?.value;
-		file.FacePaint = (byte?)this.FacePaint?.value;
-		file.FacePaintColor = (byte?)this.FacePaintColor?.value;
+			Race = (Races?)this.Race?.value,
+			Gender = (Genders?)this.Gender?.value,
+			Age = (Ages?)this.BodyType?.value,
+			Height = (byte?)this.Height?.value,
+			Tribe = (Tribes?)this.Clan?.value,
+			Head = (byte?)this.Head?.value,
+			Hair = (byte?)this.Hair?.value,
+			EnableHighlights = this.Highlights?.value > 0,
+			Skintone = (byte?)this.Skintone?.value,
+			REyeColor = (byte?)this.RightEye?.value,
+			HairTone = (byte?)this.HairTone?.value,
+			Highlights = (byte?)this.Highlights?.value,
+			FacialFeatures = (FacialFeature?)this.FacialFeatures?.value,
+			LimbalEyes = (byte?)this.LimbalEyes?.value,
+			Eyebrows = (byte?)this.EyeBrowType?.value,
+			LEyeColor = (byte?)this.LeftEye?.value,
+			Eyes = (byte?)this.Eye?.value,
+			Nose = (byte?)this.Nose?.value,
+			Jaw = (byte?)this.Jaw?.value,
+			Mouth = (byte?)this.Lips?.value,
+			LipsToneFurPattern = (byte?)this.LipsTone?.value,
+			EarMuscleTailSize = (byte?)this.TailSize?.value,
+			TailEarsType = (byte?)this.TailType?.value,
+			Bust = (byte?)this.RBust?.value,
+			FacePaint = (byte?)this.FacePaint?.value,
+			FacePaintColor = (byte?)this.FacePaintColor?.value,
+		};
 
 		// weapons
 		if (this.WeaponBase != null && this.WeaponV != null && this.Job != null)
 		{
-			file.MainHand = new CharacterFile.WeaponSave();
-			file.MainHand.ModelSet = (ushort)this.Job.value;
-			file.MainHand.ModelBase = (ushort)this.WeaponBase.value;
-			file.MainHand.ModelVariant = (ushort)this.WeaponV.value;
+			file.MainHand = new CharacterFile.WeaponSave
+			{
+				ModelSet = (ushort)this.Job.value,
+				ModelBase = (ushort)this.WeaponBase.value,
+				ModelVariant = (ushort)this.WeaponV.value,
+			};
 
 			if (this.WeaponDye != null)
 				file.MainHand.DyeId = (byte)this.WeaponDye.value;
 
-			file.MainHand.Color = this.GetColor(this.WeaponRed, this.WeaponGreen, this.WeaponBlue) ?? Color.White;
+			file.MainHand.Color = GetColor(this.WeaponRed, this.WeaponGreen, this.WeaponBlue) ?? Color.White;
 		}
 
 		if (this.OffhandBase != null && this.OffhandV != null && this.Offhand != null)
 		{
-			file.OffHand = new CharacterFile.WeaponSave();
-			file.OffHand.ModelSet = (ushort)this.Offhand.value;
-			file.OffHand.ModelBase = (ushort)this.OffhandBase.value;
-			file.OffHand.ModelVariant = (ushort)this.OffhandV.value;
+			file.OffHand = new CharacterFile.WeaponSave
+			{
+				ModelSet = (ushort)this.Offhand.value,
+				ModelBase = (ushort)this.OffhandBase.value,
+				ModelVariant = (ushort)this.OffhandV.value,
+			};
 
 			if (this.OffhandDye != null)
 				file.OffHand.DyeId = (byte)this.OffhandDye.value;
 
-			file.OffHand.Color = this.GetColor(this.OffhandRed, this.OffhandGreen, this.OffhandBlue) ?? Color.White;
+			file.OffHand.Color = GetColor(this.OffhandRed, this.OffhandGreen, this.OffhandBlue) ?? Color.White;
 		}
 
 		// equipment
-		file.HeadGear = this.GetItem(this.HeadPiece, this.HeadV, this.HeadDye);
-		file.Body = this.GetItem(this.Chest, this.ChestV, this.ChestDye);
-		file.Hands = this.GetItem(this.Arms, this.ArmsV, this.ArmsDye);
-		file.Legs = this.GetItem(this.Legs, this.LegsV, this.LegsDye);
-		file.Feet = this.GetItem(this.Feet, this.FeetVa, this.FeetDye);
-		file.Ears = this.GetItem(this.Ear, this.EarVa);
-		file.Neck = this.GetItem(this.Neck, this.NeckVa);
-		file.Wrists = this.GetItem(this.Wrist, this.WristVa);
-		file.LeftRing = this.GetItem(this.LFinger, this.LFingerVa);
-		file.RightRing = this.GetItem(this.RFinger, this.RFingerVa);
+		file.HeadGear = GetItem(this.HeadPiece, this.HeadV, this.HeadDye);
+		file.Body = GetItem(this.Chest, this.ChestV, this.ChestDye);
+		file.Hands = GetItem(this.Arms, this.ArmsV, this.ArmsDye);
+		file.Legs = GetItem(this.Legs, this.LegsV, this.LegsDye);
+		file.Feet = GetItem(this.Feet, this.FeetVa, this.FeetDye);
+		file.Ears = GetItem(this.Ear, this.EarVa);
+		file.Neck = GetItem(this.Neck, this.NeckVa);
+		file.Wrists = GetItem(this.Wrist, this.WristVa);
+		file.LeftRing = GetItem(this.LFinger, this.LFingerVa);
+		file.RightRing = GetItem(this.RFinger, this.RFingerVa);
 
 		// extended appearance
 		// NOTE: extended weapon values are stored in the WeaponSave
-		file.SkinColor = this.GetColor(this.SkinRedPigment, this.SkinGreenPigment, this.SkinBluePigment);
-		file.SkinGloss = this.GetColor(this.SkinRedGloss, this.SkinGreenGloss, this.SkinBlueGloss);
-		file.LeftEyeColor = this.GetColor(this.LeftEyeRed, this.LeftEyeGreen, this.LeftEyeBlue);
-		file.RightEyeColor = this.GetColor(this.RightEyeRed, this.RightEyeGreen, this.RightEyeBlue);
-		file.LimbalRingColor = this.GetColor(this.LimbalR, this.LimbalG, this.LimbalB);
-		file.HairColor = this.GetColor(this.HairRedPigment, this.HairGreenPigment, this.HairBluePigment);
+		file.SkinColor = GetColor(this.SkinRedPigment, this.SkinGreenPigment, this.SkinBluePigment);
+		file.SkinGloss = GetColor(this.SkinRedGloss, this.SkinGreenGloss, this.SkinBlueGloss);
+		file.LeftEyeColor = GetColor(this.LeftEyeRed, this.LeftEyeGreen, this.LeftEyeBlue);
+		file.RightEyeColor = GetColor(this.RightEyeRed, this.RightEyeGreen, this.RightEyeBlue);
+		file.LimbalRingColor = GetColor(this.LimbalR, this.LimbalG, this.LimbalB);
+		file.HairColor = GetColor(this.HairRedPigment, this.HairGreenPigment, this.HairBluePigment);
 		////file.HairGloss = this.GetColor(this.HairGlowRed, this.HairGlowGreen, this.HairGlowRed);
-		file.HairHighlight = this.GetColor(this.HairGlowRed, this.HairGlowGreen, this.HairGlowRed);
-		file.MouthColor = this.GetColor4(this.LipsR, this.LipsG, this.LipsB, this.LipsBrightness);
-		file.BustScale = this.GetVector(this.BustX, this.BustY, this.BustZ);
+		file.HairHighlight = GetColor(this.HairGlowRed, this.HairGlowGreen, this.HairGlowRed);
+		file.MouthColor = GetColor4(this.LipsR, this.LipsG, this.LipsB, this.LipsBrightness);
+		file.BustScale = GetVector(this.BustX, this.BustY, this.BustZ);
 		////file.Transparency =
 		file.MuscleTone = (float?)this.MuscleTone?.value;
 		file.HeightMultiplier = (float?)this.Height?.value;
@@ -224,14 +230,16 @@ public class CmToolLegacyAppearanceFile : JsonFileBase, IUpgradeCharacterFile
 		return (FileBase)SerializerService.Deserialize(json, this.GetType());
 	}
 
-	private CharacterFile.ItemSave? GetItem(CmToolAppearanceFile.Entry? baseVal, CmToolAppearanceFile.Entry? variant, CmToolAppearanceFile.Entry? dye = null)
+	private static CharacterFile.ItemSave? GetItem(CmToolAppearanceFile.Entry? baseVal, CmToolAppearanceFile.Entry? variant, CmToolAppearanceFile.Entry? dye = null)
 	{
 		if (baseVal == null || variant == null)
 			return null;
 
-		CharacterFile.ItemSave save = new CharacterFile.ItemSave();
-		save.ModelBase = (ushort)baseVal.value;
-		save.ModelVariant = (byte)variant.value;
+		var save = new CharacterFile.ItemSave
+		{
+			ModelBase = (ushort)baseVal.value,
+			ModelVariant = (byte)variant.value,
+		};
 
 		if (dye != null)
 			save.DyeId = (byte)dye.value;
@@ -239,7 +247,7 @@ public class CmToolLegacyAppearanceFile : JsonFileBase, IUpgradeCharacterFile
 		return save;
 	}
 
-	private Color? GetColor(CmToolAppearanceFile.Entry? r, CmToolAppearanceFile.Entry? g, CmToolAppearanceFile.Entry? b)
+	private static Color? GetColor(CmToolAppearanceFile.Entry? r, CmToolAppearanceFile.Entry? g, CmToolAppearanceFile.Entry? b)
 	{
 		if (r == null || g == null || b == null)
 			return null;
@@ -252,7 +260,7 @@ public class CmToolLegacyAppearanceFile : JsonFileBase, IUpgradeCharacterFile
 		return c;
 	}
 
-	private Color4? GetColor4(CmToolAppearanceFile.Entry? r, CmToolAppearanceFile.Entry? g, CmToolAppearanceFile.Entry? b, CmToolAppearanceFile.Entry? a)
+	private static Color4? GetColor4(CmToolAppearanceFile.Entry? r, CmToolAppearanceFile.Entry? g, CmToolAppearanceFile.Entry? b, CmToolAppearanceFile.Entry? a)
 	{
 		if (r == null || g == null || b == null || a == null)
 			return null;
@@ -266,7 +274,7 @@ public class CmToolLegacyAppearanceFile : JsonFileBase, IUpgradeCharacterFile
 		return c;
 	}
 
-	private Vector3? GetVector(CmToolAppearanceFile.Entry? x, CmToolAppearanceFile.Entry? y, CmToolAppearanceFile.Entry? z)
+	private static Vector3? GetVector(CmToolAppearanceFile.Entry? x, CmToolAppearanceFile.Entry? y, CmToolAppearanceFile.Entry? z)
 	{
 		if (x == null || y == null || z == null)
 			return null;

@@ -81,7 +81,7 @@ public partial class Pose3DView : UserControl
 		get
 		{
 			if (this.Skeleton == null)
-				return Enumerable.Empty<BoneEntity>();
+				return [];
 
 			var bones = SkeletonEntity.TraverseSkeleton(this.Skeleton);
 

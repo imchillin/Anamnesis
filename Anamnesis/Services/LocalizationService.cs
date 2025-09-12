@@ -16,12 +16,12 @@ using XivToolsWpf.DependencyInjection;
 /// </summary>
 public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProvider
 {
-	public const string FallbackCulture = "EN";
+	public const string FALLBACK_CULTURE = "EN";
 
-	private static readonly Dictionary<string, Locale> Locales = new(StringComparer.OrdinalIgnoreCase);
+	private static readonly Dictionary<string, Locale> s_locales = new(StringComparer.OrdinalIgnoreCase);
 
-	private static Locale? fallbackLocale;
-	private static Locale? currentLocale;
+	private static Locale? s_fallbackLocale;
+	private static Locale? s_currentLocale;
 
 	/// <inheritdoc/>
 	public event LocalizationEvent? LocaleChanged;
@@ -29,7 +29,10 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 	/// <summary>
 	/// Gets a value indicating whether the locale provider is loaded.
 	/// </summary>
-	public static bool Loaded => Instance.IsInitialized && currentLocale != null;
+	public static bool Loaded => Instance.IsInitialized && s_currentLocale != null;
+
+	/// <inheritdoc/>
+	bool ILocaleProvider.Loaded => Loaded;
 
 	/// <summary>
 	/// Adds a single localized string to the specified locale.
@@ -40,10 +43,10 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 	/// <param name="value">The translated string.</param>
 	public static void Add(string culture, string cultureName, string key, string value)
 	{
-		if (!Locales.TryGetValue(culture, out var locale))
+		if (!s_locales.TryGetValue(culture, out var locale))
 		{
 			locale = new Locale(culture, cultureName);
-			Locales[culture] = locale;
+			s_locales[culture] = locale;
 		}
 
 		locale.Add(key, value);
@@ -68,7 +71,7 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 	/// </summary>
 	/// <param name="key">The key to check for.</param>
 	/// <returns>True if the key exists in the current locale, false otherwise.</returns>
-	public static bool HasString(string key) => currentLocale?.Get(key, out string _) ?? false;
+	public static bool HasString(string key) => s_currentLocale?.Get(key, out string _) ?? false;
 
 	/// <summary>
 	/// Gets a localized string for the specified key, formatted with the provided parameters.
@@ -86,7 +89,7 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 		if (param == null)
 			throw new ArgumentException("Parameter array cannot be null", nameof(param));
 
-		string str = GetString(key) ?? throw new KeyNotFoundException($"Missing localized string: \"{key}\" in locale: \"{currentLocale?.Culture}\"");
+		string str = GetString(key) ?? throw new KeyNotFoundException($"Missing localized string: \"{key}\" in locale: \"{s_currentLocale?.Culture}\"");
 		return string.Format(str, param);
 	}
 
@@ -99,7 +102,7 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 	{
 		var builder = new StringBuilder();
 
-		foreach ((string code, Locale locale) in Locales)
+		foreach ((string code, Locale locale) in s_locales)
 		{
 			if (locale.Get(key, out string val))
 			{
@@ -121,13 +124,13 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 	{
 		string val = string.Empty;
 
-		if (currentLocale?.Get(key, out val) ?? false)
+		if (s_currentLocale?.Get(key, out val) ?? false)
 			return val;
 
 		if (!silent)
-			Log.Warning($"Missing Localized string: \"{key}\" in locale: \"{currentLocale?.Culture}\"");
+			Log.Warning($"Missing Localized string: \"{key}\" in locale: \"{s_currentLocale?.Culture}\"");
 
-		if (fallbackLocale?.Get(key, out val) ?? false)
+		if (s_fallbackLocale?.Get(key, out val) ?? false)
 			return val;
 
 		if (!silent)
@@ -136,12 +139,12 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 		if (!silent)
 		{
 			string errorString = $"{{{key}}}";
-			fallbackLocale?.Add(key, errorString);
+			s_fallbackLocale?.Add(key, errorString);
 			return errorString;
 		}
 		else
 		{
-			fallbackLocale?.Add(key, string.Empty);
+			s_fallbackLocale?.Add(key, string.Empty);
 			return string.Empty;
 		}
 	}
@@ -158,10 +161,10 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 			throw new ArgumentException("Prefix cannot be null or empty. Use GetString() instead.", nameof(prefix));
 
 		var results = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-		if (currentLocale == null)
+		if (s_currentLocale == null)
 			return results;
 
-		foreach (var kvp in currentLocale.Translations)
+		foreach (var kvp in s_currentLocale.Translations)
 		{
 			if (kvp.Key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
 				results[kvp.Key] = kvp.Value;
@@ -180,19 +183,19 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 	{
 		locale = locale.ToUpper();
 
-		if (Locales.TryGetValue(locale, out Locale? value))
+		if (s_locales.TryGetValue(locale, out Locale? value))
 		{
-			if (currentLocale == value)
+			if (s_currentLocale == value)
 				return;
 
-			currentLocale = value;
+			s_currentLocale = value;
 		}
 		else
 		{
-			if (currentLocale == fallbackLocale)
+			if (s_currentLocale == s_fallbackLocale)
 				return;
 
-			currentLocale = fallbackLocale;
+			s_currentLocale = s_fallbackLocale;
 		}
 
 		Instance?.LocaleChanged?.Invoke();
@@ -204,8 +207,8 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 	/// <returns>A read-only dictionary of available locales.</returns>
 	public static IReadOnlyDictionary<string, string> GetAvailableLocales()
 	{
-		var results = new Dictionary<string, string>(Locales.Count, StringComparer.OrdinalIgnoreCase);
-		foreach (Locale locale in Locales.Values)
+		var results = new Dictionary<string, string>(s_locales.Count, StringComparer.OrdinalIgnoreCase);
+		foreach (Locale locale in s_locales.Values)
 		{
 			if (!results.TryAdd(locale.Culture, locale.Name))
 				continue; // Duplicate; Skip
@@ -238,13 +241,10 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 			}
 		}
 
-		fallbackLocale = Locales[FallbackCulture];
+		s_fallbackLocale = s_locales[FALLBACK_CULTURE];
 		await base.Initialize();
 		SetLocale(SettingsService.Current.Language);
 	}
-
-	/// <inheritdoc/>
-	bool ILocaleProvider.Loaded => Loaded;
 
 	/// <inheritdoc/>
 	bool ILocaleProvider.HasString(string key) => HasString(key);
@@ -261,7 +261,7 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 	/// <summary>
 	/// Represents a locale with a culture and name.
 	/// </summary>
-	/// <param name="culture">The two-letter culture code. (e.g., "EN", "FR")</param>
+	/// <param name="culture">The two-letter culture code. (e.g., "EN", "FR").</param>
 	/// <param name="name">The name of the culture.</param>
 	private sealed class Locale(string culture, string name)
 	{

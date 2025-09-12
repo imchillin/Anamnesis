@@ -30,19 +30,19 @@ public partial class SubActorEditor : UserControl
 	public static readonly IBind<ActorMemory?> SubActorDp = Binder.Register<ActorMemory?, SubActorEditor>(nameof(SubActor), OnChanged, BindMode.TwoWay);
 	public static readonly IBind<Types> TypeDp = Binder.Register<Types, SubActorEditor>(nameof(SubActorType), OnTypeChanged);
 
-	private static readonly NpcSelector.NpcFilter MountFilter = new NpcSelector.NpcFilter()
+	private static readonly NpcSelector.NpcFilter s_mountFilter = new()
 	{
 		TypesLocked = true,
 		IncludeMount = true,
 	};
 
-	private static readonly NpcSelector.NpcFilter CompanionFilter = new NpcSelector.NpcFilter()
+	private static readonly NpcSelector.NpcFilter s_companionFilter = new()
 	{
 		TypesLocked = true,
 		IncludeCompanion = true,
 	};
 
-	private static readonly NpcSelector.NpcFilter OrnamentFilter = new NpcSelector.NpcFilter()
+	private static readonly NpcSelector.NpcFilter s_ornamentFilter = new()
 	{
 		TypesLocked = true,
 		IncludeOrnament = true,
@@ -129,7 +129,7 @@ public partial class SubActorEditor : UserControl
 	{
 		try
 		{
-			BitmapImage logo = new BitmapImage();
+			var logo = new BitmapImage();
 			logo.BeginInit();
 			logo.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
 			logo.UriSource = new Uri("pack://application:,,,/Anamnesis;component/Assets/Slots/" + value.ToString() + ".png");
@@ -164,7 +164,7 @@ public partial class SubActorEditor : UserControl
 				return;
 
 			NpcSelector view = SelectorDrawer.Show<NpcSelector, INpcBase>(null, this.Apply);
-			view.ChangeFilter(MountFilter);
+			view.ChangeFilter(s_mountFilter);
 		}
 		else if (this.SubActorType == Types.Companion)
 		{
@@ -172,7 +172,7 @@ public partial class SubActorEditor : UserControl
 				return;
 
 			NpcSelector view = SelectorDrawer.Show<NpcSelector, INpcBase>(null, this.Apply);
-			view.ChangeFilter(CompanionFilter);
+			view.ChangeFilter(s_companionFilter);
 		}
 		else if (this.SubActorType == Types.Ornament)
 		{
@@ -180,7 +180,7 @@ public partial class SubActorEditor : UserControl
 				return;
 
 			NpcSelector view = SelectorDrawer.Show<NpcSelector, INpcBase>(null, this.Apply);
-			view.ChangeFilter(OrnamentFilter);
+			view.ChangeFilter(s_ornamentFilter);
 		}
 	}
 

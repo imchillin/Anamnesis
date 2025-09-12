@@ -5,6 +5,14 @@ namespace Anamnesis.Brio;
 
 using System.Threading.Tasks;
 
+public enum RedrawResult
+{
+	NoChange,
+	Optimized,
+	Full,
+	Failed,
+}
+
 public static class Brio
 {
 	public static async Task<string> Redraw(int targetIndex)
@@ -28,14 +36,6 @@ public static class Brio
 		var result = bool.Parse(resultRaw);
 		return result;
 	}
-}
-
-public enum RedrawResult
-{
-	NoChange,
-	Optimized,
-	Full,
-	Failed,
 }
 
 public class RedrawData

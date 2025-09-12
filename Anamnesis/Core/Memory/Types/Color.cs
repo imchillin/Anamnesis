@@ -56,7 +56,7 @@ public struct Color(float r = 1, float g = 1, float b = 1) : IEquatable<Color>
 	/// Clamps a value between 0 and 1.
 	/// </summary>
 	/// <param name="v">The color value to clamp.</param>
-	/// <returns></returns>
+	/// <returns>The clamped value.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static double Clamp(double v) => Math.Max(0, Math.Min(v, 1));
 

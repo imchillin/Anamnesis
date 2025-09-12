@@ -83,7 +83,7 @@ public partial class PoseMatrixView : UserControl
 	{
 		return this.Skeleton != null
 			? SkeletonEntity.TraverseSkeleton(this.Skeleton).Where(b => b.Category == category)
-			: Enumerable.Empty<BoneEntity>();
+			: [];
 	}
 
 	private void InvalidateCaches()

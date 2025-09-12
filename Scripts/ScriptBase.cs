@@ -11,16 +11,14 @@ public abstract class ScriptBase
 
 	public static List<ScriptBase> GetAllScripts()
 	{
-		List<ScriptBase> list = new List<ScriptBase>();
+		var list = new List<ScriptBase>();
 
 		Assembly asm = Assembly.GetExecutingAssembly();
 		foreach (var type in asm.GetTypes())
 		{
 			if (type.BaseType == typeof(ScriptBase))
 			{
-				ScriptBase? script = Activator.CreateInstance(type) as ScriptBase;
-
-				if (script == null)
+				if (Activator.CreateInstance(type) is not ScriptBase script)
 					continue;
 
 				list.Add(script);

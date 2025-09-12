@@ -72,7 +72,7 @@ public class ActorModelMemory : MemoryBase
 			if (!Enum.IsDefined(typeof(DataPaths), this.DataPath))
 				return false;
 
-			if (this.parent is ActorMemory actor)
+			if (this.Parent is ActorMemory actor)
 			{
 				return actor.ModelType == 0;
 			}

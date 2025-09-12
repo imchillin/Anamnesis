@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 // TODO: Move this file to Services folder.
 public class TexToolsService : ServiceBase<TexToolsService>
 {
-	private static ModList? modList;
+	private static ModList? s_modList;
 
 	public static Mod? GetMod(IItem item)
 	{
@@ -23,10 +23,10 @@ public class TexToolsService : ServiceBase<TexToolsService>
 
 	public static Mod? GetMod(string itemName)
 	{
-		if (modList == null)
+		if (s_modList == null)
 			return null;
 
-		foreach (Mod mod in modList.Mods)
+		foreach (Mod mod in s_modList.Mods)
 		{
 			if (!mod.Enabled)
 				continue;
@@ -48,7 +48,7 @@ public class TexToolsService : ServiceBase<TexToolsService>
 			if (!File.Exists(filePath))
 				return;
 
-			modList = SerializerService.DeserializeFile<ModList>(filePath);
+			s_modList = SerializerService.DeserializeFile<ModList>(filePath);
 		}
 		catch (Exception ex)
 		{

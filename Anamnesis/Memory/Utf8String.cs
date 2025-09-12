@@ -23,7 +23,7 @@ public struct Utf8String
 		return !(left == right);
 	}
 
-	public override string ToString()
+	public override readonly string ToString()
 	{
 		if (this.Bytes == null)
 			return string.Empty;
@@ -48,7 +48,7 @@ public struct Utf8String
 		this.Bytes = bytes;
 	}
 
-	public override bool Equals(object? obj)
+	public override readonly bool Equals(object? obj)
 	{
 		if (obj is Utf8String other)
 		{
@@ -64,7 +64,7 @@ public struct Utf8String
 		return base.Equals(obj);
 	}
 
-	public override int GetHashCode()
+	public override readonly int GetHashCode()
 	{
 		return HashCode.Combine(this.Bytes?.GetHashCode());
 	}

@@ -3,10 +3,10 @@
 
 namespace Anamnesis.Actor.Views;
 
-using System.Windows;
-using System.Windows.Controls;
 using Anamnesis.Memory;
 using PropertyChanged;
+using System.Windows;
+using System.Windows.Controls;
 using XivToolsWpf.DependencyProperties;
 
 public partial class AnimationSpeedControl : UserControl

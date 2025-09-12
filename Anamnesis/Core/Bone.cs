@@ -20,10 +20,10 @@ using XivToolsWpf.Math3D.Extensions;
 [AddINotifyPropertyChangedInterface]
 public class Bone : ITransform
 {
-	protected const float EqualityTolerance = 0.00001f;
-	protected readonly ReaderWriterLockSlim transformLock = new();
-	private static readonly HashSet<string> AttachmentBoneNames = new() { "n_buki_r", "n_buki_l", "j_buki_sebo_r", "j_buki_sebo_l" };
-	private static bool scaleLinked = true;
+	public const float EQUALITY_TOLERANCE = 0.00001f;
+	protected readonly ReaderWriterLockSlim TransformLock = new();
+	private static readonly HashSet<string> s_attachmentBoneNames = new() { "n_buki_r", "n_buki_l", "j_buki_sebo_r", "j_buki_sebo_l" };
+	private static bool s_scaleLinked = true;
 	private bool hasInitialReading = false;
 
 	/// <summary>
@@ -113,7 +113,7 @@ public class Bone : ITransform
 	/// <remarks>
 	/// Attachment bones are bones that are used to attach items to a character, such as weapons or shields.
 	/// </remarks>
-	public bool IsAttachmentBone => AttachmentBoneNames.Contains(this.Name);
+	public bool IsAttachmentBone => s_attachmentBoneNames.Contains(this.Name);
 
 	/// <inheritdoc/>
 	public bool CanLinkScale => !this.IsAttachmentBone;
@@ -121,8 +121,8 @@ public class Bone : ITransform
 	/// <inheritdoc/>
 	public bool ScaleLinked
 	{
-		get => this.IsAttachmentBone || scaleLinked;
-		set => scaleLinked = value;
+		get => this.IsAttachmentBone || s_scaleLinked;
+		set => s_scaleLinked = value;
 	}
 
 	/// <summary>Gets or sets a value indicating whether linked bones are enabled.</summary>
@@ -280,7 +280,7 @@ public class Bone : ITransform
 				localTransform = ModelToLocalSpace(localTransform, parentTransform);
 			}
 
-			currentBone.transformLock.EnterReadLock();
+			currentBone.TransformLock.EnterReadLock();
 			try
 			{
 				currentBone.Position = localTransform.Position;
@@ -290,7 +290,7 @@ public class Bone : ITransform
 			}
 			finally
 			{
-				currentBone.transformLock.ExitReadLock();
+				currentBone.TransformLock.ExitReadLock();
 			}
 
 			if (readChildren)
@@ -308,7 +308,7 @@ public class Bone : ITransform
 	/// <param name="writeLinked">Whether to write the transforms of linked bones.</param>
 	public virtual void WriteTransform(bool writeChildren = true, bool writeLinked = true)
 	{
-		Stack<(Bone bone, bool writeLinked)> bonesToProcess = new();
+		Stack<(Bone Bone, bool WriteLinked)> bonesToProcess = new();
 		bonesToProcess.Push((this, writeLinked));
 
 		while (bonesToProcess.Count > 0)
@@ -345,7 +345,7 @@ public class Bone : ITransform
 				modelTransform = LocalToModelSpace(modelTransform, parentTransform);
 			}
 
-			currentBone.transformLock.EnterWriteLock();
+			currentBone.TransformLock.EnterWriteLock();
 			try
 			{
 				foreach (TransformMemory transformMemory in transformMemories)
@@ -357,19 +357,19 @@ public class Bone : ITransform
 
 				foreach (TransformMemory transformMemory in transformMemories)
 				{
-					if (currentBone.CanTranslate && !transformMemory.Position.IsApproximately(modelTransform.Position, EqualityTolerance))
+					if (currentBone.CanTranslate && !transformMemory.Position.IsApproximately(modelTransform.Position, EQUALITY_TOLERANCE))
 					{
 						transformMemory.Position = modelTransform.Position;
 						changed = true;
 					}
 
-					if (currentBone.CanScale && !transformMemory.Scale.IsApproximately(modelTransform.Scale, EqualityTolerance))
+					if (currentBone.CanScale && !transformMemory.Scale.IsApproximately(modelTransform.Scale, EQUALITY_TOLERANCE))
 					{
 						transformMemory.Scale = modelTransform.Scale;
 						changed = true;
 					}
 
-					if (currentBone.CanRotate && !transformMemory.Rotation.IsApproximately(modelTransform.Rotation, EqualityTolerance))
+					if (currentBone.CanRotate && !transformMemory.Rotation.IsApproximately(modelTransform.Rotation, EQUALITY_TOLERANCE))
 					{
 						transformMemory.Rotation = modelTransform.Rotation;
 						changed = true;
@@ -412,7 +412,7 @@ public class Bone : ITransform
 			}
 			finally
 			{
-				currentBone.transformLock.ExitWriteLock();
+				currentBone.TransformLock.ExitWriteLock();
 			}
 		}
 	}

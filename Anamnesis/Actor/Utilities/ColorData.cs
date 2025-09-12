@@ -3,21 +3,21 @@
 
 namespace Anamnesis.Actor.Utilities;
 
-using System;
-using System.Collections.Generic;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Serilog;
+using System;
+using System.Collections.Generic;
 using cmColor = Anamnesis.Memory.Color;
 using wpfColor = System.Windows.Media.Color;
 
 public static class ColorData
 {
-	private static readonly Entry[] Colors;
+	private static readonly Entry[] s_colors = [];
 
 	static ColorData()
 	{
-		List<Entry> colors = new List<Entry>();
+		var colors = new List<Entry>();
 
 		try
 		{
@@ -53,7 +53,7 @@ public static class ColorData
 			Log.Error(ex, "Failed to read game color data.");
 		}
 
-		Colors = colors.ToArray();
+		s_colors = colors.ToArray();
 	}
 
 	public static Entry[] GetSkin(ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
@@ -90,7 +90,7 @@ public static class ColorData
 
 	public static Entry[] GetLipColors()
 	{
-		List<Entry> entries = new List<Entry>();
+		var entries = new List<Entry>();
 		entries.AddRange(Span(512, 96));
 
 		for (int i = 0; i < 32; i++)
@@ -109,10 +109,10 @@ public static class ColorData
 	{
 		Entry[] entries = new Entry[count];
 
-		if (Colors.Length <= 0)
+		if (s_colors.Length <= 0)
 			return entries;
 
-		Array.Copy(Colors, from, entries, 0, count);
+		Array.Copy(s_colors, from, entries, 0, count);
 		return entries;
 	}
 
@@ -136,7 +136,7 @@ public static class ColorData
 
 	public struct Entry
 	{
-		public string Hex => $"#{this.WpfColor.R:X2}{this.WpfColor.G:X2}{this.WpfColor.B:X2}";
+		public readonly string Hex => $"#{this.WpfColor.R:X2}{this.WpfColor.G:X2}{this.WpfColor.B:X2}";
 		public cmColor CmColor { get; set; }
 		public wpfColor WpfColor { get; set; }
 		public bool Skip { get; set; }

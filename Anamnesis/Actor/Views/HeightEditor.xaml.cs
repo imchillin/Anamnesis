@@ -18,66 +18,6 @@ using XivToolsWpf.DependencyProperties;
 [AddINotifyPropertyChangedInterface]
 public partial class HeightEditor : UserControl, INotifyPropertyChanged
 {
-	/// <summary>The default minimum height value.</summary>
-	private const double DefaultMinHeight = 0.0;
-
-	/// <summary>The default maximum height value.</summary>
-	private const double DefaultMaxHeight = 255.0;
-
-	/// <summary>
-	/// A lookup dictionary for the minimum and maximum heights of each tribe/gender combination.
-	/// </summary>
-	private static readonly Dictionary<(ActorCustomizeMemory.Tribes, ActorCustomizeMemory.Genders), (double min, double max)> HeightRanges = new(capacity: 32)
-	{
-		// Hyur
-		{(ActorCustomizeMemory.Tribes.Midlander, ActorCustomizeMemory.Genders.Masculine), (168.0f, 182.0f)},
-		{(ActorCustomizeMemory.Tribes.Midlander, ActorCustomizeMemory.Genders.Feminine), (157.4f, 170.5f)},
-		{(ActorCustomizeMemory.Tribes.Highlander, ActorCustomizeMemory.Genders.Masculine), (184.8f, 200.2f)},
-		{(ActorCustomizeMemory.Tribes.Highlander, ActorCustomizeMemory.Genders.Feminine), (173.1f, 187.6f)},
-
-		// Elezen
-		{(ActorCustomizeMemory.Tribes.Wildwood, ActorCustomizeMemory.Genders.Masculine), (194.1f, 209.8f)},
-		{(ActorCustomizeMemory.Tribes.Wildwood, ActorCustomizeMemory.Genders.Feminine), (183.5f, 198.4f)},
-		{(ActorCustomizeMemory.Tribes.Duskwight, ActorCustomizeMemory.Genders.Masculine), (194.1f, 209.8f)},
-		{(ActorCustomizeMemory.Tribes.Duskwight, ActorCustomizeMemory.Genders.Feminine), (183.5f, 198.4f)},
-
-		// Lalafell
-		{(ActorCustomizeMemory.Tribes.Plainsfolk, ActorCustomizeMemory.Genders.Masculine), (86.9f, 97.0f)},
-		{(ActorCustomizeMemory.Tribes.Plainsfolk, ActorCustomizeMemory.Genders.Feminine), (86.9f, 97.0f)},
-		{(ActorCustomizeMemory.Tribes.Dunesfolk, ActorCustomizeMemory.Genders.Masculine), (86.9f, 97.0f)},
-		{(ActorCustomizeMemory.Tribes.Dunesfolk, ActorCustomizeMemory.Genders.Feminine), (86.9f, 97.0f)},
-
-		// Miqo'te
-		{(ActorCustomizeMemory.Tribes.SeekerOfTheSun, ActorCustomizeMemory.Genders.Masculine), (159.2f, 173.2f)},
-		{(ActorCustomizeMemory.Tribes.SeekerOfTheSun, ActorCustomizeMemory.Genders.Feminine), (149.7f, 162.2f)},
-		{(ActorCustomizeMemory.Tribes.KeeperOfTheMoon, ActorCustomizeMemory.Genders.Masculine), (159.2f, 173.2f)},
-		{(ActorCustomizeMemory.Tribes.KeeperOfTheMoon, ActorCustomizeMemory.Genders.Feminine), (149.7f, 162.2f)},
-
-		// Roegadyn
-		{(ActorCustomizeMemory.Tribes.SeaWolf, ActorCustomizeMemory.Genders.Masculine), (213.5f, 230.4f)},
-		{(ActorCustomizeMemory.Tribes.SeaWolf, ActorCustomizeMemory.Genders.Feminine), (192.0f, 222.7f)},
-		{(ActorCustomizeMemory.Tribes.Hellsguard, ActorCustomizeMemory.Genders.Masculine), (213.5f, 230.4f)},
-		{(ActorCustomizeMemory.Tribes.Hellsguard, ActorCustomizeMemory.Genders.Feminine), (192.0f, 222.7f)},
-
-		// Au Ra
-		{(ActorCustomizeMemory.Tribes.Raen, ActorCustomizeMemory.Genders.Masculine), (203.0f, 217.0f)},
-		{(ActorCustomizeMemory.Tribes.Raen, ActorCustomizeMemory.Genders.Feminine), (146.0f, 158.5f)},
-		{(ActorCustomizeMemory.Tribes.Xaela, ActorCustomizeMemory.Genders.Masculine), (203.0f, 217.0f)},
-		{(ActorCustomizeMemory.Tribes.Xaela, ActorCustomizeMemory.Genders.Feminine), (146.0f, 158.5f)},
-
-		// Hrothgar
-		{(ActorCustomizeMemory.Tribes.Helions, ActorCustomizeMemory.Genders.Masculine), (196.2f, 212.9f)},
-		{(ActorCustomizeMemory.Tribes.Helions, ActorCustomizeMemory.Genders.Feminine), (184.4f, 199.4f)},
-		{(ActorCustomizeMemory.Tribes.TheLost, ActorCustomizeMemory.Genders.Masculine), (196.2f, 212.9f)},
-		{(ActorCustomizeMemory.Tribes.TheLost, ActorCustomizeMemory.Genders.Feminine), (184.4f, 199.4f)},
-
-		// Viera
-		{(ActorCustomizeMemory.Tribes.Rava, ActorCustomizeMemory.Genders.Masculine), (172.2f, 186.5f)},
-		{(ActorCustomizeMemory.Tribes.Rava, ActorCustomizeMemory.Genders.Feminine), (178.8f, 191.4f)},
-		{(ActorCustomizeMemory.Tribes.Veena, ActorCustomizeMemory.Genders.Masculine), (172.2f, 186.5f)},
-		{(ActorCustomizeMemory.Tribes.Veena, ActorCustomizeMemory.Genders.Feminine), (178.8f, 191.4f)},
-	};
-
 	/// <summary>Dependency property for the height value.</summary>
 	public static readonly IBind<byte> ValueDp = Binder.Register<byte, HeightEditor>(nameof(Value), OnValueChanged, BindMode.TwoWay);
 
@@ -89,6 +29,66 @@ public partial class HeightEditor : UserControl, INotifyPropertyChanged
 
 	/// <summary>Dependency property for the age value.</summary>
 	public static readonly IBind<ActorCustomizeMemory.Ages> AgeDp = Binder.Register<ActorCustomizeMemory.Ages, HeightEditor>(nameof(Age), OnAgeChanged, BindMode.OneWay);
+
+	/// <summary>The default minimum height value.</summary>
+	private const double DEFAULT_MIN_HEIGHT = 0.0;
+
+	/// <summary>The default maximum height value.</summary>
+	private const double DEFAULT_MAX_HEIGHT = 255.0;
+
+	/// <summary>
+	/// A lookup dictionary for the minimum and maximum heights of each tribe/gender combination.
+	/// </summary>
+	private static readonly Dictionary<(ActorCustomizeMemory.Tribes, ActorCustomizeMemory.Genders), (double Min, double Max)> s_heightRanges = new(capacity: 32)
+	{
+		// Hyur
+		{ (ActorCustomizeMemory.Tribes.Midlander, ActorCustomizeMemory.Genders.Masculine), (168.0f, 182.0f) },
+		{ (ActorCustomizeMemory.Tribes.Midlander, ActorCustomizeMemory.Genders.Feminine), (157.4f, 170.5f) },
+		{ (ActorCustomizeMemory.Tribes.Highlander, ActorCustomizeMemory.Genders.Masculine), (184.8f, 200.2f) },
+		{ (ActorCustomizeMemory.Tribes.Highlander, ActorCustomizeMemory.Genders.Feminine), (173.1f, 187.6f) },
+
+		// Elezen
+		{ (ActorCustomizeMemory.Tribes.Wildwood, ActorCustomizeMemory.Genders.Masculine), (194.1f, 209.8f) },
+		{ (ActorCustomizeMemory.Tribes.Wildwood, ActorCustomizeMemory.Genders.Feminine), (183.5f, 198.4f) },
+		{ (ActorCustomizeMemory.Tribes.Duskwight, ActorCustomizeMemory.Genders.Masculine), (194.1f, 209.8f) },
+		{ (ActorCustomizeMemory.Tribes.Duskwight, ActorCustomizeMemory.Genders.Feminine), (183.5f, 198.4f) },
+
+		// Lalafell
+		{ (ActorCustomizeMemory.Tribes.Plainsfolk, ActorCustomizeMemory.Genders.Masculine), (86.9f, 97.0f) },
+		{ (ActorCustomizeMemory.Tribes.Plainsfolk, ActorCustomizeMemory.Genders.Feminine), (86.9f, 97.0f) },
+		{ (ActorCustomizeMemory.Tribes.Dunesfolk, ActorCustomizeMemory.Genders.Masculine), (86.9f, 97.0f) },
+		{ (ActorCustomizeMemory.Tribes.Dunesfolk, ActorCustomizeMemory.Genders.Feminine), (86.9f, 97.0f) },
+
+		// Miqo'te
+		{ (ActorCustomizeMemory.Tribes.SeekerOfTheSun, ActorCustomizeMemory.Genders.Masculine), (159.2f, 173.2f) },
+		{ (ActorCustomizeMemory.Tribes.SeekerOfTheSun, ActorCustomizeMemory.Genders.Feminine), (149.7f, 162.2f) },
+		{ (ActorCustomizeMemory.Tribes.KeeperOfTheMoon, ActorCustomizeMemory.Genders.Masculine), (159.2f, 173.2f) },
+		{ (ActorCustomizeMemory.Tribes.KeeperOfTheMoon, ActorCustomizeMemory.Genders.Feminine), (149.7f, 162.2f) },
+
+		// Roegadyn
+		{ (ActorCustomizeMemory.Tribes.SeaWolf, ActorCustomizeMemory.Genders.Masculine), (213.5f, 230.4f) },
+		{ (ActorCustomizeMemory.Tribes.SeaWolf, ActorCustomizeMemory.Genders.Feminine), (192.0f, 222.7f) },
+		{ (ActorCustomizeMemory.Tribes.Hellsguard, ActorCustomizeMemory.Genders.Masculine), (213.5f, 230.4f) },
+		{ (ActorCustomizeMemory.Tribes.Hellsguard, ActorCustomizeMemory.Genders.Feminine), (192.0f, 222.7f) },
+
+		// Au Ra
+		{ (ActorCustomizeMemory.Tribes.Raen, ActorCustomizeMemory.Genders.Masculine), (203.0f, 217.0f) },
+		{ (ActorCustomizeMemory.Tribes.Raen, ActorCustomizeMemory.Genders.Feminine), (146.0f, 158.5f) },
+		{ (ActorCustomizeMemory.Tribes.Xaela, ActorCustomizeMemory.Genders.Masculine), (203.0f, 217.0f) },
+		{ (ActorCustomizeMemory.Tribes.Xaela, ActorCustomizeMemory.Genders.Feminine), (146.0f, 158.5f) },
+
+		// Hrothgar
+		{ (ActorCustomizeMemory.Tribes.Helions, ActorCustomizeMemory.Genders.Masculine), (196.2f, 212.9f) },
+		{ (ActorCustomizeMemory.Tribes.Helions, ActorCustomizeMemory.Genders.Feminine), (184.4f, 199.4f) },
+		{ (ActorCustomizeMemory.Tribes.TheLost, ActorCustomizeMemory.Genders.Masculine), (196.2f, 212.9f) },
+		{ (ActorCustomizeMemory.Tribes.TheLost, ActorCustomizeMemory.Genders.Feminine), (184.4f, 199.4f) },
+
+		// Viera
+		{ (ActorCustomizeMemory.Tribes.Rava, ActorCustomizeMemory.Genders.Masculine), (172.2f, 186.5f) },
+		{ (ActorCustomizeMemory.Tribes.Rava, ActorCustomizeMemory.Genders.Feminine), (178.8f, 191.4f) },
+		{ (ActorCustomizeMemory.Tribes.Veena, ActorCustomizeMemory.Genders.Masculine), (172.2f, 186.5f) },
+		{ (ActorCustomizeMemory.Tribes.Veena, ActorCustomizeMemory.Genders.Feminine), (178.8f, 191.4f) },
+	};
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="HeightEditor"/> class.
@@ -151,7 +151,7 @@ public partial class HeightEditor : UserControl, INotifyPropertyChanged
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static double GetMinHeight(ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
 	{
-		return HeightRanges.TryGetValue((tribe, gender), out var range) ? range.min : DefaultMinHeight;
+		return s_heightRanges.TryGetValue((tribe, gender), out var range) ? range.Min : DEFAULT_MIN_HEIGHT;
 	}
 
 	/// <summary>
@@ -166,7 +166,7 @@ public partial class HeightEditor : UserControl, INotifyPropertyChanged
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static double GetMaxHeight(ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
 	{
-		return HeightRanges.TryGetValue((tribe, gender), out var range) ? range.max : DefaultMaxHeight;
+		return s_heightRanges.TryGetValue((tribe, gender), out var range) ? range.Max : DEFAULT_MAX_HEIGHT;
 	}
 
 	/// <summary>
@@ -181,13 +181,13 @@ public partial class HeightEditor : UserControl, INotifyPropertyChanged
 	/// Similarly, if a tribe and gender combination is not found, the height range will be 0.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static (double min, double max) GetHeightRange(ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender, ActorCustomizeMemory.Ages age)
+	public static (double Min, double Max) GetHeightRange(ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender, ActorCustomizeMemory.Ages age)
 	{
 		// No support for old or young height calculations
 		if (age != ActorCustomizeMemory.Ages.Normal)
 			return (0, 0);
 
-		return HeightRanges.TryGetValue((tribe, gender), out var range) ? range : (DefaultMinHeight, DefaultMaxHeight);
+		return s_heightRanges.TryGetValue((tribe, gender), out var range) ? range : (DEFAULT_MIN_HEIGHT, DEFAULT_MAX_HEIGHT);
 	}
 
 	private static void OnValueChanged(HeightEditor sender, byte value)

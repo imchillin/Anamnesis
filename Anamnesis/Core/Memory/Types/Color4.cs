@@ -9,9 +9,6 @@ using System.Globalization;
 /// <summary>Represents a RGBA color.</summary>
 public struct Color4 : IEquatable<Color4>
 {
-	/// <summary>The tolerance for approximate equality checks.</summary>
-	private const float EqualityTolerance = 0.05f;
-
 	/// <summary>The color white.</summary>
 	public static readonly Color4 White = new(1, 1, 1, 1);
 
@@ -20,6 +17,9 @@ public struct Color4 : IEquatable<Color4>
 
 	/// <summary>The color black with alpha set to 0.</summary>
 	public static readonly Color4 Transparent = new(0, 0, 0, 0);
+
+	/// <summary>The tolerance for approximate equality checks.</summary>
+	private const float EQUALITY_TOLERANCE = 0.05f;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Color4"/> struct.
@@ -88,7 +88,7 @@ public struct Color4 : IEquatable<Color4>
 	public static Color4 FromString(string str)
 	{
 		if (str == null)
-			return Color4.Transparent;
+			return Transparent;
 
 		string[] parts = str.Split([", "], StringSplitOptions.RemoveEmptyEntries);
 
@@ -138,9 +138,9 @@ public struct Color4 : IEquatable<Color4>
 	public readonly bool IsApproximately(Color4 other)
 	{
 		bool approx = true;
-		approx &= Math.Abs(this.R - other.R) < EqualityTolerance;
-		approx &= Math.Abs(this.G - other.G) < EqualityTolerance;
-		approx &= Math.Abs(this.B - other.B) < EqualityTolerance;
+		approx &= Math.Abs(this.R - other.R) < EQUALITY_TOLERANCE;
+		approx &= Math.Abs(this.G - other.G) < EQUALITY_TOLERANCE;
+		approx &= Math.Abs(this.B - other.B) < EQUALITY_TOLERANCE;
 		return approx;
 	}
 }

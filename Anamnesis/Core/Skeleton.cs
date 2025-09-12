@@ -16,6 +16,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 /// <summary>
@@ -33,19 +34,19 @@ public class Skeleton : INotifyPropertyChanged
 	/// <remarks>
 	/// This is used to automatically pick a hair bone when multiple options are available.
 	/// </remarks>
-	protected readonly Dictionary<string, Tuple<string, string>> hairNameToSuffixMap = new()
+	protected readonly Dictionary<string, Tuple<string, string>> HairNameToSuffixMap = new()
 	{
-		{ "HairAutoFrontLeft", new("l", "j_kami_f_l") },	// Hair, Front Left
-		{ "HairAutoFrontRight", new("r", "j_kami_f_r") },	// Hair, Front Right
-		{ "HairAutoA", new("a", "j_kami_a") },				// Hair, Back Up
-		{ "HairAutoB", new("b", "j_kami_b") },				// Hair, Back Down
-		{ "HairFront", new("f", string.Empty) },			// Hair, Front (Custom Bone Name)
+		{ "HairAutoFrontLeft", new("l", "j_kami_f_l") },    // Hair, Front Left
+		{ "HairAutoFrontRight", new("r", "j_kami_f_r") },   // Hair, Front Right
+		{ "HairAutoA", new("a", "j_kami_a") },              // Hair, Back Up
+		{ "HairAutoB", new("b", "j_kami_b") },              // Hair, Back Down
+		{ "HairFront", new("f", string.Empty) },            // Hair, Front (Custom Bone Name)
 	};
 
 	/// <summary>
 	/// Maximum number of attempts to retry accessing bone array memory.
 	/// </summary>
-	private const uint MaxReadRetryAttempts = 5;
+	private const uint MAX_READ_RETRY_ATTEMPTS = 5;
 
 	/// <summary>
 	/// A snapshot of the transforms of all bones in the skeleton.
@@ -58,7 +59,7 @@ public class Skeleton : INotifyPropertyChanged
 	/// <summary>
 	/// A lock object used to synchronize access to the snapshot dictionary.
 	/// </summary>
-	private readonly object snapshotLock = new();
+	private readonly Lock snapshotLock = new();
 
 	/// <summary>Initializes a new instance of the <see cref="Skeleton"/> class.</summary>
 	/// <param name="actor">The actor memory associated with this skeleton.</param>
@@ -181,7 +182,7 @@ public class Skeleton : INotifyPropertyChanged
 			name = modernName;
 
 		// Attempt to find hairstyle-specific bones. If not found, default to the standard hair bones.
-		if (this.hairNameToSuffixMap.TryGetValue(name, out Tuple<string, string>? suffixAndDefault))
+		if (this.HairNameToSuffixMap.TryGetValue(name, out Tuple<string, string>? suffixAndDefault))
 		{
 			Bone? bone = this.FindHairBoneByPattern(suffixAndDefault.Item1);
 			if (bone != null)
@@ -349,7 +350,7 @@ public class Skeleton : INotifyPropertyChanged
 
 			int retryCount = 0;
 
-			while (retryCount < MaxReadRetryAttempts)
+			while (retryCount < MAX_READ_RETRY_ATTEMPTS)
 			{
 				try
 				{
@@ -365,10 +366,10 @@ public class Skeleton : INotifyPropertyChanged
 				}
 				catch (Exception ex)
 				{
-					Log.Verbose(ex, $"{ex.Message}. Retrying... ({retryCount + 1}/{MaxReadRetryAttempts})");
+					Log.Verbose(ex, $"{ex.Message}. Retrying... ({retryCount + 1}/{MAX_READ_RETRY_ATTEMPTS})");
 
 					retryCount++;
-					if (retryCount >= MaxReadRetryAttempts)
+					if (retryCount >= MAX_READ_RETRY_ATTEMPTS)
 					{
 						Log.Warning("Max retry attempts reached. Unable to find best pose for partial skeleton.");
 						continue; // Skip to the next iteration of the outer loop
@@ -391,7 +392,7 @@ public class Skeleton : INotifyPropertyChanged
 			// Load all bones first
 			for (int boneIndex = 0; boneIndex < count; boneIndex++)
 			{
-				while (retryCount < MaxReadRetryAttempts)
+				while (retryCount < MAX_READ_RETRY_ATTEMPTS)
 				{
 					try
 					{
@@ -420,10 +421,10 @@ public class Skeleton : INotifyPropertyChanged
 					}
 					catch (ArgumentOutOfRangeException ex)
 					{
-						Log.Warning(ex, $"Failed to locate bone at index {boneIndex}. Retrying... ({retryCount + 1}/{MaxReadRetryAttempts})");
+						Log.Warning(ex, $"Failed to locate bone at index {boneIndex}. Retrying... ({retryCount + 1}/{MAX_READ_RETRY_ATTEMPTS})");
 
 						retryCount++;
-						if (retryCount >= MaxReadRetryAttempts)
+						if (retryCount >= MAX_READ_RETRY_ATTEMPTS)
 							throw; // Rethrow the exception if max retries reached
 
 						Task.Delay(10).Wait(); // Wait 10ms between retries

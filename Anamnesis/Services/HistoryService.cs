@@ -15,17 +15,14 @@ using System.Threading.Tasks;
 /// </summary>
 public class HistoryService : ServiceBase<HistoryService>
 {
-	private int isRestoring = 0;
-
-	/// <inheritdoc/>
-	protected override IEnumerable<IService> Dependencies => [TargetService.Instance];
-
 	/// <summary>Lock object for thread synchronization.</summary>
 	/// <remarks>
 	/// Use this object to ensure that any code dependent on the <see cref="IsRestoring"/>
 	/// property does not run while history is being restored.
 	/// </remarks>
 	public readonly Lock LockObject = new();
+
+	private int isRestoring = 0;
 
 	/// <summary>
 	/// The delegate object for the <see cref="OnHistoryApplied"/> event.
@@ -39,7 +36,7 @@ public class HistoryService : ServiceBase<HistoryService>
 	public static event HistoryAppliedEvent? OnHistoryApplied;
 
 	/// <summary>
-	/// Gets or sets a value indicating whether the history is currently being restored.
+	/// Gets a value indicating whether the history is currently being restored.
 	/// </summary>
 	/// <remarks>
 	/// This is an atomic property so it can be used in multi-threaded contexts.
@@ -49,6 +46,9 @@ public class HistoryService : ServiceBase<HistoryService>
 		get => Interlocked.CompareExchange(ref this.isRestoring, 0, 0) == 1;
 		private set => Interlocked.Exchange(ref this.isRestoring, value ? 1 : 0);
 	}
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [TargetService.Instance];
 
 	/// <summary>
 	/// Sets the current history context for the selected actor.

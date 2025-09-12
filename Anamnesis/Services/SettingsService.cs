@@ -21,7 +21,7 @@ using XivToolsWpf;
 /// </summary>
 public class SettingsService : ServiceBase<SettingsService>
 {
-	private static readonly string SettingsPath = FileService.ParseToFilePath(FileService.StoreDirectory + "/Settings.json");
+	private static readonly string s_settingsPath = FileService.ParseToFilePath(FileService.StoreDirectory + "/Settings.json");
 
 	/// <summary>
 	/// Event that is raised when the settings have changed.
@@ -57,7 +57,7 @@ public class SettingsService : ServiceBase<SettingsService>
 	public static void Save()
 	{
 		string json = SerializerService.Serialize(Instance.Settings!);
-		File.WriteAllText(SettingsPath, json);
+		File.WriteAllText(s_settingsPath, json);
 	}
 
 	/// <summary>
@@ -80,7 +80,7 @@ public class SettingsService : ServiceBase<SettingsService>
 	{
 		await base.Initialize();
 
-		if (!File.Exists(SettingsPath))
+		if (!File.Exists(s_settingsPath))
 		{
 			this.FirstTimeUser = true;
 			this.Settings = new Settings();
@@ -96,7 +96,7 @@ public class SettingsService : ServiceBase<SettingsService>
 				if (Keyboard.IsKeyDown(Key.LeftShift))
 					throw new Exception("User Abort");
 
-				string json = File.ReadAllText(SettingsPath);
+				string json = File.ReadAllText(s_settingsPath);
 				this.Settings = SerializerService.Deserialize<Settings>(json);
 
 				if (SystemParameters.WindowGlassColor == Colors.Black)

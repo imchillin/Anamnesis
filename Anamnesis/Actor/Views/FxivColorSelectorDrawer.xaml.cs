@@ -3,11 +3,11 @@
 
 namespace Anamnesis.Actor.Views;
 
-using System.Collections.Generic;
-using System.Windows.Controls;
 using Anamnesis.Actor.Utilities;
 using Anamnesis.Services;
 using PropertyChanged;
+using System.Collections.Generic;
+using System.Windows.Controls;
 
 /// <summary>
 /// Interaction logic for FxivColorSelectorDrawer.xaml.
@@ -15,7 +15,7 @@ using PropertyChanged;
 [AddINotifyPropertyChangedInterface]
 public partial class FxivColorSelectorDrawer : UserControl, IDrawer
 {
-	private readonly List<Item> items = new List<Item>();
+	private readonly List<Item> items = new();
 	private Item? selectedItem;
 
 	public FxivColorSelectorDrawer(ColorData.Entry[] colors, int selectedIndex)
@@ -28,9 +28,11 @@ public partial class FxivColorSelectorDrawer : UserControl, IDrawer
 			if (colors[i].Skip)
 				continue;
 
-			Item item = new Item();
-			item.Entry = colors[i];
-			item.Index = i;
+			var item = new Item
+			{
+				Entry = colors[i],
+				Index = i,
+			};
 			this.items.Add(item);
 
 			if (i == selectedIndex)

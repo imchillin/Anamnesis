@@ -14,7 +14,7 @@ using System.Collections.Generic;
 /// <typeparam name="TValue">The array element type.</typeparam>
 public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<TValue>, IArrayMemory
 {
-	private static readonly bool IsMemoryObject = typeof(MemoryBase).IsAssignableFrom(typeof(TValue));
+	private static readonly bool s_isMemoryObject = typeof(MemoryBase).IsAssignableFrom(typeof(TValue));
 	private readonly List<TValue> items = new();
 
 	private int lastLength = -1;
@@ -131,7 +131,7 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 				IntPtr address = this.ArrayAddress;
 				for (int i = 0; i < this.Length; i++)
 				{
-					if (IsMemoryObject)
+					if (s_isMemoryObject)
 					{
 						TValue instance = Activator.CreateInstance<TValue>();
 						if (instance is not MemoryBase memory)
@@ -170,21 +170,15 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 	/// <summary>
 	/// Represents binding information for an array element.
 	/// </summary>
-	public sealed class ArrayBindInfo : BindInfo
+	/// <remarks>
+	/// Initializes a new instance of the <see cref="ArrayBindInfo"/> class.
+	/// </remarks>
+	/// <param name="memory">The memory object instance.</param>
+	/// <param name="index">The index of the array element.</param>
+	public sealed class ArrayBindInfo(MemoryBase memory, int index) : BindInfo(memory)
 	{
 		/// <summary>Gets the index of the array element.</summary>
-		public readonly int Index;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ArrayBindInfo"/> class.
-		/// </summary>
-		/// <param name="memory">The memory object instance.</param>
-		/// <param name="index">The index of the array element.</param>
-		public ArrayBindInfo(MemoryBase memory, int index)
-			: base(memory)
-		{
-			this.Index = index;
-		}
+		public readonly int Index = index;
 
 		/// <inheritdoc/>
 		public override string Name => this.Index.ToString();

@@ -17,7 +17,7 @@ public class BindAttribute : Attribute
 	/// </summary>
 	/// <param name="offset">The memory offset.</param>
 	public BindAttribute(int offset)
-		: this(new[] { offset }, BindFlags.None)
+		: this([offset], BindFlags.None)
 	{
 	}
 
@@ -39,7 +39,7 @@ public class BindAttribute : Attribute
 	/// <param name="offset">The memory offset.</param>
 	/// <param name="flags">The binding flags.</param>
 	public BindAttribute(int offset, BindFlags flags)
-		: this(new[] { offset }, flags)
+		: this([offset], flags)
 	{
 	}
 
@@ -54,7 +54,7 @@ public class BindAttribute : Attribute
 	/// second offset will be added to the base address to get the final address.
 	/// </remarks>
 	public BindAttribute(int offset1, int offset2, BindFlags flags)
-		: this(new[] { offset1, offset2 }, flags)
+		: this([offset1, offset2], flags)
 	{
 	}
 

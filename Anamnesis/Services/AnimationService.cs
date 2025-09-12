@@ -19,23 +19,14 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class AnimationService : ServiceBase<AnimationService>
 {
-	private const int TickDelay = 1000;
-	private const ushort DrawWeaponAnimationId = 34;
-	private const ushort IdleAnimationId = 3;
+	private const int TICK_DELAY = 1000;
+	private const ushort DRAW_WEAPON_ANIMATION_ID = 34;
+	private const ushort IDLE_ANIMATION_ID = 3;
 
 	private readonly HashSet<ActorMemory> overriddenActors = [];
 
 	private NopHook? animationSpeedHook;
 	private bool speedControlEnabled = false;
-
-	/// <inheritdoc/>
-	protected override IEnumerable<IService> Dependencies =>
-	[
-		ActorService.Instance,
-		TargetService.Instance,
-		GposeService.Instance,
-		GameDataService.Instance
-	];
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the animation speed control is enabled.
@@ -51,6 +42,44 @@ public class AnimationService : ServiceBase<AnimationService>
 			if (this.speedControlEnabled != value)
 				this.SetSpeedControlEnabled(value && GposeService.Instance.IsGpose);
 		}
+	}
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies =>
+	[
+		ActorService.Instance,
+		TargetService.Instance,
+		GposeService.Instance,
+		GameDataService.Instance
+	];
+
+	/// <summary>
+	/// Blends the specified animation to the actor's current animation.
+	/// </summary>
+	/// <param name="memory">The actor's memory.</param>
+	/// <param name="animationId">The animation ID to blend.</param>
+	/// <returns>True if the animation was successfully blended; otherwise, false.</returns>
+	public static async Task<bool> BlendAnimation(ActorMemory memory, ushort animationId)
+	{
+		if (!memory.IsValid)
+			return false;
+
+		if (memory.Animation!.BlendLocked)
+			return false;
+
+		if (!memory.CanAnimate)
+			return false;
+
+		memory.Animation!.BlendLocked = true;
+
+		ushort oldAnim = memory.Animation!.BaseOverride;
+		memory.Animation!.BaseOverride = animationId;
+		await Task.Delay(66);
+		memory.Animation!.BaseOverride = oldAnim;
+
+		memory.Animation!.BlendLocked = false;
+
+		return true;
 	}
 
 	/// <inheritdoc/>
@@ -77,37 +106,8 @@ public class AnimationService : ServiceBase<AnimationService>
 		if (!memory.CanAnimate)
 			return false;
 
-		this.ApplyBaseAnimationInternal(memory, animationId, interrupt, ActorMemory.CharacterModes.AnimLock, 0);
+		ApplyBaseAnimationInternal(memory, animationId, interrupt, ActorMemory.CharacterModes.AnimLock, 0);
 		this.overriddenActors.Add(memory);
-
-		return true;
-	}
-
-	/// <summary>
-	/// Blends the specified animation to the actor's current animation.
-	/// </summary>
-	/// <param name="memory">The actor's memory.</param>
-	/// <param name="animationId">The animation ID to blend.</param>
-	/// <returns>True if the animation was successfully blended; otherwise, false.</returns>
-	public async Task<bool> BlendAnimation(ActorMemory memory, ushort animationId)
-	{
-		if (!memory.IsValid)
-			return false;
-
-		if (memory.Animation!.BlendLocked)
-			return false;
-
-		if (!memory.CanAnimate)
-			return false;
-
-		memory.Animation!.BlendLocked = true;
-
-		ushort oldAnim = memory.Animation!.BaseOverride;
-		memory.Animation!.BaseOverride = animationId;
-		await Task.Delay(66);
-		memory.Animation!.BaseOverride = oldAnim;
-
-		memory.Animation!.BlendLocked = false;
 
 		return true;
 	}
@@ -121,7 +121,7 @@ public class AnimationService : ServiceBase<AnimationService>
 		if (!memory.IsValid)
 			return;
 
-		this.ApplyBaseAnimationInternal(memory, 0, true, ActorMemory.CharacterModes.Normal, 0);
+		ApplyBaseAnimationInternal(memory, 0, true, ActorMemory.CharacterModes.Normal, 0);
 
 		AnimationMemory animation = memory.Animation!;
 
@@ -136,13 +136,13 @@ public class AnimationService : ServiceBase<AnimationService>
 	/// Applies the idle animation override to the specified actor.
 	/// </summary>
 	/// <param name="memory">The actor's memory.</param>
-	public void ApplyIdle(ActorMemory memory) => this.ApplyAnimationOverride(memory, IdleAnimationId, true);
+	public void ApplyIdle(ActorMemory memory) => this.ApplyAnimationOverride(memory, IDLE_ANIMATION_ID, true);
 
 	/// <summary>
 	/// Applies the draw weapon animation override to the specified actor.
 	/// </summary>
 	/// <param name="memory">The actor's memory.</param>
-	public void DrawWeapon(ActorMemory memory) => this.ApplyAnimationOverride(memory, DrawWeaponAnimationId, true);
+	public void DrawWeapon(ActorMemory memory) => this.ApplyAnimationOverride(memory, DRAW_WEAPON_ANIMATION_ID, true);
 
 	/// <summary>
 	/// Pauses the animation of all pinned actors. This will set their animation speed to 0.
@@ -179,24 +179,7 @@ public class AnimationService : ServiceBase<AnimationService>
 		return base.OnStart();
 	}
 
-	private async Task CheckThread(CancellationToken cancellationToken)
-	{
-		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
-		{
-			try
-			{
-				this.CleanupInvalidActors();
-				await Task.Delay(TickDelay, cancellationToken);
-			}
-			catch (TaskCanceledException)
-			{
-				// Task was canceled, exit the loop
-				break;
-			}
-		}
-	}
-
-	private void ApplyBaseAnimationInternal(ActorMemory memory, ushort? animationId, bool interrupt, ActorMemory.CharacterModes? mode, byte? modeInput)
+	private static void ApplyBaseAnimationInternal(ActorMemory memory, ushort? animationId, bool interrupt, ActorMemory.CharacterModes? mode, byte? modeInput)
 	{
 		if (animationId != null && memory.Animation!.BaseOverride != animationId)
 		{
@@ -209,12 +192,12 @@ public class AnimationService : ServiceBase<AnimationService>
 		// Always set the input before the mode
 		if (modeInput != null && memory.CharacterModeInput != modeInput)
 		{
-			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterModeInput)), modeInput, "Animation Mode Input Override");
+			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterModeInput)), modeInput);
 		}
 
 		if (mode != null && memory.CharacterMode != mode)
 		{
-			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterModeRaw)), mode, "Animation Mode Override");
+			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterModeRaw)), mode);
 		}
 
 		if (interrupt)
@@ -223,6 +206,23 @@ public class AnimationService : ServiceBase<AnimationService>
 		}
 
 		memory.Synchronize();
+	}
+
+	private async Task CheckThread(CancellationToken cancellationToken)
+	{
+		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
+		{
+			try
+			{
+				this.CleanupInvalidActors();
+				await Task.Delay(TICK_DELAY, cancellationToken);
+			}
+			catch (TaskCanceledException)
+			{
+				// Task was canceled, exit the loop
+				break;
+			}
+		}
 	}
 
 	private void SetSpeedControlEnabled(bool enabled)

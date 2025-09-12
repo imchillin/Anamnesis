@@ -10,22 +10,18 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using XivToolsWpf.Behaviours;
 
-public class LocalizedTooltipBehaviour : Behaviour
+public class LocalizedTooltipBehaviour(DependencyObject host, string key) : Behaviour(host, key)
 {
-	public readonly string Key;
-
-	public LocalizedTooltipBehaviour(DependencyObject host, string key)
-		: base(host, key)
-	{
-		this.Key = key;
-	}
+	public readonly string Key = key;
 
 	public override void OnLoaded()
 	{
 		base.OnLoaded();
 
-		XivToolsWpf.Controls.TextBlock text = new();
-		text.Key = this.Key;
+		var text = new XivToolsWpf.Controls.TextBlock()
+		{
+			Key = this.Key,
+		};
 
 		if (this.Host is FrameworkElement frameworkElement)
 		{
@@ -34,9 +30,7 @@ public class LocalizedTooltipBehaviour : Behaviour
 		}
 		else if (this.Host is RowDefinition rowDefinition)
 		{
-			Grid? grid = rowDefinition.Parent as Grid;
-
-			if (grid == null)
+			if (rowDefinition.Parent is not Grid grid)
 				throw new Exception("No grid found for grid row");
 
 			int columns = grid.ColumnDefinitions.Count;
@@ -54,9 +48,11 @@ public class LocalizedTooltipBehaviour : Behaviour
 				throw new Exception("Failed to locate row within grid");
 
 			// Add a backgroudn rect so the entire row has a tooltip
-			Rectangle rect = new();
-			rect.Fill = new SolidColorBrush(Colors.Transparent);
-			rect.ToolTip = text;
+			var rect = new Rectangle
+			{
+				Fill = new SolidColorBrush(Colors.Transparent),
+				ToolTip = text,
+			};
 
 			if (columns > 0)
 				Grid.SetColumnSpan(rect, columns);

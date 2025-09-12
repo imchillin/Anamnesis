@@ -70,7 +70,6 @@ public class BrioActorRefresher : IActorRefresher
 		}
 		else
 		{
-
 			// Outside of pose mode we can just refresh
 			if (doNpcHack)
 				actor.ObjectKind = ActorTypes.BattleNpc;

@@ -3,20 +3,16 @@
 
 namespace Anamnesis.Serialization.Converters;
 
+using Anamnesis.Keyboard;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Anamnesis.Keyboard;
 
 public class KeyCombinationConverter : JsonConverter<KeyCombination>
 {
 	public override KeyCombination Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
-		string? str = reader.GetString();
-
-		if (str == null)
-			throw new Exception("Cannot convert null to Color");
-
+		string? str = reader.GetString() ?? throw new Exception("Cannot convert null to Color");
 		return KeyCombination.FromString(str);
 	}
 

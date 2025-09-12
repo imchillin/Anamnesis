@@ -34,23 +34,23 @@ using CmQuaternion = System.Numerics.Quaternion;
 [AddINotifyPropertyChangedInterface]
 public partial class PosePage : UserControl, INotifyPropertyChanged
 {
-	public const double DragThreshold = 20;
+	public const double DRAG_THRESHOLD = 20;
 
-	private static readonly Type[] PoseFileTypes = new[]
-	{
+	private static readonly Type[] s_poseFileTypes =
+	[
 		typeof(PoseFile),
 		typeof(CmToolPoseFile),
-	};
+	];
 
-	private static readonly Shortcut[] PoseDirShortcuts = new[]
-	{
+	private static readonly Shortcut[] s_poseDirShortcuts =
+	[
 		FileService.DefaultPoseDirectory,
 		FileService.StandardPoseDirectory,
 		FileService.CMToolPoseSaveDir,
-	};
+	];
 
-	private static DirectoryInfo? lastLoadDir;
-	private static DirectoryInfo? lastSaveDir;
+	private static DirectoryInfo? s_lastLoadDir;
+	private static DirectoryInfo? s_lastSaveDir;
 	private readonly System.Timers.Timer refreshDebounceTimer;
 
 	private bool isLeftMouseButtonDownOnWindow;
@@ -90,10 +90,10 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		WeaponsOnly,    // Imports only the weapons (main hand and off-hand).
 	}
 
-	public SettingsService SettingsService => SettingsService.Instance;
-	public GposeService GposeService => GposeService.Instance;
-	public PoseService PoseService => PoseService.Instance;
-	public TargetService TargetService => TargetService.Instance;
+	public static SettingsService SettingsService => SettingsService.Instance;
+	public static GposeService GposeService => GposeService.Instance;
+	public static PoseService PoseService => PoseService.Instance;
+	public static TargetService TargetService => TargetService.Instance;
 
 	public bool IsFlipping { get; private set; }
 	public ActorMemory? Actor { get; private set; }
@@ -167,36 +167,6 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private static ILogger Log => Serilog.Log.ForContext<PosePage>();
 
-	private void FlipBone(Bone? targetBone, bool shouldFlip = true)
-	{
-		if (this.Skeleton == null)
-			throw new Exception("Skeleton is null");
-
-		if (targetBone == null)
-			throw new ArgumentException("The target bone cannot be null");
-
-		// Save the positions of the target bone and its children
-		// The transform memory is used to retrieve the parent-relative position of the bone
-		Dictionary<Bone, Vector3> bonePositions = new()
-		{
-			{ targetBone, targetBone.Position },
-		};
-
-		if (PoseService.Instance.EnableParenting)
-		{
-			List<Bone> boneChildren = targetBone.GetDescendants();
-			foreach (var childBone in boneChildren)
-			{
-				bonePositions.Add(childBone, childBone.Position);
-			}
-		}
-
-		this.FlipBoneInternal(targetBone, shouldFlip);
-
-		// Restore positions after flipping
-		this.RestoreBonePositions(bonePositions);
-	}
-
 	/* Basic Idea:
 	 * get mirrored quat of targetBone
 	 * check if its a 'left' bone
@@ -208,7 +178,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	 *          - store the quat on the target bone
 	 *  - recursively flip on all child bones
 	 */
-	private void FlipBoneInternal(Bone? targetBone, bool shouldFlip = true)
+	private static void FlipBoneInternal(Bone? targetBone, bool shouldFlip = true)
 	{
 		if (targetBone == null || targetBone.TransformMemory == null)
 			throw new ArgumentException("The target bone and its transform memory cannot be null");
@@ -217,9 +187,9 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		if (shouldFlip && targetBone.Name.EndsWith("_l"))
 		{
 			string rightBoneString = string.Concat(targetBone.Name.AsSpan(0, targetBone.Name.Length - 2), "_r"); // removes the "_l" and replaces it with "_r"
-			/*	Useful debug lines to make sure the correct bones are grabbed...
-				*	Log.Information("flipping: " + targetBone.BoneName);
-				*	Log.Information("right flip target: " + rightBoneString); */
+			/*  Useful debug lines to make sure the correct bones are grabbed...
+				*  Log.Information("flipping: " + targetBone.BoneName);
+				*  Log.Information("right flip target: " + rightBoneString); */
 			Bone? rightBone = targetBone.Skeleton.GetBone(rightBoneString);
 			if (rightBone != null && rightBone.TransformMemory != null)
 			{
@@ -261,9 +231,39 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		{
 			foreach (var child in targetBone.Children)
 			{
-				this.FlipBoneInternal(child, shouldFlip);
+				FlipBoneInternal(child, shouldFlip);
 			}
 		}
+	}
+
+	private void FlipBone(Bone? targetBone, bool shouldFlip = true)
+	{
+		if (this.Skeleton == null)
+			throw new Exception("Skeleton is null");
+
+		if (targetBone == null)
+			throw new ArgumentException("The target bone cannot be null");
+
+		// Save the positions of the target bone and its children
+		// The transform memory is used to retrieve the parent-relative position of the bone
+		Dictionary<Bone, Vector3> bonePositions = new()
+		{
+			{ targetBone, targetBone.Position },
+		};
+
+		if (PoseService.Instance.EnableParenting)
+		{
+			List<Bone> boneChildren = targetBone.GetDescendants();
+			foreach (var childBone in boneChildren)
+			{
+				bonePositions.Add(childBone, childBone.Position);
+			}
+		}
+
+		FlipBoneInternal(targetBone, shouldFlip);
+
+		// Restore positions after flipping
+		this.RestoreBonePositions(bonePositions);
 	}
 
 	private void OnLoaded(object sender, RoutedEventArgs e)
@@ -271,12 +271,12 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.OnDataContextChanged(null, default);
 
 		HistoryService.OnHistoryApplied += this.OnHistoryApplied;
-		this.PoseService.PropertyChanged += this.OnPoseServicePropertyChanged;
+		PoseService.PropertyChanged += this.OnPoseServicePropertyChanged;
 	}
 
 	private void OnUnloaded(object sender, RoutedEventArgs e)
 	{
-		this.PoseService.PropertyChanged -= this.OnPoseServicePropertyChanged;
+		PoseService.PropertyChanged -= this.OnPoseServicePropertyChanged;
 		HistoryService.OnHistoryApplied -= this.OnHistoryApplied;
 
 		if (this.Actor?.ModelObject != null)
@@ -303,9 +303,9 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.Skeleton?.Reselect();
 		this.Skeleton?.ReadTransforms();
 
-		if (e.PropertyName == nameof(this.PoseService.IsEnabled))
+		if (e.PropertyName == nameof(PoseService.IsEnabled))
 		{
-			if (!this.PoseService.IsEnabled)
+			if (!PoseService.IsEnabled)
 				this.OnClearClicked(null, null);
 
 			Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, BoneViewManager.Instance.Refresh);
@@ -452,23 +452,23 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		try
 		{
 			// Open and load pose file
-			OpenResult result = await FileService.Open(lastLoadDir, PoseDirShortcuts, PoseFileTypes);
+			OpenResult result = await FileService.Open(s_lastLoadDir, s_poseDirShortcuts, s_poseFileTypes);
 			if (result.File == null)
 				return;
 
-			lastLoadDir = result.Directory;
+			s_lastLoadDir = result.Directory;
 
 			bool isLegacyFile = false;
 			if (result.File is CmToolPoseFile legacyFile)
 			{
 				isLegacyFile = true;
-				result.File = legacyFile.Upgrade(this.Actor.Customize?.Race ?? ActorCustomizeMemory.Races.Hyur);
+				result.File = legacyFile.Upgrade();
 			}
 
 			if (result.File is not PoseFile poseFile)
 				return;
 
-			Dictionary<Bone, Vector3> facePositions = new();
+			Dictionary<Bone, Vector3> facePositions = [];
 			bool mismatchedFaceBones = false;
 
 			// Disable auto-commit at the beginning
@@ -603,7 +603,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		if (this.Actor == null || this.Skeleton == null)
 			return;
 
-		lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton);
+		s_lastSaveDir = await PoseFile.Save(s_lastSaveDir, this.Actor, this.Skeleton);
 	}
 
 	private async void OnExportMetaClicked(object sender, RoutedEventArgs e)
@@ -611,7 +611,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		if (this.Actor == null || this.Skeleton == null)
 			return;
 
-		lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton, null, true);
+		s_lastSaveDir = await PoseFile.Save(s_lastSaveDir, this.Actor, this.Skeleton, null, true);
 	}
 
 	private async void OnExportSelectedClicked(object sender, RoutedEventArgs e)
@@ -625,7 +625,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			bones.Add(bone.Name);
 		}
 
-		lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton, bones);
+		s_lastSaveDir = await PoseFile.Save(s_lastSaveDir, this.Actor, this.Skeleton, bones);
 	}
 
 	private void OnViewChanged(object sender, SelectionChangedEventArgs e)
@@ -663,7 +663,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	private void OnFlipClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.Actor == null)
-			throw new ArgumentNullException(nameof(this.Actor));
+			throw new ArgumentNullException(nameof(sender));
 
 		if (this.Actor.ModelObject == null || this.Actor.ModelObject.Transform == null)
 			throw new Exception("Actor has no model");
@@ -814,7 +814,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		{
 			System.Windows.Vector dragDelta = curMouseDownPoint - this.origMouseDownPoint;
 			double dragDistance = Math.Abs(dragDelta.Length);
-			if (dragDistance > DragThreshold)
+			if (dragDistance > DRAG_THRESHOLD)
 			{
 				this.isDragging = true;
 				this.MouseCanvas.CaptureMouse();
@@ -869,7 +869,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		{
 			if (this.Skeleton != null && !this.Skeleton.HasHover)
 			{
-				this.Skeleton.Select(Enumerable.Empty<BoneEntity>());
+				this.Skeleton.Select([]);
 			}
 		}
 
@@ -961,10 +961,10 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		this.selectedBonesTooltipCache = count switch
 		{
-			0 => (this.TargetService.SelectedActor != null) ? this.TargetService.SelectedActor.DisplayName : string.Empty,
+			0 => (TargetService.SelectedActor != null) ? TargetService.SelectedActor.DisplayName : string.Empty,
 			1 => selectedBones.First().Tooltip,
 			<= 3 => string.Join(", ", selectedBones.Select(b => b.Tooltip)),
-			_ => string.Join(", ", selectedBones.Take(3).Select(b => b.Tooltip)) + LocalizationService.GetStringFormatted("Pose_SelectedBones_TooltipTrimmed", (count - 3).ToString())
+			_ => string.Join(", ", selectedBones.Take(3).Select(b => b.Tooltip)) + LocalizationService.GetStringFormatted("Pose_SelectedBones_TooltipTrimmed", (count - 3).ToString()),
 		};
 
 		this.selectedBoneNameCache = count == 1 ? selectedBones.First().Name : string.Empty;

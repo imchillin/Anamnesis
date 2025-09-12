@@ -59,7 +59,7 @@ public class ViewService : ServiceBase<ViewService>
 
 	public static Task ShowDrawer(object view, DrawerDirection direction = DrawerDirection.Right)
 	{
-		if (!(view is UserControl control))
+		if (view is not UserControl control)
 			throw new Exception("Invalid view");
 
 		if (ShowingDrawer == null)
@@ -107,14 +107,12 @@ public class ViewService : ServiceBase<ViewService>
 	public static Task ShowDialog<TView>(string title, TView view)
 		where TView : IDialog
 	{
-		Dialog dlg = new Dialog();
+		var dlg = new Dialog();
 		dlg.ContentArea.Content = view;
 		dlg.TitleText.Text = title;
 		dlg.Owner = App.Current.MainWindow;
 
-		IDialog? dialogInterface = dlg.ContentArea.Content as IDialog;
-
-		if (dialogInterface == null)
+		if (dlg.ContentArea.Content is not IDialog dialogInterface)
 			throw new Exception("Dialog interface not found");
 
 		dialogInterface.Close += () => dlg.Close();
@@ -127,14 +125,12 @@ public class ViewService : ServiceBase<ViewService>
 	public static Task<TResult> ShowDialog<TView, TResult>(string title, TView view)
 		where TView : IDialog<TResult>
 	{
-		Dialog dlg = new Dialog();
+		var dlg = new Dialog();
 		dlg.ContentArea.Content = view;
 		dlg.TitleText.Text = title;
 		dlg.Owner = App.Current.MainWindow;
 
-		IDialog<TResult>? dialogInterface = dlg.ContentArea.Content as IDialog<TResult>;
-
-		if (dialogInterface == null)
+		if (dlg.ContentArea.Content is not IDialog<TResult> dialogInterface)
 			throw new Exception("Dialog interface not found");
 
 		dialogInterface.Close += () => dlg.Close();

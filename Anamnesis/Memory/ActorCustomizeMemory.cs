@@ -100,6 +100,7 @@ public class ActorCustomizeMemory : MemoryBase
 			this.race = value;
 		}
 	}
+
 	[Bind(0x001, BindFlags.ActorRefresh)] public Genders Gender { get; set; }
 	[Bind(0x002, BindFlags.ActorRefresh)] public Ages Age { get; set; }
 	[Bind(0x003, BindFlags.ActorRefresh)] public byte Height { get; set; }

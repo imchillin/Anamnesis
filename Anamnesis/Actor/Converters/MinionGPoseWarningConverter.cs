@@ -3,18 +3,18 @@
 
 namespace Anamnesis.Converters;
 
+using Anamnesis.Memory;
 using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using Anamnesis.Memory;
 
 public class MinionGposeWarningConverter : IMultiValueConverter
 {
 	public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 	{
 		if (values.Length != 2)
-			throw new ArgumentException();
+			throw new ArgumentException("The values array must contain exactly two elements.", nameof(values));
 
 		if (values[0] is ActorTypes type && values[1] is int model)
 		{

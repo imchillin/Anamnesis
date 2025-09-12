@@ -20,7 +20,7 @@ public static class VersionInfo
 	/// - Revision: The revision of the tool. This should reset to 0 on every build.
 	///   - Bump the revision number for hotfixes and urgent patches.
 	/// </remarks>
-	public static readonly Version ApplicationVersion = new Version(7, 31, 0, 1);
+	public static readonly Version ApplicationVersion = new(7, 31, 0, 1);
 
 #if CI_BUILD
 	public static readonly bool IsDevelopmentBuild = false;

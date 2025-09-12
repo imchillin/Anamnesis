@@ -46,6 +46,8 @@ public partial class ItemView : UserControl
 		this.ContentArea.DataContext = this;
 	}
 
+	public static Settings Settings => SettingsService.Current;
+
 	public ItemSlots Slot
 	{
 		get => SlotDp.Get(this);
@@ -72,8 +74,6 @@ public partial class ItemView : UserControl
 		get => WeaponExModelDp.Get(this);
 		set => WeaponExModelDp.Set(this, value);
 	}
-
-	public static Settings Settings => SettingsService.Current;
 
 	public string SlotName => LocalizationService.GetString("Character_Equipment_" + this.Slot);
 
@@ -107,7 +107,7 @@ public partial class ItemView : UserControl
 				return false;
 
 			// Invalid if we're naked in some way other than Emperor's.
-			ushort[] invalidItems = { 0, 9901, 9903 };
+			ushort[] invalidItems = [0, 9901, 9903];
 			if (invalidItems.Contains(this.Item.ModelBase))
 				return false;
 
@@ -155,6 +155,31 @@ public partial class ItemView : UserControl
 		sender.ItemModel.PropertyChanged += sender.OnViewModelPropertyChanged;
 
 		sender.OnViewModelPropertyChanged(null, null);
+	}
+
+	private static void SetModel(IEquipmentItemMemory? itemModel, ushort modelSet, ushort modelBase, ushort modelVariant)
+	{
+		if (itemModel is ItemMemory itemView)
+		{
+			itemView.Base = modelBase;
+			itemView.Variant = (byte)modelVariant;
+
+			if (modelBase == 0)
+			{
+				itemView.Dye = 0;
+			}
+		}
+		else if (itemModel is WeaponMemory weaponView)
+		{
+			weaponView.Set = modelSet;
+			weaponView.Base = modelBase;
+			weaponView.Variant = modelVariant;
+
+			if (modelSet == 0)
+			{
+				weaponView.Dye = 0;
+			}
+		}
 	}
 
 	private void OnOpenInConsoleGamesWikiClicked(object sender, RoutedEventArgs e)
@@ -225,8 +250,8 @@ public partial class ItemView : UserControl
 		if (this.Actor?.CanRefresh != true)
 			return;
 
-		EquipmentSelector selector = new EquipmentSelector(this.Slot, this.Actor);
-		SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.AutoOffhand, selector.ForceMainModel, selector.ForceOffModel));
+		var selector = new EquipmentSelector(this.Slot, this.Actor);
+		SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, EquipmentSelector.AutoOffhand, selector.ForceMainModel, selector.ForceOffModel));
 	}
 
 	private void OnSlotMouseUp(object sender, MouseButtonEventArgs e)
@@ -286,7 +311,7 @@ public partial class ItemView : UserControl
 			ushort modelBase = useSubModel ? item.SubModelBase : item.ModelBase;
 			ushort modelVariant = useSubModel ? item.SubModelVariant : item.ModelVariant;
 
-			this.SetModel(this.ItemModel, modelSet, modelBase, modelVariant);
+			SetModel(this.ItemModel, modelSet, modelBase, modelVariant);
 
 			if (autoOffhand && this.Slot == ItemSlots.MainHand
 				&& item is Item ivm
@@ -294,11 +319,11 @@ public partial class ItemView : UserControl
 			{
 				if (ivm.HasSubModel)
 				{
-					this.SetModel(this.Actor?.OffHand, ivm.SubModelSet, ivm.SubModelBase, ivm.SubModelVariant);
+					SetModel(this.Actor?.OffHand, ivm.SubModelSet, ivm.SubModelBase, ivm.SubModelVariant);
 				}
 				else
 				{
-					this.SetModel(this.Actor?.OffHand, 0, 0, 0);
+					SetModel(this.Actor?.OffHand, 0, 0, 0);
 				}
 			}
 
@@ -311,31 +336,6 @@ public partial class ItemView : UserControl
 
 		this.Item = item;
 		this.lockViewModel = false;
-	}
-
-	private void SetModel(IEquipmentItemMemory? itemModel, ushort modelSet, ushort modelBase, ushort modelVariant)
-	{
-		if (itemModel is ItemMemory itemView)
-		{
-			itemView.Base = modelBase;
-			itemView.Variant = (byte)modelVariant;
-
-			if (modelBase == 0)
-			{
-				itemView.Dye = 0;
-			}
-		}
-		else if (itemModel is WeaponMemory weaponView)
-		{
-			weaponView.Set = modelSet;
-			weaponView.Base = modelBase;
-			weaponView.Variant = modelVariant;
-
-			if (modelSet == 0)
-			{
-				weaponView.Dye = 0;
-			}
-		}
 	}
 
 	private void OnDyeClick(object sender, RoutedEventArgs e)

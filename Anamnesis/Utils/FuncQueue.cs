@@ -6,19 +6,13 @@ namespace Anamnesis.Utils;
 using System;
 using System.Threading.Tasks;
 
-public class FuncQueue
+public class FuncQueue(Func<Task> func, int delay)
 {
-	private readonly int maxDelay;
-	private readonly Func<Task> func;
+	private readonly int maxDelay = delay;
+	private readonly Func<Task> func = func;
 
 	private int delay;
 	private Task? task;
-
-	public FuncQueue(Func<Task> func, int delay)
-	{
-		this.maxDelay = delay;
-		this.func = func;
-	}
 
 	public bool Pending { get; private set; }
 

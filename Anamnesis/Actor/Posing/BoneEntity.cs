@@ -26,16 +26,11 @@ public enum BoneCategory
 /// Derived class of <see cref="Bone"/> that adds additional functionality for UI-based operations.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public class BoneEntity : Bone
+public class BoneEntity(SkeletonEntity skeleton, List<TransformMemory> transformMemories, string name, int partialSkeletonIndex, BoneEntity? parent = null)
+	: Bone(skeleton, transformMemories, name, partialSkeletonIndex, parent)
 {
-	public BoneEntity(SkeletonEntity skeleton, List<TransformMemory> transformMemories, string name, int partialSkeletonIndex, BoneEntity? parent = null)
-		: base(skeleton, transformMemories, name, partialSkeletonIndex, parent)
-	{
-		this.Skeleton = skeleton;
-	}
-
 	/// <summary> Gets the skeleton that the bone belongs to.</summary>
-	public new SkeletonEntity Skeleton { get; private set; }
+	public new SkeletonEntity Skeleton { get; private set; } = skeleton;
 
 	/// <summary>Gets the bone's parent.</summary>
 	public new BoneEntity? Parent => base.Parent as BoneEntity;
@@ -57,7 +52,7 @@ public class BoneEntity : Bone
 			3 => BoneCategory.Met,
 			4 => BoneCategory.Top,
 			_ => BoneCategory.Uncategorized,
-		}
+		},
 	};
 
 	/// <summary>

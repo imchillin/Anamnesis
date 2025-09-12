@@ -9,17 +9,17 @@ namespace Scripts;
 
 public class ConvertPropsToEquipment : ScriptBase
 {
-	const string propsFilePath = "../../../../Anamnesis/Data/Props.json";
-	const string equipmentFilePath = "../../../../Anamnesis/Data/Equipment.json";
+	const string PROPS_FILE_PATH = "../../../../Anamnesis/Data/Props.json";
+	const string EQUIPMENT_FILE_PATH = "../../../../Anamnesis/Data/Equipment.json";
 
 	public override string Name => "Convert Props list to equipment";
 
 	public override void Run()
 	{
-		string propsJson = File.ReadAllText(propsFilePath);
+		string propsJson = File.ReadAllText(PROPS_FILE_PATH);
 		Dictionary<string, string> props = SerializerService.Deserialize<Dictionary<string, string>>(propsJson);
 
-		string equipmentJson = File.ReadAllText(equipmentFilePath);
+		string equipmentJson = File.ReadAllText(EQUIPMENT_FILE_PATH);
 		List<Equipment> equipment = SerializerService.Deserialize<List<Equipment>>(equipmentJson);
 
 		foreach ((string key, string value) in props)
@@ -44,7 +44,7 @@ public class ConvertPropsToEquipment : ScriptBase
 		}
 
 		string json = SerializerService.Serialize(equipment);
-		File.WriteAllText(equipmentFilePath, json);
+		File.WriteAllText(EQUIPMENT_FILE_PATH, json);
 	}
 
 	public class Entry

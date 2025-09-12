@@ -24,56 +24,71 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+public struct OpenResult
+{
+	public FileBase? File;
+	public FileInfo? Path;
+
+	public readonly DirectoryInfo? Directory => this.Path?.Directory;
+}
+
+public struct SaveResult
+{
+	public FileInfo? Path;
+
+	public readonly DirectoryInfo? Directory => this.Path?.Directory;
+}
+
 // TODO: Move this file to Services folder.
 public class FileService : ServiceBase<FileService>
 {
 	public static readonly string StoreDirectory = "%AppData%/Anamnesis/";
 	public static readonly string CacheDirectory = "%AppData%/Anamnesis/RemoteCache/";
 
-	private static readonly Dictionary<Type, string> TypeNameLookup = new Dictionary<Type, string>();
-	private static readonly Dictionary<Type, FileFilter> FileTypeFilterLookup = new Dictionary<Type, FileFilter>();
+	private static readonly Dictionary<Type, string> s_typeNameLookup = [];
+	private static readonly Dictionary<Type, FileFilter> s_fileTypeFilterLookup = [];
 
-	public static Shortcut Desktop => new Shortcut(
+	public static Shortcut Desktop => new(
 		new DirectoryInfo(ParseToFilePath("%Desktop%")),
 		"Shortcuts/Desktop.png",
 		"Shortcut_Desktop");
 
-	public static Shortcut DefaultPoseDirectory => new Shortcut(
+	public static Shortcut DefaultPoseDirectory => new(
 		new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultPoseDirectory)),
 		"Shortcuts/Anamnesis.png",
 		"Shortcut_AnamnesisPose");
 
-	public static Shortcut DefaultCharacterDirectory => new Shortcut(
+	public static Shortcut DefaultCharacterDirectory => new(
 		new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultCharacterDirectory)),
 		"Shortcuts/Anamnesis.png",
 		"Shortcut_AnamnesisCharacter");
 
-	public static Shortcut DefaultCameraDirectory => new Shortcut(
+	public static Shortcut DefaultCameraDirectory => new(
 		new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultCameraShotDirectory)),
 		"Shortcuts/Anamnesis.png",
 		"Shortcut_AnamnesisCamera");
 
-	public static Shortcut DefaultSceneDirectory => new Shortcut(
+	public static Shortcut DefaultSceneDirectory => new(
 		new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultSceneDirectory)),
 		"Shortcuts/Anamnesis.png",
 		"Shortcut_AnamnesisScenes");
 
-	public static Shortcut StandardPoseDirectory => new Shortcut(
+	public static Shortcut StandardPoseDirectory => new(
 		new DirectoryInfo(ParseToFilePath("%AppData%/Anamnesis/StandardPoses/")),
 		"Shortcuts/AnamnesisBuiltIn.png",
 		"Shortcut_BuiltInPose");
 
-	public static Shortcut CMToolPoseSaveDir => new Shortcut(
+	public static Shortcut CMToolPoseSaveDir => new(
 		new DirectoryInfo(ParseToFilePath("%MyDocuments%/CMTool/Matrix Saves/")),
 		"Shortcuts/cmtool.png",
 		"Shortcut_CMToolPose");
 
-	public static Shortcut CMToolAppearanceSaveDir => new Shortcut(
+	public static Shortcut CMToolAppearanceSaveDir => new(
 		new DirectoryInfo(ParseToFilePath("%MyDocuments%/CMTool/")),
 		"Shortcuts/cmtool.png",
 		"Shortcut_CMToolPose");
 
-	public static Shortcut FFxivDatCharacterDirectory => new Shortcut(
+	public static Shortcut FFxivDatCharacterDirectory => new(
 		new DirectoryInfo(ParseToFilePath("%MyDocuments%/My Games/FINAL FANTASY XIV - A Realm Reborn/")),
 		"Shortcuts/ffxiv.png",
 		"Shortcut_FfxivAppearance");
@@ -140,7 +155,7 @@ public class FileService : ServiceBase<FileService>
 			if (!useExplorerBrowser)
 			{
 				List<FileFilter> filters = ToFileFilters(fileTypes);
-				FileBrowserView browser = new FileBrowserView(shortcuts, filters, defaultDirectory, null, FileBrowserView.Modes.Load);
+				var browser = new FileBrowserView(shortcuts, filters, defaultDirectory, null, FileBrowserView.Modes.Load);
 				await ViewService.ShowDrawer(browser);
 
 				while (browser.IsOpen)
@@ -154,7 +169,7 @@ public class FileService : ServiceBase<FileService>
 			{
 				result.Path = await App.Current.Dispatcher.InvokeAsync<FileInfo?>(() =>
 				{
-					OpenFileDialog dlg = new OpenFileDialog();
+					var dlg = new OpenFileDialog();
 
 					if (defaultDirectory == null)
 					{
@@ -213,12 +228,10 @@ public class FileService : ServiceBase<FileService>
 
 		try
 		{
-			FileBase? file = Activator.CreateInstance(fileType) as FileBase;
-
-			if (file == null)
+			if (Activator.CreateInstance(fileType) is not FileBase file)
 				throw new Exception($"Failed to create instance of file type: {fileType}");
 
-			using FileStream stream = new FileStream(info.FullName, FileMode.Open);
+			using var stream = new FileStream(info.FullName, FileMode.Open);
 			return file.Deserialize(stream);
 		}
 		catch (Exception ex)
@@ -241,12 +254,10 @@ public class FileService : ServiceBase<FileService>
 			{
 				try
 				{
-					FileBase? file = Activator.CreateInstance(fileType) as FileBase;
-
-					if (file == null)
+					if (Activator.CreateInstance(fileType) is not FileBase file)
 						throw new Exception($"Failed to create instance of file type: {fileType}");
 
-					using FileStream stream = new FileStream(info.FullName, FileMode.Open);
+					using var stream = new FileStream(info.FullName, FileMode.Open);
 					return file.Deserialize(stream);
 				}
 				catch (Exception ex)
@@ -279,12 +290,12 @@ public class FileService : ServiceBase<FileService>
 
 			if (!useExplorerBrowser)
 			{
-				List<FileFilter> filters = new List<FileFilter>()
-					{
-						GetFileTypeFilter(typeof(T)),
-					};
+				var filters = new List<FileFilter>()
+				{
+					GetFileTypeFilter(typeof(T)),
+				};
 
-				FileBrowserView browser = new FileBrowserView(directories, filters, defaultDirectory, typeName, FileBrowserView.Modes.Save);
+				var browser = new FileBrowserView(directories, filters, defaultDirectory, typeName, FileBrowserView.Modes.Save);
 				await ViewService.ShowDrawer(browser);
 
 				while (browser.IsOpen)
@@ -298,9 +309,11 @@ public class FileService : ServiceBase<FileService>
 			{
 				result.Path = await App.Current.Dispatcher.InvokeAsync<FileInfo?>(() =>
 				{
-					SaveFileDialog dlg = new SaveFileDialog();
-					dlg.Filter = ToFilter(typeof(T));
-					dlg.InitialDirectory = defaultDirectory?.FullName ?? string.Empty;
+					var dlg = new SaveFileDialog
+					{
+						Filter = ToFilter(typeof(T)),
+						InitialDirectory = defaultDirectory?.FullName ?? string.Empty,
+					};
 
 					if (!Directory.Exists(dlg.InitialDirectory))
 					{
@@ -330,10 +343,7 @@ public class FileService : ServiceBase<FileService>
 				}
 			}
 
-			DirectoryInfo? dir = result.Path.Directory;
-			if (dir == null)
-				throw new Exception("No directory in save path");
-
+			DirectoryInfo? dir = result.Path.Directory ?? throw new Exception("No directory in save path");
 			if (!dir.Exists)
 			{
 				dir.Create();
@@ -359,7 +369,7 @@ public class FileService : ServiceBase<FileService>
 			Directory.CreateDirectory(cacheDir);
 		}
 
-		Uri uri = new Uri(url);
+		var uri = new Uri(url);
 
 		string localFile;
 
@@ -375,7 +385,7 @@ public class FileService : ServiceBase<FileService>
 		}
 		else
 		{
-			localFile = cacheDir + uri.Segments[uri.Segments.Length - 1];
+			localFile = cacheDir + uri.Segments[^1];
 		}
 
 		if (!File.Exists(localFile))
@@ -393,7 +403,7 @@ public class FileService : ServiceBase<FileService>
 
 				Stream responseStream = await result.Content.ReadAsStreamAsync();
 
-				using FileStream fileStream = new FileStream(localFile, FileMode.Create, FileAccess.Write);
+				using var fileStream = new FileStream(localFile, FileMode.Create, FileAccess.Write);
 				responseStream.CopyTo(fileStream);
 
 				Log.Verbose($"Cached remote file: {url}. {fileStream.Position} bytes.");
@@ -414,7 +424,7 @@ public class FileService : ServiceBase<FileService>
 	public static async Task<string> CacheRemoteImage(string url)
 	{
 		Uri uri = new(url);
-		string imagePath = "ImageCache/" + HashUtility.GetHashString(url) + Path.GetExtension(uri.Segments[uri.Segments.Length - 1]);
+		string imagePath = "ImageCache/" + HashUtility.GetHashString(url) + Path.GetExtension(uri.Segments[^1]);
 
 		return await CacheRemoteFile(url, imagePath);
 	}
@@ -469,18 +479,18 @@ public class FileService : ServiceBase<FileService>
 
 	private static string ToAnyFilter(params Type[] types)
 	{
-		StringBuilder builder = new StringBuilder();
+		var builder = new StringBuilder();
 		builder.Append("Any|");
 
 		foreach (Type type in types)
-			builder.Append("*" + GetFileTypeFilter(type).Extension + ";");
+			builder.Append($"*{GetFileTypeFilter(type).Extension};");
 
 		foreach (Type type in types)
 		{
-			builder.Append("|");
+			builder.Append('|');
 			builder.Append(GetFileTypeName(type));
-			builder.Append("|");
-			builder.Append("*" + GetFileTypeFilter(type).Extension);
+			builder.Append('|');
+			builder.Append($"*{GetFileTypeFilter(type).Extension}");
 		}
 
 		return builder.ToString();
@@ -488,10 +498,10 @@ public class FileService : ServiceBase<FileService>
 
 	private static string ToFilter(Type type)
 	{
-		StringBuilder builder = new StringBuilder();
+		var builder = new StringBuilder();
 		builder.Append(GetFileTypeName(type));
-		builder.Append("|");
-		builder.Append("*" + GetFileTypeFilter(type).Extension);
+		builder.Append('|');
+		builder.Append($"*{GetFileTypeFilter(type).Extension}");
 		return builder.ToString();
 	}
 
@@ -507,16 +517,13 @@ public class FileService : ServiceBase<FileService>
 
 	private static string GetFileTypeName(Type fileType)
 	{
-		string? name;
-		if (!TypeNameLookup.TryGetValue(fileType, out name))
+		if (!s_typeNameLookup.TryGetValue(fileType, out string? name))
 		{
-			FileBase? file = Activator.CreateInstance(fileType) as FileBase;
-
-			if (file == null)
+			if (Activator.CreateInstance(fileType) is not FileBase file)
 				throw new Exception($"Failed to create instance of file type: {fileType}");
 
 			name = file.TypeName;
-			TypeNameLookup.Add(fileType, name);
+			s_typeNameLookup.Add(fileType, name);
 		}
 
 		return name;
@@ -524,46 +531,21 @@ public class FileService : ServiceBase<FileService>
 
 	private static FileFilter GetFileTypeFilter(Type fileType)
 	{
-		FileFilter? filter;
-		if (!FileTypeFilterLookup.TryGetValue(fileType, out filter))
+		if (!s_fileTypeFilterLookup.TryGetValue(fileType, out FileFilter? filter))
 		{
-			FileBase? file = Activator.CreateInstance(fileType) as FileBase;
-
-			if (file == null)
+			if (Activator.CreateInstance(fileType) is not FileBase file)
 				throw new Exception($"Failed to create instance of file type: {fileType}");
 
 			filter = file.GetFilter();
-			FileTypeFilterLookup.Add(fileType, filter);
+			s_fileTypeFilterLookup.Add(fileType, filter);
 		}
 
 		return filter;
 	}
 }
 
-#pragma warning disable SA1201, SA1402
-public struct OpenResult
-{
-	public FileBase? File;
-	public FileInfo? Path;
-
-	public DirectoryInfo? Directory => this.Path?.Directory;
-}
-
-public struct SaveResult
-{
-	public FileInfo? Path;
-
-	public DirectoryInfo? Directory => this.Path?.Directory;
-}
-
 public class Shortcut
 {
-	public DirectoryInfo Directory { get; private set; }
-	public ImageSource? Icon { get; private set; }
-	public string LabelKey { get; private set; }
-
-	public string Path => FileService.ParseFromFilePath(this.Directory.FullName);
-
 	public Shortcut(DirectoryInfo dir, string icon, string key)
 	{
 		this.Directory = dir;
@@ -573,7 +555,7 @@ public class Shortcut
 		{
 			try
 			{
-				BitmapImage newIcon = new BitmapImage(new Uri($"pack://application:,,,/Anamnesis;component/Assets/{icon}"));
+				var newIcon = new BitmapImage(new Uri($"pack://application:,,,/Anamnesis;component/Assets/{icon}"));
 				newIcon.Freeze();
 				this.Icon = newIcon;
 			}
@@ -583,4 +565,10 @@ public class Shortcut
 			}
 		}
 	}
+
+	public DirectoryInfo Directory { get; private set; }
+	public ImageSource? Icon { get; private set; }
+	public string LabelKey { get; private set; }
+
+	public string Path => FileService.ParseFromFilePath(this.Directory.FullName);
 }

@@ -49,7 +49,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 			}
 
 			string desc = nameBuilder.ToString();
-			string name = desc.Substring(0, Math.Min(desc.Length, 50));
+			string name = desc[..Math.Min(desc.Length, 50)];
 
 			return $"{slotNumber} - {name}";
 		}
@@ -61,47 +61,12 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		return fileName;
 	}
 
-	public CharacterFile Upgrade()
-	{
-		if (this.Data == null)
-			throw new Exception("Dat Appearance File has no data.");
-
-		CharacterFile file = new CharacterFile();
-		file.Race = (ActorCustomizeMemory.Races)this.Data[0];
-		file.Gender = (ActorCustomizeMemory.Genders)this.Data[1];
-		file.Age = (ActorCustomizeMemory.Ages)this.Data[2];
-		file.Height = this.Data[3];
-		file.Tribe = (ActorCustomizeMemory.Tribes)this.Data[4];
-		file.Head = this.Data[5];
-		file.Hair = this.Data[6];
-		file.EnableHighlights = this.Data[7] != 0;
-		file.Skintone = this.Data[8];
-		file.REyeColor = this.Data[9];
-		file.HairTone = this.Data[10];
-		file.Highlights = this.Data[11];
-		file.FacialFeatures = (ActorCustomizeMemory.FacialFeature)this.Data[12];
-		file.LimbalEyes = this.Data[13];
-		file.Eyebrows = this.Data[14];
-		file.LEyeColor = this.Data[15];
-		file.Eyes = this.Data[16];
-		file.Nose = this.Data[17];
-		file.Jaw = this.Data[18];
-		file.Mouth = this.Data[19];
-		file.LipsToneFurPattern = this.Data[20];
-		file.EarMuscleTailSize = this.Data[21];
-		file.TailEarsType = this.Data[22];
-		file.Bust = this.Data[23];
-		file.FacePaint = this.Data[24];
-		file.FacePaintColor = this.Data[25];
-		return file;
-	}
-
-	public bool ValidateAllowedOptions(CharaMakeType makeType, ActorCustomizeMemory customize)
+	public static bool ValidateAllowedOptions(CharaMakeType makeType, ActorCustomizeMemory customize)
 	{
 		if (makeType.CustomizeRanges == null || makeType.CustomizeRanges.Count == 0)
 			return false;
 
-		Dictionary<int, int> validate = new Dictionary<int, int>()
+		var validate = new Dictionary<int, int>()
 		{
 			{ 5, customize.Head },
 			{ 14, customize.Eyebrows },
@@ -110,6 +75,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 			{ 18, customize.Jaw },
 			{ 19, customize.Lips },
 		};
+
 		if (makeType.CustomizeRanges.ContainsKey(22))
 			validate.Add(22, customize.TailEarsType);
 
@@ -121,6 +87,44 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		}
 
 		return true;
+	}
+
+	public CharacterFile Upgrade()
+	{
+		if (this.Data == null)
+			throw new Exception("Dat Appearance File has no data.");
+
+		var file = new CharacterFile
+		{
+			Race = (ActorCustomizeMemory.Races)this.Data[0],
+			Gender = (ActorCustomizeMemory.Genders)this.Data[1],
+			Age = (ActorCustomizeMemory.Ages)this.Data[2],
+			Height = this.Data[3],
+			Tribe = (ActorCustomizeMemory.Tribes)this.Data[4],
+			Head = this.Data[5],
+			Hair = this.Data[6],
+			EnableHighlights = this.Data[7] != 0,
+			Skintone = this.Data[8],
+			REyeColor = this.Data[9],
+			HairTone = this.Data[10],
+			Highlights = this.Data[11],
+			FacialFeatures = (ActorCustomizeMemory.FacialFeature)this.Data[12],
+			LimbalEyes = this.Data[13],
+			Eyebrows = this.Data[14],
+			LEyeColor = this.Data[15],
+			Eyes = this.Data[16],
+			Nose = this.Data[17],
+			Jaw = this.Data[18],
+			Mouth = this.Data[19],
+			LipsToneFurPattern = this.Data[20],
+			EarMuscleTailSize = this.Data[21],
+			TailEarsType = this.Data[22],
+			Bust = this.Data[23],
+			FacePaint = this.Data[24],
+			FacePaintColor = this.Data[25],
+		};
+
+		return file;
 	}
 
 	public void WriteToFile(ActorMemory actor)
@@ -147,7 +151,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 			return;
 
 		// Validate options
-		bool validate = this.ValidateAllowedOptions((CharaMakeType)makeType, customize);
+		bool validate = ValidateAllowedOptions((CharaMakeType)makeType, customize);
 		if (!validate)
 		{
 			GenericDialog.Show("This character uses custom features that are not available in the character creator.", "Failed to save appearance");
@@ -190,7 +194,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		}
 
 		// Appearance Data
-		byte[] saveData = new byte[]
+		var saveData = new byte[]
 		{
 			(byte)customize.Race,
 			(byte)customize.Gender,
@@ -243,8 +247,8 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		// Write Data
 		byte[] buffer = new byte[0xD4];
 
-		using MemoryStream stream = new MemoryStream(buffer);
-		using BinaryWriter writer = new BinaryWriter(stream);
+		using var stream = new MemoryStream(buffer);
+		using var writer = new BinaryWriter(stream);
 
 		// Save Data
 		writer.Write(0x2013FF14); // Magic
@@ -264,9 +268,9 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 
 	public override FileBase Deserialize(Stream stream)
 	{
-		DatCharacterFile file = new DatCharacterFile();
+		var file = new DatCharacterFile();
 
-		using BinaryReader reader = new BinaryReader(stream);
+		using var reader = new BinaryReader(stream);
 
 		stream.Seek(0x10, SeekOrigin.Begin);
 		file.Data = reader.ReadBytes(26);

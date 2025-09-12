@@ -20,8 +20,8 @@ public static class ItemUtility
 	public static readonly InvisibleBodyItem InvisibileBodyItem = new();
 	public static readonly InvisibleHeadItem InvisibileHeadItem = new();
 
-	private static readonly ConcurrentDictionary<string, IItem> ItemLookup = new();
-	private static readonly ConcurrentDictionary<string, IItem> ChocoboItemLookup = new();
+	private static readonly ConcurrentDictionary<string, IItem> s_itemLookup = new();
+	private static readonly ConcurrentDictionary<string, IItem> s_chocoboItemLookup = new();
 
 	public static IItem EmperorsNewFists => GameDataService.Items.GetRow(13775);
 
@@ -42,8 +42,8 @@ public static class ItemUtility
 		string lookupKey = $"{slot}_{modelSet}_{modelBase}_{modelVariant}";
 
 		return isChocobo
-			? ChocoboItemLookup.GetOrAdd(lookupKey, _ => ChocoboItemSearch(slot, modelSet, modelBase, modelVariant))
-			: ItemLookup.GetOrAdd(lookupKey, _ => ItemSearch(slot, modelSet, modelBase, modelVariant));
+			? s_chocoboItemLookup.GetOrAdd(lookupKey, _ => ChocoboItemSearch(slot, modelSet, modelBase, modelVariant))
+			: s_itemLookup.GetOrAdd(lookupKey, _ => ItemSearch(slot, modelSet, modelBase, modelVariant));
 	}
 
 	public static IItem GetDummyItem(ushort modelSet, ushort modelBase, ushort modelVariant)

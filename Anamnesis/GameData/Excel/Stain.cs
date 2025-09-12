@@ -22,7 +22,7 @@ public readonly struct Stain(ExcelPage page, uint offset, uint row)
 	/// <remarks>
 	/// The dyes' corresponding item IDs are stored in the "StainTransient" sheet.
 	/// </remarks>
-	private static readonly Dictionary<uint, uint> DyeToItemKeyMap = new()
+	private static readonly Dictionary<uint, uint> s_dyeToItemKeyMap = new()
 	{
 		{ 1, 5729 }, { 2, 5730 }, { 3, 5731 }, { 4, 5732 }, { 5, 5733 },
 		{ 6, 5734 }, { 7, 5735 }, { 8, 5736 }, { 9, 5737 }, { 10, 5738 },
@@ -48,7 +48,7 @@ public readonly struct Stain(ExcelPage page, uint offset, uint row)
 		{ 106, 8737 }, { 107, 8738 }, { 108, 8739 }, { 109, 8740 }, { 110, 8741 },
 		{ 111, 8742 }, { 112, 8743 }, { 113, 8744 }, { 114, 8745 }, { 115, 8746 },
 		{ 116, 8747 }, { 117, 8748 }, { 118, 8749 }, { 119, 8750 }, { 120, 8751 },
-		{ 121, 48167 }, { 122, 48169 }, { 123, 48170 }, { 124, 48171 }, { 125, 48172 }
+		{ 121, 48167 }, { 122, 48169 }, { 123, 48170 }, { 124, 48171 }, { 125, 48172 },
 	};
 
 	/// <inheritdoc/>
@@ -93,7 +93,7 @@ public readonly struct Stain(ExcelPage page, uint offset, uint row)
 			if (this.RowId == 0)
 				return null;
 
-			if (!DyeToItemKeyMap.TryGetValue(this.RowId, out uint itemKey) || itemKey == 0)
+			if (!s_dyeToItemKeyMap.TryGetValue(this.RowId, out uint itemKey) || itemKey == 0)
 				return null;
 
 			return this.Item?.Icon;
@@ -108,7 +108,7 @@ public readonly struct Stain(ExcelPage page, uint offset, uint row)
 			if (this.RowId == 0)
 				return null;
 
-			if (!DyeToItemKeyMap.TryGetValue(this.RowId, out uint itemKey) || itemKey == 0)
+			if (!s_dyeToItemKeyMap.TryGetValue(this.RowId, out uint itemKey) || itemKey == 0)
 				return null;
 
 			return GameDataService.Items.GetRow(itemKey);

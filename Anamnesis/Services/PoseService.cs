@@ -36,9 +36,6 @@ public class PoseService : ServiceBase<PoseService>
 
 	private bool isEnabled;
 
-	/// <inheritdoc/>
-	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GposeService.Instance];
-
 	public delegate void PoseEvent(bool value);
 
 	public static event PoseEvent? EnabledChanged;
@@ -179,6 +176,9 @@ public class PoseService : ServiceBase<PoseService>
 
 	public bool CanEdit { get; set; }
 
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GposeService.Instance];
+
 	public override async Task Initialize()
 	{
 		_ = Task.Run(ExtractStandardPoses);
@@ -300,16 +300,14 @@ public class PoseService : ServiceBase<PoseService>
 
 				destPath = standardPoseDir.FullName + destPath;
 
-				string? destDir = Path.GetDirectoryName(destPath);
-
-				if (destDir == null)
-					throw new Exception($"Failed to get directory name from path: {destPath}");
+				string? destDir = Path.GetDirectoryName(destPath)
+					?? throw new Exception($"Failed to get directory name from path: {destPath}");
 
 				if (!Directory.Exists(destDir))
 					Directory.CreateDirectory(destDir);
 
 				using Stream contents = EmbeddedFileUtility.Load(posePath);
-				using FileStream fileStream = new FileStream(destPath, FileMode.Create);
+				using var fileStream = new FileStream(destPath, FileMode.Create);
 				await contents.CopyToAsync(fileStream);
 			}
 

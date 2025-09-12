@@ -13,11 +13,7 @@ public class QuaternionConverter : JsonConverter<Quaternion>
 {
 	public override Quaternion Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
-		string? str = reader.GetString();
-
-		if (str == null)
-			throw new Exception("Cannot convert null to Quaternion");
-
+		string? str = reader.GetString() ?? throw new Exception("Cannot convert null to Quaternion");
 		return QuaternionExtensions.FromString(str);
 	}
 

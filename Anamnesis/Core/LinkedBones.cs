@@ -34,22 +34,17 @@ public static class LinkedBones
 		new(ActorCustomizeMemory.Tribes.Veena, ActorCustomizeMemory.Genders.Masculine, "j_zera_b_r", "j_zerc_b_r", "j_zerd_b_r"),
 	};
 
-	public class LinkSet
+	public class LinkSet(params string[] bones)
 	{
 		public readonly ActorCustomizeMemory.Tribes? Tribe;
 		public readonly ActorCustomizeMemory.Genders? Gender;
-		public readonly HashSet<string> Bones;
+		public readonly HashSet<string> Bones = new(bones);
 
 		public LinkSet(ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender, params string[] bones)
 			: this(bones)
 		{
 			this.Tribe = tribe;
 			this.Gender = gender;
-		}
-
-		public LinkSet(params string[] bones)
-		{
-			this.Bones = new(bones);
 		}
 
 		public bool Contains(string boneName)

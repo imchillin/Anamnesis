@@ -6,20 +6,13 @@ namespace Anamnesis.Files;
 using System;
 using System.IO;
 
-public class FileFilter
+public class FileFilter(Type fileType, string extension, string? regex)
 {
-	public readonly string Extension;
-	public readonly string? Regex;
-	public readonly Type FileType;
+	public readonly string Extension = extension;
+	public readonly string? Regex = regex;
+	public readonly Type FileType = fileType;
 	public Func<FileSystemInfo, string>? GetNameCallback;
 	public Func<FileSystemInfo, string>? GetFullNameCallback;
-
-	public FileFilter(Type fileType, string extension, string? regex)
-	{
-		this.Extension = extension;
-		this.Regex = regex;
-		this.FileType = fileType;
-	}
 
 	public bool Passes(FileInfo file)
 	{

@@ -284,10 +284,10 @@ public readonly unsafe struct EventNpc(ExcelPage page, uint offset, uint row)
 	/// Retrieves weapon with equipment model value if
 	/// available, otherwise retrieves using the the base model value.
 	/// </summary>
-	/// <param name="slot"></param>
-	/// <param name="baseVal"></param>
-	/// <param name="equipVal"></param>
-	/// <returns></returns>
+	/// <param name="slot">The item slot.</param>
+	/// <param name="baseVal">The model base value of the item.</param>
+	/// <param name="equipVal">The equipment model value of the item.</param>
+	/// <returns>An <see cref="IItem"/> instance representing the weapon.</returns>"/>
 	private static IItem GetWeaponItem(ItemSlots slot, ulong baseVal, ulong? equipVal)
 	{
 		if (baseVal != 0 && baseVal != uint.MaxValue)
