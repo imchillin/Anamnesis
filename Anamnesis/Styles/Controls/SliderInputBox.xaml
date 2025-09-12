@@ -50,7 +50,7 @@
 			</Grid.ColumnDefinitions>
 
 			<!-- Decrease button -->
-			<Button x:Name="DecreaseButton" Grid.Column="0" Style="{StaticResource TransparentIconButton}" Width="19" Click="OnDecreaseButtonClicked" PreviewMouseDown="OnDecreaseButtonPreviewMouseDown" Visibility="{Binding ShowStepButtons, Converter={StaticResource B2V}}">
+			<Button x:Name="DecreaseButton" Grid.Column="0" Style="{StaticResource TransparentIconButton}" Click="OnDecreaseButtonClicked" PreviewMouseDown="OnDecreaseButtonPreviewMouseDown" Visibility="{Binding ShowStepButtons, Converter={StaticResource B2V}}">
 				<Button.ToolTip>
 					<XivToolsWpf:TextBlock Key="SliderInputBox_DecreaseButton" />
 				</Button.ToolTip>
@@ -70,12 +70,12 @@
 			</Grid>
 
 			<!-- Slider thumb -->
-			<Grid Grid.Column="1" Margin="0, 2">
+			<Grid Grid.Column="1" Margin="0, 2" IsHitTestVisible="False">
 				<Border x:Name="SliderThumb" Width="{Binding SliderThumbWidth, Mode=OneTime}" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="Black" Opacity="0.5" CornerRadius="2" Panel.ZIndex="1"/>
 			</Grid>
 
 			<!-- Increase button -->
-			<Button x:Name="IncreaseButton" Grid.Column="2" Style="{StaticResource TransparentIconButton}" Width="19" Click="OnIncreaseButtonClicked"  PreviewMouseDown="OnIncreaseButtonPreviewMouseDown" Visibility="{Binding ShowStepButtons, Converter={StaticResource B2V}}">
+			<Button x:Name="IncreaseButton" Grid.Column="2" Style="{StaticResource TransparentIconButton}" Click="OnIncreaseButtonClicked"  PreviewMouseDown="OnIncreaseButtonPreviewMouseDown" Visibility="{Binding ShowStepButtons, Converter={StaticResource B2V}}">
 				<Button.ToolTip>
 					<XivToolsWpf:TextBlock Key="SliderInputBox_IncreaseButton" />
 				</Button.ToolTip>
