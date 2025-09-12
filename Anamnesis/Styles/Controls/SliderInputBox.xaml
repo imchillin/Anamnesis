@@ -69,11 +69,9 @@
 				</Grid>
 			</Grid>
 
-			<!-- Visualization -->
-			<Grid Grid.Column="1" Background="Transparent" Margin="2, 0" IsHitTestVisible="False">
-				<Grid Margin="0, 2">
-					<Border x:Name="TickRectangle" Width="{Binding TickRectangleWidth, Mode=OneTime}" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="Black" Opacity="0.5" CornerRadius="2" Panel.ZIndex="1"/>
-				</Grid>
+			<!-- Slider thumb -->
+			<Grid Grid.Column="1" Margin="0, 2" IsHitTestVisible="False">
+				<Border x:Name="SliderThumb" Width="{Binding SliderThumbWidth, Mode=OneTime}" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="Black" Opacity="0.5" CornerRadius="2" Panel.ZIndex="1"/>
 			</Grid>
 
 			<!-- Increase button -->
