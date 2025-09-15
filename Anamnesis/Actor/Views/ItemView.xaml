@@ -184,6 +184,16 @@
 					<fa:IconBlock Icon="Mask" FontSize="10"/>
 				</ToggleButton>
 
+				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding Actor.CanRefresh}"
+						  Visibility="{Binding SupportsEarToggle, Converter={StaticResource B2V}, Mode=OneWay}" IsChecked="{Binding Actor.HeadgearEarsHidden}"
+						  BorderThickness="1" Padding="0" Margin="0">
+					<ToggleButton.ToolTip>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_HeadgearEarsToggle"/>
+					</ToggleButton.ToolTip>
+
+					<fa:IconBlock Icon="EarDeaf" FontSize="10"/>
+				</ToggleButton>
+
 				<!-- Weapon Tint -->
 				<ana:RgbColorControl Margin="2, 2, 0, 0"  Value="{Binding ExtendedViewModel.Tint}"
 									 Visibility="{Binding IsWeapon, Converter={StaticResource B2V}, Mode=OneWay}">

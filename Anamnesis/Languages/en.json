@@ -220,6 +220,7 @@
   "Character_Equipment_WeaponToggle": "Toggle Weapon Visibility",
   "Character_Equipment_HatToggle": "Toggle Hat Visibility",
   "Character_Equipment_VisorToggle": "Toggle Visor State",
+  "Character_Equipment_HeadgearEarsToggle": "Toggle Headgear Ear Visibility",
   "Character_Equipment_ItemId": "Item Id",
   "Character_Equipment_ItemSet": "Set",
   "Character_Equipment_ItemBase": "Base",
