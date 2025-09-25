@@ -51,6 +51,7 @@ public class ActorMemory : ActorBasicMemory
 		WeaponsVisible = 1 << 0,
 		WeaponsDrawn = 1 << 2,
 		VisorToggled = 1 << 4,
+		HeadgearEarsHidden = 1 << 5,
 	}
 
 	[Bind(0x01CA)] public byte ClassJob { get; set; } // Source: CharacterData; Calculated using GameObject size + ClassJob offset
@@ -131,6 +132,23 @@ public class ActorMemory : ActorBasicMemory
 			else
 			{
 				this.CharacterFlags &= ~CharacterFlagDefs.VisorToggled;
+			}
+		}
+	}
+
+	[DependsOn(nameof(CharacterFlags))]
+	public bool HeadgearEarsHidden
+	{
+		get => this.CharacterFlags.HasFlagUnsafe(CharacterFlagDefs.HeadgearEarsHidden);
+		set
+		{
+			if (value)
+			{
+				this.CharacterFlags |= CharacterFlagDefs.HeadgearEarsHidden;
+			}
+			else
+			{
+				this.CharacterFlags &= ~CharacterFlagDefs.HeadgearEarsHidden;
 			}
 		}
 	}

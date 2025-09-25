@@ -81,6 +81,9 @@ public partial class ItemView : UserControl
 
 	public bool IsHead => this.Slot == ItemSlots.Head;
 
+	public bool SupportsEarToggle => this.Slot == ItemSlots.Head
+		&& this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Viera;
+
 	public bool IsValidWeapon
 	{
 		get
@@ -487,7 +490,15 @@ public partial class ItemView : UserControl
 
 	private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 	{
+		if (this.Actor?.Customize != null)
+			this.Actor.Customize.PropertyChanged -= this.OnActorCustomizePropertyChanged;
+
 		this.Actor = this.DataContext as ActorMemory;
+
+		if (this.Actor?.Customize != null)
+			this.Actor.Customize.PropertyChanged += this.OnActorCustomizePropertyChanged;
+
+		this.OnPropertyChanged(nameof(this.SupportsEarToggle));
 	}
 
 	private void OnLoaded(object sender, RoutedEventArgs e)
@@ -505,5 +516,13 @@ public partial class ItemView : UserControl
 	private void OnLocaleChanged()
 	{
 		this.OnPropertyChanged(nameof(this.SlotName));
+	}
+
+	private void OnActorCustomizePropertyChanged(object? sender, PropertyChangedEventArgs e)
+	{
+		if (e.PropertyName == nameof(ActorCustomizeMemory.Race))
+		{
+			this.OnPropertyChanged(nameof(this.SupportsEarToggle));
+		}
 	}
 }
