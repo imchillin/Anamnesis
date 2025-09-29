@@ -18,7 +18,7 @@ using XivToolsWpf;
 /// </remarks>
 public class BoneViewManager : IDisposable
 {
-	private static readonly Lazy<BoneViewManager> Lazy = new(() => new BoneViewManager());
+	private static readonly Lazy<BoneViewManager> s_lazy = new(() => new BoneViewManager());
 
 	private readonly HashSet<BoneView> boneViews = new();
 	private SkeletonEntity? skeleton;
@@ -30,7 +30,7 @@ public class BoneViewManager : IDisposable
 	/// <summary>
 	/// Gets the singleton instance of the <see cref="BoneViewManager"/>.
 	/// </summary>
-	public static BoneViewManager Instance => Lazy.Value;
+	public static BoneViewManager Instance => s_lazy.Value;
 
 	/// <summary>
 	/// Gets the collection of bone views managed by this instance.

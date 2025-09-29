@@ -53,14 +53,9 @@ public abstract class Page
 	protected abstract UserControl CreateContent();
 }
 
-public class Page<T> : Page
+public class Page<T>(IconChar icon, string context, string name) : Page(icon, context, name)
 	where T : UserControl
 {
-	public Page(IconChar icon, string context, string name)
-		: base(icon, context, name)
-	{
-	}
-
 	protected override UserControl CreateContent()
 	{
 		UserControl? control = Activator.CreateInstance<T>();

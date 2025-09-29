@@ -5,10 +5,6 @@ namespace Anamnesis.Memory.Exceptions;
 
 using System;
 
-public class InvalidAddressException : Exception
+public class InvalidAddressException(string name) : Exception(name + " did not produce a valid memory address")
 {
-	public InvalidAddressException(string name)
-		: base(name + " did not produce a valid memory address")
-	{
-	}
 }

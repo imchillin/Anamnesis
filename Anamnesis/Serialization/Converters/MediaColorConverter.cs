@@ -12,11 +12,7 @@ public class MediaColorConverter : JsonConverter<Color>
 {
 	public override Color Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
-		string? str = reader.GetString();
-
-		if (str == null)
-			throw new Exception("Cannot convert null to Color");
-
+		string? str = reader.GetString() ?? throw new Exception("Cannot convert null to Color");
 		return (Color)System.Windows.Media.ColorConverter.ConvertFromString(str);
 	}
 

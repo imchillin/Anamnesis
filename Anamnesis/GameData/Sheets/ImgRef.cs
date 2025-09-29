@@ -17,16 +17,16 @@ using System.Windows.Media.Imaging;
 /// </summary>
 public class ImgRef
 {
-	/// <summary> The target DPI of the image.</summary>
-	private const int IMG_DPI = 96;
-
-	/// <summary>Image cache.</summary>
-	private static readonly ConditionalWeakTable<ImgRef, ImageSource> imageCache = [];
-
 	/// <summary>
 	/// Gets the image ID.
 	/// </summary>
 	public readonly uint ImageId;
+
+	/// <summary> The target DPI of the image.</summary>
+	private const int IMG_DPI = 96;
+
+	/// <summary>Image cache.</summary>
+	private static readonly ConditionalWeakTable<ImgRef, ImageSource> s_imageCache = [];
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ImgRef"/> class.
@@ -53,38 +53,6 @@ public class ImgRef
 	public ImgRef(int imageId)
 	{
 		this.ImageId = (uint)imageId;
-	}
-
-	/// <summary>Gets the image source from the reference's image identifier.</summary>
-	/// <returns>A bitmap source or null if the image is not found.</returns>
-	public ImageSource? GetImage()
-	{
-		if (this.ImageId == 0 || GameDataService.LuminaData == null)
-			return null;
-
-		if (imageCache.TryGetValue(this, out ImageSource? img))
-			return img;
-
-		try
-		{
-			Log.Verbose($"Loading image {this.ImageId}");
-			TexFile? tex = GameDataService.LuminaData.GetHqIcon(this.ImageId);
-			if (tex == null)
-				return null;
-
-			BitmapSource bmp = BitmapSource.Create(tex.Header.Width, tex.Header.Height, IMG_DPI, IMG_DPI, PixelFormats.Bgra32, null, tex.ImageData, tex.Header.Width * 4);
-			bmp.Freeze();
-			img = bmp;
-
-			imageCache.Add(this, img);
-			return img;
-		}
-		catch (Exception ex)
-		{
-			Log.Warning(ex, $"Failed to load Image: {this.ImageId} form lumina");
-		}
-
-		return null;
 	}
 
 	/// <summary>
@@ -121,5 +89,37 @@ public class ImgRef
 	{
 		ImgRef imgRef = new(imageId);
 		return imgRef.GetImage();
+	}
+
+	/// <summary>Gets the image source from the reference's image identifier.</summary>
+	/// <returns>A bitmap source or null if the image is not found.</returns>
+	public ImageSource? GetImage()
+	{
+		if (this.ImageId == 0 || GameDataService.s_luminaData == null)
+			return null;
+
+		if (s_imageCache.TryGetValue(this, out ImageSource? img))
+			return img;
+
+		try
+		{
+			Log.Verbose($"Loading image {this.ImageId}");
+			TexFile? tex = GameDataService.s_luminaData.GetHqIcon(this.ImageId);
+			if (tex == null)
+				return null;
+
+			BitmapSource bmp = BitmapSource.Create(tex.Header.Width, tex.Header.Height, IMG_DPI, IMG_DPI, PixelFormats.Bgra32, null, tex.ImageData, tex.Header.Width * 4);
+			bmp.Freeze();
+			img = bmp;
+
+			s_imageCache.Add(this, img);
+			return img;
+		}
+		catch (Exception ex)
+		{
+			Log.Warning(ex, $"Failed to load Image: {this.ImageId} form lumina");
+		}
+
+		return null;
 	}
 }

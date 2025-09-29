@@ -1,62 +1,10 @@
 ﻿root = true
 
 [*.cs]
-indent_style = tab
+# ======================================================================================== #
+# General formatting rules for C# files
 file_header_template = © Anamnesis.\nLicensed under the MIT license.
 csharp_style_namespace_declarations = block_scoped:silent
-
-dotnet_diagnostic.SA1000.severity = none
-dotnet_diagnostic.SA1027.severity = none
-dotnet_diagnostic.SA1600.severity = none
-dotnet_diagnostic.SA1503.severity = none
-dotnet_diagnostic.SA1633.severity = none
-dotnet_diagnostic.SA1401.severity = none
-dotnet_diagnostic.SA1601.severity = none
-dotnet_diagnostic.SA1602.severity = none
-dotnet_diagnostic.SA1516.severity = none
-dotnet_diagnostic.SA1618.severity = none
-dotnet_diagnostic.SA1611.severity = none
-dotnet_diagnostic.SA1615.severity = none
-dotnet_diagnostic.SA1011.severity = none
-
-dotnet_diagnostic.IDE0011.severity = none
-dotnet_diagnostic.IDE0022.severity = none
-dotnet_diagnostic.IDE0023.severity = none
-dotnet_diagnostic.IDE1006.severity = warning
-dotnet_diagnostic.IDE0044.severity = warning
-dotnet_diagnostic.IDE0058.severity = none
-dotnet_diagnostic.IDE0073.severity = warning
-dotnet_diagnostic.IDE0025.severity = none
-dotnet_diagnostic.IDE0027.severity = none
-dotnet_diagnostic.IDE0059.severity = none
-dotnet_diagnostic.IDE0065.severity = none
-
-dotnet_diagnostic.UNT0001.severity = warning
-dotnet_diagnostic.UNT0002.severity = warning
-dotnet_diagnostic.UNT0003.severity = warning
-dotnet_diagnostic.UNT0004.severity = warning
-dotnet_diagnostic.UNT0005.severity = warning
-dotnet_diagnostic.UNT0006.severity = warning
-dotnet_diagnostic.UNT0007.severity = warning
-dotnet_diagnostic.UNT0008.severity = warning
-dotnet_diagnostic.UNT0009.severity = warning
-dotnet_diagnostic.UNT0010.severity = warning
-dotnet_diagnostic.UNT0011.severity = warning
-dotnet_diagnostic.UNT0012.severity = warning
-dotnet_diagnostic.UNT0013.severity = none
-dotnet_diagnostic.UNT0014.severity = warning
-dotnet_diagnostic.UNT0015.severity = warning
-dotnet_diagnostic.UNT0016.severity = warning
-dotnet_diagnostic.UNT0017.severity = warning
-dotnet_diagnostic.UNT0018.severity = warning
-dotnet_diagnostic.UNT0019.severity = warning
-dotnet_diagnostic.UNT0020.severity = warning
-
-dotnet_diagnostic.CS1591.severity = none
-dotnet_diagnostic.CS0067.severity = none
-
-dotnet_diagnostic.CA1416.severity = none
-dotnet_diagnostic.CA2201.severity = none
 csharp_indent_labels = one_less_than_current
 csharp_using_directive_placement = outside_namespace:silent
 csharp_prefer_simple_using_statement = true:suggestion
@@ -107,57 +55,118 @@ csharp_style_var_for_built_in_types = false:silent
 csharp_style_var_when_type_is_apparent = false:silent
 csharp_style_var_elsewhere = false:silent
 csharp_style_prefer_unbound_generic_type_in_nameof = true:suggestion
+csharp_style_prefer_implicitly_typed_lambda_expression = true:suggestion
+
+# ---------------------------------------------------------------------------------------- #
+# Analyzer rules
+
+dotnet_diagnostic.IDE0011.severity = none
+dotnet_diagnostic.IDE0022.severity = none
+dotnet_diagnostic.IDE0023.severity = none
+dotnet_diagnostic.IDE1006.severity = warning
+dotnet_diagnostic.IDE0044.severity = warning
+dotnet_diagnostic.IDE0058.severity = none
+dotnet_diagnostic.IDE0073.severity = warning
+dotnet_diagnostic.IDE0025.severity = none
+dotnet_diagnostic.IDE0027.severity = none
+dotnet_diagnostic.IDE0059.severity = none
+dotnet_diagnostic.IDE0065.severity = none
+dotnet_diagnostic.IDE0028.severity = none
+dotnet_diagnostic.IDE0305.severity = none
+dotnet_diagnostic.IDE0306.severity = none
+
+dotnet_diagnostic.UNT0001.severity = warning
+dotnet_diagnostic.UNT0002.severity = warning
+dotnet_diagnostic.UNT0003.severity = warning
+dotnet_diagnostic.UNT0004.severity = warning
+dotnet_diagnostic.UNT0005.severity = warning
+dotnet_diagnostic.UNT0006.severity = warning
+dotnet_diagnostic.UNT0007.severity = warning
+dotnet_diagnostic.UNT0008.severity = warning
+dotnet_diagnostic.UNT0009.severity = warning
+dotnet_diagnostic.UNT0010.severity = warning
+dotnet_diagnostic.UNT0011.severity = warning
+dotnet_diagnostic.UNT0012.severity = warning
+dotnet_diagnostic.UNT0013.severity = none
+dotnet_diagnostic.UNT0014.severity = warning
+dotnet_diagnostic.UNT0015.severity = warning
+dotnet_diagnostic.UNT0016.severity = warning
+dotnet_diagnostic.UNT0017.severity = warning
+dotnet_diagnostic.UNT0018.severity = warning
+dotnet_diagnostic.UNT0019.severity = warning
+dotnet_diagnostic.UNT0020.severity = warning
+
+dotnet_diagnostic.CS1591.severity = none
+dotnet_diagnostic.CS0067.severity = none
+
+dotnet_diagnostic.CA1416.severity = none
+dotnet_diagnostic.CA2201.severity = none
+
+# ---------------------------------------------------------------------------------------- #
+# SA (StyleCop) rules
+
+## Spacing rules
+dotnet_diagnostic.SA1000.severity = none
+dotnet_diagnostic.SA1005.severity = none
+dotnet_diagnostic.SA1011.severity = none
+dotnet_diagnostic.SA1025.severity = none
+dotnet_diagnostic.SA1027.severity = none
+
+## Readability rules
+dotnet_diagnostic.SA1101.severity = none
+dotnet_diagnostic.SA1108.severity = none
+
+dotnet_diagnostic.SX1101.severity = none
+
+## Ordering rules
+dotnet_diagnostic.SA1200.severity = none
+dotnet_diagnostic.SA1201.severity = warning
+dotnet_diagnostic.SA1202.severity = warning
+dotnet_diagnostic.SA1203.severity = warning
+dotnet_diagnostic.SA1204.severity = warning
+dotnet_diagnostic.SA1207.severity = warning
+dotnet_diagnostic.SA1208.severity = none
+dotnet_diagnostic.SA1212.severity = warning
+dotnet_diagnostic.SA1213.severity = warning
+dotnet_diagnostic.SA1214.severity = warning
+
+## Naming rules (disabled as we use Microsoft's recommended C# naming conventions)
+dotnet_diagnostic.SA1306.severity = none
+dotnet_diagnostic.SA1307.severity = none
+dotnet_diagnostic.SA1308.severity = none
+dotnet_diagnostic.SA1309.severity = none
+dotnet_diagnostic.SA1310.severity = none
+dotnet_diagnostic.SA1311.severity = none
+
+## Maintainability rules
+dotnet_diagnostic.SA1401.severity = none
+dotnet_diagnostic.SA1402.severity = silent
+
+## Layout rules
+dotnet_diagnostic.SA1503.severity = none
+dotnet_diagnostic.SA1512.severity = none
+dotnet_diagnostic.SA1515.severity = none
+dotnet_diagnostic.SA1516.severity = none
+
+## Documentation rules
+dotnet_diagnostic.SA1600.severity = none
+dotnet_diagnostic.SA1601.severity = none
+dotnet_diagnostic.SA1602.severity = silent
+dotnet_diagnostic.SA1611.severity = none
+dotnet_diagnostic.SA1615.severity = silent
+dotnet_diagnostic.SA1618.severity = none
+dotnet_diagnostic.SA1623.severity = none
+dotnet_diagnostic.SA1633.severity = none
+dotnet_diagnostic.SA1649.severity = silent
+
 [*.{cs,vb}]
-#### Naming styles ####
-
-# Naming rules
-
-dotnet_naming_rule.interface_should_be_begins_with_i.severity = suggestion
-dotnet_naming_rule.interface_should_be_begins_with_i.symbols = interface
-dotnet_naming_rule.interface_should_be_begins_with_i.style = begins_with_i
-
-dotnet_naming_rule.types_should_be_pascal_case.severity = suggestion
-dotnet_naming_rule.types_should_be_pascal_case.symbols = types
-dotnet_naming_rule.types_should_be_pascal_case.style = pascal_case
-
-dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = suggestion
-dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_members
-dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
-
-# Symbol specifications
-
-dotnet_naming_symbols.interface.applicable_kinds = interface
-dotnet_naming_symbols.interface.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.interface.required_modifiers = 
-
-dotnet_naming_symbols.types.applicable_kinds = class, struct, interface, enum
-dotnet_naming_symbols.types.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.types.required_modifiers = 
-
-dotnet_naming_symbols.non_field_members.applicable_kinds = property, event, method
-dotnet_naming_symbols.non_field_members.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.non_field_members.required_modifiers = 
-
-# Naming styles
-
-dotnet_naming_style.begins_with_i.required_prefix = I
-dotnet_naming_style.begins_with_i.required_suffix = 
-dotnet_naming_style.begins_with_i.word_separator = 
-dotnet_naming_style.begins_with_i.capitalization = pascal_case
-
-dotnet_naming_style.pascal_case.required_prefix = 
-dotnet_naming_style.pascal_case.required_suffix = 
-dotnet_naming_style.pascal_case.word_separator = 
-dotnet_naming_style.pascal_case.capitalization = pascal_case
-
-dotnet_naming_style.pascal_case.required_prefix = 
-dotnet_naming_style.pascal_case.required_suffix = 
-dotnet_naming_style.pascal_case.word_separator = 
-dotnet_naming_style.pascal_case.capitalization = pascal_case
+# ======================================================================================== #
+## General formatting rules for C# and VB files
 dotnet_style_operator_placement_when_wrapping = beginning_of_line
 tab_width = 4
 indent_size = 4
 end_of_line = crlf
+indent_style = tab
 dotnet_style_coalesce_expression = true:suggestion
 dotnet_style_null_propagation = true:suggestion
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
@@ -189,3 +198,150 @@ dotnet_style_qualification_for_field = true:warning
 dotnet_style_qualification_for_property = true:warning
 dotnet_style_qualification_for_event = true:warning
 dotnet_style_qualification_for_method = true:warning
+
+#### Naming styles ####
+
+
+# ---------------------------------------------------------------------------------------- #
+# Naming rules
+# Based on:
+# - https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/identifier-names
+# - https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/names-of-type-members
+
+## Interfaces: begins with 'I'
+dotnet_naming_rule.interface_should_be_begins_with_i.severity = suggestion
+dotnet_naming_rule.interface_should_be_begins_with_i.symbols = interface
+dotnet_naming_rule.interface_should_be_begins_with_i.style = begins_with_i
+
+## Types: PascalCase
+dotnet_naming_rule.types_should_be_pascal_case.severity = suggestion
+dotnet_naming_rule.types_should_be_pascal_case.symbols = types
+dotnet_naming_rule.types_should_be_pascal_case.style = pascal_style
+
+## Non-field members: PascalCase
+dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_members
+dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_style
+dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = warning
+
+## Constant fields: UPPER_CASE_WITH_UNDERSCORES
+dotnet_naming_rule.constants_with_underscores.symbols  = constant_fields
+dotnet_naming_rule.constants_with_underscores.style = all_upper_style
+dotnet_naming_rule.constants_with_underscores.severity = warning
+
+## Non-private fields: PascalCase
+dotnet_naming_rule.nonprivate_fields_pascal.symbols  = nonprivate_fields
+dotnet_naming_rule.nonprivate_fields_pascal.style = pascal_style
+dotnet_naming_rule.nonprivate_fields_pascal.severity = warning
+
+## Private fields: camelCase
+dotnet_naming_rule.private_fields.symbols = private_instance_fields
+dotnet_naming_rule.private_fields.style = camel_style
+dotnet_naming_rule.private_fields.severity = warning
+
+## Static fields: begins with 's_' and camelCase for private/internal
+dotnet_naming_rule.static_private_fields_should_begin_with_s_.symbols = static_private_fields
+dotnet_naming_rule.static_private_fields_should_begin_with_s_.style = static_field_private_style
+dotnet_naming_rule.static_private_fields_should_begin_with_s_.severity = warning
+
+## Static fields: PascalCase for non-private
+dotnet_naming_rule.static_nonprivate_fields_should_begin_with_s_.symbols = static_nonprivate_fields
+dotnet_naming_rule.static_nonprivate_fields_should_begin_with_s_.style = pascal_style
+dotnet_naming_rule.static_nonprivate_fields_should_begin_with_s_.severity = warning
+
+## Thread static fields: begins with 't_'
+dotnet_naming_rule.thread_static_fields_should_begin_with_t_.symbols = thread_static_fields
+dotnet_naming_rule.thread_static_fields_should_begin_with_t_.style = thread_static_field_style
+dotnet_naming_rule.thread_static_fields_should_begin_with_t_.severity = warning
+
+# ---------------------------------------------------------------------------------------- #
+# Symbol specifications
+
+## Apply interface naming rules to interfaces
+dotnet_naming_symbols.interface.applicable_kinds = interface
+dotnet_naming_symbols.interface.applicable_accessibilities = *
+dotnet_naming_symbols.interface.required_modifiers = 
+
+## Apply PascalCase naming rules to types
+dotnet_naming_symbols.types.applicable_kinds = class, struct, interface, enum
+dotnet_naming_symbols.types.applicable_accessibilities = *
+dotnet_naming_symbols.types.required_modifiers = 
+
+## Apply PascalCase naming rules to non-field members
+dotnet_naming_symbols.non_field_members.applicable_kinds = property, event, method
+dotnet_naming_symbols.non_field_members.applicable_accessibilities = *
+dotnet_naming_symbols.non_field_members.required_modifiers = 
+
+## Apply constant naming rules to fields with 'const' modifier of any accessibility
+dotnet_naming_symbols.constant_fields.applicable_kinds = field
+dotnet_naming_symbols.constant_fields.applicable_accessibilities = *
+dotnet_naming_symbols.constant_fields.required_modifiers = const
+
+## Apply PascalCase naming rules to non-private fields
+dotnet_naming_symbols.nonprivate_fields.applicable_kinds = field
+dotnet_naming_symbols.nonprivate_fields.applicable_accessibilities = public, protected, protected_internal, private_protected
+dotnet_naming_symbols.nonprivate_fields.required_modifiers =
+
+## Apply camelCase naming rules to private/internal instance fields
+dotnet_naming_symbols.private_instance_fields.applicable_kinds = field
+dotnet_naming_symbols.private_instance_fields.applicable_accessibilities = private, internal
+dotnet_naming_symbols.private_instance_fields.required_modifiers =
+
+## Apply static field naming rules
+dotnet_naming_symbols.static_private_fields.applicable_kinds = field
+dotnet_naming_symbols.static_private_fields.applicable_accessibilities = private, internal
+dotnet_naming_symbols.static_private_fields.required_modifiers = static
+
+dotnet_naming_symbols.static_nonprivate_fields.applicable_kinds = field
+dotnet_naming_symbols.static_nonprivate_fields.applicable_accessibilities = public, protected, protected_internal, private_protected
+dotnet_naming_symbols.static_nonprivate_fields.required_modifiers = static
+
+## Apply thread static field naming rules to fields with 'thread_static' modifier of any accessibility
+dotnet_naming_symbols.thread_static_fields.applicable_kinds = field
+dotnet_naming_symbols.thread_static_fields.applicable_accessibilities = *
+dotnet_naming_symbols.thread_static_fields.required_modifiers = thread_static
+
+# ---------------------------------------------------------------------------------------- #
+# Naming styles
+
+## Interface style: begins with 'I'
+dotnet_naming_style.begins_with_i.required_prefix = I
+dotnet_naming_style.begins_with_i.required_suffix = 
+dotnet_naming_style.begins_with_i.capitalization = pascal_case 
+dotnet_naming_style.begins_with_i.word_separator = 
+
+## All upper style: UPPER_CASE_WITH_UNDERSCORES
+dotnet_naming_style.all_upper_style.capitalization = all_upper
+dotnet_naming_style.all_upper_style.word_separator = _
+
+## Pascal style: PascalCase
+dotnet_naming_style.pascal_style.required_prefix = 
+dotnet_naming_style.pascal_style.required_suffix = 
+dotnet_naming_style.pascal_style.capitalization = pascal_case
+dotnet_naming_style.pascal_style.word_separator = 
+
+## Camel style: camelCase
+dotnet_naming_style.camel_style.required_prefix =
+dotnet_naming_style.camel_style.capitalization = camel_case
+dotnet_naming_style.camel_style.word_separator =
+
+## Static field style: begins with 's_' for private/internal, no prefix for public/protected
+dotnet_naming_style.static_field_private_style.required_prefix = s_
+dotnet_naming_style.static_field_private_style.capitalization = camel_case
+dotnet_naming_style.static_field_private_style.word_separator =
+
+dotnet_naming_style.static_field_nonprivate_style.required_prefix =
+dotnet_naming_style.static_field_nonprivate_style.capitalization = pascal_case
+dotnet_naming_style.static_field_nonprivate_style.word_separator =
+
+## Thread static field style: begins with 't_'
+dotnet_naming_style.thread_static_field_style.required_prefix = t_
+dotnet_naming_style.thread_static_field_style.capitalization = camel_case
+dotnet_naming_style.thread_static_field_style.word_separator =
+
+[*.xaml]
+# ======================================================================================== #
+## General formatting rules for XAML files
+indent_style = tab
+indent_size = 4
+tab_width = 4
+end_of_line = crlf

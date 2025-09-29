@@ -20,15 +20,15 @@ public partial class HomeTab : UserControl
 		this.ContentArea.DataContext = this;
 	}
 
+	public static TipService TipService => TipService.Instance;
+	public static GameService GameService => GameService.Instance;
+	public static TargetService TargetService => TargetService.Instance;
+	public static GposeService GposeService => GposeService.Instance;
+	public static TerritoryService TerritoryService => TerritoryService.Instance;
+	public static TimeService TimeService => TimeService.Instance;
+	public static CameraService CameraService => CameraService.Instance;
+	public static SettingsService SettingsService => SettingsService.Instance;
 	public static Services.Settings Settings => SettingsService.Current;
-	public TipService TipService => TipService.Instance;
-	public GameService GameService => GameService.Instance;
-	public TargetService TargetService => TargetService.Instance;
-	public GposeService GposeService => GposeService.Instance;
-	public TerritoryService TerritoryService => TerritoryService.Instance;
-	public TimeService TimeService => TimeService.Instance;
-	public CameraService CameraService => CameraService.Instance;
-	public SettingsService SettingsService => SettingsService.Instance;
 
 	private void OnTipClicked(object sender, RoutedEventArgs e)
 	{
@@ -37,11 +37,10 @@ public partial class HomeTab : UserControl
 
 	private void OnWeatherClicked(object sender, RoutedEventArgs e)
 	{
-		WeatherSelector selector = new WeatherSelector();
-
-		SelectorDrawer.Show(selector, this.TerritoryService.CurrentWeather, (w) =>
+		var selector = new WeatherSelector();
+		SelectorDrawer.Show(selector, TerritoryService.CurrentWeather, (w) =>
 		{
-			this.TerritoryService.CurrentWeather = w;
+			TerritoryService.CurrentWeather = w;
 		});
 	}
 }

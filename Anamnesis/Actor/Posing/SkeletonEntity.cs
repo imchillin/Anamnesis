@@ -18,20 +18,15 @@ using System.Windows.Input;
 /// <summary>
 /// Derived class of <see cref="Skeleton"/> that adds additional functionality for UI-based operations.
 /// </summary>
+/// <remarks>
+/// Initializes a new instance of the <see cref="SkeletonEntity"/> class.
+/// </remarks>
+/// <param name="actor">The actor memory associated with this skeleton.</param>
 [AddINotifyPropertyChangedInterface]
-public class SkeletonEntity : Skeleton
+public class SkeletonEntity(ActorMemory actor) : Skeleton(actor)
 {
 	private List<BoneEntity>? selectedBonesCache;
 	private List<BoneEntity>? hoveredBonesCache;
-
-	/// <summary>
-	/// Initializes a new instance of the <see cref="SkeletonEntity"/> class.
-	/// </summary>
-	/// <param name="actor">The actor memory associated with this skeleton.</param>
-	public SkeletonEntity(ActorMemory actor)
-		: base(actor)
-	{
-	}
 
 	/// <summary>Specifies the bone selection mode.</summary>
 	public enum SelectMode
@@ -116,7 +111,7 @@ public class SkeletonEntity : Skeleton
 	public static IEnumerable<BoneEntity> TraverseSkeleton(SkeletonEntity skeleton)
 	{
 		if (skeleton.Bones == null || skeleton.Bones.IsEmpty)
-			return Enumerable.Empty<BoneEntity>();
+			return [];
 
 		Stack<BoneEntity> stack = new(skeleton.Bones.Values.OfType<BoneEntity>().Where(b => b.Parent == null).OrderBy(b => b.Name));
 		List<BoneEntity> result = new(stack.Count);

@@ -19,7 +19,7 @@ using System.Windows.Media;
 [AddINotifyPropertyChangedInterface]
 public class Settings : INotifyPropertyChanged
 {
-	private const int MinAutoSaveIntervalMinutes = 1;
+	private const int MIN_AUTOSAVE_INTERVAL_MINS = 1;
 	private int autoSaveIntervalMinutes = 5;
 	private bool enableAutoSave = true;
 
@@ -104,15 +104,15 @@ public class Settings : INotifyPropertyChanged
 	public int AutoSaveFileCount { get; set; } = 12;
 	public int AutoSaveIntervalMinutes
 	{
-		get => Math.Max(this.autoSaveIntervalMinutes, MinAutoSaveIntervalMinutes);
+		get => Math.Max(this.autoSaveIntervalMinutes, MIN_AUTOSAVE_INTERVAL_MINS);
 		set
 		{
 			if (value == this.autoSaveIntervalMinutes)
 				return;
 
 			// Limit the minimum value
-			if (value < MinAutoSaveIntervalMinutes)
-				value = MinAutoSaveIntervalMinutes;
+			if (value < MIN_AUTOSAVE_INTERVAL_MINS)
+				value = MIN_AUTOSAVE_INTERVAL_MINS;
 
 			this.autoSaveIntervalMinutes = value;
 
@@ -127,6 +127,7 @@ public class Settings : INotifyPropertyChanged
 			}
 		}
 	}
+
 	public bool AutoSaveOnlyInGpose { get; set; } = true;
 
 	public GizmoDragModes GizmoDragMode { get; set; } = GizmoDragModes.Linear;
@@ -193,15 +194,13 @@ public class Settings : INotifyPropertyChanged
 		public KeyCombination ActionPage_ResumeAll { get; set; } = new(Key.P, ModifierKeys.Control | ModifierKeys.Shift);
 		public KeyCombination ActionPage_PauseAll { get; set; } = new(Key.S, ModifierKeys.Control | ModifierKeys.Shift);
 
-		public Dictionary<string, KeyCombination> GetBinds()
+		public static Dictionary<string, KeyCombination> GetBinds()
 		{
 			Dictionary<string, KeyCombination> results = new();
 			PropertyInfo[]? properties = typeof(Binds).GetProperties();
 			foreach (PropertyInfo property in properties)
 			{
-				KeyCombination? key = property.GetValue(SettingsService.Current.KeyboardBindings) as KeyCombination;
-
-				if (key == null)
+				if (property.GetValue(SettingsService.Current.KeyboardBindings) is not KeyCombination key)
 					continue;
 
 				string function = property.Name.Replace('_', '.');

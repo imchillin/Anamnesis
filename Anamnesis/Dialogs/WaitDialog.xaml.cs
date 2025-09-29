@@ -3,11 +3,11 @@
 
 namespace Anamnesis.Dialogs;
 
+using Anamnesis.Services;
+using PropertyChanged;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using Anamnesis.Services;
-using PropertyChanged;
 using XivToolsWpf;
 
 /// <summary>
@@ -31,8 +31,10 @@ public partial class WaitDialog : UserControl, IDialog, IDisposable
 	{
 		await Dispatch.MainThread();
 
-		WaitDialog dlg = new();
-		dlg.Message = message;
+		var dlg = new WaitDialog
+		{
+			Message = message,
+		};
 
 		_ = Task.Run(async () =>
 		{
@@ -65,5 +67,6 @@ public partial class WaitDialog : UserControl, IDialog, IDisposable
 	public void Dispose()
 	{
 		this.Complete();
+		GC.SuppressFinalize(this);
 	}
 }

@@ -20,7 +20,7 @@ public abstract class WeatherSelectorDrawer : SelectorDrawer<Weather>
 /// </summary>
 public partial class WeatherSelector : WeatherSelectorDrawer
 {
-	private static bool natrualWeathers = true;
+	private static bool s_natrualWeathers = true;
 
 	public WeatherSelector()
 	{
@@ -30,10 +30,10 @@ public partial class WeatherSelector : WeatherSelectorDrawer
 
 	public bool NaturalWeathers
 	{
-		get => natrualWeathers;
+		get => s_natrualWeathers;
 		set
 		{
-			natrualWeathers = value;
+			s_natrualWeathers = value;
 			this.FilterItems();
 		}
 	}
@@ -57,7 +57,7 @@ public partial class WeatherSelector : WeatherSelectorDrawer
 		{
 			bool isNatural = TerritoryService.Instance.CurrentTerritory.Value.WeatherRate.Value.Weather.Any(w => w.RowId == weather.RowId);
 
-			if (natrualWeathers && !isNatural)
+			if (s_natrualWeathers && !isNatural)
 			{
 				return false;
 			}

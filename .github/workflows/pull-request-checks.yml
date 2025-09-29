@@ -1,0 +1,34 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    branches: [ "master", "testing" ]
+
+jobs:
+  merge-checks:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.2.2
+      with:
+        fetch-depth: 0
+        submodules: recursive
+        persist-credentials: true
+    
+    - name: Setup .NET 9.0
+      uses: actions/setup-dotnet@v3.4.2
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Verify .NET formatting
+      run: dotnet format --verify-no-changes --verbosity diagnostic
+
+    - name: Formatting instructions
+      if: failure()
+      run: echo "::error::Code formatting check failed. Please run 'dotnet format' locally, commit, and push your changes."

@@ -26,7 +26,7 @@ using System.Runtime.CompilerServices;
 public sealed unsafe class SignatureScanner
 {
 	/// <summary>The size of each chunk of memory to scan at a time.</summary>
-	private const int ScanChunkSize = 1024; // 1kB
+	private const int SCAN_CHUNK_SIZE = 1024; // 1kB
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SignatureScanner"/> class.
@@ -110,7 +110,7 @@ public sealed unsafe class SignatureScanner
 			for (long offset = 0; offset < size;)
 			{
 				// Calculate the number of bytes to read in the current chunk
-				int bytesToRead = Math.Min(ScanChunkSize, size - (int)offset);
+				int bytesToRead = Math.Min(SCAN_CHUNK_SIZE, size - (int)offset);
 				Span<byte> chunkBuffer = new byte[bytesToRead + overlap];
 
 				// Read memory into the chunk buffer, including the overlap
@@ -138,6 +138,20 @@ public sealed unsafe class SignatureScanner
 	}
 
 	/// <summary>
+	/// Resolve a RVA address.
+	/// </summary>
+	/// <param name="nextInstAddr">The address of the next instruction.</param>
+	/// <param name="relOffset">The relative offset.</param>
+	/// <returns>The calculated offset.</returns>
+	public static IntPtr ResolveRelativeAddress(IntPtr nextInstAddr, int relOffset)
+	{
+		if (!Environment.Is64BitProcess)
+			throw new NotSupportedException("32-bit processes are not supported.");
+
+		return nextInstAddr + relOffset;
+	}
+
+	/// <summary>
 	/// Scan for a byte signature in the .text section.
 	/// </summary>
 	/// <param name="signature">The signature.</param>
@@ -151,8 +165,7 @@ public sealed unsafe class SignatureScanner
 	/// </remarks>
 	public IntPtr ScanText(string signature)
 	{
-		if (signature == null)
-			throw new ArgumentNullException(nameof(signature));
+		ArgumentNullException.ThrowIfNull(signature);
 
 		IntPtr scanRet = Scan(this.TextSectionBase, this.TextSectionSize, signature);
 
@@ -234,20 +247,6 @@ public sealed unsafe class SignatureScanner
 	public IntPtr ScanModule(string signature) => Scan(this.SearchBase, this.Module.ModuleMemorySize, signature);
 
 	/// <summary>
-	/// Resolve a RVA address.
-	/// </summary>
-	/// <param name="nextInstAddr">The address of the next instruction.</param>
-	/// <param name="relOffset">The relative offset.</param>
-	/// <returns>The calculated offset.</returns>
-	public IntPtr ResolveRelativeAddress(IntPtr nextInstAddr, int relOffset)
-	{
-		if (!Environment.Is64BitProcess)
-			throw new NotSupportedException("32-bit processes are not supported.");
-
-		return nextInstAddr + relOffset;
-	}
-
-	/// <summary>
 	/// Build a bad character shift table for the Boyer-Moore algorithm, taking into account the bitmask.
 	/// </summary>
 	/// <param name="needle">The byte signature to search for.</param>
@@ -280,7 +279,7 @@ public sealed unsafe class SignatureScanner
 	/// <param name="signature">The byte signature to parse (IDA format).</param>
 	/// <returns>The parsed byte signature, mask, and bad character shift table.</returns>
 	/// <exception cref="ArgumentException">The signature is not even in length.</exception>
-	private static (byte[] needle, bool[] mask, int[] badCharShift) ParseSignature(string signature)
+	private static (byte[] Needle, bool[] Mask, int[] BadCharShift) ParseSignature(string signature)
 	{
 		// Strip all whitespaces
 		signature = signature.Replace(" ", string.Empty);
@@ -392,25 +391,18 @@ public sealed unsafe class SignatureScanner
 		Debug.Assert(this.DataSectionSize > 0, "Data section size must be greater than 0.");
 	}
 
-	private unsafe class UnsafeCodeReader : CodeReader
+	private unsafe class UnsafeCodeReader(byte* address, int length) : CodeReader
 	{
-		private readonly int length;
-		private readonly byte* address;
-		private int pos;
-		public UnsafeCodeReader(byte* address, int length)
-		{
-			this.length = length;
-			this.address = address;
-		}
+		private int pos = 0;
 
-		public bool CanReadByte => this.pos < this.length;
+		public bool CanReadByte => this.pos < length;
 
 		public override int ReadByte()
 		{
-			if (this.pos >= this.length)
+			if (this.pos >= length)
 				return -1;
 
-			return MemoryService.ReadByte((nint)(this.address + this.pos++));
+			return MemoryService.ReadByte((nint)(address + this.pos++));
 		}
 	}
 }

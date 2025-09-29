@@ -47,7 +47,7 @@ public class PoseFile : JsonFileBase
 
 	public Dictionary<string, Bone?>? Bones { get; set; }
 
-	public static BoneProcessingModes GetBoneMode(ActorMemory? actor, Skeleton? skeleton, string boneName)
+	public static BoneProcessingModes GetBoneMode(string boneName)
 	{
 		return boneName != "n_root" ? BoneProcessingModes.FullLoad : BoneProcessingModes.Ignore;
 	}
@@ -62,10 +62,10 @@ public class PoseFile : JsonFileBase
 		if (result.Path == null)
 			return null;
 
-		PoseFile file = new PoseFile();
+		var file = new PoseFile();
 		file.WriteToFile(actor, skeleton, bones);
 
-		using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
+		using var stream = new FileStream(result.Path.FullName, FileMode.Create);
 		file.Serialize(stream);
 
 		if (editMeta)
@@ -99,8 +99,7 @@ public class PoseFile : JsonFileBase
 
 	public void Apply(ActorMemory actor, Skeleton skeleton, HashSet<string>? bones, Mode mode, bool doFacialExpressionHack)
 	{
-		if (actor == null)
-			throw new ArgumentNullException(nameof(actor));
+		ArgumentNullException.ThrowIfNull(actor);
 
 		if (actor.ModelObject == null || actor.ModelObject.Transform == null)
 			throw new Exception("Actor has no model");
@@ -139,7 +138,7 @@ public class PoseFile : JsonFileBase
 		List<Core.Bone> bonePosRestore = new();
 		foreach (var bone in skeleton.Bones.Values)
 		{
-			if (GetBoneMode(actor, skeleton, bone.Name) == BoneProcessingModes.Ignore)
+			if (GetBoneMode(bone.Name) == BoneProcessingModes.Ignore)
 				continue;
 
 			unposedBoneTransforms[bone] = new Transform
@@ -175,7 +174,7 @@ public class PoseFile : JsonFileBase
 			string boneName = LegacyBoneNameConverter.GetModernName(name) ?? name;
 
 			// Don't apply bones that cant be serialized.
-			if (GetBoneMode(actor, skeleton, boneName) != BoneProcessingModes.FullLoad)
+			if (GetBoneMode(boneName) != BoneProcessingModes.FullLoad)
 				continue;
 
 			Core.Bone? bone = skeleton.GetBone(boneName);
@@ -234,7 +233,7 @@ public class PoseFile : JsonFileBase
 				string boneName = LegacyBoneNameConverter.GetModernName(name) ?? name;
 
 				// Don't apply bones that cant be serialized.
-				if (GetBoneMode(actor, skeleton, boneName) != BoneProcessingModes.FullLoad)
+				if (GetBoneMode(boneName) != BoneProcessingModes.FullLoad)
 					continue;
 
 				Core.Bone? bone = skeleton.GetBone(boneName);

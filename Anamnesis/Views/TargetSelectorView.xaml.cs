@@ -27,13 +27,13 @@ public abstract class TargetSelectorDrawer : SelectorDrawer<ActorBasicMemory>
 /// </summary>
 public partial class TargetSelectorView : TargetSelectorDrawer
 {
-	private static bool includePlayers = true;
-	private static bool includeCompanions = true;
-	private static bool includeNPCs = true;
-	private static bool includeMounts = true;
-	private static bool includeOrnaments = true;
-	private static bool includeOther = false;
-	private static bool includeHidden = false;
+	private static bool s_includePlayers = true;
+	private static bool s_includeCompanions = true;
+	private static bool s_includeNPCs = true;
+	private static bool s_includeMounts = true;
+	private static bool s_includeOrnaments = true;
+	private static bool s_includeOther = false;
+	private static bool s_includeHidden = false;
 
 	public TargetSelectorView()
 	{
@@ -44,55 +44,55 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 		this.PropertyChanged += this.OnSelfPropertyChanged;
 	}
 
-	public TargetService TargetService => TargetService.Instance;
-	public GposeService GPoseService => GposeService.Instance;
-	public SettingsService SettingsService => SettingsService.Instance;
+	public static TargetService TargetService => TargetService.Instance;
+	public static GposeService GPoseService => GposeService.Instance;
+	public static SettingsService SettingsService => SettingsService.Instance;
 
-	public bool IncludePlayers
+	public static bool IncludePlayers
 	{
-		get => includePlayers;
-		set => includePlayers = value;
+		get => s_includePlayers;
+		set => s_includePlayers = value;
 	}
 
-	public bool IncludeCompanions
+	public static bool IncludeCompanions
 	{
-		get => includeCompanions;
-		set => includeCompanions = value;
+		get => s_includeCompanions;
+		set => s_includeCompanions = value;
 	}
 
-	public bool IncludeNPCs
+	public static bool IncludeNPCs
 	{
-		get => includeNPCs;
-		set => includeNPCs = value;
+		get => s_includeNPCs;
+		set => s_includeNPCs = value;
 	}
 
-	public bool IncludeMounts
+	public static bool IncludeMounts
 	{
-		get => includeMounts;
-		set => includeMounts = value;
+		get => s_includeMounts;
+		set => s_includeMounts = value;
 	}
 
-	public bool IncludeOrnaments
+	public static bool IncludeOrnaments
 	{
-		get => includeOrnaments;
-		set => includeOrnaments = value;
+		get => s_includeOrnaments;
+		set => s_includeOrnaments = value;
 	}
 
-	public bool IncludeOther
+	public static bool IncludeOther
 	{
-		get => includeOther;
-		set => includeOther = value;
+		get => s_includeOther;
+		set => s_includeOther = value;
 	}
 
-	public bool IncludeHidden
+	public static bool IncludeHidden
 	{
-		get => includeHidden;
-		set => includeHidden = value;
+		get => s_includeHidden;
+		set => s_includeHidden = value;
 	}
 
 	public static void Show(Action<ActorBasicMemory> sectionChanged)
 	{
-		TargetSelectorView view = new TargetSelectorView();
+		var view = new TargetSelectorView();
 		view.SelectionChanged += (b) =>
 		{
 			if (view.Value == null)
@@ -132,25 +132,25 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 		if (TargetService.IsPinned(actor))
 			return false;
 
-		if (!includeHidden && actor.IsHidden)
+		if (!s_includeHidden && actor.IsHidden)
 			return false;
 
-		if (!includePlayers && actor.ObjectKind == Memory.ActorTypes.Player)
+		if (!s_includePlayers && actor.ObjectKind == Memory.ActorTypes.Player)
 			return false;
 
-		if (!includeCompanions && actor.ObjectKind == Memory.ActorTypes.Companion)
+		if (!s_includeCompanions && actor.ObjectKind == Memory.ActorTypes.Companion)
 			return false;
 
-		if (!includeMounts && actor.ObjectKind == Memory.ActorTypes.Mount)
+		if (!s_includeMounts && actor.ObjectKind == Memory.ActorTypes.Mount)
 			return false;
 
-		if (!includeOrnaments && actor.ObjectKind == Memory.ActorTypes.Ornament)
+		if (!s_includeOrnaments && actor.ObjectKind == Memory.ActorTypes.Ornament)
 			return false;
 
-		if (!includeNPCs && (actor.ObjectKind == Memory.ActorTypes.BattleNpc || actor.ObjectKind == Memory.ActorTypes.EventNpc))
+		if (!s_includeNPCs && (actor.ObjectKind == Memory.ActorTypes.BattleNpc || actor.ObjectKind == Memory.ActorTypes.EventNpc))
 			return false;
 
-		if (!includeOther
+		if (!s_includeOther
 			&& actor.ObjectKind != Memory.ActorTypes.Player
 			&& actor.ObjectKind != Memory.ActorTypes.Companion
 			&& actor.ObjectKind != Memory.ActorTypes.BattleNpc

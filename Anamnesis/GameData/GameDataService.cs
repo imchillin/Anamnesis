@@ -20,10 +20,10 @@ using LuminaData = global::Lumina.GameData;
 
 public class GameDataService : ServiceBase<GameDataService>
 {
-	internal static LuminaData? LuminaData;
+	internal static LuminaData? s_luminaData;
 
-	private static Dictionary<string, string>? npcNames;
-	private static Dictionary<uint, ItemCategories>? itemCategories;
+	private static Dictionary<string, string>? s_npcNames;
+	private static Dictionary<uint, ItemCategories>? s_itemCategories;
 
 	public enum ClientRegion
 	{
@@ -64,19 +64,19 @@ public class GameDataService : ServiceBase<GameDataService>
 	public static ExcelSheet<T> GetExcelSheet<T>(Language? language = null, string? name = null)
 					where T : struct, IExcelRow<T>
 	{
-		if (LuminaData == null)
+		if (s_luminaData == null)
 			throw new InvalidOperationException("LuminaData is not initialized.");
 
-		return LuminaData.Excel.GetSheet<T>(language, name);
+		return s_luminaData.Excel.GetSheet<T>(language, name);
 	}
 
 	public static RowRef<T> CreateRef<T>(uint rowId)
 		where T : struct, IExcelRow<T>
 	{
-		if (LuminaData == null)
+		if (s_luminaData == null)
 			throw new InvalidOperationException("LuminaData is not initialized.");
 
-		return new(LuminaData.Excel, rowId);
+		return new(s_luminaData.Excel, rowId);
 	}
 
 	public static bool TryGetRow<T>(string sheetName, uint rowId, out T row)
@@ -86,10 +86,10 @@ public class GameDataService : ServiceBase<GameDataService>
 	public static bool TryGetRow<T>(string sheetName, uint rowId, Language? language, out T row)
 		where T : struct, IExcelRow<T>
 	{
-		if (LuminaData == null)
+		if (s_luminaData == null)
 			throw new InvalidOperationException("LuminaData is not initialized.");
 
-		return LuminaData.Excel.GetSheet<T>(language, sheetName).TryGetRow(rowId, out row);
+		return s_luminaData.Excel.GetSheet<T>(language, sheetName).TryGetRow(rowId, out row);
 	}
 
 	public static bool TryGetRawRow(string sheetName, uint rowId, out RawRow rawRow)
@@ -97,21 +97,21 @@ public class GameDataService : ServiceBase<GameDataService>
 
 	public static byte[] GetFileData(string path)
 	{
-		if (LuminaData == null)
+		if (s_luminaData == null)
 			throw new Exception("Game Data Service has not been initialized");
 
-		FileResource? file = LuminaData.GetFile(path) ?? throw new Exception($"Failed to read file from game data: \"{path}\"");
+		FileResource? file = s_luminaData.GetFile(path) ?? throw new Exception($"Failed to read file from game data: \"{path}\"");
 		return file.Data;
 	}
 
 	public static string? GetNpcName(INpcBase npc)
 	{
-		if (npcNames == null)
+		if (s_npcNames == null)
 			return null;
 
 		string stringKey = npc.ToStringKey();
 
-		if (!npcNames.TryGetValue(stringKey, out string? name))
+		if (!s_npcNames.TryGetValue(stringKey, out string? name))
 			return null;
 
 		// Is this a BattleNpcName entry?
@@ -120,7 +120,7 @@ public class GameDataService : ServiceBase<GameDataService>
 			if (BattleNpcNames == null)
 				return name;
 
-			uint bNpcNameKey = uint.Parse(name.Remove(0, 2));
+			uint bNpcNameKey = uint.Parse(name[2..]);
 
 			BattleNpcName? row = BattleNpcNames.GetRow(bNpcNameKey);
 			if (row == null || string.IsNullOrEmpty(row.Value.Name))
@@ -135,7 +135,7 @@ public class GameDataService : ServiceBase<GameDataService>
 	public static ItemCategories GetCategory(Item item)
 	{
 		ItemCategories category = ItemCategories.None;
-		if (itemCategories != null && !itemCategories.TryGetValue(item.RowId, out category))
+		if (s_itemCategories != null && !s_itemCategories.TryGetValue(item.RowId, out category))
 			category = ItemCategories.None;
 
 		if (FavoritesService.IsFavorite(item))
@@ -152,7 +152,7 @@ public class GameDataService : ServiceBase<GameDataService>
 		Language defaultLuminaLaunguage = Language.English;
 		Region = ClientRegion.Global;
 
-		if (File.Exists(Path.Combine(MemoryService.GamePath, "FFXIVBoot.exe")) || File.Exists(Path.Combine(MemoryService.GamePath, "rail_files", "rail_game_identify.json")))
+		if (File.Exists(Path.Combine(MemoryService.GamePath, "FFXIVBoot.exe")) || File.Exists(Path.Combine(MemoryService.GamePath, "FFXIVBootV3.exe")) || File.Exists(Path.Combine(MemoryService.GamePath, "rail_files", "rail_game_identify.json")))
 		{
 			Region = ClientRegion.Chinese;
 			defaultLuminaLaunguage = Language.ChineseSimplified;
@@ -169,8 +169,8 @@ public class GameDataService : ServiceBase<GameDataService>
 		try
 		{
 			Equipment = new EquipmentSheet("Data/Equipment.json");
-			itemCategories = EmbeddedFileUtility.Load<Dictionary<uint, ItemCategories>>("Data/ItemCategories.json");
-			npcNames = EmbeddedFileUtility.Load<Dictionary<string, string>>("Data/NpcNames.json");
+			s_itemCategories = EmbeddedFileUtility.Load<Dictionary<uint, ItemCategories>>("Data/ItemCategories.json");
+			s_npcNames = EmbeddedFileUtility.Load<Dictionary<string, string>>("Data/NpcNames.json");
 		}
 		catch (Exception ex)
 		{
@@ -187,7 +187,7 @@ public class GameDataService : ServiceBase<GameDataService>
 				PanicOnSheetChecksumMismatch = true,
 			};
 
-			LuminaData = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\", options);
+			s_luminaData = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\", options);
 
 			Races = GetExcelSheet<Race>();
 			Tribes = GetExcelSheet<Tribe>();

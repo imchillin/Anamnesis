@@ -44,13 +44,13 @@ public class Equipment : IItem, IRow
 	[JsonIgnore] public ulong Model => ExcelPageExtensions.ConvertToModel(this.ModelSet, this.ModelBase, this.ModelVariant);
 
 	/// <inheritdoc/>
-	[JsonIgnore] public ushort ModelSet => IItemConverter.SplitString(this.Id).modelSet;
+	[JsonIgnore] public ushort ModelSet => IItemConverter.SplitString(this.Id).ModelSet;
 
 	/// <inheritdoc/>
-	[JsonIgnore] public ushort ModelBase => IItemConverter.SplitString(this.Id).modelBase;
+	[JsonIgnore] public ushort ModelBase => IItemConverter.SplitString(this.Id).ModelBase;
 
 	/// <inheritdoc/>
-	[JsonIgnore] public ushort ModelVariant => IItemConverter.SplitString(this.Id).modelVariant;
+	[JsonIgnore] public ushort ModelVariant => IItemConverter.SplitString(this.Id).ModelVariant;
 
 	/// <inheritdoc/>
 	[JsonIgnore] public bool IsWeapon => this.ModelSet != 0;

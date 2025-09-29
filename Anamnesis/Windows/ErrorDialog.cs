@@ -31,10 +31,12 @@ public static class ErrorDialog
 		{
 			SplashWindow.HideWindow();
 
-			Dialog dlg = new Dialog();
+			var dlg = new Dialog();
 			dlg.TitleText.Text = $"Anamnesis v{VersionInfo.ApplicationVersion}";
-			XivToolsErrorDialog errorDialog = new XivToolsErrorDialog(dlg, ex, isCriticial);
-			errorDialog.OnQuitRequested = HandleFatalErrorShutdown;
+			var errorDialog = new XivToolsErrorDialog(dlg, ex, isCriticial)
+			{
+				OnQuitRequested = HandleFatalErrorShutdown,
+			};
 
 			try
 			{
@@ -77,7 +79,7 @@ public static class ErrorDialog
 			// Ignore if service is not instantiated yet
 		}
 
-		await App.Services.ShutdownServices();
+		await ServiceManager.ShutdownServices();
 		Application.Current?.Shutdown(2);
 		return true; // Indicate that quit was handled to prevent forced shutdown
 	}

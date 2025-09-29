@@ -48,7 +48,7 @@ public partial class HotkeyPrompt : System.Windows.Controls.TextBlock
 			if (keys == null)
 				return;
 
-			StringBuilder str = new StringBuilder();
+			var str = new StringBuilder();
 
 			if (keys.Modifiers.HasFlagUnsafe(ModifierKeys.Control))
 			{

@@ -1,30 +1,31 @@
-// © Anamnesis.
+// Â© Anamnesis.
 // Licensed under the MIT license.
 
-using System.Net;
 using System.Drawing;
+using System.Net;
 using System.Text.Json;
 
 namespace Scripts;
 
 public class UpdateGallery : ScriptBase
 {
-	const int MaxThumnailSize = 720;
-	const string filePath = "../../../../Anamnesis/Data/Images.json";
+	private const int MAX_THUMBNAIL_SIZE = 720;
+	private const string FILE_PATH = "../../../../Anamnesis/Data/Images.json";
+	private static readonly HttpClient s_httpClient = new();
 
 	public override string Name => "Update Gallery";
 
 	public override void Run()
 	{
-		JsonSerializerOptions op = new();
-		op.AllowTrailingCommas = true;
-		op.WriteIndented = true;
+		var op = new JsonSerializerOptions
+		{
+			AllowTrailingCommas = true,
+			WriteIndented = true,
+		};
 
-		string json = File.ReadAllText(filePath);
-		List<Entry>? entries = JsonSerializer.Deserialize<List<Entry>>(json, op);
-
-		if (entries == null)
-			throw new Exception("Failed to deserialize npc names");
+		string json = File.ReadAllText(FILE_PATH);
+		List<Entry>? entries = JsonSerializer.Deserialize<List<Entry>>(json, op)
+			?? throw new Exception("Failed to deserialize npc names");
 
 		HashSet<string> toRemove = new();
 
@@ -35,15 +36,13 @@ public class UpdateGallery : ScriptBase
 			if (entry.Url == null)
 				return;
 
-			HttpWebResponse? response = null;
-			HttpWebRequest? request = null;
+			HttpResponseMessage? response = null;
 
 			// Check that Url is valid
 			try
 			{
-				request = (HttpWebRequest)WebRequest.Create(entry.Url);
-				request.Method = "HEAD";
-				response = (HttpWebResponse)request.GetResponse();
+				var request = new HttpRequestMessage(HttpMethod.Head, entry.Url);
+				response = s_httpClient.Send(request);
 			}
 			catch (WebException)
 			{
@@ -51,30 +50,26 @@ public class UpdateGallery : ScriptBase
 
 			if (response == null || response.StatusCode != HttpStatusCode.OK)
 			{
-				Log($"{i.ToString("d3")} [ X ]");
+				Log($"{i:d3} [ X ]");
 				toRemove.Add(entry.Url);
 				return;
 			}
 
-			if (response != null)
-			{
-				response.Close();
-			}
+			response?.Dispose();
 
 			// Generte thumbnail url
 			if (entry.Thumbnail == null)
 			{
-				Uri uri = new Uri(entry.Url);
-				string imagePath = HashUtility.GetHashString(entry.Url) + "--" + uri.Segments[uri.Segments.Length - 1];
+				var uri = new Uri(entry.Url);
+				string imagePath = HashUtility.GetHashString(entry.Url) + "--" + uri.Segments[^1];
 
 				try
 				{
-					request = (HttpWebRequest)WebRequest.Create(entry.Url);
-					response = (HttpWebResponse)request.GetResponse();
+					var imageResponse = s_httpClient.GetAsync(entry.Url).Result;
+					imageResponse.EnsureSuccessStatusCode();
 
-					Stream responseStream = response.GetResponseStream();
-
-					using FileStream fileStream = new FileStream(imagePath, FileMode.Create, FileAccess.Write);
+					using var responseStream = imageResponse.Content.ReadAsStream();
+					using var fileStream = new FileStream(imagePath, FileMode.Create, FileAccess.Write);
 					responseStream.CopyTo(fileStream);
 					fileStream.Close();
 
@@ -85,7 +80,7 @@ public class UpdateGallery : ScriptBase
 
 					File.Delete(imagePath);
 
-					Log($"{i.ToString("d3")} [ T ]");
+					Log($"{i:d3} [ T ]");
 					return;
 				}
 				catch (WebException)
@@ -93,7 +88,7 @@ public class UpdateGallery : ScriptBase
 				}
 			}
 
-			Log($"{i.ToString("d3")} [ O ]");
+			Log($"{i:d3} [ O ]");
 		});
 
 		foreach (string url in toRemove)
@@ -108,49 +103,49 @@ public class UpdateGallery : ScriptBase
 		}
 
 		json = JsonSerializer.Serialize(entries, op);
-		File.WriteAllText(filePath, json);
+		File.WriteAllText(FILE_PATH, json);
 	}
 
-	private string GetOptimizedDiscordLink(string url, int width, int height)
+	private static string GetOptimizedDiscordLink(string url, int width, int height)
 	{
 		if (width == 0 || height == 0)
 			return url;
 
-		UriBuilder uriBuilder = new UriBuilder(url);
-
-		uriBuilder.Host = "media.discordapp.net";
+		var uriBuilder = new UriBuilder(url)
+		{
+			Host = "media.discordapp.net",
+		};
 
 		var query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
 
 		if (width > height)
 		{
 			double ratio = (double)height / (double)width;
-			query["width"] = Convert.ToString(MaxThumnailSize);
-			query["height"] = Convert.ToString((int)(ratio * MaxThumnailSize));
+			query["width"] = Convert.ToString(MAX_THUMBNAIL_SIZE);
+			query["height"] = Convert.ToString((int)(ratio * MAX_THUMBNAIL_SIZE));
 		}
 		else
 		{
 			double ratio = (double)width / (double)height;
-			query["width"] = Convert.ToString((int)(ratio * MaxThumnailSize));
-			query["height"] = Convert.ToString(MaxThumnailSize);
+			query["width"] = Convert.ToString((int)(ratio * MAX_THUMBNAIL_SIZE));
+			query["height"] = Convert.ToString(MAX_THUMBNAIL_SIZE);
 		}
 
 		uriBuilder.Query = query.ToString();
 
 		try
 		{
-			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uriBuilder.ToString());
-			request.Method = "HEAD";
-			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+			var request = new HttpRequestMessage(HttpMethod.Head, uriBuilder.ToString());
+			var response = s_httpClient.Send(request);
 
 			if (response.StatusCode != HttpStatusCode.OK)
 			{
 				Log($"Failed to get samaller thumbnail from url: {uriBuilder}: {response.StatusCode}");
-				response.Close();
+				response.Dispose();
 				return url;
 			}
 
-			response.Close();
+			response.Dispose();
 		}
 		catch (Exception ex)
 		{

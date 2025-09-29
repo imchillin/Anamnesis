@@ -20,21 +20,15 @@ using System.Threading;
 /// Provides data for the PropertyChanged event, including additional change context information
 /// of type <see cref="PropertyChange"/>.
 /// </summary>
-public class MemObjPropertyChangedEventArgs : PropertyChangedEventArgs
+/// <remarks>
+/// Initializes a new instance of the <see cref="MemObjPropertyChangedEventArgs"/> class.
+/// </remarks>
+/// <param name="propertyName">The name of the property that changed.</param>
+/// <param name="context">The context of the property change.</param>
+public class MemObjPropertyChangedEventArgs(string propertyName, PropertyChange context) : PropertyChangedEventArgs(propertyName)
 {
-	/// <summary>
-	/// Initializes a new instance of the <see cref="MemObjPropertyChangedEventArgs"/> class.
-	/// </summary>
-	/// <param name="propertyName">The name of the property that changed.</param>
-	/// <param name="context">The context of the property change.</param>
-	public MemObjPropertyChangedEventArgs(string propertyName, PropertyChange context)
-		: base(propertyName)
-	{
-		this.Context = context;
-	}
-
 	/// <summary>Gets the context of the property change.</summary>
-	public PropertyChange Context { get; }
+	public PropertyChange Context { get; } = context;
 }
 
 /// <summary>
@@ -55,23 +49,13 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// This is intended to be used to update properties while synchronization is taking place on
 	/// a thread, without supressing property notifications for the rest of the application.
 	/// </remarks>
-	protected readonly ThreadLocal<bool> suppressPropNotifications = new(() => false);
+	protected readonly ThreadLocal<bool> SuppressPropNotifications = new(() => false);
 
 	/// <summary>List of child memory objects.</summary>
 	protected readonly List<MemoryBase> Children = new();
 
-	protected MemoryBase? parent;
-	protected BindInfo? parentBind;
-
 	/// <summary>Lock object for thread synchronization.</summary>
 	private readonly Lock lockObject = new();
-
-	/// <summary>A collection of delayed binds to be written later.</summary>
-	/// <remarks>
-	/// Stores binds that could not be written to memory immediately
-	/// due to ongoing memory reads.
-	/// </remarks>
-	private ConcurrentQueue<BindInfo> delayedBinds = new();
 
 	/// <summary>
 	/// A temporary queue that's used to filter out invalidated delayed binds.
@@ -80,6 +64,29 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// This is a member variable to avoid creating a new queue on every synchronization.
 	/// </remarks>
 	private readonly ConcurrentQueue<BindInfo> transientQueue = new();
+
+	/// <summary>
+	/// Represents the parent memory object, if any.
+	/// </summary>
+	/// <note>
+	/// The private field is used to avoid property access overhead in performance-critical paths.
+	/// </note>
+	private MemoryBase? parent;
+
+	/// <summary>
+	/// Provides bind information for the parent memory object, if any.
+	/// </summary>
+	/// /// <note>
+	/// The private field is used to avoid property access overhead in performance-critical paths.
+	/// </note>
+	private BindInfo? parentBind;
+
+	/// <summary>A collection of delayed binds to be written later.</summary>
+	/// <remarks>
+	/// Stores binds that could not be written to memory immediately
+	/// due to ongoing memory reads.
+	/// </remarks>
+	private ConcurrentQueue<BindInfo> delayedBinds = new();
 
 	private int enableReading = 1;
 	private int enableWriting = 1;
@@ -202,7 +209,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 		// Suppress property notifications
 		// Ignore property changes which arise from sync with game memory and not from Anamnesis
-		if (this.suppressPropNotifications.Value)
+		if (this.SuppressPropNotifications.Value)
 			return;
 
 		this.OnSelfPropertyChanged(this, new PropertyChangedEventArgs(propertyName));
@@ -709,7 +716,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 			IntPtr bindAddress = bind.GetAddress();
 			object? val = bind.Property.GetValue(this) ?? throw new Exception("Attempt to write null value to memory");
-			MemoryService.Write(bindAddress, val, $"memory: {this} bind: {bind} changed");
+			MemoryService.Write(bindAddress, val);
 			bind.LastValue = val;
 		}
 		finally
@@ -870,9 +877,9 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void SetValueWithoutNotification(PropertyBindInfo bind, object? value)
 	{
-		this.suppressPropNotifications.Value = true;
+		this.SuppressPropNotifications.Value = true;
 		bind.Property.SetValue(this, value);
-		this.suppressPropNotifications.Value = false;
+		this.SuppressPropNotifications.Value = false;
 	}
 
 	/// <summary>

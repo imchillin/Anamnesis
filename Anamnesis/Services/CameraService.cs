@@ -17,13 +17,10 @@ using System.Threading.Tasks;
 /// </summary>
 public class CameraService : ServiceBase<CameraService>
 {
-	private const int TaskSuccessDelay = 32; // ms
-	private const int TaskFailureDelay = 1000; // ms
+	private const int TASK_SUCCESS_DELAY = 32; // ms
+	private const int TASK_FAILURE_DELAY = 1000; // ms
 
 	private bool delimitCamera;
-
-	/// <inheritdoc/>
-	protected override IEnumerable<IService> Dependencies => [GameService.Instance, GposeService.Instance];
 
 	/// <summary>Gets the overworld camera's memory.</summary>
 	public CameraMemory Camera { get; private set; } = new CameraMemory();
@@ -56,6 +53,9 @@ public class CameraService : ServiceBase<CameraService>
 	}
 
 	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [GameService.Instance, GposeService.Instance];
+
+	/// <inheritdoc/>
 	public override async Task Shutdown()
 	{
 		this.DelimitCamera = false;
@@ -76,7 +76,7 @@ public class CameraService : ServiceBase<CameraService>
 		{
 			try
 			{
-				await Task.Delay(TaskSuccessDelay, cancellationToken);
+				await Task.Delay(TASK_SUCCESS_DELAY, cancellationToken);
 
 				if (!GameService.Ready)
 					continue;
@@ -88,7 +88,7 @@ public class CameraService : ServiceBase<CameraService>
 				{
 					if (!MemoryService.IsProcessAlive)
 					{
-						await Task.Delay(TaskFailureDelay, cancellationToken);
+						await Task.Delay(TASK_FAILURE_DELAY, cancellationToken);
 						continue;
 					}
 
@@ -121,7 +121,7 @@ public class CameraService : ServiceBase<CameraService>
 				catch (Exception ex)
 				{
 					Log.Warning(ex, "Failed to update camera");
-					await Task.Delay(TaskFailureDelay, cancellationToken);
+					await Task.Delay(TASK_FAILURE_DELAY, cancellationToken);
 				}
 			}
 			catch (TaskCanceledException)

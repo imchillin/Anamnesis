@@ -10,24 +10,25 @@
 // https://blogs.msdn.microsoft.com/toub/2006/05/03/low-level-keyboard-hook-in-c/
 namespace Anamnesis.Keyboard;
 
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Input;
-using Serilog;
 
-public class Hook
+public partial class Hook
 {
-	private const int WhKeyboardLl = 13;
-	private const int WmKeyDown = 0x0100;
-	private const int WmKeyUp = 0x0101;
-	private const int WmSysKeyDown = 0x0104;
-	private const int WmSysKeyUp = 0x0105;
+	private const int WH_KEYBOARD_LL = 13;
+	private const int WM_KEY_DOWN = 0x0100;
+	private const int WM_KEY_UP = 0x0101;
+	private const int WM_SYS_KEY_DOWN = 0x0104;
+	private const int WM_SYS_KEY_UP = 0x0105;
 
-	private static IntPtr hookId = IntPtr.Zero;
+	private static IntPtr s_hookId = IntPtr.Zero;
 
-	private readonly HashSet<int> downKeys = new HashSet<int>();
-	private readonly object modifiersLock = new object();
+	private readonly HashSet<int> downKeys = new();
+	private readonly Lock modifiersLock = new();
 	private ModifierKeys modifiers = ModifierKeys.None;
 	private LowLevelKeyboardProc? hook;
 	private bool isStarted;
@@ -43,7 +44,7 @@ public class Hook
 			return;
 
 		this.hook = this.HookCallback;
-		hookId = SetHook(this.hook);
+		s_hookId = SetHook(this.hook);
 		this.isStarted = true;
 	}
 
@@ -51,7 +52,7 @@ public class Hook
 	{
 		if (this.isStarted)
 		{
-			UnhookWindowsHookEx(hookId);
+			UnhookWindowsHookEx(s_hookId);
 			this.isStarted = false;
 		}
 	}
@@ -59,26 +60,26 @@ public class Hook
 	private static IntPtr SetHook(LowLevelKeyboardProc proc)
 	{
 		var userLibrary = LoadLibrary("User32");
-		return SetWindowsHookEx(WhKeyboardLl, proc, userLibrary, 0);
+		return SetWindowsHookEx(WH_KEYBOARD_LL, proc, userLibrary, 0);
 	}
 
-	[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-	private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+	[LibraryImport("user32.dll", SetLastError = true, EntryPoint = "SetWindowsHookExW")]
+	private static partial IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
 
-	[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+	[LibraryImport("user32.dll", SetLastError = true)]
 	[return: MarshalAs(UnmanagedType.Bool)]
-	private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+	private static partial bool UnhookWindowsHookEx(IntPtr hhk);
 
-	[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-	private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+	[LibraryImport("user32.dll", SetLastError = true)]
+	private static partial IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
 
 	/// <summary>
 	/// Loads the library.
 	/// </summary>
 	/// <param name="lpFileName">Name of the library.</param>
 	/// <returns>A handle to the library.</returns>
-	[DllImport("kernel32.dll")]
-	private static extern IntPtr LoadLibrary(string lpFileName);
+	[LibraryImport("kernel32.dll", EntryPoint = "LoadLibraryW", StringMarshalling = StringMarshalling.Utf16)]
+	private static partial IntPtr LoadLibrary(string lpFileName);
 
 	private bool HandleKeyPress(Key key, KeyboardKeyStates state)
 	{
@@ -109,7 +110,7 @@ public class Hook
 			}
 		}
 
-		return CallNextHookEx(hookId, nCode, wParam, lParam);
+		return CallNextHookEx(s_hookId, nCode, wParam, lParam);
 	}
 
 	private bool HandleSingleKeyboardInput(KeyboardParams keyboardParams)
@@ -122,7 +123,7 @@ public class Hook
 		Key key = KeyInterop.KeyFromVirtualKey(vkCode);
 
 		// If the keyboard event is a KeyDown event (i.e. key pressed)
-		if (wParam == (IntPtr)WmKeyDown || wParam == (IntPtr)WmSysKeyDown)
+		if (wParam == (IntPtr)WM_KEY_DOWN || wParam == (IntPtr)WM_SYS_KEY_DOWN)
 		{
 			// In this case, we only care about modifier keys
 			if (modifierKey != ModifierKeys.None)
@@ -146,7 +147,7 @@ public class Hook
 		}
 
 		// If the keyboard event is a KeyUp event (i.e. key released)
-		if (wParam == (IntPtr)WmKeyUp || wParam == (IntPtr)WmSysKeyUp)
+		if (wParam == (IntPtr)WM_KEY_UP || wParam == (IntPtr)WM_SYS_KEY_UP)
 		{
 			used = this.HandleKeyPress(key, KeyboardKeyStates.Released);
 
@@ -165,15 +166,9 @@ public class Hook
 		return used;
 	}
 
-	internal struct KeyboardParams
+	internal struct KeyboardParams(IntPtr wParam, int vkCode)
 	{
-		public IntPtr Param;
-		public int VKeyCode;
-
-		public KeyboardParams(IntPtr wParam, int vkCode)
-		{
-			this.Param = wParam;
-			this.VKeyCode = vkCode;
-		}
+		public IntPtr Param = wParam;
+		public int VKeyCode = vkCode;
 	}
 }

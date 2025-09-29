@@ -13,7 +13,7 @@ public static class Penumbra
 		{
 			Name = name,
 			ObjectTableIndex = targetIndex,
-			Type = RedrawData.RedrawType.Redraw
+			Type = RedrawData.RedrawType.Redraw,
 		};
 
 		await PenumbraApi.Post("/redraw", data);

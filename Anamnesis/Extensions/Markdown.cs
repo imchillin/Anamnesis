@@ -3,15 +3,14 @@
 
 namespace Anamnesis.Extensions;
 
+using Markdig;
+using Markdig.Wpf;
 using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Documents;
 using System.Xaml;
-using Markdig;
-using Markdig.Wpf;
-
 using XamlReader = System.Windows.Markup.XamlReader;
 
 public static class Markdown
@@ -20,8 +19,8 @@ public static class Markdown
 	{
 		string? xaml = Markdig.Wpf.Markdown.ToXaml(markdown, new MarkdownPipelineBuilder().UseSupportedExtensions().Build());
 
-		using MemoryStream? stream = new MemoryStream(Encoding.UTF8.GetBytes(xaml));
-		using XamlXmlReader? reader = new XamlXmlReader(stream, new MyXamlSchemaContext());
+		using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xaml));
+		using var reader = new XamlXmlReader(stream, new MyXamlSchemaContext());
 
 		object? document = XamlReader.Load(reader);
 

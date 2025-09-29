@@ -30,9 +30,9 @@ public enum HistoryContext
 [AddINotifyPropertyChangedInterface]
 public class History : INotifyPropertyChanged
 {
-	private const int MaxHistory = 1024 * 1024; // a lot.
+	private const int MAX_HISTORY = 1024 * 1024; // a lot.
 
-	private static readonly TimeSpan TimeTillCommit = TimeSpan.FromMilliseconds(200);
+	private static readonly TimeSpan s_timeTillCommit = TimeSpan.FromMilliseconds(200);
 
 	private readonly ObservableCollection<HistoryEntry> history = new();
 	private readonly ReadOnlyObservableCollection<HistoryEntry> readOnlyHistory;
@@ -100,7 +100,7 @@ public class History : INotifyPropertyChanged
 
 		// Commit as soon as the timer is up and the mouse is not being held down
 		// The mouse button state check is necessary in case the user is still interacting with the UI
-		if (DateTime.Now - this.lastChangeTime > TimeTillCommit && Mouse.LeftButton != MouseButtonState.Pressed)
+		if (DateTime.Now - this.lastChangeTime > s_timeTillCommit && Mouse.LeftButton != MouseButtonState.Pressed)
 		{
 			this.Commit();
 		}
@@ -174,9 +174,9 @@ public class History : INotifyPropertyChanged
 		this.history.Add(oldEntry);
 		this.CurrentIndex = this.history.Count - 1;
 
-		if (this.history.Count > MaxHistory)
+		if (this.history.Count > MAX_HISTORY)
 		{
-			Log.Warning($"History depth exceded max: {MaxHistory}. Flushing");
+			Log.Warning($"History depth exceded max: {MAX_HISTORY}. Flushing");
 			this.history.Clear();
 			this.CurrentIndex = -1;
 		}
@@ -218,7 +218,7 @@ public class History : INotifyPropertyChanged
 	/// <summary>Represents a history entry.</summary>
 	public class HistoryEntry
 	{
-		private const int MaxChanges = 1024;
+		private const int MAX_CHANGES = 1024;
 
 		private readonly List<PropertyChange> changes = new();
 
@@ -324,9 +324,9 @@ public class History : INotifyPropertyChanged
 				this.changes.Add(change);
 
 				// Sanity check history depth
-				if (this.changes.Count > MaxChanges)
+				if (this.changes.Count > MAX_CHANGES)
 				{
-					Log.Warning($"Change depth exceded max: {MaxChanges}. Flushing");
+					Log.Warning($"Change depth exceded max: {MAX_CHANGES}. Flushing");
 					this.changes.Clear();
 				}
 			}
@@ -406,7 +406,7 @@ public class History : INotifyPropertyChanged
 				Vector3 vector => !float.IsNaN(vector.X) && !float.IsNaN(vector.Y) && !float.IsNaN(vector.Z),
 				Quaternion quaternion => !float.IsNaN(quaternion.X) && !float.IsNaN(quaternion.Y) && !float.IsNaN(quaternion.Z) && !float.IsNaN(quaternion.W),
 				null => false,
-				_ => true
+				_ => true,
 			};
 		}
 	}

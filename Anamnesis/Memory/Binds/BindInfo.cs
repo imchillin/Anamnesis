@@ -9,7 +9,12 @@ using System.Threading;
 /// <summary>
 /// Represents the base class for binding information.
 /// </summary>
-public abstract class BindInfo
+/// <remarks>
+/// Initializes a new instance of the <see cref="BindInfo"/> class.
+/// </remarks>
+/// <param name="memory">The memory base instance.</param>
+/// <exception cref="ArgumentNullException">Thrown when memory is null.</exception>
+public abstract class BindInfo(MemoryBase memory)
 {
 	/// <summary>Internal read state.</summary>
 	private int isReading = 0;
@@ -17,18 +22,8 @@ public abstract class BindInfo
 	/// <summary>Internal read state.</summary>
 	private int isWriting = 0;
 
-	/// <summary>
-	/// Initializes a new instance of the <see cref="BindInfo"/> class.
-	/// </summary>
-	/// <param name="memory">The memory base instance.</param>
-	/// <exception cref="ArgumentNullException">Thrown when memory is null.</exception>
-	public BindInfo(MemoryBase memory)
-	{
-		this.Memory = memory ?? throw new ArgumentNullException(nameof(memory));
-	}
-
 	/// <summary>Gets the memory base instance.</summary>
-	public MemoryBase Memory { get; }
+	public MemoryBase Memory { get; } = memory ?? throw new ArgumentNullException(nameof(memory));
 
 	/// <summary>Gets the name of the bind.</summary>
 	public abstract string Name { get; }

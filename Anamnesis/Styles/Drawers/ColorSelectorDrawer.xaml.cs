@@ -3,6 +3,9 @@
 
 namespace Anamnesis.Styles.Drawers;
 
+using Anamnesis.Memory;
+using Anamnesis.Services;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,12 +13,8 @@ using System.Reflection;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Anamnesis.Memory;
-using Anamnesis.Services;
-using PropertyChanged;
 using XivToolsWpf.DependencyProperties;
 using Binder = XivToolsWpf.DependencyProperties.Binder;
-
 using WpfColor = System.Windows.Media.Color;
 
 /// <summary>
@@ -42,7 +41,7 @@ public partial class ColorSelectorDrawer : UserControl, IDrawer, INotifyProperty
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
 
-		List<ColorOption> colors = new List<ColorOption>();
+		var colors = new List<ColorOption>();
 		PropertyInfo[] properties = typeof(Colors).GetProperties(BindingFlags.Static | BindingFlags.Public);
 		foreach (PropertyInfo property in properties)
 		{
@@ -60,7 +59,7 @@ public partial class ColorSelectorDrawer : UserControl, IDrawer, INotifyProperty
 			colors.Add(new ColorOption((WpfColor)obj, property.Name));
 		}
 
-		ColorConverter colorConverter = new ColorConverter();
+		var colorConverter = new ColorConverter();
 		colors.Sort((a, b) =>
 		{
 			string? aHex = colorConverter.ConvertToString(a.Color);
@@ -81,7 +80,7 @@ public partial class ColorSelectorDrawer : UserControl, IDrawer, INotifyProperty
 		{
 			foreach (Color4 color in FavoritesService.Colors)
 			{
-				ColorOption op = new ColorOption(color, string.Empty);
+				var op = new ColorOption(color, string.Empty);
 				this.RecentList.Items.Add(op);
 			}
 		}
@@ -287,9 +286,7 @@ public partial class ColorSelectorDrawer : UserControl, IDrawer, INotifyProperty
 	{
 		if (sender is ListBox list)
 		{
-			ColorOption? op = list.SelectedItem as ColorOption;
-
-			if (op == null)
+			if (list.SelectedItem is not ColorOption op)
 				return;
 
 			this.Value = op.AsColor();
@@ -317,7 +314,7 @@ public partial class ColorSelectorDrawer : UserControl, IDrawer, INotifyProperty
 		{
 			this.Name = name;
 
-			WpfColor color = default(WpfColor);
+			WpfColor color = default;
 			color.ScR = c.R;
 			color.ScG = c.G;
 			color.ScB = c.B;

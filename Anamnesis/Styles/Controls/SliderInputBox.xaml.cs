@@ -31,54 +31,6 @@ using WindowsCursor = System.Windows.Forms.Cursor;
 [AddINotifyPropertyChangedInterface]
 public partial class SliderInputBox : UserControl
 {
-	/// <summary>The key for the dragging background color.</summary>
-	const string DRAG_BG_KEY = "DraggingBackgroundColor";
-
-	/// <summary>The key for the hover background color.</summary>
-	const string HOVER_BG_KEY = "HoverBackgroundColor";
-
-	/// <summary>The key for the normal background color.</summary>
-	const string NORMAL_BG_KEY = "NormalBackgroundColor";
-
-	/// <summary>The key for the disabled background color.</summary>
-	const string DISABLED_BG_KEY = "DisabledBackgroundColor";
-
-	/// <summary>Minimum distance for a drag action to be recognized.</summary>
-	const decimal DRAG_MIN_DISTANCE = 0.01m;
-
-	/// <summary>Multiplier for the key modifiers.</summary>
-	const int KEY_MODIFIER_MULTIPLIER = 10;
-
-	/// <summary>Delay for key repeat in milliseconds.</summary>
-	const int KEY_REPEAT_DELAY = 10;
-
-	/// <summary>The delay before the key repeat starts in milliseconds.</summary>
-	const int KEY_REPEAT_WAIT_DELAY = 250;
-
-	/// <summary>Margin for the tick marks to be drawn on the slider.</summary>
-	const int TICK_VISUAL_OFFSET = 2;
-
-	/// <summary>Constant for floating-point number rounding to a whole number.</summary>
-	const int INT_ROUNDING = 0;
-
-	/// <summary>The width of the slider thumb rectangle.</summary>
-	const double TICK_RECT_WIDTH = 10.0;
-
-	/// <summary> The minimum value limit for this user control.</summary>
-	/// <remarks>
-	/// Set to half of the decimal's minimum value to avoid overflow issues.
-	/// </remarks>
-	const decimal MinValueLimit = (decimal.MinValue / 2) + 1;
-
-	/// <summary>The maximum value limit for this user control.</summary>
-	/// <remarks>
-	/// Set to half of the decimal's maximum value to avoid overflow issues.
-	/// </remarks>
-	const decimal MaxValueLimit = (decimal.MaxValue / 2) - 1;
-
-	/// <summary>The half-width of the slider thumb rectangle.</summary>
-	const double TICK_RECT_HALF_WIDTH = TICK_RECT_WIDTH / 2;
-
 	/// <summary>Dependency property for the slider value.</summary>
 	public static readonly IBind<decimal> ValueDp = Binder.Register<decimal, SliderInputBox>(nameof(Value), OnValueChanged, BindMode.TwoWay);
 
@@ -122,6 +74,57 @@ public partial class SliderInputBox : UserControl
 	/// <remarks>Applies only to the standard slider mode.</remarks>
 	public static readonly IBind<bool> ShowSliderThumbDp = Binder.Register<bool, SliderInputBox>(nameof(ShowSliderThumb), OnShowSliderThumbChanged, BindMode.OneWay);
 
+	/// <summary>The key for the dragging background color.</summary>
+	private const string DRAG_BG_KEY = "DraggingBackgroundColor";
+
+	/// <summary>The key for the hover background color.</summary>
+	private const string HOVER_BG_KEY = "HoverBackgroundColor";
+
+	/// <summary>The key for the normal background color.</summary>
+	private const string NORMAL_BG_KEY = "NormalBackgroundColor";
+
+	/// <summary>The key for the disabled background color.</summary>
+	private const string DISABLED_BG_KEY = "DisabledBackgroundColor";
+
+	/// <summary>Minimum distance for a drag action to be recognized.</summary>
+	private const decimal DRAG_MIN_DISTANCE = 0.01m;
+
+	/// <summary>Multiplier for the key modifiers.</summary>
+	private const int KEY_MODIFIER_MULTIPLIER = 10;
+
+	/// <summary>Delay for key repeat in milliseconds.</summary>
+	private const int KEY_REPEAT_DELAY = 10;
+
+	/// <summary>The delay before the key repeat starts in milliseconds.</summary>
+	private const int KEY_REPEAT_WAIT_DELAY = 250;
+
+	/// <summary>Margin for the slider thumb to be drawn on the slider.</summary>
+	private const int THUMB_VISUAL_MARGIN = 2;
+
+	/// <summary>Constant for floating-point number rounding to a whole number.</summary>
+	private const int INT_ROUNDING = 0;
+
+	/// <summary>Constant for floating-point number rounding to two decimal places.</summary>
+	private const int FLOAT_POINT_ROUNDING = 3;
+
+	/// <summary>The width of the slider thumb rectangle.</summary>
+	private const double THUMB_RECT_WIDTH = 10.0;
+
+	/// <summary> The minimum value limit for this user control.</summary>
+	/// <remarks>
+	/// Set to half of the decimal's minimum value to avoid overflow issues.
+	/// </remarks>
+	private const decimal MIN_VALUE_LIMIT = (decimal.MinValue / 2) + 1;
+
+	/// <summary>The maximum value limit for this user control.</summary>
+	/// <remarks>
+	/// Set to half of the decimal's maximum value to avoid overflow issues.
+	/// </remarks>
+	private const decimal MAX_VALUE_LIMIT = (decimal.MaxValue / 2) - 1;
+
+	/// <summary>The half-width of the slider thumb rectangle.</summary>
+	private const double THUMB_RECT_HALF_WIDTH = THUMB_RECT_WIDTH / 2;
+
 	/// <summary>Timer for the initial delay before the increase button starts repeating.</summary>
 	private readonly DispatcherTimer increaseButtonInitialDelayTimer;
 
@@ -133,6 +136,11 @@ public partial class SliderInputBox : UserControl
 
 	/// <summary>Timer for repeating the decrease button action.</summary>
 	private readonly DispatcherTimer decreaseButtonRepeatTimer;
+
+	/// <summary>
+	/// The type of the source binding for the <see cref="ValueDp"/> dependency property.
+	/// </summary>
+	private TypeCode? valueBindingSrcType;
 
 	/// <summary>The starting point of the mouse drag.</summary>
 	private Point startPoint;
@@ -158,16 +166,14 @@ public partial class SliderInputBox : UserControl
 	/// <summary>Cached maximum of parsed dependency property value.</summary>
 	private decimal? parsedMaximum;
 
-	/// <summary>Preresents the minimum value the user control is using.</summary>
-	private decimal EffectiveMinimum => this.parsedMinimum ?? MinValueLimit;
-
-	/// <summary>Preresents the maximum value the user control is using.</summary>
-	private decimal EffectiveMaximum => this.parsedMaximum ?? MaxValueLimit;
-
 	/// <summary>
-	/// Gets a value that indicates whether the user control has valid lower and upper value bounds.
+	/// Stores the input area width right before the text field is activated.
 	/// </summary>
-	private bool HasValidBounds => this.EffectiveMinimum < this.EffectiveMaximum;
+	/// <remarks>
+	/// Necessary to accurately calculate the slider thumb position as using ActualWidth is not
+	/// reliable due to the step buttons.
+	/// </remarks>
+	private double? inputAreaWidth;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SliderInputBox"/> class and sets up default property values and event handlers.
@@ -184,7 +190,7 @@ public partial class SliderInputBox : UserControl
 		this.BorderColor = "#00000000";
 		this.SliderType = SliderTypes.Modern;
 		this.ShowSliderThumb = false;
-		this.TickRectangle.Visibility = Visibility.Collapsed;
+		this.SliderThumb.Visibility = Visibility.Collapsed;
 		this.SliderMode = SliderModes.Absolute;
 
 		this.InputField.IsReadOnly = true;
@@ -255,11 +261,11 @@ public partial class SliderInputBox : UserControl
 		/// <summary>
 		/// A classic slider that is more akin to the standard slider control in WPF.
 		/// </summary>
-		Classic
+		Classic,
 	}
 
-	/// <summary>Gets the width of the tick rectangle.</summary>
-	public static double TickRectangleWidth => TICK_RECT_WIDTH;
+	/// <summary>Gets the width of the slider thumb rectangle.</summary>
+	public static double SliderThumbWidth => THUMB_RECT_WIDTH;
 
 	/// <summary>Gets or sets the slider value.</summary>
 	public decimal Value
@@ -293,7 +299,6 @@ public partial class SliderInputBox : UserControl
 	[DependsOn(nameof(Value), nameof(Suffix), nameof(DecimalPlaces))]
 	public string Label => $"{this.FormatValue(this.Value)} {this.Suffix}";
 
-
 	/// <summary>Gets or sets the suffix text.</summary>
 	public string Suffix
 	{
@@ -305,7 +310,6 @@ public partial class SliderInputBox : UserControl
 			this.isInternalSet = false;
 		}
 	}
-
 
 	/// <summary>Gets or sets a value indicating whether the input field is active.</summary>
 	public bool IsInputFieldActive
@@ -471,6 +475,17 @@ public partial class SliderInputBox : UserControl
 		set => ShowSliderThumbDp.Set(this, value);
 	}
 
+	/// <summary>Preresents the minimum value the user control is using.</summary>
+	private decimal EffectiveMinimum => this.parsedMinimum ?? MIN_VALUE_LIMIT;
+
+	/// <summary>Preresents the maximum value the user control is using.</summary>
+	private decimal EffectiveMaximum => this.parsedMaximum ?? MAX_VALUE_LIMIT;
+
+	/// <summary>
+	/// Gets a value that indicates whether the user control has valid lower and upper value bounds.
+	/// </summary>
+	private bool HasValidBounds => this.EffectiveMinimum < this.EffectiveMaximum;
+
 	/// <summary>
 	/// Programmatically gives focus to the control.
 	/// </summary>
@@ -484,6 +499,7 @@ public partial class SliderInputBox : UserControl
 
 		if (enableInputField)
 		{
+			this.inputAreaWidth = this.InputArea.ActualWidth;
 			this.IsInputFieldActive = true;
 			this.InputField.Focus();
 			this.InputField.SelectAll();
@@ -519,6 +535,15 @@ public partial class SliderInputBox : UserControl
 		this.UpdateMouseCursor();
 	}
 
+	/// <summary>
+	/// Refreshes the mouse cursor based on the current state.
+	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public void UpdateMouseCursor()
+	{
+		Mouse.OverrideCursor = (this.IsMouseHovered && (this.SliderType == SliderTypes.Modern || (this.SliderType == SliderTypes.Classic && this.SliderMode == SliderModes.Relative))) ? Cursors.SizeWE : null;
+	}
+
 	/// <summary>Handles changes to the slider value.</summary>
 	/// <param name="sender">The sender.</param>
 	/// <param name="val">The new value.</param>
@@ -526,6 +551,17 @@ public partial class SliderInputBox : UserControl
 	{
 		if (sender.isInternalSet)
 			return;
+
+		// Detect the bound value type if not already set
+		if (sender.valueBindingSrcType == null)
+		{
+			var binding = sender.GetBindingExpression(ValueDp.Property);
+			Type? type = null;
+			if (binding?.ResolvedSourcePropertyName != null)
+				type = binding.ResolvedSource.GetType().GetProperty(binding.ResolvedSourcePropertyName)?.PropertyType;
+
+			sender.valueBindingSrcType = type != null ? Type.GetTypeCode(type) : TypeCode.Decimal;
+		}
 
 		sender.Value = sender.Validate(val);
 		sender.UpdateTickPosition();
@@ -663,8 +699,8 @@ public partial class SliderInputBox : UserControl
 	/// <summary>
 	/// Applies the key modifier to the provided value.
 	/// </summary>
-	/// <param name="value"></param>
-	/// <returns></returns>
+	/// <param name="value">The value to apply the modifier to.</param>
+	/// <returns>The updated value after applying key modifiers.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static decimal ApplyKeyModifiers(decimal value)
 	{
@@ -756,11 +792,13 @@ public partial class SliderInputBox : UserControl
 					{
 						if (this.SliderMode == SliderModes.Absolute && this.HasValidBounds)
 						{
-							// Else, calculate the new value based on the tick position
-							double relativePosition = (this.startPoint.X - this.DecreaseButton.ActualWidth - TICK_VISUAL_OFFSET - TICK_RECT_HALF_WIDTH) / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - TICK_RECT_WIDTH);
-							decimal newValue = ((decimal)relativePosition * (this.EffectiveMaximum - this.EffectiveMinimum)) + this.EffectiveMinimum;
+							Point relPointInputArea = this.TranslatePoint(this.startPoint, this.InputArea);
 
-							this.Value = newValue;
+							// Else, calculate the new value based on the tick position
+							double clampedMouseX = Math.Max(0, relPointInputArea.X - THUMB_VISUAL_MARGIN - THUMB_RECT_HALF_WIDTH);
+							double relVal = clampedMouseX / (this.InputArea.ActualWidth - (2 * THUMB_VISUAL_MARGIN) - THUMB_RECT_WIDTH);
+							this.Value = Math.Clamp(((decimal)relVal * (this.EffectiveMaximum - this.EffectiveMinimum)) + this.EffectiveMinimum, this.EffectiveMinimum, this.EffectiveMaximum);
+
 							this.UpdateTickPosition();
 						}
 						else if (this.SliderMode == SliderModes.Relative || !this.HasValidBounds)
@@ -804,11 +842,12 @@ public partial class SliderInputBox : UserControl
 
 				if (this.SliderMode == SliderModes.Absolute && this.HasValidBounds)
 				{
-					// Calculate the new value based on the tick position
-					double relativePosition = (currentPoint.X - this.DecreaseButton.ActualWidth - TICK_VISUAL_OFFSET - TICK_RECT_HALF_WIDTH) / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - TICK_RECT_WIDTH);
-					decimal newValue = ((decimal)relativePosition * (this.EffectiveMaximum - this.EffectiveMinimum)) + this.EffectiveMinimum;
+					Point relPointInputArea = this.TranslatePoint(currentPoint, this.InputArea);
 
-					this.Value = newValue;
+					// Calculate the new value based on the tick position
+					double clampedMouseX = Math.Max(0, relPointInputArea.X - THUMB_VISUAL_MARGIN - THUMB_RECT_HALF_WIDTH);
+					double relVal = clampedMouseX / (this.InputArea.ActualWidth - (2 * THUMB_VISUAL_MARGIN) - THUMB_RECT_WIDTH);
+					this.Value = Math.Clamp(((decimal)relVal * (this.EffectiveMaximum - this.EffectiveMinimum)) + this.EffectiveMinimum, this.EffectiveMinimum, this.EffectiveMaximum);
 
 					// Handle cursor overflow for classic slider type
 					this.HandleCursorOverflow();
@@ -902,8 +941,6 @@ public partial class SliderInputBox : UserControl
 	/// <param name="e">The event arguments.</param>
 	private void OnPreviewKeyDown(object sender, KeyEventArgs e)
 	{
-		base.OnPreviewKeyDown(e);
-
 		if (this.IsInputFieldActive && (e.Key == Key.Enter || e.Key == Key.Escape))
 		{
 			// Commit the changes
@@ -1019,8 +1056,6 @@ public partial class SliderInputBox : UserControl
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void OnPreviewKeyUp(object sender, KeyEventArgs e)
 	{
-		base.OnPreviewKeyUp(e);
-
 		if (this.keyHeld == e.Key)
 		{
 			e.Handled = true;
@@ -1096,7 +1131,33 @@ public partial class SliderInputBox : UserControl
 	/// </summary>
 	/// <param name="val">The value to round.</param>
 	/// <returns>The rounded value.</returns>
-	private decimal RoundValue(decimal val) => Math.Round(val, this.DecimalPlaces ?? INT_ROUNDING, MidpointRounding.AwayFromZero);
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private decimal RoundValue(decimal val)
+	{
+		if (this.valueBindingSrcType == null)
+			return Math.Round(val, this.DecimalPlaces ?? INT_ROUNDING, MidpointRounding.AwayFromZero);
+
+#pragma warning disable IDE0066
+		switch (this.valueBindingSrcType.Value)
+		{
+			case TypeCode.Boolean:
+			case TypeCode.Byte:
+			case TypeCode.SByte:
+			case TypeCode.Int16:
+			case TypeCode.UInt16:
+			case TypeCode.Int32:
+			case TypeCode.UInt32:
+			case TypeCode.Int64:
+			case TypeCode.UInt64:
+				return Math.Round(val, INT_ROUNDING, MidpointRounding.AwayFromZero);
+			case TypeCode.Single:
+			case TypeCode.Double:
+				return Math.Round(val, this.DecimalPlaces ?? FLOAT_POINT_ROUNDING, MidpointRounding.AwayFromZero);
+			default:
+				return Math.Round(val, this.DecimalPlaces ?? INT_ROUNDING, MidpointRounding.AwayFromZero);
+		}
+#pragma warning restore IDE0066
+	}
 
 	/// <summary>
 	/// Validates and adjusts the new value based on the overflow behavior and decimal places.
@@ -1111,9 +1172,10 @@ public partial class SliderInputBox : UserControl
 		if (this.OverflowBehavior == OverflowModes.Clamp)
 		{
 			val = Math.Clamp(val, min, max);
+			decimal roundedVal = this.RoundValue(val);
 
-			this.DecreaseButton.IsEnabled = val > min;
-			this.IncreaseButton.IsEnabled = val < max;
+			this.DecreaseButton.IsEnabled = roundedVal > min;
+			this.IncreaseButton.IsEnabled = roundedVal < max;
 		}
 		else if (this.OverflowBehavior == OverflowModes.Loop && this.Minimum != null && this.Maximum != null)
 		{
@@ -1145,11 +1207,11 @@ public partial class SliderInputBox : UserControl
 	private void UpdateTickPosition()
 	{
 		// Update visibility based on the slider thumb property and IsClassicSliderMode
-		this.TickRectangle.Visibility = this.ShowSliderThumb || this.SliderType == SliderTypes.Classic ? Visibility.Visible : Visibility.Collapsed;
+		this.SliderThumb.Visibility = this.ShowSliderThumb || this.SliderType == SliderTypes.Classic ? Visibility.Visible : Visibility.Collapsed;
 
 		// Update the tick position based on the value
 		// Skip update if component is hidden
-		if (this.EffectiveMaximum > this.EffectiveMinimum && this.TickRectangle.Visibility == Visibility.Visible)
+		if (this.EffectiveMaximum > this.EffectiveMinimum && this.SliderThumb.Visibility == Visibility.Visible)
 		{
 			decimal range = this.EffectiveMaximum - this.EffectiveMinimum;
 
@@ -1159,10 +1221,13 @@ public partial class SliderInputBox : UserControl
 
 			decimal safeValue = Math.Clamp(this.Value, this.EffectiveMinimum, this.EffectiveMaximum);
 			decimal relativeValue = (safeValue - this.EffectiveMinimum) / range;
-			double tickPosition = ((double)relativeValue * (this.InputArea.ActualWidth - TICK_RECT_WIDTH - (2 * TICK_VISUAL_OFFSET))) + TICK_RECT_HALF_WIDTH;
 
-			this.TickRectangle.Margin = new Thickness(tickPosition - TICK_RECT_HALF_WIDTH, 0, 0, 0);
-			this.TickRectangle.UpdateLayout();
+			// Calculate the available width for the input area
+			double inputAreaWidth = this.inputAreaWidth ?? this.InputArea.ActualWidth;
+			double tickPosition = THUMB_VISUAL_MARGIN + ((double)relativeValue * Math.Max(0, inputAreaWidth - THUMB_RECT_WIDTH - (2 * THUMB_VISUAL_MARGIN)));
+
+			this.SliderThumb.Margin = new Thickness(tickPosition, 0, 0, 0);
+			this.SliderThumb.UpdateLayout();
 		}
 	}
 
@@ -1173,8 +1238,8 @@ public partial class SliderInputBox : UserControl
 	{
 		if (this.SliderType == SliderTypes.Classic && this.OverflowBehavior == OverflowModes.Loop)
 		{
-			Point rightEdge = this.PointToScreen(new Point(this.DecreaseButton.ActualWidth + this.InputArea.ActualWidth - TICK_VISUAL_OFFSET - TICK_RECT_HALF_WIDTH - 0.25, this.InputArea.ActualHeight / 2));
-			Point leftEdge = this.PointToScreen(new Point(this.DecreaseButton.ActualWidth + TICK_VISUAL_OFFSET + TICK_RECT_HALF_WIDTH + 0.25, this.InputArea.ActualHeight / 2));
+			Point rightEdge = this.InputArea.PointToScreen(new Point(this.InputArea.ActualWidth - THUMB_RECT_HALF_WIDTH, this.InputArea.ActualHeight / 2));
+			Point leftEdge = this.InputArea.PointToScreen(new Point(THUMB_RECT_HALF_WIDTH, this.InputArea.ActualHeight / 2));
 
 			if (WindowsCursor.Position.X > rightEdge.X)
 			{
@@ -1233,25 +1298,11 @@ public partial class SliderInputBox : UserControl
 	}
 
 	/// <summary>
-	/// Refreshes the mouse cursor based on the current state.
-	/// </summary>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public void UpdateMouseCursor()
-	{
-		Mouse.OverrideCursor = (this.IsMouseHovered && (this.SliderType == SliderTypes.Modern || (this.SliderType == SliderTypes.Classic && this.SliderMode == SliderModes.Relative))) ? Cursors.SizeWE : null;
-	}
-
-	/// <summary>
 	/// Handles the context menu opening event to open the input field.
 	/// </summary>
 	/// <param name="sender">The sender.</param>
 	/// <param name="e">The event arguments.</param>
-	private void OnPromptInputFieldClick(object sender, RoutedEventArgs e)
-	{
-		this.IsInputFieldActive = true;
-		this.InputField.Focus();
-		this.InputField.SelectAll();
-	}
+	private void OnPromptInputFieldClick(object sender, RoutedEventArgs e) => this.GainFocus(true);
 
 	/// <summary>
 	/// Handles the input field size changed event to update the tick position.

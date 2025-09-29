@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 public class ActorMemory : ActorBasicMemory
 {
-	private static readonly int RefreshDebounceTimeout = 200;
+	private const int REFRESH_DEBOUNCE_TIMEOUT = 200;
 	private readonly System.Timers.Timer refreshDebounceTimer;
 	private readonly FuncQueue backupQueue;
 	private int isRefreshing = 0;
@@ -26,7 +26,7 @@ public class ActorMemory : ActorBasicMemory
 		this.PropertyChanged += this.HandlePropertyChanged;
 
 		// Initialize the debounce timer
-		this.refreshDebounceTimer = new(RefreshDebounceTimeout) { AutoReset = false };
+		this.refreshDebounceTimer = new(REFRESH_DEBOUNCE_TIMEOUT) { AutoReset = false };
 		this.refreshDebounceTimer.Elapsed += async (s, e) => { await this.Refresh(); };
 	}
 
@@ -51,6 +51,7 @@ public class ActorMemory : ActorBasicMemory
 		WeaponsVisible = 1 << 0,
 		WeaponsDrawn = 1 << 2,
 		VisorToggled = 1 << 4,
+		HeadgearEarsHidden = 1 << 5,
 	}
 
 	[Bind(0x01CA)] public byte ClassJob { get; set; } // Source: CharacterData; Calculated using GameObject size + ClassJob offset
@@ -131,6 +132,23 @@ public class ActorMemory : ActorBasicMemory
 			else
 			{
 				this.CharacterFlags &= ~CharacterFlagDefs.VisorToggled;
+			}
+		}
+	}
+
+	[DependsOn(nameof(CharacterFlags))]
+	public bool HeadgearEarsHidden
+	{
+		get => this.CharacterFlags.HasFlagUnsafe(CharacterFlagDefs.HeadgearEarsHidden);
+		set
+		{
+			if (value)
+			{
+				this.CharacterFlags |= CharacterFlagDefs.HeadgearEarsHidden;
+			}
+			else
+			{
+				this.CharacterFlags &= ~CharacterFlagDefs.HeadgearEarsHidden;
 			}
 		}
 	}

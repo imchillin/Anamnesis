@@ -18,13 +18,22 @@ public abstract class ServiceBase<T> : IService, INotifyPropertyChanged
 	where T : ServiceBase<T>
 {
 	/// <summary>Maximum number of attempts to start the service.</summary>
-	protected static readonly int MaxStartAttempts = 10;
+	protected const int MAX_START_ATTEMPTS = 10;
 
 	/// <summary>Delay between attempts to start the service.</summary>
-	protected static readonly int StartAttemptDelay = 1000; // ms
+	protected const int START_ATTEMPT_DELAY = 1000; // ms
+
+	/// <summary>
+	/// Gets or sets a stoppable background task for the service (if any).
+	/// </summary>
+	/// <remarks>
+	/// Do not assign a task to this property if you want the service's task
+	/// to continue running after the service is shut down.
+	/// </remarks>
+	protected Task? BackgroundTask = null;
 
 	/// <summary>The internal instance of the service.</summary>
-	private static T? instance;
+	private static T? s_instance;
 
 	/// <inheritdoc/>
 	public event PropertyChangedEventHandler? PropertyChanged;
@@ -34,17 +43,22 @@ public abstract class ServiceBase<T> : IService, INotifyPropertyChanged
 	{
 		get
 		{
-			if (instance == null)
+			if (s_instance == null)
 				throw new ServiceNotFoundException(typeof(T));
 
-			return instance;
+			return s_instance;
 		}
 	}
 
 	/// <summary>
 	/// Gets the singleton instance of the service, or null if it has not been instantiated.
 	/// </summary>
-	public static T? InstanceOrNull => instance;
+	/// <remarks>
+	/// The use of <see cref="InstanceOrNull"/> is discouraged in favor of <see cref="Instance"/>
+	/// to avoid situations where the service's validity is required. Use this property only when
+	/// you are certain that the service is not required to be running at the time of access.
+	/// </remarks>
+	public static T? InstanceOrNull => s_instance;
 
 	/// <summary>
 	/// Gets a value indicating whether the service is initialized.
@@ -81,15 +95,6 @@ public abstract class ServiceBase<T> : IService, INotifyPropertyChanged
 	/// </summary>
 	protected virtual IEnumerable<IService> Dependencies => [];
 
-	/// <summary>
-	/// Gets or sets a stoppable background task for the service (if any).
-	/// </summary>
-	/// <remarks>
-	/// Do not assign a task to this property if you want the service's task
-	/// to continue running after the service is shut down.
-	/// </remarks>
-	protected Task? BackgroundTask = null;
-
 	/// <summary>Initializes the service.</summary>
 	/// <remarks>
 	/// It is not guaranteed that the service is alive after initialization.
@@ -97,7 +102,7 @@ public abstract class ServiceBase<T> : IService, INotifyPropertyChanged
 	/// <returns>A <see cref="Task.CompletedTask"/> object.</returns>"/>
 	public virtual Task Initialize()
 	{
-		instance = (T)this;
+		s_instance = (T)this;
 		this.IsInitialized = true;
 		return Task.CompletedTask;
 	}
@@ -128,29 +133,6 @@ public abstract class ServiceBase<T> : IService, INotifyPropertyChanged
 		if (this.BackgroundTask != null && !this.BackgroundTask.IsCompleted)
 			await this.BackgroundTask;
 
-		await Task.CompletedTask;
-	}
-
-	/// <summary>
-	/// Pre-start method that is called before the service is started.
-	/// </summary>
-	/// <remarks>
-	/// By default, this method checks if the service's dependencies are alive.
-	/// </remarks>
-	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-	protected virtual async Task PreStart()
-	{
-		// Wait for the dependency services to be operational
-		if (this.Dependencies.Any())
-			await EnsureServicesAreAlive(this.Dependencies, MaxStartAttempts, StartAttemptDelay);
-	}
-
-	/// <summary>
-	/// On-start method that is called when the service is started but before the service is marked as alive.
-	/// </summary>
-	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-	protected virtual async Task OnStart()
-	{
 		await Task.CompletedTask;
 	}
 
@@ -193,6 +175,29 @@ public abstract class ServiceBase<T> : IService, INotifyPropertyChanged
 			.ToList();
 
 		throw new TimeoutException($"The following services failed to start within the expected time for {typeof(T).Name}: {string.Join(", ", serviceNames)}");
+	}
+
+	/// <summary>
+	/// Pre-start method that is called before the service is started.
+	/// </summary>
+	/// <remarks>
+	/// By default, this method checks if the service's dependencies are alive.
+	/// </remarks>
+	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+	protected virtual async Task PreStart()
+	{
+		// Wait for the dependency services to be operational
+		if (this.Dependencies.Any())
+			await EnsureServicesAreAlive(this.Dependencies, MAX_START_ATTEMPTS, START_ATTEMPT_DELAY);
+	}
+
+	/// <summary>
+	/// On-start method that is called when the service is started but before the service is marked as alive.
+	/// </summary>
+	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+	protected virtual async Task OnStart()
+	{
+		await Task.CompletedTask;
 	}
 
 	/// <summary>

@@ -231,27 +231,27 @@ public static class INpcBaseExtensions
 	/// <summary>
 	/// Maps NPC types to a letter for use in string keys.
 	/// </summary>
-	private static readonly Dictionary<Type, char> TypeToCharMap = new()
+	private static readonly Dictionary<Type, char> s_typeToCharMap = new()
 	{
 		{ typeof(ResidentNpc), 'R' },
 		{ typeof(BattleNpc), 'B' },
 		{ typeof(EventNpc), 'E' },
 		{ typeof(Companion), 'C' },
 		{ typeof(Mount), 'M' },
-		{ typeof(Ornament), 'O' }
+		{ typeof(Ornament), 'O' },
 	};
 
 	/// <summary>
 	/// Maps a letter to a function that retrieves an NPC from the game data service.
 	/// </summary>
-	private static readonly Dictionary<char, Func<uint, INpcBase>> CharToServiceMap = new()
+	private static readonly Dictionary<char, Func<uint, INpcBase>> s_charToServiceMap = new()
 	{
 		{ 'R', key => GameDataService.ResidentNPCs.GetRow(key) },
 		{ 'B', key => GameDataService.BattleNPCs.GetRow(key) },
 		{ 'E', key => GameDataService.EventNPCs.GetRow(key) },
 		{ 'C', key => GameDataService.Companions.GetRow(key) },
 		{ 'M', key => GameDataService.Mounts.GetRow(key) },
-		{ 'O', key => GameDataService.Ornaments.GetRow(key) }
+		{ 'O', key => GameDataService.Ornaments.GetRow(key) },
 	};
 
 	/// <summary>
@@ -262,7 +262,7 @@ public static class INpcBaseExtensions
 	/// <exception cref="Exception">Thrown if the NPC type is unknown.</exception>
 	public static string ToStringKey(this INpcBase npc)
 	{
-		if (!TypeToCharMap.TryGetValue(npc.GetType(), out char t))
+		if (!s_typeToCharMap.TryGetValue(npc.GetType(), out char t))
 			throw new Exception($"Unknown Npc Type: {npc.GetType()}");
 
 		return $"{t}:{npc.RowId:D7}";
@@ -282,7 +282,7 @@ public static class INpcBaseExtensions
 			uint key = uint.Parse(stringKey);
 			return GameDataService.ResidentNPCs.GetRow(key);
 		}
-		else if (parts.Length == 2 && CharToServiceMap.TryGetValue(parts[0][0], out var getService))
+		else if (parts.Length == 2 && s_charToServiceMap.TryGetValue(parts[0][0], out var getService))
 		{
 			uint key = uint.Parse(parts[1]);
 			return getService(key);

@@ -17,8 +17,8 @@ using XivToolsWpf.DependencyProperties;
 [AddINotifyPropertyChangedInterface]
 public partial class ClassFilterItem : UserControl, INotifyPropertyChanged
 {
-	public static DependencyProperty<Classes> ValueDp = Binder.Register<Classes, ClassFilterItem>(nameof(ClassFilterItem.Value), OnValueChanged);
-	public static DependencyProperty<Classes> ClassDp = Binder.Register<Classes, ClassFilterItem>(nameof(ClassFilterItem.Class), OnClassChanged);
+	public static readonly DependencyProperty<Classes> ValueDp = Binder.Register<Classes, ClassFilterItem>(nameof(ClassFilterItem.Value), OnValueChanged);
+	public static readonly DependencyProperty<Classes> ClassDp = Binder.Register<Classes, ClassFilterItem>(nameof(ClassFilterItem.Class), OnClassChanged);
 
 	public ClassFilterItem()
 	{

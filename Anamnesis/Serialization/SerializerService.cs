@@ -12,7 +12,7 @@ using System.Text.Json.Serialization;
 
 public class SerializerService : ServiceBase<SerializerService>
 {
-	public static JsonSerializerOptions Options = new JsonSerializerOptions();
+	public static readonly JsonSerializerOptions Options = new();
 
 	static SerializerService()
 	{
@@ -58,10 +58,8 @@ public class SerializerService : ServiceBase<SerializerService>
 	{
 		string json = File.ReadAllText(path);
 		json = json.Replace("\r", Environment.NewLine);
-		T? result = JsonSerializer.Deserialize<T>(json, Options);
-
-		if (result == null)
-			throw new Exception("Failed to deserialize object");
+		T? result = JsonSerializer.Deserialize<T>(json, Options)
+			?? throw new Exception("Failed to deserialize object");
 
 		return result;
 	}
@@ -69,20 +67,16 @@ public class SerializerService : ServiceBase<SerializerService>
 	public static T Deserialize<T>(string json)
 		where T : notnull
 	{
-		T? result = JsonSerializer.Deserialize<T>(json, Options);
-
-		if (result == null)
-			throw new Exception("Failed to deserialize object");
+		T? result = JsonSerializer.Deserialize<T>(json, Options)
+			?? throw new Exception("Failed to deserialize object");
 
 		return result;
 	}
 
 	public static object Deserialize(string json, Type type)
 	{
-		object? result = JsonSerializer.Deserialize(json, type, Options);
-
-		if (result == null)
-			throw new Exception("Failed to deserialize object");
+		object? result = JsonSerializer.Deserialize(json, type, Options)
+			?? throw new Exception("Failed to deserialize object");
 
 		return result;
 	}

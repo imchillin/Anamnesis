@@ -23,27 +23,13 @@ using XivToolsWpf;
 [AddINotifyPropertyChangedInterface]
 public class TargetService : ServiceBase<TargetService>
 {
-	private const int TaskDelay = 32; // ms (~30 fps)
-
-	/// <inheritdoc/>
-	protected override IEnumerable<IService> Dependencies =>
-	[
-		AddressService.Instance,
-		ActorService.Instance,
-		GameService.Instance,
-		GposeService.Instance
-	];
+	private const int TASK_DELAY = 32; // ms (~30 fps)
 
 	/// <summary>
 	/// The delegate object for the <see cref="TargetService.ActorSelected"/> event.
 	/// </summary>
-	/// <param name="actor"></param>
+	/// <param name="actor">The actor that was selected, or null if selection was cleared.</param>
 	public delegate void SelectionEvent(ActorMemory? actor);
-
-	/// <summary>
-	/// Event that is triggered when actor selection changes.
-	/// </summary>
-	public static event SelectionEvent? ActorSelected;
 
 	/// <summary>
 	/// The delegate object for the <see cref="TargetService.ActorPinned"/>
@@ -51,6 +37,11 @@ public class TargetService : ServiceBase<TargetService>
 	/// </summary>
 	/// <param name="actor">The actor that was pinned or unpinned.</param>
 	public delegate void PinnedEvent(PinnedActor actor);
+
+	/// <summary>
+	/// Event that is triggered when actor selection changes.
+	/// </summary>
+	public static event SelectionEvent? ActorSelected;
 
 	/// <summary>
 	/// Event that is triggered when an actor is pinned.
@@ -99,6 +90,15 @@ public class TargetService : ServiceBase<TargetService>
 	[DependsOn(nameof(PinnedActorCount))]
 	public bool MoreThanFourPins => this.PinnedActorCount > 4;
 
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies =>
+	[
+		AddressService.Instance,
+		ActorService.Instance,
+		GameService.Instance,
+		GposeService.Instance
+	];
+
 	/// <summary>
 	/// Pins the targeted actor to the list of pinned actors.
 	/// </summary>
@@ -134,18 +134,18 @@ public class TargetService : ServiceBase<TargetService>
 				memory = actorMemory;
 
 			memory.SetAddress(basicActor.Address);
-			PinnedActor pined = new PinnedActor(memory);
+			var pinned = new PinnedActor(memory);
 
-			Log.Information($"Pinning actor: {pined}");
+			Log.Information($"Pinning actor: {pinned}");
 
 			await Dispatch.MainThread();
-			Instance.PinnedActors.Add(pined);
+			Instance.PinnedActors.Add(pinned);
 			Instance.PinnedActorCount = Instance.PinnedActors.Count;
 
 			if (select)
-				Instance.SelectActor(pined);
+				Instance.SelectActor(pinned);
 
-			ActorPinned?.Invoke(pined);
+			ActorPinned?.Invoke(pinned);
 		}
 		catch (Exception ex)
 		{
@@ -477,11 +477,11 @@ public class TargetService : ServiceBase<TargetService>
 			{
 				if (GposeService.Instance.IsGpose)
 				{
-					MemoryService.Write(IntPtr.Add(AddressService.TargetSystem, AddressService.GPosePlayerTargetOffset), (IntPtr)ptr, "Update player target");
+					MemoryService.Write(IntPtr.Add(AddressService.TargetSystem, AddressService.GPOSE_PLAYER_TARGET_OFFSET), (IntPtr)ptr);
 				}
 				else
 				{
-					MemoryService.Write(IntPtr.Add(AddressService.TargetSystem, AddressService.OverworldPlayerTargetOffset), (IntPtr)ptr, "Update player target");
+					MemoryService.Write(IntPtr.Add(AddressService.TargetSystem, AddressService.OVERWORLD_PLAYER_TARGET_OFFSET), (IntPtr)ptr);
 				}
 			}
 		}
@@ -566,7 +566,7 @@ public class TargetService : ServiceBase<TargetService>
 					this.PinnedActors[i].Tick();
 				}
 
-				await Task.Delay(TaskDelay, cancellationToken);
+				await Task.Delay(TASK_DELAY, cancellationToken);
 			}
 			catch (TaskCanceledException)
 			{

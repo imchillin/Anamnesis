@@ -9,24 +9,16 @@ using Anamnesis.Services;
 using Anamnesis.TexTools;
 using System.Runtime.CompilerServices;
 
-public class ChocoboSkinItem : IItem
+public class ChocoboSkinItem(INpcBase mount, ushort variant) : IItem
 {
-	public ChocoboSkinItem(INpcBase mount, ushort variant)
-	{
-		this.Name = mount.Name;
-		this.Description = mount.Description;
-		this.ModelVariant = variant;
-		this.Icon = mount.Icon;
-	}
-
-	public string Name { get; private set; }
-	public string? Description { get; private set; }
-	public ImgRef? Icon { get; private set; }
+	public string Name { get; private set; } = mount.Name;
+	public string? Description { get; private set; } = mount.Description;
+	public ImgRef? Icon { get; private set; } = mount.Icon;
 
 	public ulong Model => ExcelPageExtensions.ConvertToModel(0, 1, this.ModelVariant);
 	public ushort ModelSet => 0;
 	public ushort ModelBase => 1;
-	public ushort ModelVariant { get; private set; }
+	public ushort ModelVariant { get; private set; } = variant;
 	public bool HasSubModel => false;
 	public ulong SubModel => 0;
 	public ushort SubModelSet => 0;

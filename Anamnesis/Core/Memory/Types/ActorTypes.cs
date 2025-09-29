@@ -26,16 +26,8 @@ public enum ActorTypes : byte
 	Ornament = 0x0F,
 }
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1649:File name should match first type name", Justification = "Not the first type")]
-public class ActorType
+public class ActorType(string name, ActorTypes value)
 {
-	public ActorType(string name, ActorTypes value)
-	{
-		this.Name = name;
-		this.Value = value;
-		this.IsSupportedType = value.IsSupportedType();
-	}
-
 	public static IEnumerable<ActorType> AllActorTypes
 	{
 		get
@@ -52,7 +44,7 @@ public class ActorType
 		}
 	}
 
-	public string Name { get; private set; }
-	public ActorTypes Value { get; private set; }
-	public bool IsSupportedType { get; private set; }
+	public string Name { get; private set; } = name;
+	public ActorTypes Value { get; private set; } = value;
+	public bool IsSupportedType { get; private set; } = value.IsSupportedType();
 }

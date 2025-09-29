@@ -5,4 +5,6 @@ namespace Anamnesis.Memory.Exceptions;
 
 using System;
 
-public class UpdateTriggeredException() : Exception() { }
+public class UpdateTriggeredException() : Exception()
+{
+}

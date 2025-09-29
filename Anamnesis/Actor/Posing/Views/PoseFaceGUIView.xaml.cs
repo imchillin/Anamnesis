@@ -100,7 +100,7 @@ public partial class PoseFaceGuiView : UserControl
 		}
 
 		this.mouthSelectorBorder.BorderBrush = new SolidColorBrush(Colors.Gray) { Opacity = 1.0 };
-		this.SetOpacity(new[] { "MouthGuideLine", "MouthGuideEllipse" }, 0.75);
+		this.SetOpacity(["MouthGuideLine", "MouthGuideEllipse"], 0.75);
 	}
 
 	private void MouthSelector_MouseLeave(object sender, MouseEventArgs e)
@@ -112,7 +112,7 @@ public partial class PoseFaceGuiView : UserControl
 		}
 
 		this.MouthSelectorBorder.BorderBrush = new SolidColorBrush(Colors.Gray) { Opacity = 0.5 };
-		this.SetOpacity(new[] { "MouthGuideLine", "MouthGuideEllipse" }, 0);
+		this.SetOpacity(["MouthGuideLine", "MouthGuideEllipse"], 0);
 	}
 }
 

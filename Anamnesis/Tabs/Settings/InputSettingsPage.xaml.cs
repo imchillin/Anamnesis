@@ -60,7 +60,7 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 		this.SettingCategories["Hotkeys"].Settings.Add(new Setting("Settings_KeysHeader", this.Input_Hotkeys_List));
 
 		// Set up hotkey options
-		this.Hotkeys = SettingsService.Current.KeyboardBindings.GetBinds()
+		this.Hotkeys = Settings.Binds.GetBinds()
 			.Select(bind => new HotkeyOption(bind.Key, bind.Value))
 			.ToList();
 
@@ -89,7 +89,6 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 	public IEnumerable<HotkeyOption> Hotkeys { get; }
 	public IEnumerable<GizmoDragModeOption> GizmoDragModes { get; }
 	public IEnumerable<SliderType> SliderTypes { get; }
-
 
 	[DependsOn(nameof(this.GizmoDragModes))]
 	public GizmoDragModeOption SelectedGizmoDragMode

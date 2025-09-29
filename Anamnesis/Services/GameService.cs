@@ -4,7 +4,6 @@
 namespace Anamnesis.Services;
 
 using Anamnesis.Core;
-using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using PropertyChanged;
 using System;
@@ -18,12 +17,9 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class GameService : ServiceBase<GameService>
 {
-	private const int TaskWaitTime = 16; // ms
+	private const int TASK_WAIT_TIME = 16; // ms
 
 	private int isSignedIn = 0;
-
-	/// <inheritdoc/>
-	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GameDataService.Instance];
 
 	/// <summary>
 	/// Gets a value indicating whether the game process is in a ready state.
@@ -31,13 +27,16 @@ public class GameService : ServiceBase<GameService>
 	public static bool Ready => (Instance?.IsInitialized ?? false) && Instance.IsSignedIn;
 
 	/// <summary>
-	/// Gets or sets a value indicating whether the user is signed into a character.
+	/// Gets a value indicating whether the user is signed into a character.
 	/// </summary>
 	public bool IsSignedIn
 	{
 		get => Interlocked.CompareExchange(ref this.isSignedIn, 0, 0) == 1;
 		private set => Interlocked.Exchange(ref this.isSignedIn, value ? 1 : 0);
 	}
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GameDataService.Instance];
 
 	/// <summary>
 	/// Checks if the user is signed into a character by probing the game process' memory.
@@ -86,7 +85,7 @@ public class GameService : ServiceBase<GameService>
 				this.IsSignedIn = GetIsSignedIn();
 
 				// Property is updated synchronously; No need to resume from the original sync context
-				await Task.Delay(TaskWaitTime, cancellationToken).ConfigureAwait(false);
+				await Task.Delay(TASK_WAIT_TIME, cancellationToken).ConfigureAwait(false);
 			}
 			catch (TaskCanceledException)
 			{

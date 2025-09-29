@@ -16,12 +16,10 @@ using System.Windows.Input;
 
 public class HotkeyService : ServiceBase<HotkeyService>
 {
-	private static readonly Hook Hook = new();
-
-	private static readonly Dictionary<string, List<Handler>> FunctionToHandlers = new();
-	private static readonly Dictionary<(Key, ModifierKeys), string> KeyToFunction = new();
-
-	private static readonly HashSet<Key> KeyDownSentToGame = new();
+	private static readonly Hook s_hotkeyHook = new();
+	private static readonly Dictionary<string, List<Handler>> s_functionToHandlers = new();
+	private static readonly Dictionary<(Key, ModifierKeys), string> s_keyToFunction = new();
+	private static readonly HashSet<Key> s_keyDownSentToGame = new();
 
 	/// <inheritdoc/>
 	protected override IEnumerable<IService> Dependencies =>
@@ -48,29 +46,29 @@ public class HotkeyService : ServiceBase<HotkeyService>
 
 	public static void RegisterHotkeyHandler(string function, Handler handler)
 	{
-		lock (FunctionToHandlers)
+		lock (s_functionToHandlers)
 		{
-			if (!FunctionToHandlers.ContainsKey(function))
-				FunctionToHandlers.Add(function, new());
+			if (!s_functionToHandlers.ContainsKey(function))
+				s_functionToHandlers.Add(function, new());
 
-			FunctionToHandlers[function].Insert(0, handler);
+			s_functionToHandlers[function].Insert(0, handler);
 			Log.Verbose($"Adding hotkey binding: {function} for {handler.Owner}");
 		}
 	}
 
 	public static void ClearHotkeyHandler(string function, object owner)
 	{
-		lock (FunctionToHandlers)
+		lock (s_functionToHandlers)
 		{
-			if (!FunctionToHandlers.ContainsKey(function))
+			if (!s_functionToHandlers.TryGetValue(function, out List<Handler>? value))
 				return;
 
-			for (int i = FunctionToHandlers[function].Count - 1; i >= 0; i--)
+			for (int i = value.Count - 1; i >= 0; i--)
 			{
-				if (FunctionToHandlers[function][i].Owner != owner)
+				if (value[i].Owner != owner)
 					continue;
 
-				FunctionToHandlers[function].RemoveAt(i);
+				value.RemoveAt(i);
 			}
 
 			Log.Verbose($"Clearing hotkey binding: {function} for {owner}");
@@ -81,15 +79,15 @@ public class HotkeyService : ServiceBase<HotkeyService>
 	{
 		var dicKey = (key, modifiers);
 
-		if (KeyToFunction.ContainsKey(dicKey))
+		if (s_keyToFunction.ContainsKey(dicKey))
 			throw new Exception($"Duplicate key binding: {key} - {modifiers} - {function}");
 
-		KeyToFunction.Add(dicKey, function);
+		s_keyToFunction.Add(dicKey, function);
 	}
 
 	public static KeyCombination? GetBind(string function)
 	{
-		foreach ((var keys, string func) in KeyToFunction)
+		foreach ((var keys, string func) in s_keyToFunction)
 		{
 			if (func == function)
 			{
@@ -103,7 +101,7 @@ public class HotkeyService : ServiceBase<HotkeyService>
 	/// <inheritdoc/>
 	public override async Task Initialize()
 	{
-		foreach ((string function, KeyCombination key) in SettingsService.Current.KeyboardBindings.GetBinds())
+		foreach ((string function, KeyCombination key) in Settings.Binds.GetBinds())
 			RegisterHotkey(key.Key, key.Modifiers, function);
 
 		await base.Initialize();
@@ -112,56 +110,26 @@ public class HotkeyService : ServiceBase<HotkeyService>
 	/// <inheritdoc/>
 	public override Task Shutdown()
 	{
-		Hook.OnKeyboardInput -= this.OnKeyboardInput;
-		Hook.Stop();
+		s_hotkeyHook.OnKeyboardInput -= this.OnKeyboardInput;
+		s_hotkeyHook.Stop();
 		return base.Shutdown();
 	}
 
 	/// <inheritdoc/>
 	protected override Task OnStart()
 	{
-		Hook.OnKeyboardInput += this.OnKeyboardInput;
-		Hook.Start();
+		s_hotkeyHook.OnKeyboardInput += this.OnKeyboardInput;
+		s_hotkeyHook.Start();
 		return base.OnStart();
 	}
 
-	private bool OnKeyboardInput(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
-	{
-		// Do not intercept or forward these keys.
-		if (key == Key.Tab || key == Key.Return || key == Key.Escape)
-			return false;
-
-		bool handled = this.HandleKey(key, state, modifiers);
-
-		if (SettingsService.Current.ForwardKeys)
-		{
-			// Forward any unused keys to ffxiv if Anamnesis has focus
-			if (!handled && !(Keyboard.FocusedElement is TextBoxBase))
-			{
-				if (MainWindow.IsActive && state == KeyboardKeyStates.Pressed)
-				{
-					KeyDownSentToGame.Add(key);
-					MemoryService.SendKey(key, state);
-				}
-			}
-
-			if (state == KeyboardKeyStates.Released && KeyDownSentToGame.Contains(key))
-			{
-				KeyDownSentToGame.Remove(key);
-				MemoryService.SendKey(key, state);
-			}
-		}
-
-		return handled;
-	}
-
-	private bool HandleKey(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
+	private static bool HandleKey(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
 	{
 		if (!SettingsService.Current.EnableHotkeys)
 			return false;
 
 		// Only process the hotkeys if we have focus but not to a text box.
-		bool processInputs = MainWindow.IsActive && !(Keyboard.FocusedElement is TextBoxBase);
+		bool processInputs = MainWindow.IsActive && Keyboard.FocusedElement is not TextBoxBase;
 
 		// Or if FFXIV has focus, the hooks are enabled, and the user is in gpose.
 		if (MemoryService.DoesProcessHaveFocus && SettingsService.Current.EnableGameHotkeyHooks && GposeService.Instance.IsGpose)
@@ -172,15 +140,13 @@ public class HotkeyService : ServiceBase<HotkeyService>
 
 		var dicKey = (key, modifiers);
 
-		if (!KeyToFunction.ContainsKey(dicKey))
+		if (!s_keyToFunction.TryGetValue(dicKey, out string? func))
 			return false;
 
-		string func = KeyToFunction[dicKey];
-
-		if (!FunctionToHandlers.ContainsKey(func))
+		if (!s_functionToHandlers.TryGetValue(func, out List<Handler>? value))
 			return false;
 
-		foreach (Handler handler in FunctionToHandlers[func])
+		foreach (Handler handler in value)
 		{
 			if (handler.Invoke(state))
 			{
@@ -189,6 +155,36 @@ public class HotkeyService : ServiceBase<HotkeyService>
 		}
 
 		return false;
+	}
+
+	private bool OnKeyboardInput(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
+	{
+		// Do not intercept or forward these keys.
+		if (key == Key.Tab || key == Key.Return || key == Key.Escape)
+			return false;
+
+		bool handled = HandleKey(key, state, modifiers);
+
+		if (SettingsService.Current.ForwardKeys)
+		{
+			// Forward any unused keys to ffxiv if Anamnesis has focus
+			if (!handled && Keyboard.FocusedElement is not TextBoxBase)
+			{
+				if (MainWindow.IsActive && state == KeyboardKeyStates.Pressed)
+				{
+					s_keyDownSentToGame.Add(key);
+					MemoryService.SendKey(key, state);
+				}
+			}
+
+			if (state == KeyboardKeyStates.Released && s_keyDownSentToGame.Contains(key))
+			{
+				s_keyDownSentToGame.Remove(key);
+				MemoryService.SendKey(key, state);
+			}
+		}
+
+		return handled;
 	}
 
 	public class Handler

@@ -4,7 +4,6 @@
 namespace Anamnesis;
 
 using Anamnesis.Core;
-using Anamnesis.Core.Memory;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Anamnesis.Services;
@@ -21,18 +20,9 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class TerritoryService : ServiceBase<TerritoryService>
 {
-	private const int TaskSuccessDelay = 16; // ms
-	private const int TaskFailureDelay = 1000; // ms
+	private const int TASK_SUCCESS_DELAY = 16; // ms
+	private const int TASK_FAILURE_DELAY = 1000; // ms
 	private uint currentWeatherId;
-
-	/// <inheritdoc/>
-	protected override IEnumerable<IService> Dependencies =>
-	[
-		AddressService.Instance,
-		GameService.Instance,
-		GameDataService.Instance,
-		GposeService.Instance
-	];
 
 	/// <summary>
 	/// The delegate object for the <see cref="TerritoryService.TerritoryChanged"/> event.
@@ -81,6 +71,15 @@ public class TerritoryService : ServiceBase<TerritoryService>
 	public Weather? CurrentWeather { get; set; }
 
 	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies =>
+	[
+		AddressService.Instance,
+		GameService.Instance,
+		GameDataService.Instance,
+		GposeService.Instance
+	];
+
+	/// <inheritdoc/>
 	protected override async Task OnStart()
 	{
 		this.CancellationTokenSource = new CancellationTokenSource();
@@ -98,7 +97,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 			{
 				try
 				{
-					await Task.Delay(TaskSuccessDelay, cancellationToken);
+					await Task.Delay(TASK_SUCCESS_DELAY, cancellationToken);
 
 					if (!MemoryService.IsProcessAlive)
 						continue;
@@ -162,7 +161,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 					this.CurrentTerritory = null;
 					this.CurrentTerritoryName = "Unknown";
 
-					await Task.Delay(TaskFailureDelay, cancellationToken);
+					await Task.Delay(TASK_FAILURE_DELAY, cancellationToken);
 				}
 			}
 			catch (TaskCanceledException)
@@ -184,7 +183,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 
 				if (current != this.CurrentWeatherId)
 				{
-					MemoryService.Write(AddressService.GPoseWeather, this.CurrentWeatherId, "Gpose weather Changed");
+					MemoryService.Write(AddressService.GPoseWeather, this.CurrentWeatherId);
 				}
 			}
 			else
@@ -193,7 +192,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 
 				if (current != this.CurrentWeatherId)
 				{
-					MemoryService.Write(AddressService.NextWeatherId, (byte)this.CurrentWeatherId, "Overworld weather Changed");
+					MemoryService.Write(AddressService.NextWeatherId, (byte)this.CurrentWeatherId);
 				}
 			}
 		}

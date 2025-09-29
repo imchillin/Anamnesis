@@ -4,7 +4,6 @@
 namespace Anamnesis.Services;
 
 using Anamnesis.Core;
-using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using PropertyChanged;
 using System;
@@ -18,15 +17,12 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class GposeService : ServiceBase<GposeService>
 {
-	private const int TaskDelay = 32; // ms (~30 fps)
-
-	/// <inheritdoc/>
-	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GameService.Instance];
+	private const int TASK_DELAY = 32; // ms (~30 fps)
 
 	/// <summary>
 	/// The delegate object for the <see cref="GposeService.GposeStateChanged"/> event.
 	/// </summary>
-	/// <param name="newState"></param>
+	/// <param name="newState">The new GPose state (i.e. true if player actor is in GPose, false otherwise).</param>
 	public delegate void GposeEvent(bool newState);
 
 	/// <summary>
@@ -41,6 +37,9 @@ public class GposeService : ServiceBase<GposeService>
 	/// This is a cached value that is updated by a continuous background task.
 	/// </remarks>
 	public bool IsGpose { get; private set; } = false;
+
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GameService.Instance];
 
 	/// <summary>
 	/// Checks if the user is in GPose photo mode by probing the game process' memory.
@@ -83,7 +82,7 @@ public class GposeService : ServiceBase<GposeService>
 					GposeStateChanged?.Invoke(newGpose);
 				}
 
-				await Task.Delay(TaskDelay, cancellationToken);
+				await Task.Delay(TASK_DELAY, cancellationToken);
 			}
 			catch (TaskCanceledException)
 			{

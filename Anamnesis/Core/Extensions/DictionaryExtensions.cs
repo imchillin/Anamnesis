@@ -5,7 +5,7 @@ namespace System.Collections.Generic;
 
 public static class DictionaryExtensions
 {
-	public static (TKey, TValue) Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> self)
+	public static (TKey Key, TValue Value) Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> self)
 	{
 		return (self.Key, self.Value);
 	}
@@ -19,18 +19,16 @@ public static class DictionaryExtensions
 	public static void Set<TKey, TValue>(this Dictionary<TKey, TValue> self, TKey key, TValue value)
 		where TKey : notnull
 	{
-		if (!self.ContainsKey(key))
-			self.Add(key, value);
-
+		self.TryAdd(key, value);
 		self[key] = value;
 	}
 
 	public static TValue Get<TKey, TValue>(this Dictionary<TKey, TValue> self, TKey key, TValue defaultValue)
 		where TKey : notnull
 	{
-		if (!self.ContainsKey(key))
+		if (!self.TryGetValue(key, out TValue? value))
 			return defaultValue;
 
-		return self[key];
+		return value;
 	}
 }

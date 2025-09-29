@@ -3,8 +3,8 @@
 
 namespace Anamnesis.Actor.Views;
 
-using System.Windows.Controls;
 using Anamnesis.Memory;
+using System.Windows.Controls;
 using XivToolsWpf.DependencyProperties;
 
 public partial class AnimationStatusControl : UserControl

@@ -25,7 +25,7 @@ public partial class FacialFeaturesControl : UserControl
 	public static readonly IBind<ActorCustomizeMemory.Tribes> TribeDp = Binder.Register<ActorCustomizeMemory.Tribes, FacialFeaturesControl>(nameof(Tribe), OnTribeChanged);
 	public static readonly IBind<byte> FaceDp = Binder.Register<byte, FacialFeaturesControl>(nameof(Face), OnHeadChanged);
 
-	private readonly List<Option> features = new List<Option>();
+	private readonly List<Option> features = new();
 	private bool locked = false;
 
 	public FacialFeaturesControl()
@@ -92,6 +92,21 @@ public partial class FacialFeaturesControl : UserControl
 		sender.locked = false;
 	}
 
+	private static ActorCustomizeMemory.FacialFeature GetValue(int index)
+	{
+		return index switch
+		{
+			0 => ActorCustomizeMemory.FacialFeature.First,
+			1 => ActorCustomizeMemory.FacialFeature.Second,
+			2 => ActorCustomizeMemory.FacialFeature.Third,
+			3 => ActorCustomizeMemory.FacialFeature.Fourth,
+			4 => ActorCustomizeMemory.FacialFeature.Fifth,
+			5 => ActorCustomizeMemory.FacialFeature.Sixth,
+			6 => ActorCustomizeMemory.FacialFeature.Seventh,
+			_ => throw new Exception("Invalid index value"),
+		};
+	}
+
 	private void GetFeatures()
 	{
 		this.locked = true;
@@ -114,7 +129,7 @@ public partial class FacialFeaturesControl : UserControl
 				if (set.FacialFeatures == null)
 					throw new Exception("Missing facial features");
 
-				facialFeatures = [.. set.FacialFeatures];
+				facialFeatures = set.FacialFeatures.ToArray();
 				break;
 			}
 		}
@@ -143,35 +158,23 @@ public partial class FacialFeaturesControl : UserControl
 			if (id < 0 || id >= facialFeatures.Length)
 				continue;
 
-			Option op = new Option();
-			op.Icon = facialFeatures[id];
-			op.Value = this.GetValue(i);
-			op.Index = id;
+			var op = new Option
+			{
+				Icon = facialFeatures[id],
+				Value = GetValue(i),
+				Index = id,
+			};
 			this.features.Add(op);
 		}
 
-		Option legacyTattoo = new Option();
-		legacyTattoo.Value = ActorCustomizeMemory.FacialFeature.LegacyTattoo;
+		var legacyTattoo = new Option
+		{
+			Value = ActorCustomizeMemory.FacialFeature.LegacyTattoo,
+		};
 		this.features.Add(legacyTattoo);
 
 		this.FeaturesList.ItemsSource = this.features;
 		this.locked = false;
-	}
-
-	private ActorCustomizeMemory.FacialFeature GetValue(int index)
-	{
-		switch (index)
-		{
-			case 0: return ActorCustomizeMemory.FacialFeature.First;
-			case 1: return ActorCustomizeMemory.FacialFeature.Second;
-			case 2: return ActorCustomizeMemory.FacialFeature.Third;
-			case 3: return ActorCustomizeMemory.FacialFeature.Fourth;
-			case 4: return ActorCustomizeMemory.FacialFeature.Fifth;
-			case 5: return ActorCustomizeMemory.FacialFeature.Sixth;
-			case 6: return ActorCustomizeMemory.FacialFeature.Seventh;
-		}
-
-		throw new Exception("Invalid index value");
 	}
 
 	private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)

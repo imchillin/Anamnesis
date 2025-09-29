@@ -21,9 +21,9 @@ using System.Threading.Tasks;
 /// </summary>
 public class LogService : ServiceBase<LogService>
 {
-	private const string LogfilePath = "/Logs/";
+	private const string LOG_FILE_PATH = "/Logs/";
 
-	private static readonly LoggingLevelSwitch LogLevel = new()
+	private static readonly LoggingLevelSwitch s_logLevel = new()
 	{
 #if DEBUG
 		MinimumLevel = LogEventLevel.Verbose,
@@ -32,7 +32,7 @@ public class LogService : ServiceBase<LogService>
 #endif
 	};
 
-	private static string? currentLogPath;
+	private static string? s_currentLogPath;
 
 	/// <summary>
 	/// Gets or sets the minimum logging level for the application.
@@ -43,8 +43,8 @@ public class LogService : ServiceBase<LogService>
 	/// </remarks>
 	public static bool VerboseLogging
 	{
-		get => LogLevel.MinimumLevel == LogEventLevel.Verbose;
-		set => LogLevel.MinimumLevel = value ? LogEventLevel.Verbose : LogEventLevel.Debug;
+		get => s_logLevel.MinimumLevel == LogEventLevel.Verbose;
+		set => s_logLevel.MinimumLevel = value ? LogEventLevel.Verbose : LogEventLevel.Debug;
 	}
 
 	/// <summary>
@@ -53,10 +53,8 @@ public class LogService : ServiceBase<LogService>
 	/// <exception cref="Exception">Thrown if the logs directory could not be retrieved.</exception>
 	public static void ShowLogs()
 	{
-		string? dir = Path.GetDirectoryName(FileService.StoreDirectory + LogfilePath);
-
-		if (dir == null)
-			throw new Exception("Failed to get directory name for path");
+		string? dir = Path.GetDirectoryName(FileService.StoreDirectory + LOG_FILE_PATH)
+			?? throw new Exception("Failed to get directory name for path");
 
 		dir = FileService.ParseToFilePath(dir);
 		Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", dir);
@@ -67,7 +65,7 @@ public class LogService : ServiceBase<LogService>
 	/// </summary>
 	public static void ShowCurrentLog()
 	{
-		Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", $"/select, \"{currentLogPath}\"");
+		Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", $"/select, \"{s_currentLogPath}\"");
 	}
 
 	/// <summary>
@@ -75,10 +73,10 @@ public class LogService : ServiceBase<LogService>
 	/// </summary>
 	public static void CreateLog()
 	{
-		if (!string.IsNullOrEmpty(currentLogPath))
+		if (!string.IsNullOrEmpty(s_currentLogPath))
 			return;
 
-		string dir = Path.GetDirectoryName(FileService.StoreDirectory + LogfilePath) + "\\";
+		string dir = Path.GetDirectoryName(FileService.StoreDirectory + LOG_FILE_PATH) + "\\";
 		dir = FileService.ParseToFilePath(dir);
 
 		if (!Directory.Exists(dir))
@@ -93,11 +91,11 @@ public class LogService : ServiceBase<LogService>
 			}
 		}
 
-		currentLogPath = dir + DateTime.Now.ToString(@"yyyy-MM-dd-HH-mm-ss") + ".txt";
+		s_currentLogPath = dir + DateTime.Now.ToString(@"yyyy-MM-dd-HH-mm-ss") + ".txt";
 
 		var config = new LoggerConfiguration();
-		config.MinimumLevel.ControlledBy(LogLevel);
-		config.WriteTo.File(currentLogPath);
+		config.MinimumLevel.ControlledBy(s_logLevel);
+		config.WriteTo.File(s_currentLogPath);
 		config.WriteTo.Sink<ErrorDialogLogDestination>();
 		config.WriteTo.Debug();
 

@@ -32,14 +32,14 @@ using XivToolsWpf.Windows;
 [AddINotifyPropertyChangedInterface]
 public partial class MainWindow : ChromedWindow
 {
-	private static MainWindow? instance;
+	private static MainWindow? s_instance;
 	private MiniWindow? mini;
 	private bool hasSetPosition = false;
 	private Tabs tab = Tabs.Home;
 
 	public MainWindow()
 	{
-		instance = this;
+		s_instance = this;
 
 		this.InitializeComponent();
 
@@ -62,7 +62,20 @@ public partial class MainWindow : ChromedWindow
 		Actor,
 	}
 
-	public static new bool IsActive => instance?.GetIsActive() ?? false;
+#if DEBUG
+	public static bool IsDebug => true;
+#else
+	public static bool IsDebug => false;
+#endif
+
+	public static GameService GameService => GameService.Instance;
+	public static SettingsService SettingsService => SettingsService.Instance;
+	public static GposeService GposeService => GposeService.Instance;
+	public static TargetService TargetService => TargetService.Instance;
+	public static MemoryService MemoryService => MemoryService.Instance;
+	public static LogService LogService => LogService.Instance;
+	public static UpdateService UpdateService => UpdateService.Instance;
+	public static new bool IsActive => s_instance?.GetIsActive() ?? false;
 
 	public bool IsClosing { get; private set; } = false;
 	public bool IsDrawerOpen { get; private set; } = false;
@@ -73,25 +86,11 @@ public partial class MainWindow : ChromedWindow
 		set
 		{
 			if (value != Tabs.Actor)
-				this.TargetService.ClearSelection();
+				TargetService.ClearSelection();
 
 			this.tab = value;
 		}
 	}
-
-	public GameService GameService => GameService.Instance;
-	public SettingsService SettingsService => SettingsService.Instance;
-	public GposeService GposeService => GposeService.Instance;
-	public TargetService TargetService => TargetService.Instance;
-	public MemoryService MemoryService => MemoryService.Instance;
-	public LogService LogService => LogService.Instance;
-	public UpdateService UpdateService => UpdateService.Instance;
-
-#if DEBUG
-	public bool IsDebug => true;
-#else
-	public bool IsDebug => false;
-#endif
 
 	[DependsOn(nameof(Tab))]
 	public bool ShowHome
@@ -123,7 +122,7 @@ public partial class MainWindow : ChromedWindow
 
 	public static DpiScale GetDpi()
 	{
-		return VisualTreeHelper.GetDpi(instance);
+		return VisualTreeHelper.GetDpi(s_instance);
 	}
 
 	protected override void OnActivated(EventArgs e)
@@ -194,7 +193,7 @@ public partial class MainWindow : ChromedWindow
 		if (actor != null)
 		{
 			this.Tab = Tabs.Actor;
-			FrameworkElement? container = this.PinnedActorList.ItemContainerGenerator.ContainerFromItem(this.TargetService.CurrentlyPinned) as FrameworkElement;
+			FrameworkElement? container = this.PinnedActorList.ItemContainerGenerator.ContainerFromItem(TargetService.CurrentlyPinned) as FrameworkElement;
 			container?.BringIntoView();
 		}
 	}

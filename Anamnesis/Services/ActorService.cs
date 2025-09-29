@@ -21,14 +21,14 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class ActorService : ServiceBase<ActorService>
 {
-	private const int TickDelay = 16; // ms
-	private const int ActorTableSize = 819;
-	private const int GPoseIndexStart = 200;
-	private const int GPoseIndexEnd = 440;
-	private const int OverworldPlayerIndex = 0;
-	private const int GPosePlayerIndex = 201;
+	private const int TICK_DELAY = 16; // ms
+	private const int ACTOR_TABLE_SIZE = 819;
+	private const int GPOSE_INDEX_START = 200;
+	private const int GPOSE_INDEX_END = 440;
+	private const int OVERWORLD_PLAYER_INDEX = 0;
+	private const int GPOSE_PLAYER_INDEX = 201;
 
-	private readonly IntPtr[] actorTable = new IntPtr[ActorTableSize];
+	private readonly IntPtr[] actorTable = new IntPtr[ACTOR_TABLE_SIZE];
 	private readonly ReaderWriterLockSlim actorTableLock = new();
 
 	private readonly List<IActorRefresher> actorRefreshers =
@@ -37,9 +37,6 @@ public class ActorService : ServiceBase<ActorService>
 		new PenumbraActorRefresher(),
 		new AnamnesisActorRefresher(),
 	];
-
-	/// <inheritdoc/>
-	protected override IEnumerable<IService> Dependencies => [AddressService.Instance];
 
 	/// <summary>Gets the actor table as a read-only collection.</summary>
 	public ReadOnlyCollection<IntPtr> ActorTable
@@ -58,11 +55,14 @@ public class ActorService : ServiceBase<ActorService>
 		}
 	}
 
+	/// <inheritdoc/>
+	protected override IEnumerable<IService> Dependencies => [AddressService.Instance];
+
 	/// <summary>Determines if the actor is in GPose.</summary>
 	/// <param name="objectIndex">The index of the actor.</param>
 	/// <returns>True if the actor is in GPose, otherwise false.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static bool IsGPoseActor(int objectIndex) => objectIndex >= GPoseIndexStart && objectIndex < GPoseIndexEnd;
+	public static bool IsGPoseActor(int objectIndex) => objectIndex >= GPOSE_INDEX_START && objectIndex < GPOSE_INDEX_END;
 
 	/// <summary>Determines if the actor is in the overworld.</summary>
 	/// <param name="objectIndex">The index of the actor.</param>
@@ -74,13 +74,13 @@ public class ActorService : ServiceBase<ActorService>
 	/// <param name="objectIndex">The index of the actor.</param>
 	/// <returns>True if the actor is the local overworld player, otherwise false.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static bool IsLocalOverworldPlayer(int objectIndex) => objectIndex == OverworldPlayerIndex;
+	public static bool IsLocalOverworldPlayer(int objectIndex) => objectIndex == OVERWORLD_PLAYER_INDEX;
 
 	/// <summary>Determines if the actor is the local GPose player.</summary>
 	/// <param name="objectIndex">The index of the actor.</param>
 	/// <returns>True if the actor is the local GPose player, otherwise false.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static bool IsLocalGPosePlayer(int objectIndex) => objectIndex == GPosePlayerIndex;
+	public static bool IsLocalGPosePlayer(int objectIndex) => objectIndex == GPOSE_PLAYER_INDEX;
 
 	/// <summary>Determines if the actor is the local player.</summary>
 	/// <param name="objectIndex">The index of the actor.</param>
@@ -276,7 +276,7 @@ public class ActorService : ServiceBase<ActorService>
 			try
 			{
 				this.UpdateActorTable();
-				await Task.Delay(TickDelay, cancellationToken);
+				await Task.Delay(TICK_DELAY, cancellationToken);
 			}
 			catch (TaskCanceledException)
 			{
@@ -292,7 +292,7 @@ public class ActorService : ServiceBase<ActorService>
 		if (!GameService.Ready)
 			return;
 
-		int tableSizeInBytes = ActorTableSize * IntPtr.Size;
+		int tableSizeInBytes = ACTOR_TABLE_SIZE * IntPtr.Size;
 		byte[] buffer = ArrayPool<byte>.Shared.Rent(tableSizeInBytes);
 
 		try

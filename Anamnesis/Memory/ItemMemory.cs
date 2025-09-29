@@ -43,7 +43,7 @@ public class ItemMemory : MemoryBase, IEquipmentItemMemory
 
 	public void ApplyDye(IDye dye, DyeSlot dyeSlot)
 	{
-		if(dyeSlot.HasFlagUnsafe(DyeSlot.First))
+		if (dyeSlot.HasFlagUnsafe(DyeSlot.First))
 			this.Dye = (dye != null) ? dye.Id : DyeUtility.NoneDye.Id;
 
 		if (dyeSlot.HasFlagUnsafe(DyeSlot.Second))

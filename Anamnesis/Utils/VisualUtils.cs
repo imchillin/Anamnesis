@@ -18,7 +18,8 @@ public static class VisualUtils
 	/// <remarks>
 	/// Based on code from https://stackoverflow.com/a/9229255.
 	/// </remarks>
-	public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+	public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj)
+		where T : DependencyObject
 	{
 		if (depObj == null)
 			yield break;

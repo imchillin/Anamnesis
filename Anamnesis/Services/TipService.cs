@@ -18,33 +18,33 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public partial class TipService : ServiceBase<TipService>
 {
-	private const int TipCycleDelay = 10000; // ms (10 seconds)
-	private const string MissingTipText = "I couldn't find any tips. =(";
-	private List<TipEntry>? tips;
+	private const int TIP_CYCLE_DELAY = 10000; // ms (10 seconds)
+	private const string MISSING_TIP_TEXT = "I couldn't find any tips. =(";
 	private readonly Lock objectLock = new();
+	private List<TipEntry>? tips;
 
 	/// <summary>
-	/// Gets or sets a value indicating whether the current tip icon is Hydaelyn.
+	/// Gets a value indicating whether the current tip icon is Hydaelyn.
 	/// </summary>
 	public bool IsHydaelyn { get; private set; }
 
 	/// <summary>
-	/// Gets or sets a value indicating whether the current tip icon is Zodiark.
+	/// Gets a value indicating whether the current tip icon is Zodiark.
 	/// </summary>
 	public bool IsZodiark { get; private set; }
 
 	/// <summary>
-	/// Gets or sets a value indicating whether the current tip icon is Amaurotine.
+	/// Gets a value indicating whether the current tip icon is Amaurotine.
 	/// </summary>
 	public bool IsAmaurotine { get; private set; }
 
 	/// <summary>
-	/// Gets or sets a value indicating whether the current tip icon is Anamnesis-tan (mascot).
+	/// Gets a value indicating whether the current tip icon is Anamnesis-tan (mascot).
 	/// </summary>
 	public bool IsAnamTan { get; private set; }
 
 	/// <summary>
-	/// Gets or sets the currently active tip.
+	/// Gets the currently active tip.
 	/// </summary>
 	public TipEntry? Tip { get; private set; }
 
@@ -124,23 +124,12 @@ public partial class TipService : ServiceBase<TipService>
 
 		if (!isLoaded)
 		{
-			this.Tip = new TipEntry { Text = MissingTipText };
+			this.Tip = new TipEntry { Text = MISSING_TIP_TEXT };
 			return;
 		}
 		else
 		{
 			_ = Task.Run(this.TipCycle);
-		}
-	}
-
-	/// <summary>
-	/// Handles tips text language change on locale change.
-	/// </summary>
-	private void OnLocaleChanged()
-	{
-		lock (this.objectLock)
-		{
-			this.tips = GetTipsFromLocale();
 		}
 	}
 
@@ -160,7 +149,7 @@ public partial class TipService : ServiceBase<TipService>
 		{
 			if (this.tips == null || this.tips.Count == 0)
 			{
-				this.Tip = new TipEntry { Text = MissingTipText };
+				this.Tip = new TipEntry { Text = MISSING_TIP_TEXT };
 				return;
 			}
 
@@ -182,7 +171,7 @@ public partial class TipService : ServiceBase<TipService>
 			var psi = new ProcessStartInfo
 			{
 				FileName = this.Tip.Url,
-				UseShellExecute = true
+				UseShellExecute = true,
 			};
 			Process.Start(psi);
 		}
@@ -192,12 +181,30 @@ public partial class TipService : ServiceBase<TipService>
 		}
 	}
 
+	[GeneratedRegex(@"^Tip_(\d+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+	private static partial Regex TipKeyRegex();
+
+	/// <summary>
+	/// The main loop that cycles through tips at a set interval.
+	/// </summary>
+	/// <returns>A task representing the asynchronous operation.</returns>
 	private async Task TipCycle()
 	{
 		while (this.IsInitialized)
 		{
 			this.NextTip();
-			await Task.Delay(TipCycleDelay);
+			await Task.Delay(TIP_CYCLE_DELAY);
+		}
+	}
+
+	/// <summary>
+	/// Handles tips text language change on locale change.
+	/// </summary>
+	private void OnLocaleChanged()
+	{
+		lock (this.objectLock)
+		{
+			this.tips = GetTipsFromLocale();
 		}
 	}
 
@@ -209,7 +216,4 @@ public partial class TipService : ServiceBase<TipService>
 
 		public bool CanClick => !string.IsNullOrEmpty(this.Url);
 	}
-
-	[GeneratedRegex(@"^Tip_(\d+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
-	private static partial Regex TipKeyRegex();
 }

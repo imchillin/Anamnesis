@@ -245,8 +245,7 @@ public class CharacterFile : JsonFileBase
 		if (actor.Customize == null)
 			return;
 
-		if (this.Glasses == null)
-			this.Glasses = new GlassesSave();
+		this.Glasses ??= new GlassesSave();
 
 		Log.Information("Reading appearance from file");
 
@@ -472,11 +471,6 @@ public class CharacterFile : JsonFileBase
 		Log.Information("Finished reading appearance from file");
 	}
 
-	private bool IncludeSection(SaveModes section, SaveModes mode)
-	{
-		return this.SaveMode.HasFlagUnsafe(section) && mode.HasFlagUnsafe(section);
-	}
-
 	private static void WriteEquipment(ItemSave? itemSave, ItemMemory? itemMemory)
 	{
 		if (itemSave != null)
@@ -490,6 +484,11 @@ public class CharacterFile : JsonFileBase
 			itemMemory.Dye = (byte)ItemUtility.NoneDye.RowId;
 			itemMemory.Dye2 = (byte)ItemUtility.NoneDye.RowId;
 		}
+	}
+
+	private bool IncludeSection(SaveModes section, SaveModes mode)
+	{
+		return this.SaveMode.HasFlagUnsafe(section) && mode.HasFlagUnsafe(section);
 	}
 
 	[Serializable]

@@ -434,9 +434,9 @@ public class CmToolPoseFile : JsonFileBase
 	public string? ExTopHSize { get; set; }
 	public string? ExTopISize { get; set; }
 
-	public PoseFile Upgrade(ActorCustomizeMemory.Races race)
+	public PoseFile Upgrade()
 	{
-		PoseFile file = new PoseFile();
+		var file = new PoseFile();
 		Type legacyType = this.GetType();
 
 		if (this.Race == null)
@@ -490,18 +490,16 @@ public class CmToolPoseFile : JsonFileBase
 
 			PoseFile.Bone bone = StringToBone(rotString, scaleString);
 
-			if (file.Bones.ContainsKey(boneName))
-				file.Bones.Remove(boneName);
-
+			file.Bones.Remove(boneName);
 			file.Bones.Add(boneName, bone);
 		}
 
 		return file;
 	}
 
-	private static PoseFile.Bone StringToBone(string? rot = null, string? scale = null, string? position = null)
+	private static PoseFile.Bone StringToBone(string? rot = null, string? scale = null)
 	{
-		PoseFile.Bone bone = new PoseFile.Bone();
+		var bone = new PoseFile.Bone();
 
 		if (!string.IsNullOrEmpty(rot) && rot != "null")
 		{

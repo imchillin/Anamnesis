@@ -27,8 +27,8 @@ public partial class DeveloperTab : UserControl
 		this.ContentArea.DataContext = this;
 	}
 
-	public TargetService TargetService => TargetService.Instance;
-	public GposeService GposeService => GposeService.Instance;
+	public static TargetService TargetService => TargetService.Instance;
+	public static GposeService GposeService => GposeService.Instance;
 	public SceneOptionsValues SceneOptions { get; init; } = new();
 
 	private void OnNpcNameSearchClicked(object sender, RoutedEventArgs e)
@@ -59,7 +59,7 @@ public partial class DeveloperTab : UserControl
 
 	private void OnCopyActorAddressClicked(object sender, RoutedEventArgs e)
 	{
-		ActorBasicMemory memory = this.TargetService.PlayerTarget;
+		ActorBasicMemory memory = TargetService.PlayerTarget;
 
 		if (!memory.IsValid)
 		{
@@ -74,7 +74,7 @@ public partial class DeveloperTab : UserControl
 
 	private void OnCopyAssociatedAddressesClick(object sender, RoutedEventArgs e)
 	{
-		ActorBasicMemory abm = this.TargetService.PlayerTarget;
+		ActorBasicMemory abm = TargetService.PlayerTarget;
 
 		if (!abm.IsValid)
 		{
@@ -119,7 +119,7 @@ public partial class DeveloperTab : UserControl
 			SceneFile file = new();
 			file.WriteToFile();
 
-			using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
+			using var stream = new FileStream(result.Path.FullName, FileMode.Create);
 			file.Serialize(stream);
 		}
 		catch (Exception ex)
@@ -132,15 +132,8 @@ public partial class DeveloperTab : UserControl
 	{
 		try
 		{
-			Shortcut[]? shortcuts = new[]
-			{
-				FileService.DefaultSceneDirectory,
-			};
-
-			Type[] types = new[]
-			{
-				typeof(SceneFile),
-			};
+			Shortcut[]? shortcuts = [FileService.DefaultSceneDirectory];
+			Type[] types = [typeof(SceneFile)];
 
 			OpenResult result = await FileService.Open(null, shortcuts, types);
 

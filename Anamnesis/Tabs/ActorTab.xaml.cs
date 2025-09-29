@@ -56,7 +56,7 @@ public partial class ActorTab : UserControl
 	private void AddPage<T>(string name, IconChar icon)
 		where T : UserControl
 	{
-		Page<T> page = new Page<T>(icon, "ActorTabs", name);
+		var page = new Page<T>(icon, "ActorTabs", name);
 		this.Tabs.Add(page);
 		this.Pages.Add(page);
 	}
@@ -81,9 +81,7 @@ public partial class ActorTab : UserControl
 
 		foreach (var tab in this.Tabs)
 		{
-			if (!SettingsService.Current.ActorTabOrder.ContainsKey(tab.Name))
-				SettingsService.Current.ActorTabOrder.Add(tab.Name, 0);
-
+			SettingsService.Current.ActorTabOrder.TryAdd(tab.Name, 0);
 			SettingsService.Current.ActorTabOrder[tab.Name] = this.Tabs.IndexOf(tab);
 		}
 
