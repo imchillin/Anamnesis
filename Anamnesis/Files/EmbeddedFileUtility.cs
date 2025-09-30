@@ -62,7 +62,9 @@ public static class EmbeddedFileUtility
 
 		dir = dir.Replace("\\", ".");
 		dir = dir.Replace("/", ".");
-		dir = "." + dir;
+
+		if (!dir.StartsWith('.'))
+			dir = "." + dir;
 
 		string[] all = assembly.GetManifestResourceNames();
 
