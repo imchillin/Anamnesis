@@ -38,7 +38,10 @@ public class ActorBasicMemory : MemoryBase
 	public string IdNoAddress => $"n{this.NameHash}_d{this.DataId}"; ////_k{this.ObjectKind}";
 	public int Index => ActorService.Instance.GetActorTableIndex(this.Address);
 	public IconChar Icon => this.ObjectKind.GetIcon();
-	public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
+	public double DistanceFromPlayer => Math.Sqrt(
+		(this.DistanceFromPlayerX * this.DistanceFromPlayerX) +
+		(this.DistanceFromPlayerY * this.DistanceFromPlayerY));
+
 	public string NameHash => HashUtility.GetHashString(this.NameBytes.ToString(), true);
 
 	[AlsoNotifyFor(nameof(DisplayName))]
