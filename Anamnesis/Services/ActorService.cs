@@ -28,6 +28,8 @@ public class ActorService : ServiceBase<ActorService>
 	private const int OVERWORLD_PLAYER_INDEX = 0;
 	private const int GPOSE_PLAYER_INDEX = 201;
 
+	private static readonly int s_actorTableSizeInBytes = ACTOR_TABLE_SIZE * IntPtr.Size;
+
 	private readonly IntPtr[] actorTable = new IntPtr[ACTOR_TABLE_SIZE];
 	private readonly ReaderWriterLockSlim actorTableLock = new();
 
@@ -292,12 +294,11 @@ public class ActorService : ServiceBase<ActorService>
 		if (!GameService.Ready)
 			return;
 
-		int tableSizeInBytes = ACTOR_TABLE_SIZE * IntPtr.Size;
-		byte[] buffer = ArrayPool<byte>.Shared.Rent(tableSizeInBytes);
+		byte[] buffer = ArrayPool<byte>.Shared.Rent(s_actorTableSizeInBytes);
 
 		try
 		{
-			if (!MemoryService.Read(AddressService.ActorTable, buffer.AsSpan(0, tableSizeInBytes)))
+			if (!MemoryService.Read(AddressService.ActorTable, buffer.AsSpan(0, s_actorTableSizeInBytes)))
 				throw new Exception("Failed to read actor table from memory.");
 
 			bool hasChanged = false;
@@ -306,7 +307,7 @@ public class ActorService : ServiceBase<ActorService>
 			try
 			{
 				Span<IntPtr> currentSpan = this.actorTable.AsSpan();
-				Span<IntPtr> newSpan = MemoryMarshal.Cast<byte, IntPtr>(buffer.AsSpan(0, tableSizeInBytes));
+				Span<IntPtr> newSpan = MemoryMarshal.Cast<byte, IntPtr>(buffer.AsSpan(0, s_actorTableSizeInBytes));
 
 				if (!currentSpan.SequenceEqual(newSpan))
 				{
