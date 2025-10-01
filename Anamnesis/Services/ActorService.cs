@@ -21,10 +21,10 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class ActorService : ServiceBase<ActorService>
 {
+	public const int GPOSE_INDEX_START = 200;
+	public const int GPOSE_INDEX_END = 440;
 	private const int TICK_DELAY = 16; // ms
 	private const int ACTOR_TABLE_SIZE = 819;
-	private const int GPOSE_INDEX_START = 200;
-	private const int GPOSE_INDEX_END = 440;
 	private const int OVERWORLD_PLAYER_INDEX = 0;
 	private const int GPOSE_PLAYER_INDEX = 201;
 

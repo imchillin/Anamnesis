@@ -22,8 +22,9 @@ public enum ActorTypes : byte
 	Area = 0x0B,
 	Housing = 0x0C,
 	Cutscene = 0x0D,
-	CardStand = 0x0E,
+	ReactionEvent = 0x0E,
 	Ornament = 0x0F,
+	CardStand = 0x10,
 }
 
 public class ActorType(string name, ActorTypes value)
