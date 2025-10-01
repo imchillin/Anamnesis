@@ -69,7 +69,7 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x0968)] public ushort OrnamentId { get; set; }
 	[Bind(0x0A20)] public AnimationMemory? Animation { get; set; }
 	[Bind(0x1A48)] public byte Voice { get; set; }
-	[Bind(0x1B28, BindFlags.ActorRefresh)] public int ModelType { get; set; }
+	[Bind(0x1B28, BindFlags.ActorRefresh)] public int ModelType { get; set; } = -1; // Invalid by default to prevent false positive human checks
 	[Bind(0x1B94)] public bool IsMotionDisabled { get; set; }
 	[Bind(0x22D8)] public float Transparency { get; set; }
 	[Bind(0x2354)] public byte CharacterModeRaw { get; set; }

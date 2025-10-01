@@ -51,7 +51,8 @@ public class ActorModelMemory : MemoryBase
 	[Bind(0x2EC)] public float Drenched { get; set; }
 	[Bind(0xAA0)] public short DataPath { get; set; }
 	[Bind(0xAA4)] public byte DataHead { get; set; }
-	[Bind(0xBF0, 0x028, BindFlags.Pointer)] public ExtendedAppearanceMemory? ExtendedAppearance { get; set; }
+	[Bind(0xBF0, 0x024)] public int ExtendedAppearanceFlags { get; private set; }
+	[Bind(0xBF0, 0x028, BindFlags.Pointer)] public ExtendedAppearanceMemory? ExtendedAppearanceUnsafePtr { get; private set; }
 
 	public bool LockWetness
 	{
@@ -73,25 +74,27 @@ public class ActorModelMemory : MemoryBase
 				return false;
 
 			if (this.Parent is ActorMemory actor)
-			{
 				return actor.ModelType == 0;
-			}
 
-			return true;
+			return false;
 		}
 	}
 
+	public ExtendedAppearanceMemory? ExtendedAppearance
+		=> (this.IsHuman && (this.ExtendedAppearanceFlags & 0x4003) == 0) ? this.ExtendedAppearanceUnsafePtr : null;
+
 	protected override bool CanRead(BindInfo bind)
 	{
-		if (bind.Name == nameof(ActorModelMemory.ExtendedAppearance))
+		if (bind.Name == nameof(this.ExtendedAppearanceFlags) ||
+			bind.Name == nameof(this.ExtendedAppearanceUnsafePtr))
 		{
 			// No extended appearance for anything that isn't a player!
 			if (!this.IsHuman)
 			{
-				if (this.ExtendedAppearance != null)
+				if (this.ExtendedAppearanceUnsafePtr != null)
 				{
-					this.ExtendedAppearance.Dispose();
-					this.ExtendedAppearance = null;
+					this.ExtendedAppearanceUnsafePtr?.Dispose();
+					this.ExtendedAppearanceUnsafePtr = null;
 				}
 
 				return false;
