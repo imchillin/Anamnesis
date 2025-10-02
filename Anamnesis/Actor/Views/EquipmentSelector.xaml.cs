@@ -57,17 +57,20 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		Level,
 	}
 
-	public static bool ShowFilters
+	// Suppress CA1822: The properties are used in WPF bindings. Do not set them to static.
+#pragma warning disable CA1822
+	public bool ShowFilters
 	{
 		get => s_showFilters;
 		set => s_showFilters = value;
 	}
 
-	public static bool AutoOffhand
+	public bool AutoOffhand
 	{
 		get => s_autoOffhand;
 		set => s_autoOffhand = value;
 	}
+#pragma warning restore CA1822
 
 	public ItemSlots Slot { get; set; }
 	public bool IsMainHandSlot => this.Slot == ItemSlots.MainHand;

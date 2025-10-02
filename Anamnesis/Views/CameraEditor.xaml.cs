@@ -40,7 +40,11 @@ public partial class CameraEditor : UserControl
 	public static CameraService CameraService => CameraService.Instance;
 	public static SettingsService SettingsService => SettingsService.Instance;
 	public static Settings Settings => SettingsService.Current;
-	public static OverflowModes RotationOverflowBehavior => Settings.WrapRotationSliders ? OverflowModes.Loop : OverflowModes.Clamp;
+
+#pragma warning disable CA1822
+	public OverflowModes RotationOverflowBehavior => Settings.WrapRotationSliders ? OverflowModes.Loop : OverflowModes.Clamp;
+#pragma warning restore CA1822
+
 	private static ILogger Log => Serilog.Log.ForContext<CameraEditor>();
 
 	private async void OnImportCamera(object sender, RoutedEventArgs e)
@@ -116,6 +120,6 @@ public partial class CameraEditor : UserControl
 
 	private void OnSettingsChanged(object? sender, EventArgs e)
 	{
-		this.OnPropertyChanged(nameof(RotationOverflowBehavior));
+		this.OnPropertyChanged(nameof(this.RotationOverflowBehavior));
 	}
 }
