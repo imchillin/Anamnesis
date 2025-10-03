@@ -10,7 +10,6 @@ using PropertyChanged;
 using System;
 using System.Collections.Generic;
 
-// TODO: Rename to GameObject
 public class ActorBasicMemory : MemoryBase
 {
 	private ActorBasicMemory? owner;
@@ -38,16 +37,18 @@ public class ActorBasicMemory : MemoryBase
 	public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.Address}";
 	public string IdNoAddress => $"n{this.NameHash}_d{this.DataId}"; ////_k{this.ObjectKind}";
 	public int Index => ActorService.Instance.GetActorTableIndex(this.Address);
-
 	public IconChar Icon => this.ObjectKind.GetIcon();
-	public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
+	public double DistanceFromPlayer => Math.Sqrt(
+		(this.DistanceFromPlayerX * this.DistanceFromPlayerX) +
+		(this.DistanceFromPlayerY * this.DistanceFromPlayerY));
+
 	public string NameHash => HashUtility.GetHashString(this.NameBytes.ToString(), true);
 
 	[AlsoNotifyFor(nameof(DisplayName))]
 	public string? Nickname { get; set; }
 
 	[DependsOn(nameof(ObjectIndex))]
-	public virtual bool IsGPoseActor => this.ObjectIndex >= 200 && this.ObjectIndex < 440;
+	public virtual bool IsGPoseActor => this.ObjectIndex >= ActorService.GPOSE_INDEX_START && this.ObjectIndex < ActorService.GPOSE_INDEX_END;
 
 	[DependsOn(nameof(IsGPoseActor))]
 	public bool IsOverworldActor => !this.IsGPoseActor;
@@ -60,21 +61,8 @@ public class ActorBasicMemory : MemoryBase
 	/// </summary>
 	public string DisplayName => this.Nickname ?? this.Name;
 
-	public string Name
-	{
-		get
-		{
-			string name = this.NameBytes.ToString();
-
-			// Geting owner now can be expensive, so disable this for now.
-			/*ActorBasicMemory? owner = this.GetOwner();
-
-			if (owner != null)
-				name += $" ({owner.DisplayName})";*/
-
-			return name;
-		}
-	}
+	[DependsOn(nameof(NameBytes))]
+	public string Name => this.NameBytes.ToString();
 
 	[DependsOn(nameof(ObjectKind))]
 	public int ObjectKindInt
@@ -129,8 +117,5 @@ public class ActorBasicMemory : MemoryBase
 		return this.owner;
 	}
 
-	public override string ToString()
-	{
-		return $"{this.Id}";
-	}
+	public override string ToString() => $"{this.Id}";
 }

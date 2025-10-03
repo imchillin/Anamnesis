@@ -46,9 +46,6 @@ public class PropertyBindInfo : BindInfo
 
 		if (this.cachedOffsets == null || this.cachedOffsets.Length == 0)
 			throw new NullReferenceException("Cached offsets are not initialized.");
-
-		if (this.cachedOffsets.Length > 1 && !this.flags.HasFlagUnsafe(BindFlags.Pointer))
-			throw new InvalidOperationException("Bind address has multiple offsets but is not a pointer. This is not supported.");
 	}
 
 	/// <summary>Gets the name of the bound property.</summary>
@@ -76,18 +73,20 @@ public class PropertyBindInfo : BindInfo
 	/// </exception>
 	public override IntPtr GetAddress()
 	{
-		IntPtr bindAddress = this.Memory.Address + this.cachedOffsets[0];
+		IntPtr bindAddress = this.Memory.Address;
+		var offsets = this.cachedOffsets;
+		int count = offsets.Length;
+
+		for (int i = 0; i < count - 1; ++i)
+		{
+			bindAddress += offsets[i];
+			bindAddress = MemoryService.Read<IntPtr>(bindAddress);
+		}
+
+		bindAddress += offsets[count - 1];
 
 		if (this.flags.HasFlagUnsafe(BindFlags.Pointer))
-		{
 			bindAddress = MemoryService.Read<IntPtr>(bindAddress);
-
-			for (int i = 1; i < this.cachedOffsets.Length; i++)
-			{
-				bindAddress += this.cachedOffsets[i];
-				bindAddress = MemoryService.Read<IntPtr>(bindAddress);
-			}
-		}
 
 		return bindAddress;
 	}

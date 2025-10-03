@@ -50,10 +50,28 @@ public class BindAttribute : Attribute
 	/// <param name="offset2">The memory offset of the second object.</param>
 	/// <param name="flags">The binding flags.</param>
 	/// <remarks>
-	/// When providing two offsets, the first offset will be used to find the base address and the
-	/// second offset will be added to the base address to get the final address.
+	/// Address resolution with two offsets depends on the <see cref="BindFlags.Pointer"/> flag:
+	/// <list type="bullet">
+	/// <item>
+	/// <description>
+	/// <b>Without <see cref="BindFlags.Pointer"/>:</b>
+	/// The first offset is added to the base address and dereferenced. The second offset is added to the
+	/// dereferenced address as a literal.
+	/// </description>
+	/// </item>
+	/// <item>
+	/// <description>
+	/// <b>With <see cref="BindFlags.Pointer"/>:</b>
+	/// The first offset is added to the base address and dereferenced. The second offset is added to the
+	/// dereferenced address, and the result is dereferenced again.
+	/// </description>
+	/// </item>
+	/// </list>
+	/// For multiple offsets, each offset except the last is added to the address and dereferenced in
+	/// sequence. The last offset is added, and if <see cref="BindFlags.Pointer"/> is set, the final
+	/// address is also dereferenced.
 	/// </remarks>
-	public BindAttribute(int offset1, int offset2, BindFlags flags)
+	public BindAttribute(int offset1, int offset2, BindFlags flags = BindFlags.None)
 		: this([offset1, offset2], flags)
 	{
 	}
@@ -64,10 +82,11 @@ public class BindAttribute : Attribute
 	/// <param name="offsets">The memory offsets.</param>
 	/// <param name="flags">The binding flags.</param>
 	/// <remarks>
-	/// When providing multiple offsets, the address is calculated by sequentially navigating through
-	/// memory pointers using each offset until the final address is reached.
+	/// For multiple offsets, each offset except the last is added to the address and dereferenced in
+	/// sequence. The last offset is added, and if <see cref="BindFlags.Pointer"/> is set, the final
+	/// address is also dereferenced.
 	/// </remarks>
-	public BindAttribute(int[] offsets, BindFlags flags)
+	public BindAttribute(int[] offsets, BindFlags flags = BindFlags.None)
 	{
 		Debug.Assert(offsets != null, "Offsets array cannot be null.");
 		Debug.Assert(offsets.Length > 0, "Offsets array cannot be empty.");

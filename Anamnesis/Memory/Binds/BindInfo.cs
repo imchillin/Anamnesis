@@ -23,7 +23,7 @@ public abstract class BindInfo(MemoryBase memory)
 	private int isWriting = 0;
 
 	/// <summary>Gets the memory base instance.</summary>
-	public MemoryBase Memory { get; } = memory ?? throw new ArgumentNullException(nameof(memory));
+	public MemoryBase Memory { get; } = memory;
 
 	/// <summary>Gets the name of the bind.</summary>
 	public abstract string Name { get; }
