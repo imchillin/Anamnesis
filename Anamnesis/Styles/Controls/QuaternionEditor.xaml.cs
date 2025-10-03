@@ -167,7 +167,9 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 
 	public static Settings Settings => SettingsService.Current;
 
-	public static OverflowModes RotationOverflowBehavior => Settings.WrapRotationSliders ? OverflowModes.Loop : OverflowModes.Clamp;
+#pragma warning disable CA1822
+	public OverflowModes RotationOverflowBehavior => Settings.WrapRotationSliders ? OverflowModes.Loop : OverflowModes.Clamp;
+#pragma warning restore CA1822
 
 	public decimal TickFrequency
 	{
@@ -521,7 +523,7 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 	/// <param name="e">The event arguments.</param>
 	private void OnSettingsChanged(object? sender, EventArgs e)
 	{
-		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RotationOverflowBehavior)));
+		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.RotationOverflowBehavior)));
 	}
 
 	private class RotationGizmo : ModelVisual3D

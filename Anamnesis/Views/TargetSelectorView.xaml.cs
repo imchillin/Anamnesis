@@ -48,47 +48,49 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 	public static GposeService GPoseService => GposeService.Instance;
 	public static SettingsService SettingsService => SettingsService.Instance;
 
-	public static bool IncludePlayers
+#pragma warning disable CA1822
+	public bool IncludePlayers
 	{
 		get => s_includePlayers;
 		set => s_includePlayers = value;
 	}
 
-	public static bool IncludeCompanions
+	public bool IncludeCompanions
 	{
 		get => s_includeCompanions;
 		set => s_includeCompanions = value;
 	}
 
-	public static bool IncludeNPCs
+	public bool IncludeNPCs
 	{
 		get => s_includeNPCs;
 		set => s_includeNPCs = value;
 	}
 
-	public static bool IncludeMounts
+	public bool IncludeMounts
 	{
 		get => s_includeMounts;
 		set => s_includeMounts = value;
 	}
 
-	public static bool IncludeOrnaments
+	public bool IncludeOrnaments
 	{
 		get => s_includeOrnaments;
 		set => s_includeOrnaments = value;
 	}
 
-	public static bool IncludeOther
+	public bool IncludeOther
 	{
 		get => s_includeOther;
 		set => s_includeOther = value;
 	}
 
-	public static bool IncludeHidden
+	public bool IncludeHidden
 	{
 		get => s_includeHidden;
 		set => s_includeHidden = value;
 	}
+#pragma warning restore CA1822
 
 	public static void Show(Action<ActorBasicMemory> sectionChanged)
 	{

@@ -254,7 +254,7 @@ public partial class ItemView : UserControl
 			return;
 
 		var selector = new EquipmentSelector(this.Slot, this.Actor);
-		SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, EquipmentSelector.AutoOffhand, selector.ForceMainModel, selector.ForceOffModel));
+		SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.AutoOffhand, selector.ForceMainModel, selector.ForceOffModel));
 	}
 
 	private void OnSlotMouseUp(object sender, MouseButtonEventArgs e)
