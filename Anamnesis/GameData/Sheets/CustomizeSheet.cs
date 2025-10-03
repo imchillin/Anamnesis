@@ -18,6 +18,8 @@ public static class CustomizeSheet
 	private const uint HAIR_OPTIONS_LENGTH = 130;
 	private const uint FACE_PAINT_OPTIONS_LENGTH = 50;
 
+	private static readonly Dictionary<(Features, ActorCustomizeMemory.Tribes, ActorCustomizeMemory.Genders), Dictionary<byte, CharaMakeCustomize>> s_featureCache = [];
+
 	/// <summary>
 	/// A lookup table for the start indices for all supported character customization features.
 	/// </summary>
@@ -141,25 +143,14 @@ public static class CustomizeSheet
 	/// <param name="gender">The gender.</param>
 	/// <returns>The list of feature options.</returns>
 	/// <exception cref="Exception">Thrown if the feature type, tribe, and gender combination is unrecognized.</exception>
-	public static List<CharaMakeCustomize> GetFeatureOptions(this ExcelSheet<CharaMakeCustomize> self, Features featureType, ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
+	public static List<CharaMakeCustomize> GetFeatureOptions(
+		this ExcelSheet<CharaMakeCustomize> self,
+		Features featureType,
+		ActorCustomizeMemory.Tribes tribe,
+		ActorCustomizeMemory.Genders gender)
 	{
-		List<CharaMakeCustomize> results = [];
-
-		if (!s_featureStartIndexMap.TryGetValue((featureType, tribe, gender), out uint startIndex))
-			throw new Exception("Unrecognized feature type, tribe, and gender combination");
-
-		uint count = GetFeatureLength(featureType);
-		for (byte i = (featureType != Features.FacePaint) ? (byte)1 : (byte)0; i < byte.MaxValue; i++)
-		{
-			CharaMakeCustomize? feature = self.FindFeatureById(startIndex, count, i);
-
-			if (!feature.HasValue)
-				continue;
-
-			results.Add(feature.Value);
-		}
-
-		return results;
+		var lookup = GetOrBuildFeatureLookup(self, featureType, tribe, gender);
+		return [.. lookup.Values];
 	}
 
 	/// <summary>
@@ -171,16 +162,16 @@ public static class CustomizeSheet
 	/// <param name="gender">The gender.</param>
 	/// <param name="featureId">The feature ID.</param>
 	/// <returns>The feature option if found; otherwise, <c>null</c>.</returns>
-	public static CharaMakeCustomize? GetFeature(this ExcelSheet<CharaMakeCustomize> self, Features featureType, ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender, byte featureId)
+	/// <exception cref="Exception">Thrown if the feature type, tribe, and gender combination is unrecognized.</exception>
+	public static CharaMakeCustomize? GetFeature(
+		this ExcelSheet<CharaMakeCustomize> self,
+		Features featureType,
+		ActorCustomizeMemory.Tribes tribe,
+		ActorCustomizeMemory.Genders gender,
+		byte featureId)
 	{
-		List<CharaMakeCustomize> featureOptions = self.GetFeatureOptions(featureType, tribe, gender);
-		foreach (CharaMakeCustomize featureOption in featureOptions)
-		{
-			if (featureOption.FeatureId == featureId)
-				return featureOption;
-		}
-
-		return null;
+		var lookup = GetOrBuildFeatureLookup(self, featureType, tribe, gender);
+		return lookup.TryGetValue(featureId, out var feature) ? feature : null;
 	}
 
 	/// <summary>
@@ -201,26 +192,65 @@ public static class CustomizeSheet
 	}
 
 	/// <summary>
-	/// Finds a feature option by its feature ID within a range of rows.
+	/// Gets or builds a lookup dictionary for character customization features based on the specified feature type.
 	/// </summary>
-	/// <param name="self">The Excel sheet.</param>
-	/// <param name="from">The starting row index.</param>
-	/// <param name="length">The row length.</param>
-	/// <param name="featureId">The sub.</param>
-	/// <returns>The feature option if found; otherwise, <c>null</c>.</returns>
-	private static CharaMakeCustomize? FindFeatureById(this ExcelSheet<CharaMakeCustomize> self, uint from, uint length, byte featureId)
+	/// <param name="self">The <see cref="ExcelSheet{T}"/> containing the character customization data.</param>
+	/// <param name="featureType">The type of feature to look up, such as hair or face paint.</param>
+	/// <param name="tribe">The tribe of the character.</param>
+	/// <param name="gender">The gender of the character.</param>
+	/// <returns>
+	/// A dictionary where the keys are feature IDs and the values are <see cref="CharaMakeCustomize"/> objects
+	/// representing the corresponding customization features.
+	/// </returns>
+	/// <exception cref="Exception">Thrown if the feature type, tribe, and gender combination is unrecognized.</exception>
+	private static Dictionary<byte, CharaMakeCustomize> GetOrBuildFeatureLookup(
+		ExcelSheet<CharaMakeCustomize> self,
+		Features featureType,
+		ActorCustomizeMemory.Tribes tribe,
+		ActorCustomizeMemory.Genders gender)
 	{
-		for (uint i = from; i < from + length; i++)
+		var key = (featureType, tribe, gender);
+		if (!s_featureCache.TryGetValue(key, out var lookup))
 		{
-			CharaMakeCustomize feature = self.GetRow(i);
+			if (!s_featureStartIndexMap.TryGetValue(key, out uint startIndex))
+				throw new Exception("Unrecognized feature type, tribe, and gender combination");
 
+			uint count = GetFeatureLength(featureType);
+			lookup = BuildFeatureLookup(self, startIndex, count, featureType);
+			s_featureCache[key] = lookup;
+		}
+
+		return lookup;
+	}
+
+	/// <summary>
+	/// Builds a lookup dictionary of character customization features based on the specified range and feature type.
+	/// </summary>
+	/// <param name="self">The <see cref="ExcelSheet{T}"/> containing the character customization data.</param>
+	/// <param name="startIndex">The starting index of the range to process.</param>
+	/// <param name="count">The number of rows to process starting from <paramref name="startIndex"/>.</param>
+	/// <param name="featureType">The type of feature to include in the lookup, such as hair or face paint.</param>
+	/// <returns>
+	/// A dictionary where the keys are feature IDs and the values are <see cref="CharaMakeCustomize"/> objects
+	/// representing the corresponding customization features.
+	/// </returns>
+	private static Dictionary<byte, CharaMakeCustomize> BuildFeatureLookup(
+		ExcelSheet<CharaMakeCustomize> self, uint startIndex, uint count, Features featureType)
+	{
+		var dict = new Dictionary<byte, CharaMakeCustomize>();
+		for (uint i = startIndex; i < startIndex + count; i++)
+		{
+			var feature = self.GetRow(i);
 			if (feature.Equals(default(CharaMakeCustomize)))
 				continue;
 
-			if (feature.FeatureId == featureId)
-				return feature;
+			// Include a "no feature" option for face paint but not for hair.
+			if (featureType != Features.FacePaint && feature.FeatureId == 0)
+				continue;
+
+			dict[feature.FeatureId] = feature;
 		}
 
-		return null;
+		return dict;
 	}
 }
