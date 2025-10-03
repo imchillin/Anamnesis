@@ -58,14 +58,6 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	private readonly Lock lockObject = new();
 
 	/// <summary>
-	/// A temporary queue that's used to filter out invalidated delayed binds.
-	/// </summary>
-	/// <remarks>
-	/// This is a member variable to avoid creating a new queue on every synchronization.
-	/// </remarks>
-	private readonly ConcurrentQueue<BindInfo> transientQueue = new();
-
-	/// <summary>
 	/// Represents the parent memory object, if any.
 	/// </summary>
 	/// <note>
@@ -621,15 +613,15 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				// Note: This is only relevant to MemoryBase objects as they are reference type objects
 
 				// Filter out the invalidated delayed binds
-				this.transientQueue.Clear();
+				var transientQueue = new ConcurrentQueue<BindInfo>();
 				while (this.delayedBinds.TryDequeue(out BindInfo? delayedBind))
 				{
 					if (delayedBind != bind)
-						this.transientQueue.Enqueue(delayedBind);
+						transientQueue.Enqueue(delayedBind);
 				}
 
 				// Replace the delayed binds queue
-				this.delayedBinds = this.transientQueue;
+				this.delayedBinds = transientQueue;
 
 				try
 				{
@@ -891,6 +883,23 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	private void PropagatePropertyChanged(string propertyName, PropertyChange context)
 	{
 		MemoryBase? current = this;
+		int ancestorCount = context.BindPath.Count;
+		while (current != null)
+		{
+			if (current.parent == null)
+				break;
+
+			if (current.parentBind == null)
+				throw new Exception("Parent was not null, but parent bind was!");
+
+			ancestorCount++;
+			current = current.parent;
+		}
+
+		// Resize the bind info list that that we know total capacity
+		context.BindPath.Capacity = ancestorCount;
+
+		current = this;
 		while (current != null)
 		{
 			current.PropertyChanged?.Invoke(current, new MemObjPropertyChangedEventArgs(propertyName, context));
@@ -898,10 +907,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			if (current.parent == null)
 				break;
 
-			if (current.parentBind == null)
-				throw new Exception("Parent was not null, but parent bind was!");
-
-			context.AddPath(current.parentBind);
+			context.AddPath(current.parentBind!);
 			current = current.parent;
 		}
 	}
