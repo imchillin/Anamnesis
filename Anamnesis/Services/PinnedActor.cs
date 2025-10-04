@@ -316,12 +316,8 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 			if (newBasic != null)
 			{
-				this.Memory?.Dispose();
-
-				// Reusing the old actor can cause issues so we always recreate when retargeting.
-				this.Memory = new ActorMemory();
+				this.Memory ??= new ActorMemory();
 				this.Memory.SetAddress(newBasic.Address);
-				this.Memory.Pinned = this;
 
 				IntPtr? oldPointer = this.Pointer;
 
