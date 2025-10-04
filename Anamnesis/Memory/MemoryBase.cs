@@ -229,7 +229,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <remarks>
 	/// This method releases managed and unmanaged resources.
 	/// </remarks>
-	public void Dispose()
+	public virtual void Dispose()
 	{
 		this.Dispose(true);
 		GC.SuppressFinalize(this);
@@ -358,6 +358,8 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				}
 
 				this.Children.Clear();
+				this.delayedBinds.Clear();
+				this.SuppressPropNotifications.Dispose();
 			}
 
 			/* Dispose unmanaged resources here if any */

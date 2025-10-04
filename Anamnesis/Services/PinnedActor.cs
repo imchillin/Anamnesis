@@ -93,6 +93,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 		if (this.Memory != null)
 		{
+			this.Memory.PropertyChanged -= this.OnViewModelPropertyChanged;
 			this.Memory.Pinned = null;
 			this.Memory = null;
 		}
