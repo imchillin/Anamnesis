@@ -97,9 +97,8 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 		this.Viewport.Children.Add(this.rotationGizmo);
 
 		// Create and add the pivot sphere directly to the viewport
-		this.pivotSphere = new Sphere
+		this.pivotSphere = new Sphere(0.03)
 		{
-			Radius = 0.03,
 			Material = new DiffuseMaterial(new SolidColorBrush(Colors.Yellow)),
 		};
 
@@ -534,9 +533,8 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 		{
 			this.target = target;
 
-			var sphere = new Sphere
+			var sphere = new Sphere(0.48)
 			{
-				Radius = 0.48,
 				Material = new DiffuseMaterial(new SolidColorBrush(Color.FromArgb(128, 0, 0, 0))),
 			};
 			this.Children.Add(sphere);
