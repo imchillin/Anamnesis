@@ -1,8 +1,8 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Core.Memory;
-using Anamnesis.Memory;
+namespace Anamnesis.Memory;
+
 using Iced.Intel;
 using Serilog;
 using System;
