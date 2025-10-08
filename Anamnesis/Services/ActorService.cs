@@ -12,6 +12,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -31,7 +32,9 @@ public class ActorService : ServiceBase<ActorService>
 	private static readonly int s_actorTableSizeInBytes = ACTOR_TABLE_SIZE * IntPtr.Size;
 
 	private readonly IntPtr[] actorTable = new IntPtr[ACTOR_TABLE_SIZE];
+	private readonly Dictionary<IntPtr, ActorBasicMemory> actorInstances = [];
 	private readonly ReaderWriterLockSlim actorTableLock = new();
+	private readonly ReaderWriterLockSlim actorInstancesLock = new();
 
 	private readonly List<IActorRefresher> actorRefreshers =
 	[
@@ -232,34 +235,15 @@ public class ActorService : ServiceBase<ActorService>
 		if (refresh)
 			this.UpdateActorTable();
 
-		List<ActorBasicMemory> results = [];
-
-		this.actorTableLock.EnterReadLock();
+		this.actorInstancesLock.EnterReadLock();
 		try
 		{
-			foreach (var ptr in this.actorTable)
-			{
-				if (ptr == IntPtr.Zero)
-					continue;
-
-				try
-				{
-					ActorBasicMemory actor = new();
-					actor.SetAddress(ptr);
-					results.Add(actor);
-				}
-				catch (Exception ex)
-				{
-					Log.Warning(ex, $"Failed to create basic actor memory object from address: {ptr}");
-				}
-			}
+			return this.actorInstances.Values.ToList();
 		}
 		finally
 		{
-			this.actorTableLock.ExitReadLock();
+			this.actorInstancesLock.ExitReadLock();
 		}
-
-		return results;
 	}
 
 	/// <inheritdoc/>
@@ -322,6 +306,57 @@ public class ActorService : ServiceBase<ActorService>
 
 			if (hasChanged)
 			{
+				this.actorInstancesLock.EnterWriteLock();
+				try
+				{
+					// Remove and dispose actors no longer present
+					foreach (var oldPtr in this.actorInstances.Keys.ToArray())
+					{
+						if (this.GetActorTableIndex(oldPtr) == -1)
+						{
+							this.actorInstances[oldPtr].Dispose();
+							this.actorInstances.Remove(oldPtr);
+						}
+					}
+
+					// Add new actors
+					this.actorTableLock.EnterReadLock();
+					try
+					{
+						foreach (var ptr in this.actorTable)
+						{
+							if (ptr == IntPtr.Zero)
+								continue;
+
+							if (!this.actorInstances.TryGetValue(ptr, out ActorBasicMemory? value))
+							{
+								try
+								{
+									var actor = new ActorBasicMemory();
+									actor.SetAddress(ptr);
+									this.actorInstances[ptr] = actor;
+								}
+								catch (Exception ex)
+								{
+									Log.Warning(ex, $"Failed to create basic actor memory object from address: {ptr}");
+								}
+							}
+							else
+							{
+								value.SetAddress(ptr);
+							}
+						}
+					}
+					finally
+					{
+						this.actorTableLock.ExitReadLock();
+					}
+				}
+				finally
+				{
+					this.actorInstancesLock.ExitWriteLock();
+				}
+
 				this.RaisePropertyChanged(nameof(this.ActorTable));
 				Log.Verbose("[ActorService] Actor table updated.");
 			}

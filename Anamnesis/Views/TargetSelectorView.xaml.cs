@@ -11,6 +11,7 @@ using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -108,7 +109,13 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 
 	protected override Task LoadItems()
 	{
-		this.AddItems(ActorService.Instance.GetAllActors());
+		List<ActorBasicMemory> allActors = ActorService.Instance.GetAllActors();
+
+		// As we do not actively update non-pinned actors, synchronize first
+		foreach (ActorBasicMemory actor in allActors)
+			actor.Synchronize();
+
+		this.AddItems(allActors);
 		return Task.CompletedTask;
 	}
 
@@ -132,6 +139,9 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 			return false;
 
 		if (TargetService.IsPinned(actor))
+			return false;
+
+		if (!actor.IsValid)
 			return false;
 
 		if (!s_includeHidden && actor.IsHidden)
@@ -207,7 +217,6 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 
 							ActorMemory fullActor = new();
 							fullActor.SetAddress(newActor.Address);
-							fullActor.Synchronize();
 							var skeleton = new Skeleton(fullActor);
 							poseFile.Apply(fullActor, skeleton, null, PoseFile.Mode.Rotation, true);
 						}

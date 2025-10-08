@@ -41,9 +41,6 @@ public struct PropertyChange
 	/// <summary>Gets or sets the name of the property.</summary>
 	public string? Name;
 
-	/// <summary>The full path of the property change.</summary>
-	private string path;
-
 	/// <summary>
 	/// Initializes a new instance of the <see cref="PropertyChange"/> struct.
 	/// </summary>
@@ -54,7 +51,6 @@ public struct PropertyChange
 	public PropertyChange(BindInfo bind, object? oldValue, object? newValue, Origins origin)
 	{
 		this.BindPath = new List<BindInfo>(1) { bind };
-		this.path = bind.Path;
 		this.OldValue = oldValue;
 		this.NewValue = newValue;
 		this.Origin = origin;
@@ -71,7 +67,6 @@ public struct PropertyChange
 		this.BindPath.AddRange(other.BindPath);
 		this.OldValue = other.OldValue;
 		this.NewValue = other.NewValue;
-		this.path = other.path;
 		this.Origin = other.Origin;
 		this.Name = other.Name;
 	}
@@ -85,7 +80,20 @@ public struct PropertyChange
 	}
 
 	/// <summary>Gets the full path of the property change.</summary>
-	public readonly string Path => this.path;
+	public readonly string Path
+	{
+		get
+		{
+			if (this.BindPath.Count == 0)
+				return string.Empty;
+
+			var sb = new System.Text.StringBuilder();
+			foreach (var bind in this.BindPath)
+				sb.Append(bind.Path);
+
+			return string.Intern(sb.ToString());
+		}
+	}
 
 	/// <summary>Gets the bind information of the origin property bind.</summary>
 	public readonly BindInfo OriginBind => this.BindPath[0];
@@ -118,11 +126,7 @@ public struct PropertyChange
 	/// </summary>
 	/// <param name="bind">The bind information to add.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public void AddPath(BindInfo bind)
-	{
-		this.BindPath.Add(bind);
-		this.path = bind.Path + this.path;
-	}
+	public readonly void AddPath(BindInfo bind) => this.BindPath.Add(bind);
 
 	/// <summary>
 	/// Adds all ancestor binds of the parent bind to the property change.
@@ -131,7 +135,7 @@ public struct PropertyChange
 	/// Use this method only if the change's bind path is not already configured.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public void ConfigureBindPath()
+	public readonly void ConfigureBindPath()
 	{
 		var parentBind = this.BindPath[0].Memory.ParentBind;
 		if (parentBind == null)
@@ -154,6 +158,6 @@ public struct PropertyChange
 	/// <returns>A string that represents the current object.</returns>
 	public override readonly string ToString()
 	{
-		return $"{this.path}: {this.OldValue} -> {this.NewValue}";
+		return $"{this.Path}: {this.OldValue} -> {this.NewValue}";
 	}
 }

@@ -5,6 +5,7 @@ namespace Anamnesis.Memory;
 
 using Anamnesis.Core.Extensions;
 using Anamnesis.Services;
+using Microsoft.Extensions.ObjectPool;
 using PropertyChanged;
 using Serilog;
 using System;
@@ -54,16 +55,11 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <summary>List of child memory objects.</summary>
 	protected readonly List<MemoryBase> Children = new();
 
+	private static readonly ObjectPool<Queue<MemoryBase>> s_queuePool = ObjectPool.Create<Queue<MemoryBase>>();
+	private static readonly ObjectPool<Stack<MemoryBase>> s_stackPool = ObjectPool.Create<Stack<MemoryBase>>();
+
 	/// <summary>Lock object for thread synchronization.</summary>
 	private readonly Lock lockObject = new();
-
-	/// <summary>
-	/// A temporary queue that's used to filter out invalidated delayed binds.
-	/// </summary>
-	/// <remarks>
-	/// This is a member variable to avoid creating a new queue on every synchronization.
-	/// </remarks>
-	private readonly ConcurrentQueue<BindInfo> transientQueue = new();
 
 	/// <summary>
 	/// Represents the parent memory object, if any.
@@ -237,7 +233,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <remarks>
 	/// This method releases managed and unmanaged resources.
 	/// </remarks>
-	public void Dispose()
+	public virtual void Dispose()
 	{
 		this.Dispose(true);
 		GC.SuppressFinalize(this);
@@ -366,6 +362,8 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				}
 
 				this.Children.Clear();
+				this.delayedBinds.Clear();
+				this.SuppressPropNotifications.Dispose();
 			}
 
 			/* Dispose unmanaged resources here if any */
@@ -514,19 +512,26 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// </summary>
 	protected void ClaimLocks()
 	{
-		Queue<MemoryBase> queue = new();
-		queue.Enqueue(this);
-
-		while (queue.Count > 0)
+		var queue = s_queuePool.Get();
+		try
 		{
-			MemoryBase current = queue.Dequeue();
-			if (!current.lockObject.TryEnter(5000))
-				throw new Exception("Failed to claim lock on memory object. Possible deadlock?");
-
-			foreach (MemoryBase child in current.Children)
+			queue.Enqueue(this);
+			while (queue.Count > 0)
 			{
-				queue.Enqueue(child);
+				MemoryBase current = queue.Dequeue();
+				if (!current.lockObject.TryEnter(5000))
+					throw new Exception("Failed to claim lock on memory object. Possible deadlock?");
+
+				foreach (MemoryBase child in current.Children)
+				{
+					queue.Enqueue(child);
+				}
 			}
+		}
+		finally
+		{
+			queue.Clear();
+			s_queuePool.Return(queue);
 		}
 	}
 
@@ -535,18 +540,25 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// </summary>
 	protected void ReleaseLocks()
 	{
-		Stack<MemoryBase> stack = new();
-		stack.Push(this);
-
-		while (stack.Count > 0)
+		var stack = s_stackPool.Get();
+		try
 		{
-			MemoryBase current = stack.Pop();
-			current.lockObject.Exit();
-
-			foreach (MemoryBase child in current.Children)
+			stack.Push(this);
+			while (stack.Count > 0)
 			{
-				stack.Push(child);
+				MemoryBase current = stack.Pop();
+				current.lockObject.Exit();
+
+				foreach (MemoryBase child in current.Children)
+				{
+					stack.Push(child);
+				}
 			}
+		}
+		finally
+		{
+			stack.Clear();
+			s_stackPool.Return(stack);
 		}
 	}
 
@@ -556,18 +568,26 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <param name="value">The synchronization state.</param>
 	protected void SetIsSynchronizing(bool value)
 	{
-		Stack<MemoryBase> stack = new();
-		stack.Push(this);
+		var stack = s_stackPool.Get();
 
-		while (stack.Count > 0)
+		try
 		{
-			MemoryBase current = stack.Pop();
-			Interlocked.Exchange(ref current.isSynchronizing, value ? 1 : 0);
-
-			foreach (MemoryBase child in current.Children)
+			stack.Push(this);
+			while (stack.Count > 0)
 			{
-				stack.Push(child);
+				MemoryBase current = stack.Pop();
+				Interlocked.Exchange(ref current.isSynchronizing, value ? 1 : 0);
+
+				foreach (MemoryBase child in current.Children)
+				{
+					stack.Push(child);
+				}
 			}
+		}
+		finally
+		{
+			stack.Clear();
+			s_stackPool.Return(stack);
 		}
 	}
 
@@ -621,15 +641,15 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				// Note: This is only relevant to MemoryBase objects as they are reference type objects
 
 				// Filter out the invalidated delayed binds
-				this.transientQueue.Clear();
+				var transientQueue = new ConcurrentQueue<BindInfo>();
 				while (this.delayedBinds.TryDequeue(out BindInfo? delayedBind))
 				{
 					if (delayedBind != bind)
-						this.transientQueue.Enqueue(delayedBind);
+						transientQueue.Enqueue(delayedBind);
 				}
 
 				// Replace the delayed binds queue
-				this.delayedBinds = this.transientQueue;
+				this.delayedBinds = transientQueue;
 
 				try
 				{
@@ -740,54 +760,63 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		{
 			this.SetIsSynchronizing(true);
 
-			Stack<MemoryBase> stack = new();
-			stack.Push(this);
+			var stack = s_stackPool.Get();
 
-			while (stack.Count > 0)
+			try
 			{
-				MemoryBase current = stack.Pop();
+				stack.Push(this);
 
-				if (current is IArrayMemory arrayMemory)
+				while (stack.Count > 0)
 				{
-					arrayMemory.ReadArrayMemory();
-				}
-				else
-				{
-					// Go through all binds that belong to this memory object.
-					foreach (PropertyBindInfo bind in current.Binds.Values)
+					MemoryBase current = stack.Pop();
+
+					if (current is IArrayMemory arrayMemory)
 					{
-						// Skip if we can't read this bind right now.
-						if (!current.CanRead(bind))
-							continue;
+						arrayMemory.ReadArrayMemory();
+					}
+					else
+					{
+						// Go through all binds that belong to this memory object.
+						foreach (PropertyBindInfo bind in current.Binds.Values)
+						{
+							// Skip if we can't read this bind right now.
+							if (!current.CanRead(bind))
+								continue;
 
-						try
-						{
-							current.ReadFromMemory(bind);
-						}
-						catch (Exception ex)
-						{
-							throw new Exception($"Failed to read {current.GetType()} - {bind.Name}", ex);
+							try
+							{
+								current.ReadFromMemory(bind);
+							}
+							catch (Exception ex)
+							{
+								throw new Exception($"Failed to read {current.GetType()} - {bind.Name}", ex);
+							}
 						}
 					}
+
+					// Go through all child memory objects.
+					foreach (MemoryBase child in current.Children)
+					{
+						// If the child has no parent bind, then it is not a bind, and should not be refreshed.
+						if (child.parentBind == null)
+							continue;
+
+						// If the child is a bind, and the parent bind is not readable, then skip it.
+						if (!current.CanRead(child.parentBind))
+							continue;
+
+						// If the child is a bind but only applies in gpose and we are not in gpose, then skip it.
+						if (child.parentBind.Flags.HasFlagUnsafe(BindFlags.OnlyInGPose) && GposeService.InstanceOrNull?.IsGpose != true)
+							continue;
+
+						stack.Push(child);
+					}
 				}
-
-				// Go through all child memory objects.
-				foreach (MemoryBase child in current.Children)
-				{
-					// If the child has no parent bind, then it is not a bind, and should not be refreshed.
-					if (child.parentBind == null)
-						continue;
-
-					// If the child is a bind, and the parent bind is not readable, then skip it.
-					if (!current.CanRead(child.parentBind))
-						continue;
-
-					// If the child is a bind but only applies in gpose and we are not in gpose, then skip it.
-					if (child.parentBind.Flags.HasFlagUnsafe(BindFlags.OnlyInGPose) && GposeService.InstanceOrNull?.IsGpose != true)
-						continue;
-
-					stack.Push(child);
-				}
+			}
+			finally
+			{
+				stack.Clear();
+				s_stackPool.Return(stack);
 			}
 		}
 		finally
@@ -804,63 +833,71 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// </remarks>
 	private void WriteDelayedBindsInternal()
 	{
-		Stack<MemoryBase> stack = new();
-		stack.Push(this);
-
-		while (stack.Count > 0)
+		var stack = s_stackPool.Get();
+		try
 		{
-			MemoryBase current = stack.Pop();
+			stack.Push(this);
 
-			var remainingBinds = ArrayPool<BindInfo>.Shared.Rent(current.delayedBinds.Count);
-			int remainingCount = 0;
-
-			try
+			while (stack.Count > 0)
 			{
-				while (current.delayedBinds.TryDequeue(out BindInfo? bind))
-				{
-					if (bind is not PropertyBindInfo propertyBind)
-						continue;
+				MemoryBase current = stack.Pop();
 
-					// If we still can't write this bind, just skip it.
-					if (!current.CanWrite(propertyBind))
+				var remainingBinds = ArrayPool<BindInfo>.Shared.Rent(current.delayedBinds.Count);
+				int remainingCount = 0;
+
+				try
+				{
+					while (current.delayedBinds.TryDequeue(out BindInfo? bind))
 					{
-						remainingBinds[remainingCount++] = propertyBind;
-						continue;
+						if (bind is not PropertyBindInfo propertyBind)
+							continue;
+
+						// If we still can't write this bind, just skip it.
+						if (!current.CanWrite(propertyBind))
+						{
+							remainingBinds[remainingCount++] = propertyBind;
+							continue;
+						}
+
+						// Store the old value before it is overwritten by the new value in WriteToMemory
+						object? oldValue = propertyBind.LastValue;
+
+						current.WriteToMemory(propertyBind);
+
+						// Propagate property changed event to the rest of the application after writing to memory
+						var origin = PropertyChange.Origins.User;
+						if (!propertyBind.Flags.HasFlagUnsafe(BindFlags.DontRecordHistory) && HistoryService.InstanceOrNull?.IsRestoring == true)
+						{
+							origin = PropertyChange.Origins.History;
+						}
+
+						var change = new PropertyChange(propertyBind, oldValue, propertyBind.LastValue, origin);
+						current.PropagatePropertyChanged(propertyBind.Name, change);
+					}
+				}
+				finally
+				{
+					for (int i = 0; i < remainingCount; i++)
+					{
+						current.delayedBinds.Enqueue(remainingBinds[i]);
 					}
 
-					// Store the old value before it is overwritten by the new value in WriteToMemory
-					object? oldValue = propertyBind.LastValue;
+					ArrayPool<BindInfo>.Shared.Return(remainingBinds, clearArray: true);
 
-					current.WriteToMemory(propertyBind);
-
-					// Propagate property changed event to the rest of the application after writing to memory
-					var origin = PropertyChange.Origins.User;
-					if (!propertyBind.Flags.HasFlagUnsafe(BindFlags.DontRecordHistory) && HistoryService.InstanceOrNull?.IsRestoring == true)
-					{
-						origin = PropertyChange.Origins.History;
-					}
-
-					var change = new PropertyChange(propertyBind, oldValue, propertyBind.LastValue, origin);
-					current.PropagatePropertyChanged(propertyBind.Name, change);
+					if (!current.delayedBinds.IsEmpty)
+						Log.Warning($"Failed to write all delayed binds, remaining: {current.delayedBinds.Count}");
 				}
-			}
-			finally
-			{
-				for (int i = 0; i < remainingCount; i++)
+
+				foreach (var child in current.Children)
 				{
-					current.delayedBinds.Enqueue(remainingBinds[i]);
+					stack.Push(child);
 				}
-
-				ArrayPool<BindInfo>.Shared.Return(remainingBinds, clearArray: true);
-
-				if (!current.delayedBinds.IsEmpty)
-					Log.Warning($"Failed to write all delayed binds, remaining: {current.delayedBinds.Count}");
 			}
-
-			foreach (var child in current.Children)
-			{
-				stack.Push(child);
-			}
+		}
+		finally
+		{
+			stack.Clear();
+			s_stackPool.Return(stack);
 		}
 	}
 
@@ -891,6 +928,23 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	private void PropagatePropertyChanged(string propertyName, PropertyChange context)
 	{
 		MemoryBase? current = this;
+		int ancestorCount = context.BindPath.Count;
+		while (current != null)
+		{
+			if (current.parent == null)
+				break;
+
+			if (current.parentBind == null)
+				throw new Exception("Parent was not null, but parent bind was!");
+
+			ancestorCount++;
+			current = current.parent;
+		}
+
+		// Resize the bind info list that that we know total capacity
+		context.BindPath.Capacity = ancestorCount;
+
+		current = this;
 		while (current != null)
 		{
 			current.PropertyChanged?.Invoke(current, new MemObjPropertyChangedEventArgs(propertyName, context));
@@ -898,10 +952,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			if (current.parent == null)
 				break;
 
-			if (current.parentBind == null)
-				throw new Exception("Parent was not null, but parent bind was!");
-
-			context.AddPath(current.parentBind);
+			context.AddPath(current.parentBind!);
 			current = current.parent;
 		}
 	}

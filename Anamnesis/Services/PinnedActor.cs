@@ -45,22 +45,23 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	}
 
 	public ActorMemory? Memory { get; private set; }
-	////public ActorViewModel? ViewModel { get; private set; }
-
 	public string? Name { get; private set; }
 	public string Id { get; private set; }
 	public string IdNoAddress { get; private set; }
 	public IntPtr? Pointer { get; private set; }
-	public ActorTypes Kind { get; private set; }
 	public IconChar Icon { get; private set; }
-	public int ModelType { get; private set; }
 	public string? Initials { get; private set; }
 	public bool IsValid { get; private set; }
-	public bool IsGPoseActor { get; private set; }
-	public bool IsHidden { get; private set; }
-	public bool IsPinned => TargetService.Instance.PinnedActors.Contains(this);
 
+	[DependsOn(nameof(Memory))]
+	public ActorTypes Kind => this.Memory?.ObjectKind ?? ActorTypes.None;
+
+	[DependsOn(nameof(Memory))]
+	public bool IsGPoseActor => this.Memory?.IsGPoseActor ?? false;
+
+	[DependsOn(nameof(Memory))]
 	public string? DisplayName => this.Memory == null ? this.Name : this.Memory.DisplayName;
+
 	public bool IsRetargeting { get; private set; } = false;
 
 	public CharacterFile? GposeCharacterBackup { get; private set; }
@@ -92,6 +93,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 		if (this.Memory != null)
 		{
+			this.Memory.PropertyChanged -= this.OnViewModelPropertyChanged;
 			this.Memory.Pinned = null;
 			this.Memory = null;
 		}
@@ -138,14 +140,14 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 				return;
 			}
 
-			if (this.IsGPoseActor && !GposeService.Instance.IsGpose)
+			if (this.Memory.IsGPoseActor && !GposeService.Instance.IsGpose)
 			{
 				Log.Information($"Actor: {this} was a gpose actor and we are now in the overworld");
 				this.Retarget();
 				return;
 			}
 
-			if (this.Memory.IsHidden && !this.IsHidden && !this.IsGPoseActor && !this.Memory.IsRefreshing && GposeService.Instance.IsGpose)
+			if (this.Memory.IsHidden && !this.Memory.IsGPoseActor && !this.Memory.IsRefreshing && GposeService.Instance.IsGpose)
 			{
 				Log.Information($"Actor: {this} was hidden entering the gpose boundary");
 				this.Retarget();
@@ -260,14 +262,24 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 			List<ActorBasicMemory> allActors = ActorService.Instance.GetAllActors();
 
+			// As we do not actively update non-pinned actors, synchronize first
+			foreach (ActorBasicMemory actor in allActors)
+				actor.Synchronize();
+
 			// Search for an exact match first
 			foreach (ActorBasicMemory actor in allActors)
 			{
+				if (!actor.IsValid)
+					continue;
+
 				if (actor.Id != this.Id || actor.Address == IntPtr.Zero)
 					continue;
 
 				// Don't consider hidden actors for retargeting
 				if (actor.IsHidden)
+					continue;
+
+				if (actor.IsGPoseActor != isGPose)
 					continue;
 
 				newBasic = actor;
@@ -279,11 +291,17 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 			{
 				foreach (ActorBasicMemory actor in allActors)
 				{
+					if (!actor.IsValid)
+						continue;
+
 					if (actor.IdNoAddress != this.IdNoAddress || actor.Address == IntPtr.Zero)
 						continue;
 
 					// Don't consider hidden actors for retargeting
 					if (actor.IsHidden)
+						continue;
+
+					if (actor.IsGPoseActor != isGPose)
 						continue;
 
 					// Is this actor memory already pinned to a differnet pin?
@@ -298,12 +316,8 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 			if (newBasic != null)
 			{
-				this.Memory?.Dispose();
-
-				// Reusing the old actor can cause issues so we always recreate when retargeting.
-				this.Memory = new ActorMemory();
+				this.Memory ??= new ActorMemory();
 				this.Memory.SetAddress(newBasic.Address);
-				this.Memory.Pinned = this;
 
 				IntPtr? oldPointer = this.Pointer;
 
@@ -346,13 +360,13 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		this.Id = this.Memory.Id;
 		this.IdNoAddress = this.Memory.IdNoAddress;
 		this.Name = this.Memory.Name;
-		this.Memory.PropertyChanged += this.OnViewModelPropertyChanged;
 		this.Pointer = this.Memory.Address;
-		this.Kind = this.Memory.ObjectKind;
 		this.Icon = this.Memory.ObjectKind.GetIcon();
-		this.ModelType = this.Memory.ModelType;
-		this.IsGPoseActor = this.Memory.IsGPoseActor;
-		this.IsHidden = this.Memory.IsHidden;
+
+		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Kind)));
+		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsGPoseActor)));
+
+		this.Memory.PropertyChanged += this.OnViewModelPropertyChanged;
 
 		this.UpdateInitials(this.DisplayName);
 
@@ -364,11 +378,23 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		if (this.Memory == null)
 			return;
 
-		if (e.PropertyName == nameof(ActorMemory.DisplayName) || e.PropertyName == nameof(ActorMemory.ObjectKind))
+		if (e.PropertyName == nameof(ActorMemory.DisplayName))
 		{
 			this.UpdateInitials(this.Memory.DisplayName);
-			this.Kind = this.Memory.ObjectKind;
+			return;
+		}
+
+		if (e.PropertyName == nameof(ActorMemory.ObjectKind))
+		{
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Kind)));
 			this.Icon = this.Memory.ObjectKind.GetIcon();
+			return;
+		}
+
+		if (e.PropertyName == nameof(ActorMemory.IsGPoseActor))
+		{
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsGPoseActor)));
+			return;
 		}
 	}
 
