@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -43,6 +44,8 @@ public struct SaveResult
 public class FileService : ServiceBase<FileService>
 {
 	public static readonly string StoreDirectory = "%AppData%/Anamnesis/";
+	public static readonly string StandardLibDirectory = "%AppData%/Anamnesis/StandardLibrary/";
+	public static readonly string LegacyLibDirectory = "%AppData%/Anamnesis/StandardPoses/";
 	public static readonly string CacheDirectory = "%AppData%/Anamnesis/RemoteCache/";
 
 	private static readonly Dictionary<Type, string> s_typeNameLookup = [];
@@ -74,9 +77,14 @@ public class FileService : ServiceBase<FileService>
 		"Shortcut_AnamnesisScenes");
 
 	public static Shortcut StandardPoseDirectory => new(
-		new DirectoryInfo(ParseToFilePath("%AppData%/Anamnesis/StandardPoses/")),
+		new DirectoryInfo(ParseToFilePath($"{StandardLibDirectory}Poses/")),
 		"Shortcuts/AnamnesisBuiltIn.png",
 		"Shortcut_BuiltInPose");
+
+	public static Shortcut StandardAppearancesDirectory => new(
+		new DirectoryInfo(ParseToFilePath($"{StandardLibDirectory}Appearances/")),
+		"Shortcuts/AnamnesisBuiltIn.png",
+		"Shortcut_BuiltInAppearances");
 
 	public static Shortcut CMToolPoseSaveDir => new(
 		new DirectoryInfo(ParseToFilePath("%MyDocuments%/CMTool/Matrix Saves/")),
@@ -477,6 +485,12 @@ public class FileService : ServiceBase<FileService>
 		}
 	}
 
+	public override async Task Initialize()
+	{
+		_ = Task.Run(ExtractStandardLibrary);
+		await base.Initialize();
+	}
+
 	private static string ToAnyFilter(params Type[] types)
 	{
 		var builder = new StringBuilder();
@@ -541,6 +555,110 @@ public class FileService : ServiceBase<FileService>
 		}
 
 		return filter;
+	}
+
+	private static async Task ExtractStandardLibrary()
+	{
+		try
+		{
+			// Delete the legacy library if it exists
+			DirectoryInfo legacyLibDir = new(ParseToFilePath(LegacyLibDirectory));
+			if (legacyLibDir.Exists)
+				legacyLibDir.Delete(true);
+
+			// Check version file
+			DirectoryInfo libDir = new(ParseToFilePath(StandardLibDirectory));
+			string verFile = Path.Combine(libDir.FullName, "ver.txt");
+			if (libDir.Exists && File.Exists(verFile))
+			{
+				try
+				{
+					string verText = await File.ReadAllTextAsync(verFile);
+
+					if (!DateTime.TryParse(verText, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime _))
+					{
+						if (!Version.TryParse(verText, out Version? stdLibVer))
+						{
+							Log.Error($"Failed to parse standard pose library version: {verText}");
+							return;
+						}
+
+						if (stdLibVer == VersionInfo.ApplicationVersion)
+						{
+							Log.Information($"Standard pose library up to date");
+							return;
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					Log.Warning(ex, "Failed to read standard library version file");
+				}
+
+				libDir.Delete(true);
+			}
+
+			libDir.Create();
+			await File.WriteAllTextAsync(verFile, VersionInfo.ApplicationVersion.ToString());
+
+			// Copy the embedded "DO NOT PUT ANYTHING HERE.txt" file
+			using (Stream embedded = EmbeddedFileUtility.Load("Data\\StandardLibrary\\DO NOT PUT ANYTHING HERE.txt"))
+			using (var fileStream = new FileStream(Path.Combine(libDir.FullName, "DO NOT PUT ANYTHING HERE.txt"), FileMode.Create, FileAccess.Write))
+			{
+				await embedded.CopyToAsync(fileStream);
+			}
+
+			// Extract sub-libraries
+			await ExtractStandardSubLibrary(
+				StandardPoseDirectory.Directory,
+				"Data\\StandardLibrary\\Poses\\",
+				new Dictionary<string, string> { { "\\pose", ".pose" }, { "\\txt", ".txt" } });
+
+			// Extract appearances
+			await ExtractStandardSubLibrary(
+				StandardAppearancesDirectory.Directory,
+				"Data\\StandardLibrary\\Appearances\\",
+				new Dictionary<string, string> { { "\\chara", ".chara" }, { "\\txt", ".txt" } });
+
+			Log.Information($"Extracted standard library");
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Failed to extract standard library");
+		}
+	}
+
+	private static async Task ExtractStandardSubLibrary(
+		DirectoryInfo targetDir,
+		string embeddedDir,
+		Dictionary<string, string> extMap)
+	{
+		if (!targetDir.Exists)
+			targetDir.Create();
+
+		string[] files = EmbeddedFileUtility.GetAllFilesInDirectory(embeddedDir);
+		foreach (string filePath in files)
+		{
+			string destPath = filePath.Replace('.', '\\').Replace('_', ' ');
+			destPath = destPath.Replace(embeddedDir.TrimStart('\\'), string.Empty);
+
+			// Restore file extensions
+			foreach (var kvp in extMap)
+				destPath = destPath.Replace(kvp.Key, kvp.Value);
+
+			destPath = Path.Combine(targetDir.FullName, destPath);
+
+			string? destDir = Path.GetDirectoryName(destPath)
+				?? throw new Exception($"Failed to get directory name from path: {destPath}");
+
+			// Ensure any nested directories exist
+			if (!Directory.Exists(destDir))
+				Directory.CreateDirectory(destDir);
+
+			using Stream contents = EmbeddedFileUtility.Load(filePath);
+			using var fileStream = new FileStream(destPath, FileMode.Create);
+			await contents.CopyToAsync(fileStream);
+		}
 	}
 }
 
