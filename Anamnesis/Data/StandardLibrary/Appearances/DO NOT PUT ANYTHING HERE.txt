@@ -1,0 +1,5 @@
+⚠ WARNING: This folder is automatically cleared during every Anamnesis update.
+
+Please do not save any files here.
+
+To avoid losing your data, store your files in a different location. Any files placed here will be deleted, and recovery will not be possible.

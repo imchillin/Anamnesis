@@ -493,6 +493,7 @@ public partial class CharacterPage : UserControl
 			Shortcut[]? shortcuts =
 			[
 				FileService.DefaultCharacterDirectory,
+				FileService.StandardAppearancesDirectory,
 				FileService.FFxivDatCharacterDirectory,
 				FileService.CMToolAppearanceSaveDir,
 			];
