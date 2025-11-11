@@ -564,7 +564,10 @@ public class FileService : ServiceBase<FileService>
 			// Delete the legacy library if it exists
 			DirectoryInfo legacyLibDir = new(ParseToFilePath(LegacyLibDirectory));
 			if (legacyLibDir.Exists)
+			{
+				SetAttributesNormal(legacyLibDir);
 				legacyLibDir.Delete(true);
+			}
 
 			// Check version file
 			DirectoryInfo libDir = new(ParseToFilePath(StandardLibDirectory));
@@ -599,10 +602,12 @@ public class FileService : ServiceBase<FileService>
 					Log.Warning(ex, "Failed to read standard library version file");
 				}
 
+				SetAttributesNormal(libDir);
 				libDir.Delete(true);
 			}
 
 			libDir.Create();
+			SetAttributesNormal(libDir);
 			await File.WriteAllTextAsync(verFile, VersionInfo.ApplicationVersion.ToString());
 
 			// Copy the embedded "DO NOT PUT ANYTHING HERE.txt" file
