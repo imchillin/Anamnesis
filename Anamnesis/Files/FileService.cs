@@ -575,7 +575,11 @@ public class FileService : ServiceBase<FileService>
 				{
 					string verText = await File.ReadAllTextAsync(verFile);
 
-					if (!DateTime.TryParse(verText, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime _))
+					if (string.IsNullOrEmpty(verText))
+					{
+						Log.Warning("Standard library version file missing or empty. Replacing library contents...");
+					}
+					else if (!DateTime.TryParse(verText, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime _))
 					{
 						if (!Version.TryParse(verText, out Version? stdLibVer))
 						{
