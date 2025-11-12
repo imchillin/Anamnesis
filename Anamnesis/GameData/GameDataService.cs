@@ -104,6 +104,14 @@ public class GameDataService : ServiceBase<GameDataService>
 		return file.Data;
 	}
 
+	public static bool FileExists(string path)
+	{
+		if (s_luminaData == null)
+			throw new Exception("Game Data Service has not been initialized");
+
+		return s_luminaData.FileExists(path);
+	}
+
 	public static string? GetNpcName(INpcBase npc)
 	{
 		if (s_npcNames == null)
@@ -213,6 +221,8 @@ public class GameDataService : ServiceBase<GameDataService>
 			Ornaments = GetExcelSheet<Ornament>();
 			BuddyEquips = GetExcelSheet<BuddyEquip>();
 			Glasses = GetExcelSheet<Glasses>();
+
+			CustomizeOptionsCache.Build();
 		}
 		catch (Exception ex)
 		{
