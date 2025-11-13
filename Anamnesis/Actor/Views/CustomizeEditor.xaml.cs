@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Actor.Views;
 
+using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Memory;
@@ -23,6 +24,23 @@ using static Anamnesis.Memory.ActorCustomizeMemory;
 [AddINotifyPropertyChangedInterface]
 public partial class CustomizeEditor : UserControl
 {
+	/// <summary>
+	/// Tribes for which the face options need to be offset by -100
+	/// to match the internal face ids used by the game.
+	/// </summary>
+	/// <remarks>
+	/// Hrothgar and Viera use face ids 1 - 100 regardless of the tribe.
+	/// </remarks>
+	private static readonly HashSet<Tribes> s_offsetTargets = new()
+	{
+		Tribes.Highlander,
+		Tribes.Duskwight,
+		Tribes.Dunesfolk,
+		Tribes.KeeperOfTheMoon,
+		Tribes.Hellsguard,
+		Tribes.Xaela,
+	};
+
 	private readonly DispatcherTimer debounceTimer;
 
 	public CustomizeEditor()
@@ -36,15 +54,7 @@ public partial class CustomizeEditor : UserControl
 				.Cast<ActorCustomizeMemory.Ages>()
 				.Where(age => age != ActorCustomizeMemory.Ages.None);
 
-		List<Race> races = new();
-		foreach (Race race in GameDataService.Races)
-		{
-			if (race.RowId == 0)
-				continue;
-
-			races.Add(race);
-		}
-
+		List<Race> races = GameDataService.Races.Where(race => race.RowId != 0).ToList();
 		this.RaceComboBox.ItemsSource = races;
 
 		this.debounceTimer = new DispatcherTimer
@@ -54,11 +64,17 @@ public partial class CustomizeEditor : UserControl
 		this.debounceTimer.Tick += this.DebounceTimer_Tick;
 	}
 
+	public List<byte> ValidFaceOptions { get; set; } = new();
+	public List<byte> ValidTailEarsOptions { get; set; } = new();
+	public Ages SelectedAge { get; set; } = Ages.Normal;
+
 	public bool HasGender { get; set; }
 	public bool HasFur { get; set; }
 	public bool HasTail { get; set; }
 	public bool HasEars { get; set; }
 	public bool HasEarsTail { get; set; }
+	[DependsOn(nameof(Customize), nameof(HasEars), nameof(HasTail))]
+	public bool HasSeparateTailEarsModel => this.Customize?.Race != Races.Elezen && this.Customize?.Race != Races.Lalafel;
 	public bool HasMuscles { get; set; }
 	public bool CanAge { get; set; }
 	public CharaMakeCustomize? Hair { get; set; }
@@ -119,7 +135,7 @@ public partial class CustomizeEditor : UserControl
 
 		// Based on one or multiple property updates, reflect the changes
 		// in the rest of the customize editor components.
-		this.UpdateRaceAndTribe();
+		Application.Current.Dispatcher.Invoke(this.UpdateRaceAndTribe);
 	}
 
 	private void OnAppearancePropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -139,6 +155,65 @@ public partial class CustomizeEditor : UserControl
 			this.debounceTimer.Stop();
 			this.debounceTimer.Start();
 		}
+	}
+
+	private void UpdateFaceOptions(Tribes tribe, Genders gender, Ages age)
+	{
+		if (this.Customize == null)
+			return;
+
+		var dataPath = DataPathResolver.ToDataPath(tribe, gender, age != Ages.Normal);
+		if (dataPath.HasValue && CustomizeOptionsCache.ValidFaceIds.TryGetValue(dataPath.Value, out var validFaces))
+		{
+			// Apply offset logic for specific tribes
+			if (s_offsetTargets.Contains(tribe))
+			{
+				this.ValidFaceOptions = validFaces
+					.Where(v => v > 100)
+					.Select(v => v <= 200 ? (byte)(v - 100) : v)
+					.ToList();
+			}
+			else
+			{
+				this.ValidFaceOptions = validFaces.Where(v => v <= 100 || v > 200).ToList();
+			}
+		}
+		else
+		{
+			this.ValidFaceOptions = [];
+		}
+
+		if (this.ValidFaceOptions.Count > 0)
+		{
+			if (this.ValidFaceOptions.Contains(this.Customize.Head))
+				this.FaceComboBox.GetBindingExpression(ComboBox.SelectedValueProperty)?.UpdateTarget();
+			else
+				this.Customize.Head = this.ValidFaceOptions[0];
+		}
+
+		this.OnPropertyChanged(nameof(this.ValidFaceOptions));
+	}
+
+	private void UpdateTailEarsOptions(Races race, Tribes tribe, Genders gender, Ages age)
+	{
+		if (this.Customize == null)
+			return;
+
+		var dataPath = DataPathResolver.ToDataPath(tribe, gender, age != Ages.Normal);
+		if (dataPath.HasValue && CustomizeOptionsCache.ValidTailEarIds.TryGetValue(dataPath.Value, out var validTailEars))
+			this.ValidTailEarsOptions = validTailEars;
+		else
+			this.ValidTailEarsOptions = new List<byte>();
+
+		if (this.ValidTailEarsOptions.Count > 0)
+		{
+			if (this.ValidTailEarsOptions.Contains(this.Customize.TailEarsType))
+				this.TailEarsCombobox.GetBindingExpression(ComboBox.SelectedValueProperty)?.UpdateTarget();
+			else
+				this.Customize.TailEarsType = this.ValidTailEarsOptions[0];
+		}
+
+		this.OnPropertyChanged(nameof(this.ValidTailEarsOptions));
 	}
 
 	private void UpdateRaceAndTribe()
@@ -192,16 +267,21 @@ public partial class CustomizeEditor : UserControl
 
 		this.TribeComboBox.SelectedItem = this.Tribe;
 
+		this.UpdateFaceOptions(this.Customize.Tribe, this.Customize.Gender, this.Customize.Age);
+		this.UpdateTailEarsOptions(this.Customize.Race, this.Customize.Tribe, this.Customize.Gender, this.Customize.Age);
+
 		// Re-subscribe to selection changed events
 		this.RaceComboBox.SelectionChanged += this.OnRaceChanged;
 		this.TribeComboBox.SelectionChanged += this.OnTribeChanged;
 
-		this.HasTail = this.Customize.Race == Races.Hrothgar || this.Customize.Race == Races.Miqote || this.Customize.Race == Races.AuRa;
-		this.HasEars = this.Customize.Race == Races.Viera || this.Customize.Race == Races.Lalafel || this.Customize.Race == Races.Elezen;
+		this.HasTail = this.Customize.Race is Races.Hrothgar or Races.Miqote or Races.AuRa;
+		this.HasEars = this.Customize.Race is Races.Viera or Races.Lalafel or Races.Elezen;
 		this.HasFur = this.Customize.Race == Races.Hrothgar;
-		this.HasEarsTail = this.HasTail | this.HasEars;
+		this.HasEarsTail = this.HasTail || this.HasEars;
 		this.HasMuscles = !this.HasEars && !this.HasTail;
 		this.HasGender = true;
+
+		this.OnPropertyChanged(nameof(this.HasSeparateTailEarsModel));
 
 		bool canAge = this.Customize.Tribe == Tribes.Midlander;
 		canAge |= this.Customize.Race == Races.Miqote && this.Customize.Gender == Genders.Feminine;
@@ -231,6 +311,19 @@ public partial class CustomizeEditor : UserControl
 		}
 
 		this.Customize.Gender = (Genders)gender;
+	}
+
+	private void OnAgeChanged(object sender, SelectionChangedEventArgs e)
+	{
+		if (this.Customize == null)
+			return;
+
+		if (this.AgeComboBox.SelectedItem is not Ages newAge)
+			return;
+
+		this.UpdateFaceOptions(this.Customize.Tribe, this.Customize.Gender, newAge);
+		this.UpdateTailEarsOptions(this.Customize.Race, this.Customize.Tribe, this.Customize.Gender, newAge);
+		this.Customize.Age = newAge;
 	}
 
 	private async void OnHairClicked(object sender, RoutedEventArgs e)
