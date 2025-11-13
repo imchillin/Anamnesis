@@ -318,6 +318,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 			{
 				this.Memory ??= new ActorMemory();
 				this.Memory.SetAddress(newBasic.Address);
+				this.Memory.Pinned = this;
 
 				IntPtr? oldPointer = this.Pointer;
 
