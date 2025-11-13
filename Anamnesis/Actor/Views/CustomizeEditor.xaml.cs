@@ -29,7 +29,7 @@ public partial class CustomizeEditor : UserControl
 	/// to match the internal face ids used by the game.
 	/// </summary>
 	/// <remarks>
-	/// Hrothgar and Viera use face ids 1 - 100 regardless of the tribe.
+	/// Au Ra, Hrothgar and Viera use face ids 1 - 100 regardless of the tribe.
 	/// </remarks>
 	private static readonly HashSet<Tribes> s_offsetTargets = new()
 	{
@@ -38,7 +38,6 @@ public partial class CustomizeEditor : UserControl
 		Tribes.Dunesfolk,
 		Tribes.KeeperOfTheMoon,
 		Tribes.Hellsguard,
-		Tribes.Xaela,
 	};
 
 	private readonly DispatcherTimer debounceTimer;
@@ -253,6 +252,7 @@ public partial class CustomizeEditor : UserControl
 		// Unsubscribe from events to avoid the callbacks from being called
 		this.RaceComboBox.SelectionChanged -= this.OnRaceChanged;
 		this.TribeComboBox.SelectionChanged -= this.OnTribeChanged;
+		this.AgeComboBox.SelectionChanged -= this.OnAgeChanged;
 
 		this.RaceComboBox.SelectedItem = this.Race;
 		this.TribeComboBox.ItemsSource = this.Race.Value.Tribes;
@@ -271,8 +271,9 @@ public partial class CustomizeEditor : UserControl
 		this.UpdateTailEarsOptions(this.Customize.Race, this.Customize.Tribe, this.Customize.Gender, this.Customize.Age);
 
 		// Re-subscribe to selection changed events
-		this.RaceComboBox.SelectionChanged += this.OnRaceChanged;
+		this.AgeComboBox.SelectionChanged += this.OnAgeChanged;
 		this.TribeComboBox.SelectionChanged += this.OnTribeChanged;
+		this.RaceComboBox.SelectionChanged += this.OnRaceChanged;
 
 		this.HasTail = this.Customize.Race is Races.Hrothgar or Races.Miqote or Races.AuRa;
 		this.HasEars = this.Customize.Race is Races.Viera or Races.Lalafel or Races.Elezen;
@@ -358,7 +359,7 @@ public partial class CustomizeEditor : UserControl
 		this.TribeComboBox.SelectionChanged -= this.OnTribeChanged;
 
 		// Reset age when changing race
-		this.Customize.Age = Ages.Normal;
+		this.AgeComboBox.SelectedValue = Ages.Normal;
 
 		int oldTribeIndex = GetTribeIndex(this.Race, this.Tribe);
 
@@ -391,7 +392,7 @@ public partial class CustomizeEditor : UserControl
 			return;
 
 		// Reset age when changing tribe
-		this.Customize.Age = Ages.Normal;
+		this.AgeComboBox.SelectedValue = Ages.Normal;
 
 		this.Tribe = tribe;
 		this.Customize.Tribe = this.Tribe.Value.CustomizeTribe;
