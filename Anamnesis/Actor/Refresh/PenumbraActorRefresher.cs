@@ -34,7 +34,7 @@ public class PenumbraActorRefresher : IActorRefresher
 		bool doNpcHack = SettingsService.Current.EnableNpcHack && actor.ObjectKind == ActorTypes.Player;
 
 		if (doNpcHack)
-			actor.ObjectKind = ActorTypes.BattleNpc;
+			actor.ObjectKind = ActorTypes.EventNpc;
 
 		try
 		{

@@ -43,7 +43,7 @@ public class BrioActorRefresher : IActorRefresher
 
 			// Redraw
 			if (doNpcHack)
-				actor.ObjectKind = ActorTypes.BattleNpc;
+				actor.ObjectKind = ActorTypes.EventNpc;
 
 			try
 			{
@@ -72,7 +72,7 @@ public class BrioActorRefresher : IActorRefresher
 		{
 			// Outside of pose mode we can just refresh
 			if (doNpcHack)
-				actor.ObjectKind = ActorTypes.BattleNpc;
+				actor.ObjectKind = ActorTypes.EventNpc;
 
 			try
 			{

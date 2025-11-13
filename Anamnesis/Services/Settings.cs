@@ -60,7 +60,7 @@ public class Settings : INotifyPropertyChanged
 	public bool ExtendIntoWindowChrome { get; set; } = true;
 	public bool UseExternalRefresh { get; set; } = false;
 	public bool UseExternalRefreshBrio { get; set; } = false;
-	public bool EnableNpcHack { get; set; } = false;
+	public bool EnableNpcHack { get; set; } = true;
 	public bool EnableGameHotkeyHooks { get; set; } = false;
 	public bool EnableHotkeys { get; set; } = true;
 	public bool ForwardKeys { get; set; } = true;
