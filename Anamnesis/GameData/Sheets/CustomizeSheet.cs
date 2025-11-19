@@ -216,7 +216,7 @@ public static class CustomizeSheet
 				throw new Exception("Unrecognized feature type, tribe, and gender combination");
 
 			uint count = GetFeatureLength(featureType);
-			lookup = BuildFeatureLookup(self, startIndex, count, featureType);
+			lookup = BuildFeatureLookup(self, startIndex, count, featureType, tribe, gender);
 			s_featureCache[key] = lookup;
 		}
 
@@ -230,14 +230,30 @@ public static class CustomizeSheet
 	/// <param name="startIndex">The starting index of the range to process.</param>
 	/// <param name="count">The number of rows to process starting from <paramref name="startIndex"/>.</param>
 	/// <param name="featureType">The type of feature to include in the lookup, such as hair or face paint.</param>
+	/// <param name="tribe">The tribe of the actor.</param>
+	/// <param name="gender">The gender of the actor.</param>
 	/// <returns>
 	/// A dictionary where the keys are feature IDs and the values are <see cref="CharaMakeCustomize"/> objects
 	/// representing the corresponding customization features.
 	/// </returns>
 	private static Dictionary<byte, CharaMakeCustomize> BuildFeatureLookup(
-		ExcelSheet<CharaMakeCustomize> self, uint startIndex, uint count, Features featureType)
+		ExcelSheet<CharaMakeCustomize> self,
+		uint startIndex,
+		uint count,
+		Features featureType,
+		ActorCustomizeMemory.Tribes tribe,
+		ActorCustomizeMemory.Genders gender)
 	{
 		var dict = new Dictionary<byte, CharaMakeCustomize>();
+		List<byte>? validHairIds = null;
+
+		if (featureType == Features.Hair)
+		{
+			var dataPath = DataPathResolver.ToDataPath(tribe, gender, false);
+			if (dataPath.HasValue && CustomizeOptionsCache.ValidHairIds.TryGetValue(dataPath.Value, out var validIds))
+				validHairIds = validIds;
+		}
+
 		for (uint i = startIndex; i < startIndex + count; i++)
 		{
 			var feature = self.GetRow(i);
@@ -246,6 +262,10 @@ public static class CustomizeSheet
 
 			// Include a "no feature" option for face paint but not for hair.
 			if (featureType != Features.FacePaint && feature.FeatureId == 0)
+				continue;
+
+			// For hair, only add hairstyles with resolved data paths for their models.
+			if (featureType == Features.Hair && validHairIds != null && !validHairIds.Contains(feature.FeatureId))
 				continue;
 
 			dict[feature.FeatureId] = feature;
