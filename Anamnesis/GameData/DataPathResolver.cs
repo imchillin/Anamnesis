@@ -56,6 +56,9 @@ public enum DataPaths : short
 
 public static class DataPathResolver
 {
+	/// <summary>
+	/// A translation map between actor tribe/gender/isNpc and game data path IDs.
+	/// </summary>
 	private static readonly Dictionary<(ActorCustomizeMemory.Tribes, ActorCustomizeMemory.Genders, bool), DataPaths> s_dataPathMap = new()
 	{
 		// Hyur: Midlander
