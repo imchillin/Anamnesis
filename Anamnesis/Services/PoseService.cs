@@ -5,13 +5,10 @@ namespace Anamnesis.Services;
 
 using Anamnesis;
 using Anamnesis.Core;
-using Anamnesis.Files;
 using Anamnesis.Memory;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Threading.Tasks;
 
 [AddINotifyPropertyChangedInterface]
@@ -179,12 +176,6 @@ public class PoseService : ServiceBase<PoseService>
 	/// <inheritdoc/>
 	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GposeService.Instance];
 
-	public override async Task Initialize()
-	{
-		_ = Task.Run(ExtractStandardPoses);
-		await base.Initialize();
-	}
-
 	public override async Task Shutdown()
 	{
 		GposeService.GposeStateChanged -= this.OnGposeStateChanged;
@@ -242,81 +233,6 @@ public class PoseService : ServiceBase<PoseService>
 		await base.OnStart();
 
 		GposeService.GposeStateChanged += this.OnGposeStateChanged;
-	}
-
-	private static async Task ExtractStandardPoses()
-	{
-		try
-		{
-			DirectoryInfo standardPoseDir = FileService.StandardPoseDirectory.Directory;
-			string verFile = standardPoseDir.FullName + "\\ver.txt";
-
-			if (standardPoseDir.Exists)
-			{
-				if (File.Exists(verFile))
-				{
-					try
-					{
-						string verText = await File.ReadAllTextAsync(verFile);
-
-						if (!DateTime.TryParse(verText, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime _))
-						{
-							if (!Version.TryParse(verText, out Version? standardPoseVer))
-							{
-								Log.Error($"Failed to parse standard pose library version: {verText}");
-								return;
-							}
-
-							if (standardPoseVer == VersionInfo.ApplicationVersion)
-							{
-								Log.Information($"Standard pose library up to date");
-								return;
-							}
-						}
-					}
-					catch (Exception ex)
-					{
-						Log.Warning(ex, "Failed to read standard pose library version file");
-					}
-				}
-
-				standardPoseDir.Delete(true);
-			}
-
-			standardPoseDir.Create();
-			await File.WriteAllTextAsync(verFile, VersionInfo.ApplicationVersion.ToString());
-
-			string[] poses = EmbeddedFileUtility.GetAllFilesInDirectory("\\Data\\StandardPoses\\");
-			foreach (string posePath in poses)
-			{
-				string destPath = posePath;
-				destPath = destPath.Replace('.', '\\');
-				destPath = destPath.Replace('_', ' ');
-				destPath = destPath.Replace("Data\\StandardPoses\\", string.Empty);
-
-				// restore file extensions
-				destPath = destPath.Replace("\\pose", ".pose");
-				destPath = destPath.Replace("\\txt", ".txt");
-
-				destPath = standardPoseDir.FullName + destPath;
-
-				string? destDir = Path.GetDirectoryName(destPath)
-					?? throw new Exception($"Failed to get directory name from path: {destPath}");
-
-				if (!Directory.Exists(destDir))
-					Directory.CreateDirectory(destDir);
-
-				using Stream contents = EmbeddedFileUtility.Load(posePath);
-				using var fileStream = new FileStream(destPath, FileMode.Create);
-				await contents.CopyToAsync(fileStream);
-			}
-
-			Log.Information($"Extracted standard pose library");
-		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, "Failed to extract standard pose library");
-		}
 	}
 
 	private void OnGposeStateChanged(bool isGPose)

@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Actor.Views;
 
+using Anamnesis.GameData;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
@@ -31,7 +32,7 @@ public partial class DataPathSelector : UserControl
 
 		this.SelectedPath = this.GetOption(this.DataPath);
 
-		foreach (ActorModelMemory.DataPaths dataPathVal in Enum.GetValues<ActorModelMemory.DataPaths>())
+		foreach (DataPaths dataPathVal in Enum.GetValues<DataPaths>())
 		{
 			string? name = Enum.GetName(dataPathVal);
 
@@ -117,7 +118,7 @@ public partial class DataPathSelector : UserControl
 		this.DataHead = this.selectedPath.GetHead(this.Tribe);
 	}
 
-	public class DataPathOption(string name, ActorModelMemory.DataPaths path)
+	public class DataPathOption(string name, DataPaths path)
 	{
 		public short PathValue { get; private set; } = (short)path;
 		public string Name { get; private set; } = name;

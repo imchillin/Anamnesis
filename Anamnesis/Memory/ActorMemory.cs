@@ -12,7 +12,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class ActorMemory : ActorBasicMemory
+public class ActorMemory : ActorBasicMemory, IDisposable
 {
 	private const int REFRESH_DEBOUNCE_TIMEOUT = 200;
 	private readonly System.Timers.Timer refreshDebounceTimer;
@@ -165,6 +165,13 @@ public class ActorMemory : ActorBasicMemory
 
 	[DependsOn(nameof(CharacterMode))]
 	public bool IsAnimationOverridden => this.CharacterMode == CharacterModes.AnimLock;
+
+	public override void Dispose()
+	{
+		this.PropertyChanged -= this.HandlePropertyChanged;
+		this.refreshDebounceTimer?.Dispose();
+		base.Dispose();
+	}
 
 	public override void Synchronize()
 	{

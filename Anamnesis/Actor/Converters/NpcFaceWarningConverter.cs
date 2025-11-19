@@ -4,6 +4,7 @@
 namespace Anamnesis.Converters;
 
 using Anamnesis.Memory;
+using Anamnesis.Services;
 using System;
 using System.Globalization;
 using System.Windows;
@@ -23,14 +24,18 @@ public class NpcFaceWarningConverter : IMultiValueConverter
 			if (type == ActorTypes.BattleNpc || type == ActorTypes.EventNpc)
 				return Visibility.Collapsed;
 
-			// For all except Hrothgar, >4 is an NPC face.
-			if (head > 4 && !isHroth)
-				return Visibility.Visible;
+			// Hide NPC face warning if the NPC hack is enabled.
+			if (!SettingsService.Current.EnableNpcHack)
+			{
+				// For all except Hrothgar, >4 is an NPC face.
+				if (head > 4 && !isHroth)
+					return Visibility.Visible;
 
-			// For Hrothgar only, between 5 and 8 are player faces.
-			// For Male Hrothgar specifically, faces 1-4 additionally are customizable.
-			if (isHroth && (head > 8 || (gender == ActorCustomizeMemory.Genders.Feminine && head < 5)))
-				return Visibility.Visible;
+				// For Hrothgar only, between 5 and 8 are player faces.
+				// For Male Hrothgar specifically, faces 1-4 additionally are customizable.
+				if (isHroth && (head > 8 || (gender == ActorCustomizeMemory.Genders.Feminine && head < 5)))
+					return Visibility.Visible;
+			}
 
 			return Visibility.Collapsed;
 		}

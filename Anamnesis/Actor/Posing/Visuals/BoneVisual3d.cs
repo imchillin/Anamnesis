@@ -231,9 +231,8 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 	/// <returns>The precomputed sphere.</returns>
 	private static Sphere CreatePrecomputedSphere()
 	{
-		var sphere = new Sphere
+		var sphere = new Sphere(SPHERE_RADIUS)
 		{
-			Radius = SPHERE_RADIUS,
 			Material = Themes.IsLightTheme ? s_normalMaterialLightTheme : s_normalMaterialDarkTheme,
 		};
 

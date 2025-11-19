@@ -30,7 +30,7 @@ public class AnamnesisActorRefresher : IActorRefresher
 	{
 		if (SettingsService.Current.EnableNpcHack && actor.ObjectKind == ActorTypes.Player)
 		{
-			actor.ObjectKind = ActorTypes.BattleNpc;
+			actor.ObjectKind = ActorTypes.EventNpc;
 			actor.RenderMode = RenderModes.Unload;
 			await Task.Delay(75);
 			actor.RenderMode = RenderModes.Draw;
