@@ -46,7 +46,7 @@ public class Skeleton : INotifyPropertyChanged
 	/// <summary>
 	/// Maximum number of attempts to retry accessing bone array memory.
 	/// </summary>
-	private const uint MAX_READ_RETRY_ATTEMPTS = 5;
+	private const uint MAX_READ_RETRY_ATTEMPTS = 15;
 
 	/// <summary>
 	/// A snapshot of the transforms of all bones in the skeleton.
@@ -276,6 +276,10 @@ public class Skeleton : INotifyPropertyChanged
 		if (!GposeService.Instance.IsGpose || this.Actor?.ModelObject?.Skeleton == null)
 			return;
 
+		actor.Synchronize();
+
+		actor.PauseSynchronization = true;
+
 		// Get all bones
 		this.AddBones(this.Actor.ModelObject.Skeleton);
 
@@ -284,6 +288,8 @@ public class Skeleton : INotifyPropertyChanged
 
 		if (this.Actor.OffHand?.Model?.Skeleton != null)
 			this.AddBones(this.Actor.OffHand.Model.Skeleton, "oh_");
+
+		actor.PauseSynchronization = false;
 
 		// Create Bone links from the link database
 		foreach ((string name, Bone bone) in this.Bones)
@@ -343,107 +349,127 @@ public class Skeleton : INotifyPropertyChanged
 	/// <param name="namePrefix">An optional prefix to add to the bone names.</param>
 	protected virtual void AddBones(SkeletonMemory skeleton, string? namePrefix = null)
 	{
+		var partialTasks = new List<Task>();
+
 		for (int partialSkeletonIndex = 0; partialSkeletonIndex < skeleton.Length; partialSkeletonIndex++)
 		{
-			PartialSkeletonMemory partialSkeleton = skeleton[partialSkeletonIndex];
-			HkaPoseMemory? bestHkaPose = null;
-
-			int retryCount = 0;
-
-			while (retryCount < MAX_READ_RETRY_ATTEMPTS)
+			int index = partialSkeletonIndex;
+			partialTasks.Add(Task.Run(() =>
 			{
-				try
-				{
-					bestHkaPose = partialSkeleton.Pose1;
+				PartialSkeletonMemory partialSkeleton = skeleton[index];
+				HkaPoseMemory? bestHkaPose = null;
+				int retryCount = 0;
 
-					if (bestHkaPose == null ||
-						bestHkaPose.Skeleton?.Bones == null ||
-						bestHkaPose.Skeleton?.ParentIndices == null ||
-						bestHkaPose.Transforms == null)
-						throw new Exception("Failed to find best Havok pose for partial skeleton");
-
-					break;
-				}
-				catch (Exception ex)
-				{
-					Log.Verbose(ex, $"{ex.Message}. Retrying... ({retryCount + 1}/{MAX_READ_RETRY_ATTEMPTS})");
-
-					retryCount++;
-					if (retryCount >= MAX_READ_RETRY_ATTEMPTS)
-					{
-						Log.Warning("Max retry attempts reached. Unable to find best pose for partial skeleton.");
-						continue; // Skip to the next iteration of the outer loop
-					}
-
-					Task.Delay(100).Wait();  // Wait 100ms between retries
-				}
-			}
-
-			if (bestHkaPose == null || bestHkaPose.Skeleton?.Bones == null || bestHkaPose.Skeleton?.ParentIndices == null || bestHkaPose.Transforms == null)
-			{
-				Log.Verbose("Failed to find best HkaSkeleton for partial skeleton");
-				continue;
-			}
-
-			int count = bestHkaPose.Transforms.Length;
-
-			retryCount = 0;
-
-			// Load all bones first
-			for (int boneIndex = 0; boneIndex < count; boneIndex++)
-			{
 				while (retryCount < MAX_READ_RETRY_ATTEMPTS)
 				{
 					try
 					{
-						string originalName = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
-						string name = ConvertBoneName(namePrefix, originalName);
-						TransformMemory? transform = bestHkaPose.Transforms[boneIndex];
+						bestHkaPose = partialSkeleton.Pose1;
 
-						if (!this.Bones.TryGetValue(name, out var currentBone))
-						{
-							currentBone = this.CreateBone(this, [transform], name, partialSkeletonIndex);
-							if (currentBone == null)
-								throw new Exception($"Failed to create bone: {name}");
+						if (bestHkaPose == null ||
+							bestHkaPose.Skeleton?.Bones == null ||
+							bestHkaPose.Skeleton?.ParentIndices == null ||
+							bestHkaPose.Transforms == null)
+							throw new Exception("Failed to find best Havok pose for partial skeleton");
 
-							this.Bones[name] = currentBone;
-						}
-						else
-						{
-							currentBone.TransformMemories.Add(transform);
-						}
-
-						// Do not allow modification of the root bone, things get weird.
-						if (originalName == "n_root")
-							currentBone.IsTransformLocked = true;
-
-						break; // Exit the retry loop if successful
+						break;
 					}
-					catch (ArgumentOutOfRangeException ex)
+					catch (Exception ex)
 					{
-						Log.Warning(ex, $"Failed to locate bone at index {boneIndex}. Retrying... ({retryCount + 1}/{MAX_READ_RETRY_ATTEMPTS})");
+						Log.Verbose(ex, $"{ex.Message}. Retrying... ({retryCount + 1}/{MAX_READ_RETRY_ATTEMPTS})");
 
 						retryCount++;
 						if (retryCount >= MAX_READ_RETRY_ATTEMPTS)
-							throw; // Rethrow the exception if max retries reached
+						{
+							Log.Warning("Max retry attempts reached. Unable to find best pose for partial skeleton.");
+							return; // Skip this partial skeleton
+						}
 
-						Task.Delay(10).Wait(); // Wait 10ms between retries
+						Task.Delay(16).Wait();
 					}
 				}
-			}
 
-			// Set parents now all the bones are loaded
+				if (bestHkaPose == null || bestHkaPose.Skeleton?.Bones == null || bestHkaPose.Skeleton?.ParentIndices == null || bestHkaPose.Transforms == null)
+				{
+					Log.Verbose("Failed to find best HkaSkeleton for partial skeleton");
+					return;
+				}
+
+				int count = bestHkaPose.Transforms.Length;
+
+				// Load all bones first
+				for (int boneIndex = 0; boneIndex < count; boneIndex++)
+				{
+					retryCount = 0;
+					while (retryCount < MAX_READ_RETRY_ATTEMPTS)
+					{
+						try
+						{
+							string originalName = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
+							string name = ConvertBoneName(namePrefix, originalName);
+							TransformMemory? transform = bestHkaPose.Transforms[boneIndex];
+
+							if (!this.Bones.TryGetValue(name, out var currentBone))
+							{
+								currentBone = this.CreateBone(this, [transform], name, index);
+								if (currentBone == null)
+									throw new Exception($"Failed to create bone: {name}");
+
+								this.Bones[name] = currentBone;
+							}
+							else
+							{
+								lock (currentBone.TransformMemories)
+								{
+									currentBone.TransformMemories.Add(transform);
+								}
+							}
+
+							if (originalName == "n_root")
+								currentBone.IsTransformLocked = true;
+
+							break;
+						}
+						catch (ArgumentOutOfRangeException ex)
+						{
+							Log.Warning(ex, $"Failed to locate bone at index {boneIndex}. Retrying... ({retryCount + 1}/{MAX_READ_RETRY_ATTEMPTS})");
+
+							retryCount++;
+							if (retryCount >= MAX_READ_RETRY_ATTEMPTS)
+								throw;
+
+							Task.Delay(16).Wait();
+						}
+					}
+				}
+			}));
+		}
+
+		Task.WaitAll(partialTasks.ToArray());
+
+		// Set parents now that all bones are loaded
+		for (int partialSkeletonIndex = 0; partialSkeletonIndex < skeleton.Length; partialSkeletonIndex++)
+		{
+			PartialSkeletonMemory partialSkeleton = skeleton[partialSkeletonIndex];
+			HkaPoseMemory? bestHkaPose = partialSkeleton.Pose1;
+
+			if (bestHkaPose == null
+				|| bestHkaPose.Skeleton?.Bones == null
+				|| bestHkaPose.Skeleton?.ParentIndices == null
+				|| bestHkaPose.Transforms == null)
+				continue;
+
+			int count = bestHkaPose.Transforms.Length;
 			for (int boneIndex = 0; boneIndex < count; boneIndex++)
 			{
 				int parentIndex = bestHkaPose.Skeleton.ParentIndices[boneIndex];
 				string boneName = ConvertBoneName(namePrefix, bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString());
-				Bone bone = this.Bones[boneName];
+				if (!this.Bones.TryGetValue(boneName, out var bone))
+					continue;
 
-				// If the bone already has a parent, skip it.
 				if (bone.Parent != null)
 					continue;
 
-				// If parent index is -1, it means the bone has no parent.
 				if (parentIndex >= 0)
 				{
 					string parentBoneName = ConvertBoneName(namePrefix, bestHkaPose.Skeleton.Bones[parentIndex].Name.ToString());
