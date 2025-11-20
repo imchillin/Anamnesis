@@ -438,11 +438,14 @@ public class TargetService : ServiceBase<TargetService>
 			{
 				bool isGpose = GposeService.GetIsGPose();
 
-				List<ActorBasicMemory> allActors = ActorService.Instance.GetAllActors(true);
+				List<ActorBasicMemory> allActors = ActorService.Instance.GetAllActors();
 
 				// We want the first non-hidden actor with a name in the same mode as the game
 				foreach (ActorBasicMemory actor in allActors)
 				{
+					if (actor.IsDisposed)
+						continue;
+
 					if (actor.IsHidden)
 						continue;
 

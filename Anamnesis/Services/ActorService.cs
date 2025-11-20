@@ -134,16 +134,14 @@ public class ActorService : ServiceBase<ActorService>
 
 	/// <summary>Gets the index of the actor in the actor table.</summary>
 	/// <param name="pointer">The pointer to the actor.</param>
-	/// <param name="refresh">Whether to refresh the actor table.</param>
 	/// <returns>The index of the actor in the actor table, or -1 if not found.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public int GetActorTableIndex(IntPtr pointer, bool refresh = false)
+	public int GetActorTableIndex(IntPtr pointer)
 	{
 		if (pointer == IntPtr.Zero)
 			return -1;
 
-		if (refresh)
-			this.UpdateActorTable();
+		this.UpdateActorTable();
 
 		this.actorTableLock.EnterReadLock();
 		try
@@ -158,12 +156,11 @@ public class ActorService : ServiceBase<ActorService>
 
 	/// <summary>Determines if the actor is in the actor table.</summary>
 	/// <param name="ptr">The pointer to the actor.</param>
-	/// <param name="refresh">Whether to refresh the actor table.</param>
 	/// <returns>True if the actor is in the actor table, otherwise false.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public bool IsActorInTable(IntPtr ptr, bool refresh = false)
+	public bool IsActorInTable(IntPtr ptr)
 	{
-		return this.GetActorTableIndex(ptr, refresh) != -1;
+		return this.GetActorTableIndex(ptr) != -1;
 	}
 
 	/// <summary>Determines if the actor is in the actor table.</summary>
@@ -171,7 +168,7 @@ public class ActorService : ServiceBase<ActorService>
 	/// <param name="refresh">Whether to refresh the actor table.</param>
 	/// <returns>True if the actor is in the actor table, otherwise false.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public bool IsActorInTable(MemoryBase memory, bool refresh = false) => this.IsActorInTable(memory.Address, refresh);
+	public bool IsActorInTable(MemoryBase memory, bool refresh = false) => this.IsActorInTable(memory.Address);
 
 	/// <summary>Determines if the actor is in GPose.</summary>
 	/// <param name="actorAddress">The address of the actor.</param>
@@ -228,12 +225,10 @@ public class ActorService : ServiceBase<ActorService>
 	public bool IsLocalPlayer(IntPtr actorAddress) => this.IsLocalOverworldPlayer(actorAddress) || this.IsLocalGPosePlayer(actorAddress);
 
 	/// <summary>Gets all actors from actor table.</summary>
-	/// <param name="refresh">Whether to refresh the actor table.</param>
 	/// <returns>A list of all actors.</returns>
-	public List<ActorBasicMemory> GetAllActors(bool refresh = false)
+	public List<ActorBasicMemory> GetAllActors()
 	{
-		if (refresh)
-			this.UpdateActorTable();
+		this.UpdateActorTable();
 
 		this.actorInstancesLock.EnterReadLock();
 		try

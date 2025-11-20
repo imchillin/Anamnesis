@@ -193,7 +193,7 @@ public partial class CustomizeEditor : UserControl
 		this.OnPropertyChanged(nameof(this.ValidFaceOptions));
 	}
 
-	private void UpdateTailEarsOptions(Races race, Tribes tribe, Genders gender, Ages age)
+	private void UpdateTailEarsOptions(Tribes tribe, Genders gender, Ages age)
 	{
 		if (this.Customize == null)
 			return;
@@ -268,7 +268,7 @@ public partial class CustomizeEditor : UserControl
 		this.TribeComboBox.SelectedItem = this.Tribe;
 
 		this.UpdateFaceOptions(this.Customize.Tribe, this.Customize.Gender, this.Customize.Age);
-		this.UpdateTailEarsOptions(this.Customize.Race, this.Customize.Tribe, this.Customize.Gender, this.Customize.Age);
+		this.UpdateTailEarsOptions(this.Customize.Tribe, this.Customize.Gender, this.Customize.Age);
 
 		// Re-subscribe to selection changed events
 		this.AgeComboBox.SelectionChanged += this.OnAgeChanged;
@@ -323,7 +323,7 @@ public partial class CustomizeEditor : UserControl
 			return;
 
 		this.UpdateFaceOptions(this.Customize.Tribe, this.Customize.Gender, newAge);
-		this.UpdateTailEarsOptions(this.Customize.Race, this.Customize.Tribe, this.Customize.Gender, newAge);
+		this.UpdateTailEarsOptions(this.Customize.Tribe, this.Customize.Gender, newAge);
 		this.Customize.Age = newAge;
 	}
 

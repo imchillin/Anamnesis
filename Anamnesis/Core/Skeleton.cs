@@ -276,8 +276,6 @@ public class Skeleton : INotifyPropertyChanged
 		if (!GposeService.Instance.IsGpose || this.Actor?.ModelObject?.Skeleton == null)
 			return;
 
-		actor.Synchronize();
-
 		actor.PauseSynchronization = true;
 
 		// Get all bones
@@ -386,6 +384,7 @@ public class Skeleton : INotifyPropertyChanged
 						}
 
 						Task.Delay(16).Wait();
+						partialSkeleton.Synchronize();
 					}
 				}
 
@@ -439,6 +438,7 @@ public class Skeleton : INotifyPropertyChanged
 								throw;
 
 							Task.Delay(16).Wait();
+							bestHkaPose.Skeleton.Synchronize();
 						}
 					}
 				}

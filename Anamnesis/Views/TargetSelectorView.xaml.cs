@@ -113,7 +113,12 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 
 		// As we do not actively update non-pinned actors, synchronize first
 		foreach (ActorBasicMemory actor in allActors)
+		{
+			if (actor.IsDisposed)
+				continue;
+
 			actor.Synchronize();
+		}
 
 		this.AddItems(allActors);
 		return Task.CompletedTask;
@@ -200,7 +205,7 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 			var nextActorId = await Brio.Spawn();
 			if (nextActorId != -1)
 			{
-				var actors = ActorService.Instance.GetAllActors(true);
+				var actors = ActorService.Instance.GetAllActors();
 				var newActor = actors.SingleOrDefault(i => i.ObjectIndex == nextActorId);
 				if (newActor != null)
 				{
