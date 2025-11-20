@@ -42,6 +42,11 @@ public struct PropertyChange
 	public string? Name;
 
 	/// <summary>
+	/// Caches the computed path of the property change to avoid string concatenation overhead.
+	/// </summary>
+	private string? cachedPath;
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="PropertyChange"/> struct.
 	/// </summary>
 	/// <param name="bind">The bind information associated with the property change.</param>
@@ -80,10 +85,14 @@ public struct PropertyChange
 	}
 
 	/// <summary>Gets the full path of the property change.</summary>
-	public readonly string Path
+	public string Path
 	{
 		get
 		{
+			// Use cached value if available
+			if (this.cachedPath != null)
+				return this.cachedPath;
+
 			if (this.BindPath.Count == 0)
 				return string.Empty;
 
@@ -91,7 +100,8 @@ public struct PropertyChange
 			foreach (var bind in this.BindPath)
 				sb.Append(bind.Path);
 
-			return string.Intern(sb.ToString());
+			this.cachedPath = string.Intern(sb.ToString());
+			return this.cachedPath;
 		}
 	}
 
@@ -126,7 +136,13 @@ public struct PropertyChange
 	/// </summary>
 	/// <param name="bind">The bind information to add.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public readonly void AddPath(BindInfo bind) => this.BindPath.Add(bind);
+	public void AddPath(BindInfo bind)
+	{
+		this.BindPath.Add(bind);
+
+		// Invalidate cached path
+		this.cachedPath = null;
+	}
 
 	/// <summary>
 	/// Adds all ancestor binds of the parent bind to the property change.
@@ -135,7 +151,7 @@ public struct PropertyChange
 	/// Use this method only if the change's bind path is not already configured.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public readonly void ConfigureBindPath()
+	public void ConfigureBindPath()
 	{
 		var parentBind = this.BindPath[0].Memory.ParentBind;
 		if (parentBind == null)
@@ -150,13 +166,16 @@ public struct PropertyChange
 
 			memParent = memParent.Parent;
 		}
+
+		// Invalidate cached path
+		this.cachedPath = null;
 	}
 
 	/// <summary>
 	/// Returns a string that represents the current object.
 	/// </summary>
 	/// <returns>A string that represents the current object.</returns>
-	public override readonly string ToString()
+	public override string ToString()
 	{
 		return $"{this.Path}: {this.OldValue} -> {this.NewValue}";
 	}
