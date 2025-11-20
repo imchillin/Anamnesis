@@ -59,9 +59,9 @@ public partial class DeveloperTab : UserControl
 
 	private void OnCopyActorAddressClicked(object sender, RoutedEventArgs e)
 	{
-		ActorBasicMemory memory = TargetService.PlayerTarget;
+		ActorBasicMemory? memory = TargetService.PlayerTarget;
 
-		if (!memory.IsValid)
+		if (memory == null || !memory.IsValid)
 		{
 			Log.Warning("Actor is invalid");
 			return;
@@ -74,9 +74,9 @@ public partial class DeveloperTab : UserControl
 
 	private void OnCopyAssociatedAddressesClick(object sender, RoutedEventArgs e)
 	{
-		ActorBasicMemory abm = TargetService.PlayerTarget;
+		ActorBasicMemory? abm = TargetService.PlayerTarget;
 
-		if (!abm.IsValid)
+		if (abm == null || !abm.IsValid)
 		{
 			Log.Warning("Actor is invalid");
 			return;

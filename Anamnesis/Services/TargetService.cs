@@ -56,12 +56,12 @@ public class TargetService : ServiceBase<TargetService>
 	/// <summary>
 	/// Gets the player target actor.
 	/// </summary>
-	public ActorBasicMemory PlayerTarget { get; private set; } = new();
+	public ActorBasicMemory? PlayerTarget { get; private set; } = new();
 
 	/// <summary>
 	/// Gets a value indicating whether the player target is pinnable.
 	/// </summary>
-	public bool IsPlayerTargetPinnable => this.PlayerTarget.Address != IntPtr.Zero && this.PlayerTarget.ObjectKind.IsSupportedType();
+	public bool IsPlayerTargetPinnable => this.PlayerTarget != null && this.PlayerTarget.Address != IntPtr.Zero && this.PlayerTarget.ObjectKind.IsSupportedType();
 
 	/// <summary>
 	/// Gets the currently pinned selected actor (if any).
@@ -157,7 +157,7 @@ public class TargetService : ServiceBase<TargetService>
 	/// Gets the memory of the player target.
 	/// </summary>
 	/// <returns>The memory of the player target.</returns>
-	public static ActorBasicMemory GetTargetedActor()
+	public static ActorBasicMemory? GetTargetedActor()
 	{
 		Instance.UpdatePlayerTarget();
 		return Instance.PlayerTarget;
@@ -248,10 +248,8 @@ public class TargetService : ServiceBase<TargetService>
 	{
 		foreach (var pinned in Instance.PinnedActors)
 		{
-			if (pinned.Pointer == Instance.PlayerTarget.Address)
-			{
+			if (Instance.PlayerTarget != null && pinned.Pointer == Instance.PlayerTarget.Address)
 				return pinned;
-			}
 		}
 
 		return null;
@@ -440,11 +438,14 @@ public class TargetService : ServiceBase<TargetService>
 			{
 				bool isGpose = GposeService.GetIsGPose();
 
-				List<ActorBasicMemory> allActors = ActorService.Instance.GetAllActors(true);
+				List<ActorBasicMemory> allActors = ActorService.Instance.GetAllActors();
 
 				// We want the first non-hidden actor with a name in the same mode as the game
 				foreach (ActorBasicMemory actor in allActors)
 				{
+					if (actor.IsDisposed)
+						continue;
+
 					if (actor.IsHidden)
 						continue;
 
@@ -509,15 +510,17 @@ public class TargetService : ServiceBase<TargetService>
 
 		try
 		{
-			if (currentPlayerTargetPtr != this.PlayerTarget.Address)
+			if (currentPlayerTargetPtr != this.PlayerTarget?.Address)
 			{
 				if (currentPlayerTargetPtr == IntPtr.Zero)
 				{
-					this.PlayerTarget.Dispose();
+					this.PlayerTarget?.Dispose();
+					this.PlayerTarget = null;
 				}
 				else
 				{
-					this.PlayerTarget.SetAddress(currentPlayerTargetPtr);
+					this.PlayerTarget ??= new ActorBasicMemory();
+					this.PlayerTarget!.SetAddress(currentPlayerTargetPtr);
 				}
 
 				this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
@@ -560,7 +563,7 @@ public class TargetService : ServiceBase<TargetService>
 				for (int i = this.PinnedActors.Count - 1; i >= 0; i--)
 				{
 					// Skip the player target as it is already updated in the preceding function call
-					if (this.PinnedActors[i].Memory?.Address == this.PlayerTarget.Address)
+					if (this.PlayerTarget != null && this.PinnedActors[i].Memory?.Address == this.PlayerTarget.Address)
 						continue;
 
 					this.PinnedActors[i].Tick();

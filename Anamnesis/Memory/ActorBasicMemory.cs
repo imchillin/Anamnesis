@@ -102,6 +102,9 @@ public class ActorBasicMemory : MemoryBase
 
 		foreach (ActorBasicMemory actor in actors)
 		{
+			if (actor.IsDisposed)
+				continue;
+
 			if (actor.ObjectKind != ActorTypes.Player &&
 				actor.ObjectKind != ActorTypes.BattleNpc &&
 				actor.ObjectKind != ActorTypes.EventNpc)

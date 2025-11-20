@@ -185,7 +185,7 @@ public class SceneFile : JsonFileBase
 		if (targetActor == null || !targetActor.IsValid || targetActor.Memory == null)
 			throw new Exception("Targeted actor must be pinned");
 
-		this.TargetActorName = TargetService.Instance.PlayerTarget.DisplayName;
+		this.TargetActorName = targetActor.DisplayName ?? "Unknown";
 
 		this.CameraShot = new();
 		this.CameraShot.WriteToFile(CameraService.Instance, targetActor.Memory);

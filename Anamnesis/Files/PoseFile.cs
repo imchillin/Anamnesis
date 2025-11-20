@@ -267,6 +267,8 @@ public class PoseFile : JsonFileBase
 
 				bone.ReadTransform();
 			}
+
+			Task.Delay(16).Wait();
 		}
 
 		// Restore the head bone rotation if we were only loading an expression

@@ -127,6 +127,9 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <summary>Gets or sets the object's memory address.</summary>
 	public IntPtr Address { get; set; } = IntPtr.Zero;
 
+	/// <summary>Gets a value indicating whether the object has been disposed.</summary>
+	public bool IsDisposed => this.disposed;
+
 	/// <summary>Gets or sets the parent memory object.</summary>
 	[DoNotNotify]
 	public MemoryBase? Parent

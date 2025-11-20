@@ -165,9 +165,8 @@ public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChan
 			this.Selector.SelectionChanged -= this.OnSelectionChanged;
 			this.Selector.LoadItems -= this.LoadItems;
 			this.Selector.Sort -= this.Compare;
+			this.Selector.ClearItems();
 		}
-
-		this.Selector.ClearItems();
 	}
 
 	// forward selector APIs
