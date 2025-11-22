@@ -107,7 +107,37 @@ public class CharacterFile : JsonFileBase
 	public float? MuscleTone { get; set; }
 	public float? HeightMultiplier { get; set; }
 
-	public void WriteToFile(ActorMemory actor, SaveModes mode)
+	public void WriteToFile(ObjectHandle<ActorMemory> handle, SaveModes mode)
+	{
+		handle.Do(actor => this.WriteToFile(actor, mode));
+	}
+
+	public void Apply(ObjectHandle<ActorMemory> handle, SaveModes mode, ItemSlots? slot = null)
+	{
+		handle.Do(actor => this.Apply(actor, mode, slot));
+	}
+
+	private static void WriteEquipment(ItemSave? itemSave, ItemMemory? itemMemory)
+	{
+		if (itemSave != null)
+		{
+			itemSave.Write(itemMemory);
+		}
+		else if (itemMemory != null)
+		{
+			itemMemory.Base = ItemUtility.NoneItem.ModelBase;
+			itemMemory.Variant = (byte)ItemUtility.NoneItem.ModelVariant;
+			itemMemory.Dye = (byte)ItemUtility.NoneDye.RowId;
+			itemMemory.Dye2 = (byte)ItemUtility.NoneDye.RowId;
+		}
+	}
+
+	private bool IncludeSection(SaveModes section, SaveModes mode)
+	{
+		return this.SaveMode.HasFlagUnsafe(section) && mode.HasFlagUnsafe(section);
+	}
+
+	private void WriteToFile(ActorMemory actor, SaveModes mode)
 	{
 		this.Nickname = actor.Nickname;
 		this.ModelType = (uint)actor.ModelType;
@@ -228,7 +258,7 @@ public class CharacterFile : JsonFileBase
 		}
 	}
 
-	public void Apply(ActorMemory actor, SaveModes mode, ItemSlots? slot = null)
+	private void Apply(ActorMemory actor, SaveModes mode, ItemSlots? slot = null)
 	{
 		if (this.Tribe == 0)
 			this.Tribe = ActorCustomizeMemory.Tribes.Midlander;
@@ -469,26 +499,6 @@ public class CharacterFile : JsonFileBase
 		actor.PauseSynchronization = false;
 
 		Log.Information("Finished reading appearance from file");
-	}
-
-	private static void WriteEquipment(ItemSave? itemSave, ItemMemory? itemMemory)
-	{
-		if (itemSave != null)
-		{
-			itemSave.Write(itemMemory);
-		}
-		else if (itemMemory != null)
-		{
-			itemMemory.Base = ItemUtility.NoneItem.ModelBase;
-			itemMemory.Variant = (byte)ItemUtility.NoneItem.ModelVariant;
-			itemMemory.Dye = (byte)ItemUtility.NoneDye.RowId;
-			itemMemory.Dye2 = (byte)ItemUtility.NoneDye.RowId;
-		}
-	}
-
-	private bool IncludeSection(SaveModes section, SaveModes mode)
-	{
-		return this.SaveMode.HasFlagUnsafe(section) && mode.HasFlagUnsafe(section);
 	}
 
 	[Serializable]

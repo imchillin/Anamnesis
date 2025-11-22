@@ -186,8 +186,8 @@ public partial class ActionPage : UserControl
 		{
 			if (target.IsValid && target.Memory != null && target.Memory.IsValid)
 			{
-				target.Memory.Animation!.LinkSpeeds = true;
-				target.Memory.Animation!.Speeds![0].Value = 1.0f;
+				target.Memory.Do(a => a.Animation!.LinkSpeeds = true);
+				target.Memory.Do(a => a.Animation!.Speeds![0].Value = 1.0f);
 			}
 		}
 	}
@@ -205,8 +205,8 @@ public partial class ActionPage : UserControl
 		{
 			if (target.IsValid && target.Memory != null && target.Memory.IsValid)
 			{
-				target.Memory.Animation!.LinkSpeeds = true;
-				target.Memory.Animation!.Speeds![0].Value = 0.0f;
+				target.Memory.Do(a => a.Animation!.LinkSpeeds = true);
+				target.Memory.Do(a => a.Animation!.Speeds![0].Value = 0.0f);
 			}
 		}
 	}

@@ -18,12 +18,12 @@ using System.Windows;
 
 public static class NpcAppearanceSearch
 {
-	public static void Search(ActorMemory actor)
+	public static void Search(ObjectHandle<ActorMemory> handle)
 	{
-		Task.Factory.StartNew(() => SearchAsync(actor));
+		Task.Factory.StartNew(() => SearchAsync(handle));
 	}
 
-	public static async Task SearchAsync(ActorMemory actor)
+	public static async Task SearchAsync(ObjectHandle<ActorMemory> actor)
 	{
 		List<INpcBase> appearances = new();
 
@@ -114,7 +114,7 @@ public static class NpcAppearanceSearch
 		}
 	}
 
-	private static void Search(ActorMemory actor, IEnumerable<INpcBase> npcs, ref List<INpcBase> results)
+	private static void Search(ObjectHandle<ActorMemory> actor, IEnumerable<INpcBase> npcs, ref List<INpcBase> results)
 	{
 		foreach (INpcBase npc in npcs)
 		{
@@ -125,28 +125,31 @@ public static class NpcAppearanceSearch
 		}
 	}
 
-	private static bool IsAppearance(ActorMemory actor, INpcBase npc)
+	private static bool IsAppearance(ObjectHandle<ActorMemory> actor, INpcBase npc)
 	{
-		if (actor.ModelType != npc.ModelCharaRow)
-			return false;
-
-		if (actor.Customize != null)
+		return actor.Do(a =>
 		{
-			if (!IsCustomize(actor.Customize, npc))
-			{
+			if (a.ModelType != npc.ModelCharaRow)
 				return false;
-			}
-		}
 
-		if (actor.Equipment != null)
-		{
-			if (!IsEquipment(actor.Equipment, npc))
+			if (a.Customize != null)
 			{
-				return false;
+				if (!IsCustomize(a.Customize, npc))
+				{
+					return false;
+				}
 			}
-		}
 
-		return true;
+			if (a.Equipment != null)
+			{
+				if (!IsEquipment(a.Equipment, npc))
+				{
+					return false;
+				}
+			}
+
+			return true;
+		});
 	}
 
 	// We dont check everything here, just enough to get unique.

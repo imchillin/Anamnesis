@@ -188,7 +188,7 @@ public partial class MainWindow : ChromedWindow
 		}
 	}
 
-	private void OnActorSelected(ActorMemory? actor)
+	private void OnActorSelected(ObjectHandle<ActorMemory>? actor)
 	{
 		if (actor != null)
 		{
@@ -332,7 +332,7 @@ public partial class MainWindow : ChromedWindow
 
 			try
 			{
-				if (await Brio.Brio.Despawn(actor.Memory.ObjectIndex))
+				if (await Brio.Brio.Despawn(actor.Memory.Do(a => a.ObjectIndex)))
 				{
 					TargetService.UnpinActor(actor);
 				}

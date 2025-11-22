@@ -160,7 +160,7 @@
 							<XivToolsWpf:InfoControl Key="Pose_WarningNotFrozen" Margin="0,0,0,46">
 								<XivToolsWpf:InfoControl.Visibility>
 									<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
-										<Binding Path="TargetService.SelectedActor.IsMotionEnabled"/>
+										<Binding Path="TargetService.SelectedActor.Unsafe.IsMotionEnabled"/>
 										<Binding Path="PoseService.WorldPositionNotFrozen"/>
 									</MultiBinding>
 								</XivToolsWpf:InfoControl.Visibility>
@@ -479,13 +479,13 @@
 		</Grid>
 
 		<Grid Visibility="{Binding Actor, Converter={StaticResource NotNullToVisibilityConverter}}">
-			<Grid Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
+			<Grid Visibility="{Binding Actor.Unsafe.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
 				<Grid Visibility="{Binding Skeleton, Converter={StaticResource NullToVisibilityConverter}}">
 					<XivToolsWpf:InfoControl IsError="True" Key="Pose_NoSkeleton" VerticalAlignment="Bottom" Margin="12"/>
 				</Grid>
 			</Grid>
 
-			<Grid Visibility="{Binding Actor.ModelObject, Converter={StaticResource NullToVisibilityConverter}}">
+			<Grid Visibility="{Binding Actor.Unsafe.ModelObject, Converter={StaticResource NullToVisibilityConverter}}">
 				<XivToolsWpf:InfoControl IsError="True" Key="Pose_NoModel" VerticalAlignment="Bottom" Margin="12"/>
 			</Grid>
 		</Grid>

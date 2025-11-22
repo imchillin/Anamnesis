@@ -23,7 +23,7 @@
 				Padding="6,3"
 				Click="OnUndoClicked"
 				Style="{StaticResource TransparentIconButton}"
-				IsEnabled="{Binding TargetService.SelectedActor.History.CanUndo}"
+				IsEnabled="{Binding TargetService.SelectedActor.Unsafe.History.CanUndo, Mode=OneWay}"
 				anaUtils:Behaviours.Tooltip="Hotkey_Undo">
 				<XivToolsWpf:IconBlock Icon="Undo" />
 			</Button>
@@ -31,7 +31,7 @@
 				Padding="6,3"
 				Click="OnRedoClicked"
 				Style="{StaticResource TransparentIconButton}"
-				IsEnabled="{Binding TargetService.SelectedActor.History.CanRedo}"
+				IsEnabled="{Binding TargetService.SelectedActor.Unsafe.History.CanRedo, Mode=OneWay}"
 				anaUtils:Behaviours.Tooltip="Hotkey_Redo">
 				<XivToolsWpf:IconBlock Icon="Redo" />
 			</Button>
@@ -39,7 +39,7 @@
 				Padding="6,3"
 				Click="OnClearClicked"
 				Style="{StaticResource TransparentIconButton}"
-				IsEnabled="{Binding TargetService.SelectedActor.History.HasEntries}"
+				IsEnabled="{Binding TargetService.SelectedActor.Unsafe.History.HasEntries, Mode=OneWay}"
 				anaUtils:Behaviours.Tooltip="History_ClearHistory">
 			<XivToolsWpf:IconBlock Icon="TrashAlt" />
 			</Button>
@@ -49,13 +49,13 @@
 				<StackPanel Orientation="Horizontal">
 					<XivToolsWpf:Header Icon="Undo" Key="System_History" />
 					<TextBlock Text="(" Margin="6,0,2,0"/>
-					<TextBlock Text="{Binding TargetService.SelectedActor.DisplayName}"/>
+					<TextBlock Text="{Binding TargetService.SelectedActor.Unsafe.DisplayName, Mode=OneWay}"/>
 					<TextBlock Text=")" Margin="2,0,0,0"/>
 				</StackPanel>
 			</GroupBox.Header>
 
 			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="5, 5, 0, 0" Height="450">
-				<ItemsControl ItemsSource="{Binding TargetService.SelectedActor.History.Entries}">
+				<ItemsControl ItemsSource="{Binding TargetService.SelectedActor.Unsafe.History.Entries, Mode=OneWay}">
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
 							<Grid>
@@ -65,7 +65,7 @@
 											<DataTrigger Value="True">
 												<DataTrigger.Binding>
 													<MultiBinding Converter="{StaticResource HIndexToOpacity}">
-														<Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" Path="DataContext.TargetService.SelectedActor.History.CurrentIndex" />
+														<Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" Path="DataContext.TargetService.SelectedActor.Unsafe.History.CurrentIndex" />
 														<Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}" />
 														<Binding Path="." />
 													</MultiBinding>

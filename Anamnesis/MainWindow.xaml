@@ -127,7 +127,7 @@
 
 	<Window.Title>
 		<MultiBinding StringFormat="{}Anamnesis - {0}">
-			<Binding Path="TargetService.SelectedActor.DisplayName" />
+			<Binding Path="TargetService.SelectedActor.Unsafe.DisplayName" />
 		</MultiBinding>
 	</Window.Title>
 

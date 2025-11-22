@@ -23,7 +23,7 @@ using System.Windows.Input;
 /// </remarks>
 /// <param name="actor">The actor memory associated with this skeleton.</param>
 [AddINotifyPropertyChangedInterface]
-public class SkeletonEntity(ActorMemory actor) : Skeleton(actor)
+public class SkeletonEntity(ObjectHandle<ActorMemory> actor) : Skeleton(actor)
 {
 	private List<BoneEntity>? selectedBonesCache;
 	private List<BoneEntity>? hoveredBonesCache;
@@ -137,57 +137,60 @@ public class SkeletonEntity(ActorMemory actor) : Skeleton(actor)
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void WriteSkeleton()
 	{
-		if (this.Actor == null || this.Actor.ModelObject?.Skeleton == null)
-			return;
-
-		if (this.HasSelection && PoseService.Instance.IsEnabled)
+		this.Actor?.Do(actor =>
 		{
-			lock (HistoryService.Instance.LockObject)
+			if (actor.ModelObject?.Skeleton == null)
+				return;
+
+			if (this.HasSelection && PoseService.Instance.IsEnabled)
 			{
-				try
+				lock (HistoryService.Instance.LockObject)
 				{
-					this.Actor.PauseSynchronization = true;
-
-					// Get all selected bones
-					var selectedBones = this.selectedBonesCache ??= this.Bones.Values.OfType<BoneEntity>().Where(b => b.IsSelected).ToList();
-
-					// Filter out bones that are descendants of other selected bones
-					HashSet<BoneEntity> ancestorBones = new();
-					bool isAncestor;
-
-					foreach (var bone in selectedBones)
+					try
 					{
-						isAncestor = false;
-						foreach (var otherBone in selectedBones)
+						actor.PauseSynchronization = true;
+
+						// Get all selected bones
+						var selectedBones = this.selectedBonesCache ??= this.Bones.Values.OfType<BoneEntity>().Where(b => b.IsSelected).ToList();
+
+						// Filter out bones that are descendants of other selected bones
+						HashSet<BoneEntity> ancestorBones = new();
+						bool isAncestor;
+
+						foreach (var bone in selectedBones)
 						{
-							if (bone != otherBone && bone.HasAncestor(otherBone))
+							isAncestor = false;
+							foreach (var otherBone in selectedBones)
 							{
-								isAncestor = true;
-								break;
+								if (bone != otherBone && bone.HasAncestor(otherBone))
+								{
+									isAncestor = true;
+									break;
+								}
+							}
+
+							if (!isAncestor)
+							{
+								ancestorBones.Add(bone);
 							}
 						}
 
-						if (!isAncestor)
-						{
-							ancestorBones.Add(bone);
-						}
+						// Write transforms for all ancestor bones
+						foreach (var bone in ancestorBones)
+							bone.WriteTransform();
 					}
-
-					// Write transforms for all ancestor bones
-					foreach (var bone in ancestorBones)
-						bone.WriteTransform();
-				}
-				catch (Exception ex)
-				{
-					Log.Error(ex, "Failed to write bone transforms");
-					this.ClearSelection();
-				}
-				finally
-				{
-					this.Actor.PauseSynchronization = false;
+					catch (Exception ex)
+					{
+						Log.Error(ex, "Failed to write bone transforms");
+						this.ClearSelection();
+					}
+					finally
+					{
+						actor.PauseSynchronization = false;
+					}
 				}
 			}
-		}
+		});
 	}
 
 	/// <summary>Selects a bone.</summary>

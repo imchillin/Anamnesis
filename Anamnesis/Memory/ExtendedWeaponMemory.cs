@@ -5,5 +5,5 @@ namespace Anamnesis.Memory;
 
 public class ExtendedWeaponMemory : WeaponSubModelMemory
 {
-	[Bind(0x028, BindFlags.Pointer)] public WeaponSubModelMemory? SubModel { get; set; }
+	[Bind(0x028, BindFlags.Pointer)] public WeaponSubModelMemory? NextSiblingObject { get; set; }
 }

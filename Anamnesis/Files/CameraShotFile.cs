@@ -21,7 +21,17 @@ public class CameraShotFile : JsonFileBase
 	public Vector3 Position { get; set; }
 	public Vector3 Rotation { get; set; }
 
-	public void Apply(CameraService camService, ActorMemory actor)
+	public void Apply(CameraService camService, ObjectHandle<ActorBasicMemory> handle)
+	{
+		handle.Do(actor => this.Apply(camService, actor));
+	}
+
+	public void WriteToFile(CameraService camService, ObjectHandle<ActorBasicMemory> handle)
+	{
+		handle.Do(actor => this.WriteToFile(camService, actor));
+	}
+
+	private void Apply(CameraService camService, ActorBasicMemory actor)
 	{
 		camService.DelimitCamera = this.DelimitCamera;
 		camService.Camera.Zoom = this.Zoom;
@@ -46,7 +56,7 @@ public class CameraShotFile : JsonFileBase
 		}
 	}
 
-	public void WriteToFile(CameraService camService, ActorMemory actor)
+	private void WriteToFile(CameraService camService, ActorBasicMemory actor)
 	{
 		this.DelimitCamera = camService.DelimitCamera;
 		this.Zoom = camService.Camera.Zoom;

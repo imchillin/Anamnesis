@@ -8,12 +8,9 @@ using Anamnesis.Utils;
 using FontAwesome.Sharp;
 using PropertyChanged;
 using System;
-using System.Collections.Generic;
 
 public class ActorBasicMemory : MemoryBase
 {
-	private ActorBasicMemory? owner;
-
 	public enum RenderModes : uint
 	{
 		Draw = 0,
@@ -31,12 +28,12 @@ public class ActorBasicMemory : MemoryBase
 	[Bind(0x094)] public byte DistanceFromPlayerX { get; set; }
 	[Bind(0x096)] public byte DistanceFromPlayerY { get; set; }
 	[Bind(0x00C4)] public float Scale { get; set; }
-	[Bind(0x0100, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
+	[Bind(0x0100, BindFlags.Pointer)] public DrawObjectMemory? ModelObject { get; set; }
 	[Bind(0x0118)] public RenderModes RenderMode { get; set; }
 
 	public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.Address}";
 	public string IdNoAddress => $"n{this.NameHash}_d{this.DataId}"; ////_k{this.ObjectKind}";
-	public int Index => ActorService.Instance.GetActorTableIndex(this.Address);
+	public int Index => ActorService.Instance.ActorTable.GetIndexOf(this.Address);
 	public IconChar Icon => this.ObjectKind.GetIcon();
 	public double DistanceFromPlayer => Math.Sqrt(
 		(this.DistanceFromPlayerX * this.DistanceFromPlayerX) +
@@ -77,7 +74,7 @@ public class ActorBasicMemory : MemoryBase
 	[DependsOn(nameof(ObjectIndex), nameof(Address))]
 	public bool IsValid
 	{
-		get => this.Address != IntPtr.Zero && ActorService.InstanceOrNull?.GetActorTableIndex(this.Address) == this.ObjectIndex;
+		get => this.Address != IntPtr.Zero && ActorService.InstanceOrNull?.ActorTable.GetIndexOf(this.Address) == this.ObjectIndex;
 	}
 
 	/// <summary>
@@ -86,38 +83,35 @@ public class ActorBasicMemory : MemoryBase
 	/// once inside of gpose, the owner becomes itself. Thanks SQEX.
 	/// </summary>
 	/// <returns>This actors owner actor.</returns>
-	public ActorBasicMemory? GetOwner()
+	public ObjectHandle<ActorBasicMemory>? GetOwner()
 	{
 		// do we own ourselves?
 		if (this.OwnerId == this.ObjectId)
 			return null;
 
-		// do we already have the correct owner?
-		if (this.owner != null && this.owner.ObjectId == this.OwnerId)
-			return this.owner;
+		var handles = ActorService.Instance.ActorTable.GetAll();
 
-		this.owner = null;
-
-		List<ActorBasicMemory>? actors = ActorService.Instance.GetAllActors();
-
-		foreach (ActorBasicMemory actor in actors)
+		foreach (var handle in handles)
 		{
-			if (actor.IsDisposed)
-				continue;
-
-			if (actor.ObjectKind != ActorTypes.Player &&
-				actor.ObjectKind != ActorTypes.BattleNpc &&
-				actor.ObjectKind != ActorTypes.EventNpc)
-				continue;
-
-			if (actor.ObjectId == this.OwnerId)
+			// Encapsulate the entire check in the Do method
+			var isOwner = handle.Do(actor =>
 			{
-				this.owner = actor;
-				break;
-			}
+				if (actor.IsDisposed)
+					return false;
+
+				if (actor.ObjectKind != ActorTypes.Player &&
+					actor.ObjectKind != ActorTypes.BattleNpc &&
+					actor.ObjectKind != ActorTypes.EventNpc)
+					return false;
+
+				return actor.ObjectId == this.OwnerId;
+			});
+
+			if (isOwner == true)
+				return handle;
 		}
 
-		return this.owner;
+		return null;
 	}
 
 	public override string ToString() => $"{this.Id}";

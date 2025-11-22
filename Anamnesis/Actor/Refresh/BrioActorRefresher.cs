@@ -8,6 +8,7 @@ using Anamnesis.Core;
 using Anamnesis.Files;
 using Anamnesis.Memory;
 using Anamnesis.Services;
+using Serilog;
 using System.Threading.Tasks;
 using XivToolsWpf;
 
@@ -38,8 +39,15 @@ public class BrioActorRefresher : IActorRefresher
 		{
 			// Save the current pose
 			var poseFile = new PoseFile();
-			var skeleton = new Skeleton(actor);
-			poseFile.WriteToFile(actor, skeleton, null);
+			var actorHandle = ActorService.Instance.ActorTable.Get<ActorMemory>(actor.Address);
+			if (actorHandle == null)
+			{
+				Log.Warning($"Failed to refresh actor {actor.Id} as they are not part of the object table");
+				return;
+			}
+
+			var skeleton = new Skeleton(actorHandle);
+			poseFile.WriteToFile(actorHandle, skeleton, null);
 
 			// Redraw
 			if (doNpcHack)
@@ -57,8 +65,8 @@ public class BrioActorRefresher : IActorRefresher
 						await Dispatch.MainThread();
 
 						// Restore current pose
-						skeleton = new Skeleton(actor);
-						poseFile.Apply(actor, skeleton, null, PoseFile.Mode.All, true);
+						skeleton = new Skeleton(actorHandle);
+						poseFile.Apply(actorHandle, skeleton, null, PoseFile.Mode.All, true);
 					}).Start();
 				}
 			}

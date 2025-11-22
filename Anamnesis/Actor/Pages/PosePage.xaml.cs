@@ -96,7 +96,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	public static TargetService TargetService => TargetService.Instance;
 
 	public bool IsFlipping { get; private set; }
-	public ActorMemory? Actor { get; private set; }
+	public ObjectHandle<ActorMemory>? Actor { get; private set; }
 	public SkeletonEntity? Skeleton { get; private set; }
 
 	public bool IsSingleBoneSelected => this.Skeleton?.SelectedBones.Count() == 1;
@@ -279,11 +279,14 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		PoseService.PropertyChanged -= this.OnPoseServicePropertyChanged;
 		HistoryService.OnHistoryApplied -= this.OnHistoryApplied;
 
-		if (this.Actor?.ModelObject != null)
+		this.Actor?.Do(actor =>
 		{
-			this.Actor.Refreshed -= this.OnActorRefreshed;
-			this.Actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
-		}
+			if (actor.ModelObject != null)
+			{
+				actor.Refreshed -= this.OnActorRefreshed;
+				actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
+			}
+		});
 
 		if (this.Skeleton != null)
 		{
@@ -314,25 +317,31 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private async void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 	{
-		ActorMemory? newActor = this.DataContext as ActorMemory;
+		var newActorHandle = this.DataContext as ObjectHandle<ActorMemory>;
 
 		// Don't do all this work unless we need to.
-		if (this.Actor == newActor)
+		if (this.Actor == newActorHandle)
 			return;
 
-		if (this.Actor?.ModelObject != null)
+		this.Actor?.Do(actor =>
 		{
-			this.Actor.Refreshed -= this.OnActorRefreshed;
-			this.Actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
-		}
+			if (actor.ModelObject != null)
+			{
+				actor.Refreshed -= this.OnActorRefreshed;
+				actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
+			}
+		});
 
-		if (newActor?.ModelObject != null)
+		newActorHandle?.Do(actor =>
 		{
-			newActor.Refreshed += this.OnActorRefreshed;
-			newActor.ModelObject.PropertyChanged += this.OnModelObjectChanged;
-		}
+			if (actor.ModelObject != null)
+			{
+				actor.Refreshed += this.OnActorRefreshed;
+				actor.ModelObject.PropertyChanged += this.OnModelObjectChanged;
+			}
+		});
 
-		this.Actor = newActor;
+		this.Actor = newActorHandle;
 
 		await this.Refresh();
 	}
@@ -361,7 +370,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.FaceGuiView.DataContext = null;
 		this.MatrixView.DataContext = null;
 
-		if (this.Actor == null || this.Actor.ModelObject == null)
+		if (this.Actor == null || this.Actor.Do(a => a.ModelObject) == null)
 		{
 			this.Skeleton?.Clear();
 			this.Skeleton = null;
@@ -447,155 +456,158 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		if (this.Actor == null || this.Skeleton == null)
 			return;
 
-		bool originalAutoCommitEnabled = this.Actor.History.AutoCommitEnabled;
-
-		try
+		await this.Actor.DoAsync(async actor =>
 		{
-			// Open and load pose file
-			OpenResult result = await FileService.Open(s_lastLoadDir, s_poseDirShortcuts, s_poseFileTypes);
-			if (result.File == null)
-				return;
+			bool originalAutoCommitEnabled = actor.History.AutoCommitEnabled;
 
-			s_lastLoadDir = result.Directory;
-
-			bool isLegacyFile = false;
-			if (result.File is CmToolPoseFile legacyFile)
+			try
 			{
-				isLegacyFile = true;
-				result.File = legacyFile.Upgrade();
-			}
+				// Open and load pose file
+				OpenResult result = await FileService.Open(s_lastLoadDir, s_poseDirShortcuts, s_poseFileTypes);
+				if (result.File == null)
+					return;
 
-			if (result.File is not PoseFile poseFile)
-				return;
+				s_lastLoadDir = result.Directory;
 
-			Dictionary<Bone, Vector3> facePositions = [];
-			bool mismatchedFaceBones = false;
+				bool isLegacyFile = false;
+				if (result.File is CmToolPoseFile legacyFile)
+				{
+					isLegacyFile = true;
+					result.File = legacyFile.Upgrade();
+				}
 
-			// Disable auto-commit at the beginning
-			// Commit any changes if they are present to avoid falsely grouping actions
-			this.Actor.History.AutoCommitEnabled = false;
-			this.Actor.History.Commit();
+				if (result.File is not PoseFile poseFile)
+					return;
 
-			// Display a warning if there is a face bones mismatch.
-			// We should not load expressions if the face bones are mismatched.
-			// We skip this step for non-humanoid actors
-			if (this.Actor.Customize!.Age != ActorCustomizeMemory.Ages.None
-				&& importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly)
-			{
-				mismatchedFaceBones = isLegacyFile || poseFile.IsPreDTPoseFile() != this.Skeleton.HasPreDTFace;
+				Dictionary<Bone, Vector3> facePositions = [];
+				bool mismatchedFaceBones = false;
+
+				// Disable auto-commit at the beginning
+				// Commit any changes if they are present to avoid falsely grouping actions
+				actor.History.AutoCommitEnabled = false;
+				actor.History.Commit();
+
+				// Display a warning if there is a face bones mismatch.
+				// We should not load expressions if the face bones are mismatched.
+				// We skip this step for non-humanoid actors
+				if (actor.Customize!.Age != ActorCustomizeMemory.Ages.None
+					&& importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly)
+				{
+					mismatchedFaceBones = isLegacyFile || poseFile.IsPreDTPoseFile() != this.Skeleton.HasPreDTFace;
+					if (mismatchedFaceBones)
+					{
+						string dialogMsgKey = isLegacyFile || poseFile.IsPreDTPoseFile()
+							? "Pose_WarningExpresionOldOnNew"
+							: "Pose_WarningExpresionNewOnOld";
+						await GenericDialog.ShowLocalizedAsync(dialogMsgKey, "Common_Attention", MessageBoxButton.OK);
+					}
+				}
+
+				// Exit early if bones are mismatched and we're only importing expressions
+				if (mismatchedFaceBones && importOption == PoseImportOptions.ExpressionOnly)
+					return;
+
+				// Positions are not frozen yet, that will happen at the appropriate moment
+				PoseService.Instance.SetEnabled(true);
+				PoseService.Instance.FreezeScale |= mode.HasFlagUnsafe(PoseFile.Mode.Scale);
+				PoseService.Instance.FreezeRotation |= mode.HasFlagUnsafe(PoseFile.Mode.Rotation);
+				PoseService.Instance.FreezePositions |= mode.HasFlagUnsafe(PoseFile.Mode.Position);
+
+				if (importOption == PoseImportOptions.SelectedBones)
+				{
+					// Don't unselected bones after import. Let the user decide what to do with the selection.
+					var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
+					poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, false);
+					return;
+				}
+
+				if (importOption == PoseImportOptions.WeaponsOnly)
+				{
+					this.Skeleton.SelectWeapons();
+					var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
+					poseFile.Apply(this.Actor, this.Skeleton, selectedBoneNames, mode, false);
+					this.Skeleton.ClearSelection();
+					return;
+				}
+
+				// Backup face bone positions before importing the body pose.
+				// "Freeze Position" toggle resets them, so restore after import. Relevant only when pose service is enabled.
+				this.Skeleton.SelectHead();
+				facePositions = this.Skeleton.SelectedBones.ToDictionary(bone => bone as Bone, bone => bone.Position);
+				this.Skeleton.ClearSelection();
+
+				// Step 1: Import body part of the pose
+				if (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.BodyOnly)
+				{
+					this.Skeleton.SelectBody();
+					var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
+					this.Skeleton.ClearSelection();
+
+					// Don't import body with positions during default pose import.
+					// Otherwise, the body will be deformed if the pose file was created for another race.
+					bool doLegacyImport = importOption == PoseImportOptions.Character && mode.HasFlagUnsafe(PoseFile.Mode.Position);
+					if (doLegacyImport)
+					{
+						mode &= ~PoseFile.Mode.Position;
+					}
+
+					// Don't apply the facial expression hack for the body import step.
+					// Otherwise, the head won't pose as intended and will return to its original position.
+					poseFile.Apply(this.Actor, this.Skeleton, selectedBoneNames, mode, false);
+
+					// Re-enable positions if they were disabled.
+					if (doLegacyImport)
+					{
+						mode |= PoseFile.Mode.Position;
+					}
+				}
+
+				// Step 2: Import the facial expression
+				if (!mismatchedFaceBones && (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly))
+				{
+					this.Skeleton.SelectHead();
+					var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
+					this.Skeleton.ClearSelection();
+
+					// Pre-DT faces need to be imported without positions.
+					bool doLegacyImport = actor.Customize!.Age == ActorCustomizeMemory.Ages.None
+										|| (poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace && mode.HasFlagUnsafe(PoseFile.Mode.Position));
+					if (doLegacyImport)
+					{
+						mode &= ~PoseFile.Mode.Position;
+					}
+
+					// Apply facial expression hack for the expression import
+					poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, true);
+
+					// Re-enable positions if they were disabled.
+					if (doLegacyImport)
+					{
+						mode |= PoseFile.Mode.Position;
+					}
+				}
+
+				// Step 3: Restore face bone positions if face bones were mismatched
+				// This is necessary as .Apply will not be called for the face bones
 				if (mismatchedFaceBones)
 				{
-					string dialogMsgKey = isLegacyFile || poseFile.IsPreDTPoseFile()
-						? "Pose_WarningExpresionOldOnNew"
-						: "Pose_WarningExpresionNewOnOld";
-					await GenericDialog.ShowLocalizedAsync(dialogMsgKey, "Common_Attention", MessageBoxButton.OK);
+					this.RestoreBonePositions(facePositions);
 				}
 			}
-
-			// Exit early if bones are mismatched and we're only importing expressions
-			if (mismatchedFaceBones && importOption == PoseImportOptions.ExpressionOnly)
-				return;
-
-			// Positions are not frozen yet, that will happen at the appropriate moment
-			PoseService.Instance.SetEnabled(true);
-			PoseService.Instance.FreezeScale |= mode.HasFlagUnsafe(PoseFile.Mode.Scale);
-			PoseService.Instance.FreezeRotation |= mode.HasFlagUnsafe(PoseFile.Mode.Rotation);
-			PoseService.Instance.FreezePositions |= mode.HasFlagUnsafe(PoseFile.Mode.Position);
-
-			if (importOption == PoseImportOptions.SelectedBones)
+			catch (Exception ex)
 			{
-				// Don't unselected bones after import. Let the user decide what to do with the selection.
-				var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
-				poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, false);
-				return;
+				Log.Error(ex, "Failed to load pose file");
 			}
-
-			if (importOption == PoseImportOptions.WeaponsOnly)
+			finally
 			{
-				this.Skeleton.SelectWeapons();
-				var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
-				poseFile.Apply(this.Actor, this.Skeleton, selectedBoneNames, mode, false);
-				this.Skeleton.ClearSelection();
-				return;
+				// Update the skeleton after applying the pose
+				this.Skeleton.ReadTransforms();
+
+				// Re-enable auto-commit and commit changes
+				actor.History.Commit();
+				actor.History.AutoCommitEnabled = originalAutoCommitEnabled;
 			}
-
-			// Backup face bone positions before importing the body pose.
-			// "Freeze Position" toggle resets them, so restore after import. Relevant only when pose service is enabled.
-			this.Skeleton.SelectHead();
-			facePositions = this.Skeleton.SelectedBones.ToDictionary(bone => bone as Bone, bone => bone.Position);
-			this.Skeleton.ClearSelection();
-
-			// Step 1: Import body part of the pose
-			if (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.BodyOnly)
-			{
-				this.Skeleton.SelectBody();
-				var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
-				this.Skeleton.ClearSelection();
-
-				// Don't import body with positions during default pose import.
-				// Otherwise, the body will be deformed if the pose file was created for another race.
-				bool doLegacyImport = importOption == PoseImportOptions.Character && mode.HasFlagUnsafe(PoseFile.Mode.Position);
-				if (doLegacyImport)
-				{
-					mode &= ~PoseFile.Mode.Position;
-				}
-
-				// Don't apply the facial expression hack for the body import step.
-				// Otherwise, the head won't pose as intended and will return to its original position.
-				poseFile.Apply(this.Actor, this.Skeleton, selectedBoneNames, mode, false);
-
-				// Re-enable positions if they were disabled.
-				if (doLegacyImport)
-				{
-					mode |= PoseFile.Mode.Position;
-				}
-			}
-
-			// Step 2: Import the facial expression
-			if (!mismatchedFaceBones && (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly))
-			{
-				this.Skeleton.SelectHead();
-				var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
-				this.Skeleton.ClearSelection();
-
-				// Pre-DT faces need to be imported without positions.
-				bool doLegacyImport = this.Actor.Customize!.Age == ActorCustomizeMemory.Ages.None
-									|| (poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace && mode.HasFlagUnsafe(PoseFile.Mode.Position));
-				if (doLegacyImport)
-				{
-					mode &= ~PoseFile.Mode.Position;
-				}
-
-				// Apply facial expression hack for the expression import
-				poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, true);
-
-				// Re-enable positions if they were disabled.
-				if (doLegacyImport)
-				{
-					mode |= PoseFile.Mode.Position;
-				}
-			}
-
-			// Step 3: Restore face bone positions if face bones were mismatched
-			// This is necessary as .Apply will not be called for the face bones
-			if (mismatchedFaceBones)
-			{
-				this.RestoreBonePositions(facePositions);
-			}
-		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, "Failed to load pose file");
-		}
-		finally
-		{
-			// Update the skeleton after applying the pose
-			this.Skeleton.ReadTransforms();
-
-			// Re-enable auto-commit and commit changes
-			this.Actor.History.Commit();
-			this.Actor.History.AutoCommitEnabled = originalAutoCommitEnabled;
-		}
+		});
 	}
 
 	private async void OnExportClicked(object sender, RoutedEventArgs e)
@@ -665,73 +677,76 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		if (this.Actor == null)
 			throw new ArgumentNullException(nameof(sender));
 
-		if (this.Actor.ModelObject == null || this.Actor.ModelObject.Transform == null)
-			throw new Exception("Actor has no model");
-
-		if (this.Actor.ModelObject.Skeleton == null)
-			throw new Exception("Actor model has no skeleton. Are you trying to load a pose outside of GPose?");
-
-		if (this.Skeleton == null || this.IsFlipping)
-			return;
-
-		SkeletonMemory skeletonMem = this.Actor.ModelObject.Skeleton;
-		skeletonMem.PauseSynchronization = true;
-
-		bool originalAutoCommitEnabled = this.Actor.History.AutoCommitEnabled;
-
-		try
+		this.Actor.Do(actor =>
 		{
-			// Disable auto-commit at the beginning
-			// Commit any changes if they are present to avoid falsely grouping actions
-			this.Actor.History.AutoCommitEnabled = false;
-			this.Actor.History.Commit();
+			if (actor.ModelObject == null || actor.ModelObject.Transform == null)
+				throw new Exception("Actor has no model");
 
-			// If no bone selected, flip both lumbar and waist bones
-			this.IsFlipping = true;
-			if (!this.Skeleton.HasSelection)
+			if (actor.ModelObject.Skeleton == null)
+				throw new Exception("Actor model has no skeleton. Are you trying to load a pose outside of GPose?");
+
+			if (this.Skeleton == null || this.IsFlipping)
+				return;
+
+			SkeletonMemory skeletonMem = actor.ModelObject.Skeleton;
+			skeletonMem.PauseSynchronization = true;
+
+			bool originalAutoCommitEnabled = actor.History.AutoCommitEnabled;
+
+			try
 			{
-				if (this.Skeleton.GetBone("n_hara") is Bone abdomenBone)
+				// Disable auto-commit at the beginning
+				// Commit any changes if they are present to avoid falsely grouping actions
+				actor.History.AutoCommitEnabled = false;
+				actor.History.Commit();
+
+				// If no bone selected, flip both lumbar and waist bones
+				this.IsFlipping = true;
+				if (!this.Skeleton.HasSelection)
 				{
-					this.FlipBone(abdomenBone);
-					abdomenBone.ReadTransform(true);
-				}
-				else
-				{
-					Log.Warning("Could not find abdomen bone");
-				}
-			}
-			else
-			{
-				// If targeted bone is a limb don't switch the respective left and right sides
-				if (this.Skeleton.SelectedBones.Any(b => b.Name.EndsWith("_l") || b.Name.EndsWith("_r")) == false)
-				{
-					foreach (Bone bone in this.Skeleton.SelectedBones)
+					if (this.Skeleton.GetBone("n_hara") is Bone abdomenBone)
 					{
-						this.FlipBone(bone);
-						bone.ReadTransform(true);
+						this.FlipBone(abdomenBone);
+						abdomenBone.ReadTransform(true);
+					}
+					else
+					{
+						Log.Warning("Could not find abdomen bone");
 					}
 				}
 				else
 				{
-					foreach (Bone bone in this.Skeleton.SelectedBones)
+					// If targeted bone is a limb don't switch the respective left and right sides
+					if (this.Skeleton.SelectedBones.Any(b => b.Name.EndsWith("_l") || b.Name.EndsWith("_r")) == false)
 					{
-						this.FlipBone(bone, false);
-						bone.ReadTransform(true);
+						foreach (Bone bone in this.Skeleton.SelectedBones)
+						{
+							this.FlipBone(bone);
+							bone.ReadTransform(true);
+						}
+					}
+					else
+					{
+						foreach (Bone bone in this.Skeleton.SelectedBones)
+						{
+							this.FlipBone(bone, false);
+							bone.ReadTransform(true);
+						}
 					}
 				}
+
+				this.IsFlipping = false;
+
+				skeletonMem.PauseSynchronization = false;
+				skeletonMem.WriteDelayedBinds();
 			}
-
-			this.IsFlipping = false;
-
-			skeletonMem.PauseSynchronization = false;
-			skeletonMem.WriteDelayedBinds();
-		}
-		finally
-		{
-			// Re-enable auto-commit and commit changes
-			this.Actor.History.Commit();
-			this.Actor.History.AutoCommitEnabled = originalAutoCommitEnabled;
-		}
+			finally
+			{
+				// Re-enable auto-commit and commit changes
+				actor.History.Commit();
+				actor.History.AutoCommitEnabled = originalAutoCommitEnabled;
+			}
+		});
 	}
 
 	private void OnParentClicked(object sender, RoutedEventArgs e)
@@ -961,7 +976,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		this.selectedBonesTooltipCache = count switch
 		{
-			0 => (TargetService.SelectedActor != null) ? TargetService.SelectedActor.DisplayName : string.Empty,
+			0 => (TargetService.SelectedActor != null) ? TargetService.SelectedActor.Do(a => a.DisplayName) : string.Empty,
 			1 => selectedBones.First().Tooltip,
 			<= 3 => string.Join(", ", selectedBones.Select(b => b.Tooltip)),
 			_ => string.Join(", ", selectedBones.Take(3).Select(b => b.Tooltip)) + LocalizationService.GetStringFormatted("Pose_SelectedBones_TooltipTrimmed", (count - 3).ToString()),

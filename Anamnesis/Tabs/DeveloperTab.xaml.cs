@@ -30,6 +30,15 @@ public partial class DeveloperTab : UserControl
 	public static TargetService TargetService => TargetService.Instance;
 	public static GposeService GposeService => GposeService.Instance;
 	public SceneOptionsValues SceneOptions { get; init; } = new();
+	public string PlayerTargetDisplayName => TargetService.PlayerTargetHandle?.Do(a => a.DisplayName) ?? string.Empty;
+	public int PlayerTargetIndex => TargetService.PlayerTargetHandle?.Do(a => a.Index) ?? 0;
+	public int PlayerTargetObjectKindInt
+	{
+		get => TargetService.PlayerTargetHandle?.Do(a => a.ObjectKindInt) ?? 0;
+		set => TargetService.PlayerTargetHandle?.Do(a => a.ObjectKindInt = value);
+	}
+
+	public bool PlayerTargetIsValid => TargetService.PlayerTargetHandle?.IsValid ?? false;
 
 	private void OnNpcNameSearchClicked(object sender, RoutedEventArgs e)
 	{
@@ -46,35 +55,32 @@ public partial class DeveloperTab : UserControl
 	{
 		TargetSelectorView.Show((a) =>
 		{
-			ActorMemory memory = new();
-
-			if (a is ActorMemory actorMemory)
-				memory = actorMemory;
-
-			memory.SetAddress(a.Address);
-
-			NpcAppearanceSearch.Search(memory);
+			var upgradedHandle = ActorService.Instance.ActorTable.Get<ActorMemory>(a.Address);
+			if (upgradedHandle != null)
+			{
+				NpcAppearanceSearch.Search(upgradedHandle);
+			}
 		});
 	}
 
 	private void OnCopyActorAddressClicked(object sender, RoutedEventArgs e)
 	{
-		ActorBasicMemory? memory = TargetService.PlayerTarget;
+		var handle = TargetService.PlayerTargetHandle;
 
-		if (memory == null || !memory.IsValid)
+		if (handle == null || !handle.IsValid)
 		{
 			Log.Warning("Actor is invalid");
 			return;
 		}
 
-		string address = memory.Address.ToString("X");
+		string address = handle.Address.ToString("X");
 
 		ClipboardUtility.CopyToClipboard(address);
 	}
 
 	private void OnCopyAssociatedAddressesClick(object sender, RoutedEventArgs e)
 	{
-		ActorBasicMemory? abm = TargetService.PlayerTarget;
+		var abm = TargetService.PlayerTargetHandle;
 
 		if (abm == null || !abm.IsValid)
 		{

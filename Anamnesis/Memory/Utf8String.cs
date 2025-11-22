@@ -43,7 +43,7 @@ public struct Utf8String
 		byte[] bytes = Encoding.UTF8.GetBytes(self);
 
 		if (bytes.Length >= 0x040)
-			throw new Exception($"SeString value {self} excedes 30 byte limit");
+			throw new Exception($"SeString value {self} exceeds 64 byte limit");
 
 		this.Bytes = bytes;
 	}

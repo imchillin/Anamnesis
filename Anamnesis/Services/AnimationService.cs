@@ -158,8 +158,8 @@ public class AnimationService : ServiceBase<AnimationService>
 			{
 				if (actor.IsValid && actor.Memory != null && actor.Memory.Address != IntPtr.Zero && actor.Memory.IsValid)
 				{
-					actor.Memory.Animation!.LinkSpeeds = true;
-					actor.Memory.Animation!.Speeds![(int)AnimationMemory.AnimationSlots.FullBody].Value = 0.0f;
+					actor.Memory.Do(a => a.Animation!.LinkSpeeds = true);
+					actor.Memory.Do(a => a.Animation!.Speeds![(int)AnimationMemory.AnimationSlots.FullBody].Value = 0.0f);
 				}
 			}
 		}
