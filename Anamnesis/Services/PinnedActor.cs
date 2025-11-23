@@ -25,6 +25,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		this.Id = memory.Id;
 		this.IdNoAddress = memory.IdNoAddress;
 		this.Memory = memory;
+		this.Name = memory.Name;
 		this.Memory.Pinned = this;
 
 		this.UpdateActorInfo();
