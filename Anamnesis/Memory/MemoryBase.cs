@@ -95,9 +95,16 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// </summary>
 	public MemoryBase()
 	{
+		var processedNames = new HashSet<string>();
+
 		// Enumerate through the class' properties to retrieve memory offsets.
 		foreach (PropertyInfo property in this.GetType().GetProperties())
 		{
+			// As some classes re-declare properties from their base classes, we need to
+			// filter out duplicates. Add only the first occurrence, which is the most-derived one.
+			if (!processedNames.Add(property.Name))
+				continue;
+
 			BindAttribute? attribute = property.GetCustomAttribute<BindAttribute>();
 			if (attribute == null)
 				continue;
