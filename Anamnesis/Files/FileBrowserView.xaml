@@ -217,7 +217,7 @@
 
 							<XivToolsWpf:IconBlock 
 								VerticalAlignment="Center"
-								FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 5 Free Solid"
+								FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 6 Free Solid"
 								FontSize="16"
 								Icon="FileAlt"
 								Margin="3,0,6,0"/>
@@ -235,7 +235,7 @@
 							Grid.Column="0"
 							Margin="3,0,6,0"
 							VerticalAlignment="Center"
-							FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 5 Free Solid"
+							FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 6 Free Solid"
 							FontSize="16"
 							Foreground="#FFDA70"
 							Icon="Folder"
