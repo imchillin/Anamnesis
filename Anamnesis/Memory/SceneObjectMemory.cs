@@ -3,6 +3,9 @@
 
 namespace Anamnesis.Memory;
 
+/// <summary>
+/// Represents a scene (i.e., GPose) object in memory.
+/// </summary>
 public class SceneObjectMemory : MemoryBase
 {
 	// NOTE: Do not declare NextSiblingObject in the base scene object class!

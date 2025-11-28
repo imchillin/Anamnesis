@@ -9,6 +9,9 @@ using System.ComponentModel;
 
 public class ActorModelMemory : DrawObjectMemory
 {
+	/// <summary>
+	/// Gets or sets the main-hand weapon memory object.
+	/// </summary>
 	[Bind(0x030, BindFlags.Pointer)] public new ExtendedWeaponMemory? ChildObject { get; set; }
 	[Bind(0x0A0, BindFlags.Pointer | BindFlags.OnlyInGPose | BindFlags.DontCacheOffsets)] public SkeletonMemory? Skeleton { get; set; }
 	[Bind(0x150, BindFlags.Pointer)] public BustMemory? Bust { get; set; }

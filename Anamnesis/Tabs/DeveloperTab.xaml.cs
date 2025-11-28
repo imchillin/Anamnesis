@@ -30,15 +30,6 @@ public partial class DeveloperTab : UserControl
 	public static TargetService TargetService => TargetService.Instance;
 	public static GposeService GposeService => GposeService.Instance;
 	public SceneOptionsValues SceneOptions { get; init; } = new();
-	public string PlayerTargetDisplayName => TargetService.PlayerTargetHandle?.Do(a => a.DisplayName) ?? string.Empty;
-	public int PlayerTargetIndex => TargetService.PlayerTargetHandle?.Do(a => a.Index) ?? 0;
-	public int PlayerTargetObjectKindInt
-	{
-		get => TargetService.PlayerTargetHandle?.Do(a => a.ObjectKindInt) ?? 0;
-		set => TargetService.PlayerTargetHandle?.Do(a => a.ObjectKindInt = value);
-	}
-
-	public bool PlayerTargetIsValid => TargetService.PlayerTargetHandle?.IsValid ?? false;
 
 	private void OnNpcNameSearchClicked(object sender, RoutedEventArgs e)
 	{
@@ -55,10 +46,10 @@ public partial class DeveloperTab : UserControl
 	{
 		TargetSelectorView.Show((a) =>
 		{
-			var upgradedHandle = ActorService.Instance.ActorTable.Get<ActorMemory>(a.Address);
-			if (upgradedHandle != null)
+			var actorHandle = ActorService.Instance.ActorTable.Get<ActorMemory>(a.Address);
+			if (actorHandle != null)
 			{
-				NpcAppearanceSearch.Search(upgradedHandle);
+				NpcAppearanceSearch.Search(actorHandle);
 			}
 		});
 	}

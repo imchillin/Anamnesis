@@ -281,11 +281,11 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		this.Actor?.Do(actor =>
 		{
-			if (actor.ModelObject != null)
-			{
-				actor.Refreshed -= this.OnActorRefreshed;
-				actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
-			}
+			if (actor.ModelObject == null)
+				return;
+
+			actor.Refreshed -= this.OnActorRefreshed;
+			actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
 		});
 
 		if (this.Skeleton != null)
@@ -325,20 +325,20 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		this.Actor?.Do(actor =>
 		{
-			if (actor.ModelObject != null)
-			{
-				actor.Refreshed -= this.OnActorRefreshed;
-				actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
-			}
+			if (actor.ModelObject == null)
+				return;
+
+			actor.Refreshed -= this.OnActorRefreshed;
+			actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
 		});
 
 		newActorHandle?.Do(actor =>
 		{
-			if (actor.ModelObject != null)
-			{
-				actor.Refreshed += this.OnActorRefreshed;
-				actor.ModelObject.PropertyChanged += this.OnModelObjectChanged;
-			}
+			if (actor.ModelObject == null)
+				return;
+
+			actor.Refreshed += this.OnActorRefreshed;
+			actor.ModelObject.PropertyChanged += this.OnModelObjectChanged;
 		});
 
 		this.Actor = newActorHandle;
@@ -370,7 +370,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.FaceGuiView.DataContext = null;
 		this.MatrixView.DataContext = null;
 
-		if (this.Actor == null || this.Actor.Do(a => a.ModelObject) == null)
+		if (this.Actor == null || this.Actor.Do(a => a.ModelObject == null))
 		{
 			this.Skeleton?.Clear();
 			this.Skeleton = null;

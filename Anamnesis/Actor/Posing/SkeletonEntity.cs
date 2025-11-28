@@ -142,52 +142,52 @@ public class SkeletonEntity(ObjectHandle<ActorMemory> actor) : Skeleton(actor)
 			if (actor.ModelObject?.Skeleton == null)
 				return;
 
-			if (this.HasSelection && PoseService.Instance.IsEnabled)
+			if (!this.HasSelection || !PoseService.Instance.IsEnabled)
+				return;
+
+			lock (HistoryService.Instance.LockObject)
 			{
-				lock (HistoryService.Instance.LockObject)
+				try
 				{
-					try
+					actor.PauseSynchronization = true;
+
+					// Get all selected bones
+					var selectedBones = this.selectedBonesCache ??= this.Bones.Values.OfType<BoneEntity>().Where(b => b.IsSelected).ToList();
+
+					// Filter out bones that are descendants of other selected bones
+					HashSet<BoneEntity> ancestorBones = new();
+					bool isAncestor;
+
+					foreach (var bone in selectedBones)
 					{
-						actor.PauseSynchronization = true;
-
-						// Get all selected bones
-						var selectedBones = this.selectedBonesCache ??= this.Bones.Values.OfType<BoneEntity>().Where(b => b.IsSelected).ToList();
-
-						// Filter out bones that are descendants of other selected bones
-						HashSet<BoneEntity> ancestorBones = new();
-						bool isAncestor;
-
-						foreach (var bone in selectedBones)
+						isAncestor = false;
+						foreach (var otherBone in selectedBones)
 						{
-							isAncestor = false;
-							foreach (var otherBone in selectedBones)
+							if (bone != otherBone && bone.HasAncestor(otherBone))
 							{
-								if (bone != otherBone && bone.HasAncestor(otherBone))
-								{
-									isAncestor = true;
-									break;
-								}
-							}
-
-							if (!isAncestor)
-							{
-								ancestorBones.Add(bone);
+								isAncestor = true;
+								break;
 							}
 						}
 
-						// Write transforms for all ancestor bones
-						foreach (var bone in ancestorBones)
-							bone.WriteTransform();
+						if (!isAncestor)
+						{
+							ancestorBones.Add(bone);
+						}
 					}
-					catch (Exception ex)
-					{
-						Log.Error(ex, "Failed to write bone transforms");
-						this.ClearSelection();
-					}
-					finally
-					{
-						actor.PauseSynchronization = false;
-					}
+
+					// Write transforms for all ancestor bones
+					foreach (var bone in ancestorBones)
+						bone.WriteTransform();
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, "Failed to write bone transforms");
+					this.ClearSelection();
+				}
+				finally
+				{
+					actor.PauseSynchronization = false;
 				}
 			}
 		});

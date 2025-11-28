@@ -6,7 +6,6 @@ namespace Anamnesis.Services;
 using Anamnesis.Core;
 using Anamnesis.Memory;
 using PropertyChanged;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -156,7 +155,7 @@ public class AnimationService : ServiceBase<AnimationService>
 			var actors = TargetService.Instance.PinnedActors.ToList();
 			foreach (var actor in actors)
 			{
-				if (actor.IsValid && actor.Memory != null && actor.Memory.Address != IntPtr.Zero && actor.Memory.IsValid)
+				if (actor.IsValid && actor.Memory?.IsValid == true)
 				{
 					actor.Memory.Do(a => a.Animation!.LinkSpeeds = true);
 					actor.Memory.Do(a => a.Animation!.Speeds![(int)AnimationMemory.AnimationSlots.FullBody].Value = 0.0f);

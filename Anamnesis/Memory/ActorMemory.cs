@@ -18,15 +18,16 @@ using System.Threading.Tasks;
 public class ActorMemory : ActorBasicMemory, IDisposable
 {
 	private const int REFRESH_DEBOUNCE_TIMEOUT = 200;
-	private readonly System.Timers.Timer refreshDebounceTimer;
-	private readonly FuncQueue backupQueue;
 
-	private readonly List<IActorRefresher> actorRefreshers =
+	private static readonly List<IActorRefresher> s_actorRefreshers =
 	[
 		new BrioActorRefresher(),
 		new PenumbraActorRefresher(),
 		new AnamnesisActorRefresher(),
 	];
+
+	private readonly System.Timers.Timer refreshDebounceTimer;
+	private readonly FuncQueue backupQueue;
 
 	private int isRefreshing = 0;
 
@@ -102,7 +103,7 @@ public class ActorMemory : ActorBasicMemory, IDisposable
 	public bool IsWeaponDirty { get; set; } = false;
 
 	[DependsOn(nameof(IsValid), nameof(IsOverworldActor), nameof(Name), nameof(RenderMode))]
-	public bool CanRefresh => this.CanRefreshActor(this);
+	public bool CanRefresh => CanRefreshActor(this);
 
 	public bool IsHuman => this.ModelObject != null && this.ModelObject.IsHuman;
 
@@ -178,6 +179,45 @@ public class ActorMemory : ActorBasicMemory, IDisposable
 	[DependsOn(nameof(CharacterMode))]
 	public bool IsAnimationOverridden => this.CharacterMode == CharacterModes.AnimLock;
 
+	/// <summary>Determines if the actor can be refreshed.</summary>
+	/// <param name="actor">The actor to check.</param>
+	/// <returns>True if the actor can be refreshed, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool CanRefreshActor(ActorMemory actor)
+	{
+		if (!actor.IsValid)
+			return false;
+
+		foreach (IActorRefresher actorRefresher in s_actorRefreshers)
+		{
+			if (actorRefresher.CanRefresh(actor))
+				return true;
+		}
+
+		return false;
+	}
+
+	/// <summary>Refreshes the specified actor.</summary>
+	/// <param name="actor">The actor to refresh.</param>
+	/// <returns>True if the actor was refreshed, otherwise false.</returns>
+	public static async Task<bool> RefreshActor(ActorMemory actor)
+	{
+		if (CanRefreshActor(actor))
+		{
+			foreach (IActorRefresher actorRefresher in s_actorRefreshers)
+			{
+				if (actorRefresher.CanRefresh(actor))
+				{
+					Log.Information($"Executing {actorRefresher.GetType().Name} refresh for actor address: {actor.Address}");
+					await actorRefresher.RefreshActor(actor);
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	public override void Dispose()
 	{
 		this.PropertyChanged -= this.HandlePropertyChanged;
@@ -217,7 +257,7 @@ public class ActorMemory : ActorBasicMemory, IDisposable
 
 			this.IsRefreshing = true;
 
-			if (await this.RefreshActor(this))
+			if (await RefreshActor(this))
 			{
 				Log.Information($"Completed actor refresh for actor address: {this.Address}");
 			}
@@ -246,45 +286,6 @@ public class ActorMemory : ActorBasicMemory, IDisposable
 			await Task.Delay(10);
 
 		this.Pinned?.CreateCharacterBackup(PinnedActor.BackupModes.Gpose);
-	}
-
-	/// <summary>Determines if the actor can be refreshed.</summary>
-	/// <param name="actor">The actor to check.</param>
-	/// <returns>True if the actor can be refreshed, otherwise false.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public bool CanRefreshActor(ActorMemory actor)
-	{
-		if (!actor.IsValid)
-			return false;
-
-		foreach (IActorRefresher actorRefresher in this.actorRefreshers)
-		{
-			if (actorRefresher.CanRefresh(actor))
-				return true;
-		}
-
-		return false;
-	}
-
-	/// <summary>Refreshes the specified actor.</summary>
-	/// <param name="actor">The actor to refresh.</param>
-	/// <returns>True if the actor was refreshed, otherwise false.</returns>
-	public async Task<bool> RefreshActor(ActorMemory actor)
-	{
-		if (this.CanRefreshActor(actor))
-		{
-			foreach (IActorRefresher actorRefresher in this.actorRefreshers)
-			{
-				if (actorRefresher.CanRefresh(actor))
-				{
-					Log.Information($"Executing {actorRefresher.GetType().Name} refresh for actor address: {actor.Address}");
-					await actorRefresher.RefreshActor(actor);
-					return true;
-				}
-			}
-		}
-
-		return false;
 	}
 
 	public void RaiseRefreshChanged()

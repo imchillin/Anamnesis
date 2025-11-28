@@ -47,7 +47,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		Original,
 	}
 
-	public ObjectHandle<ActorMemory>? Memory { get; set; }
+	public ObjectHandle<ActorMemory>? Memory { get; private set; }
 	public string? Name { get; private set; }
 	public string Id { get; private set; }
 	public string IdNoAddress { get; private set; }
@@ -131,7 +131,6 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 				return;
 			}
 
-			// TODO: This might not be necessary. Instead Retarget() on Invalidated event from the handle?
 			if (!ActorService.Instance.ActorTable.Contains(this.Memory.Address))
 			{
 				Log.Information($"Actor: {this} was not in actor table");
@@ -139,7 +138,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 				return;
 			}
 
-			if (this.Memory.Do(a => a.IsGPoseActor) == true && !GposeService.Instance.IsGpose)
+			if (this.Memory.Do(a => a.IsGPoseActor) && !GposeService.Instance.IsGpose)
 			{
 				Log.Information($"Actor: {this} was a gpose actor and we are now in the overworld");
 				this.Retarget();
@@ -170,7 +169,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		if (this.isRestoringBackup)
 			return;
 
-		if (this.Memory == null)
+		if (this.Memory == null || !this.Memory.IsValid)
 		{
 			Log.Warning("Unable to create character backup, pinned actor has no memory");
 			return;
@@ -262,12 +261,6 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 			// As we do not actively update non-pinned actors, synchronize first
 			foreach (var handle in actorHandles)
 			{
-				if (!handle.IsValid)
-				{
-					Log.Verbose("Skipping invalid actor handle during retarget");
-					continue;
-				}
-
 				handle.Do(a => a.Synchronize());
 			}
 

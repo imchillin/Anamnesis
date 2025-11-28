@@ -74,6 +74,7 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 			if (!Directory.Exists(charDirPath))
 				Directory.CreateDirectory(charDirPath);
 
+			int index = 0;
 			foreach (var pinnedActor in TargetService.Instance.PinnedActors.ToList())
 			{
 				var handle = pinnedActor.Memory;
@@ -81,7 +82,7 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 					continue;
 
 				CharacterFile file = new();
-				string fullFilePath = Path.Combine(charDirPath, $"{handle.Do(a => a.Name)}{file.FileExtension}");
+				string fullFilePath = Path.Combine(charDirPath, $"{handle.Do(a => a.Name) ?? $"Unknown - {index}"}{file.FileExtension}");
 				if (fullFilePath.Any(c => invalidPathChars.Contains(c)))
 				{
 					Log.Error($"Invalid character file path: {fullFilePath}");
@@ -91,6 +92,7 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 				file.WriteToFile(handle, CharacterFile.SaveModes.All);
 				using FileStream stream = new(fullFilePath, FileMode.Create);
 				file.Serialize(stream);
+				index++;
 			}
 
 			if (GposeService.Instance.IsGpose)
@@ -122,16 +124,17 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 				if (!Directory.Exists(posesDir))
 					Directory.CreateDirectory(posesDir);
 
+				index = 0;
 				foreach (var pinnedActor in TargetService.Instance.PinnedActors.ToList())
 				{
 					var actorHandle = pinnedActor.Memory;
-					if (actorHandle == null || actorHandle.Do(a => a.ModelObject) == null || actorHandle.Do(a => a.ModelObject!.Skeleton) == null)
+					if (actorHandle == null || actorHandle.Do(a => a.ModelObject == null || a.ModelObject!.Skeleton == null))
 						continue;
 
 					var skeleton = new Skeleton(actorHandle);
 
 					PoseFile file = new();
-					string fullFilePath = Path.Combine(posesDir, $"{actorHandle.Do(a => a.Name)}{file.FileExtension}");
+					string fullFilePath = Path.Combine(posesDir, $"{actorHandle.Do(a => a.Name) ?? $"Unknown - {index}"}{file.FileExtension}");
 					if (fullFilePath.Any(c => invalidPathChars.Contains(c)))
 					{
 						Log.Error($"Invalid pose file path: {fullFilePath}");
@@ -141,6 +144,7 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 					file.WriteToFile(actorHandle, skeleton, null);
 					using FileStream stream = new(fullFilePath, FileMode.Create);
 					file.Serialize(stream);
+					index++;
 				}
 			}
 		}

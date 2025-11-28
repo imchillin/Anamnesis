@@ -184,11 +184,11 @@ public partial class ActionPage : UserControl
 
 		foreach (var target in TargetService.Instance.PinnedActors.ToList())
 		{
-			if (target.IsValid && target.Memory != null && target.Memory.IsValid)
-			{
-				target.Memory.Do(a => a.Animation!.LinkSpeeds = true);
-				target.Memory.Do(a => a.Animation!.Speeds![0].Value = 1.0f);
-			}
+			if (!target.IsValid)
+				continue;
+
+			target.Memory?.Do(a => a.Animation!.LinkSpeeds = true);
+			target.Memory?.Do(a => a.Animation!.Speeds![0].Value = 1.0f);
 		}
 	}
 
@@ -203,11 +203,11 @@ public partial class ActionPage : UserControl
 
 		foreach (var target in TargetService.Instance.PinnedActors.ToList())
 		{
-			if (target.IsValid && target.Memory != null && target.Memory.IsValid)
-			{
-				target.Memory.Do(a => a.Animation!.LinkSpeeds = true);
-				target.Memory.Do(a => a.Animation!.Speeds![0].Value = 0.0f);
-			}
+			if (!target.IsValid)
+				continue;
+
+			target.Memory?.Do(a => a.Animation!.LinkSpeeds = true);
+			target.Memory?.Do(a => a.Animation!.Speeds![0].Value = 0.0f);
 		}
 	}
 

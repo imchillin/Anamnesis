@@ -20,7 +20,9 @@ using System.Runtime.Remoting;
 using System.Threading;
 using System.Threading.Tasks;
 
-// TODO: Update documentation for ObjectTable as some of the functions were copied from ActorService
+/// <summary>
+/// A representation of the game's object table in memory.
+/// </summary>
 [AddINotifyPropertyChangedInterface]
 public class ObjectTable : INotifyPropertyChanged, IDisposable
 {
@@ -33,6 +35,9 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	private readonly ReaderWriterLockSlim tableLock = new();
 	private HashSet<IntPtr> objSet = [];
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="ObjectTable"/> class.
+	/// </summary>
 	public ObjectTable()
 	{
 		this.objTableBuffer = ArrayPool<byte>.Shared.Rent(s_objectTableSizeInBytes);
@@ -41,6 +46,9 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	public event PropertyChangedEventHandler? PropertyChanged;
 	public event Action? TableChanged;
 
+	/// <summary>
+	/// Disposes resources used internally by the object table.
+	/// </summary>
 	public void Dispose()
 	{
 		ArrayPool<byte>.Shared.Return(this.objTableBuffer);
@@ -49,7 +57,7 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	}
 
 	/// <summary>
-	/// Refreshes the actor object table by reading from game memory.
+	/// Refreshes the object table by reading from game memory.
 	/// </summary>
 	/// <exception cref="Exception">
 	/// Thrown if reading from memory at the given object table address fails.
@@ -57,7 +65,7 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	public void Refresh()
 	{
 		if (!MemoryService.Read(AddressService.ActorTable, this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes)))
-			throw new Exception("Failed to read actor table from memory.");
+			throw new Exception("Failed to read object table from memory.");
 
 		Span<IntPtr> newSpan = MemoryMarshal.Cast<byte, IntPtr>(this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes));
 		bool hasChanged = false;
@@ -98,6 +106,8 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	public ObjectHandle<T>? Get<T>(IntPtr address)
 		where T : ActorBasicMemory, new()
 	{
+		this.Refresh();
+
 		if (!this.Contains(address))
 			return null;
 
@@ -131,9 +141,9 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 		return handles;
 	}
 
-	/// <summary>Gets the index of the actor in the actor table.</summary>
-	/// <param name="ptr">The pointer to the actor.</param>
-	/// <returns>The index of the actor in the actor table, or -1 if not found.</returns>
+	/// <summary>Gets the index of the object in the object table.</summary>
+	/// <param name="ptr">The object pointer to check for.</param>
+	/// <returns>The index of the object in the object table, or -1 if not found.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public int GetIndexOf(IntPtr ptr)
 	{
@@ -153,9 +163,16 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 		}
 	}
 
+	/// <summary>
+	/// Checks if the object table contains the provided object pointer.
+	/// </summary>
+	/// <param name="ptr">The object pointer to check for.</param>
+	/// <returns>True if the object table contains the pointer, otherwise false.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool Contains(IntPtr ptr)
 	{
+		this.Refresh();
+
 		this.tableLock.EnterReadLock();
 		try
 		{
@@ -167,14 +184,22 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 		}
 	}
 
-	/// <summary>Determines if the actor is in the actor table.</summary>
-	/// <param name="memObj">The memory of the target game memory object.</param>
-	/// <returns>True if the actor is in the actor table, otherwise false.</returns>
+	/// <summary>
+	/// Checks if the object table contains the provided memory object.
+	/// </summary>
+	/// <param name="memObj">The memory object to check for.</param>
+	/// <returns>True if the object table contains the memory object's address, otherwise false.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool Contains(MemoryBase memObj) => this.Contains(memObj.Address);
 }
 
-// TODO: Create a ToString() function for the object handle to display essential information
+/// <summary>
+/// A safe handle to an object in the game's object table.
+/// </summary>
+/// <typeparam name="T">
+/// The type of the memory object.
+/// Either <see cref="ActorBasicMemory"/> or a derived type.
+/// </typeparam>
 [AddINotifyPropertyChangedInterface]
 public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	where T : ActorBasicMemory, new()
@@ -213,7 +238,7 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 			}
 			catch (Exception ex)
 			{
-				Log.Warning(ex, $"Failed to create basic actor memory object from address: {ptr}");
+				Log.Warning(ex, $"Failed to create memory object from address: {ptr}");
 			}
 		}
 		else
@@ -252,9 +277,11 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	/// <remarks>
 	/// This is intended only for UI data bindings and should not be used outside of that context.
 	/// </remarks>
-	public T? Unsafe => s_cache.TryGetValue((this.ptr, typeof(T)), out var entry) ? entry.Actor : null;
+	public T? Unsafe => s_cache.TryGetValue((this.ptr, typeof(T)), out var entry) ? entry.Object : null;
 
-	/// <summary>Disposes resources used internally by the object handle.</summary>
+	/// <summary>
+	/// Disposes resources used internally by the object handle.
+	/// </summary>
 	public void Dispose()
 	{
 		if (this.disposed)
@@ -270,13 +297,15 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 			int newCount = Interlocked.Decrement(ref entry.RefCount);
 			if (newCount <= 0)
 			{
-				if (!entry.Actor.IsDisposed)
-					entry.Actor.Dispose();
+				if (s_cache.TryRemove(cacheKey, out var removedEntry))
+				{
+					if (!removedEntry.Object.IsDisposed)
+						removedEntry.Object.Dispose();
 
-				s_cache.TryRemove(cacheKey, out _);
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Unsafe)));
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsValid)));
-				Invalidated?.Invoke(this);
+					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Unsafe)));
+					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsValid)));
+					Invalidated?.Invoke(this);
+				}
 			}
 		}
 
@@ -287,13 +316,14 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	/// Performs the specified action on the underlying object if the handle is valid.
 	/// </summary>
 	/// <param name="action">The action to perform.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void Do(Action<T> action)
 	{
 		if (!this.IsValid)
 			return;
 
 		if (s_cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			action(entry.Actor);
+			action(entry.Object);
 	}
 
 	/// <summary>
@@ -301,14 +331,19 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	/// </summary>
 	/// <typeparam name="TResult">The type of the result.</typeparam>
 	/// <param name="func">The function to perform.</param>
+	/// <remarks>
+	/// Exert caution when using this method, especially when expecting a boolean result, as the default value
+	/// is returned if the handle is not valid, which in the case of booleans is false.
+	/// </remarks>
 	/// <returns>The result of the function, or default if the handle is not valid.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public TResult? Do<TResult>(Func<T, TResult> func)
 	{
 		if (!this.IsValid)
 			return default;
 
 		if (s_cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			return func(entry.Actor);
+			return func(entry.Object);
 
 		return default;
 	}
@@ -318,13 +353,14 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	/// </summary>
 	/// <param name="action">The asynchronous action to perform.</param>
 	/// <returns>The task representing the asynchronous operation.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public async Task DoAsync(Func<T, Task> action)
 	{
 		if (!this.IsValid)
 			return;
 
 		if (s_cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			await action(entry.Actor);
+			await action(entry.Object);
 	}
 
 	/// <summary>
@@ -332,14 +368,19 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	/// </summary>
 	/// <typeparam name="TResult">The type of the result.</typeparam>
 	/// <param name="func">The asynchronous function to perform.</param>
+	/// <remarks>
+	/// Exert caution when using this method, especially when expecting a boolean result, as the default value
+	/// is returned if the handle is not valid, which in the case of booleans is false.
+	/// </remarks>
 	/// <returns>The result of the function, or default if the handle is not valid.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public async Task<TResult?> DoAsync<TResult>(Func<T, Task<TResult>> func)
 	{
 		if (!this.IsValid)
 			return default;
 
 		if (s_cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			return await func(entry.Actor);
+			return await func(entry.Object);
 
 		return default;
 	}
@@ -353,8 +394,8 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 		{
 			if (s_cache.TryRemove((this.ptr, typeof(T)), out var entry))
 			{
-				if (!entry.Actor.IsDisposed)
-					entry.Actor.Dispose();
+				if (!entry.Object.IsDisposed)
+					entry.Object.Dispose();
 			}
 
 			Invalidated?.Invoke(this);
@@ -365,13 +406,13 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	{
 		public int RefCount;
 
-		public CacheEntry(T actor)
+		public CacheEntry(T obj)
 		{
-			this.Actor = actor;
+			this.Object = obj;
 			this.RefCount = 1;
 		}
 
-		public T Actor { get; init; }
+		public T Object { get; init; }
 	}
 }
 

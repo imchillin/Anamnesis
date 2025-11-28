@@ -56,7 +56,7 @@ public partial class CharacterPage : UserControl
 
 	public ObjectHandle<ActorMemory>? Actor { get; private set; }
 	public ListCollectionView VoiceEntries { get; private set; }
-	public bool CanDyeEquipment => this.Actor != null && this.Actor.Do(a => a.Equipment != null);
+	public bool CanDyeEquipment => this.Actor?.Do(a => a.Equipment != null) == true;
 
 	public bool CanDyeWeapons
 	{
@@ -447,10 +447,7 @@ public partial class CharacterPage : UserControl
 			return;
 
 		var pinned = TargetService.GetPinned(this.Actor);
-		if (pinned == null)
-			return;
-
-		if (pinned.OriginalCharacterBackup == null)
+		if (pinned?.OriginalCharacterBackup == null)
 			return;
 
 		if (await GenericDialog.ShowLocalizedAsync("Character_Reset_Confirm", "Character_Reset", MessageBoxButton.YesNo) != true)

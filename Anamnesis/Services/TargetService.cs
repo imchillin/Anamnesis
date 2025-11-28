@@ -61,7 +61,7 @@ public class TargetService : ServiceBase<TargetService>
 	/// <summary>
 	/// Gets a value indicating whether the player target is pinnable.
 	/// </summary>
-	public bool IsPlayerTargetPinnable => this.PlayerTargetHandle != null && this.PlayerTargetHandle.IsValid && this.PlayerTargetHandle.Do(a => a.ObjectKind.IsSupportedType());
+	public bool IsPlayerTargetPinnable => this.PlayerTargetHandle != null && this.PlayerTargetHandle.Do(a => a.ObjectKind.IsSupportedType());
 
 	/// <summary>
 	/// Gets the currently pinned selected actor (if any).
@@ -202,12 +202,13 @@ public class TargetService : ServiceBase<TargetService>
 	public static PinnedActor? GetPinned<T>(ObjectHandle<T> actor)
 		where T : ActorBasicMemory, new()
 	{
+		var targetId = actor.Do(a => a.Id);
 		foreach (PinnedActor pinned in Instance.PinnedActors.ToList())
 		{
 			if (pinned.Memory == null)
 				continue;
 
-			if (pinned.Memory.Do(a => a.Id == actor.Do(b => b.Id)))
+			if (pinned.Memory.Do(a => a.Id == targetId))
 				return pinned;
 		}
 
@@ -445,6 +446,9 @@ public class TargetService : ServiceBase<TargetService>
 						if (a.IsDisposed)
 							return false;
 
+						// Ensure the actor data is up to date
+						a.Synchronize();
+
 						if (a.IsHidden)
 							return false;
 
@@ -519,10 +523,7 @@ public class TargetService : ServiceBase<TargetService>
 				}
 				else
 				{
-					if (ActorService.Instance.ActorTable.Contains(currentPlayerTargetPtr))
-						this.PlayerTargetHandle = ActorService.Instance.ActorTable.Get<ActorBasicMemory>(currentPlayerTargetPtr);
-					else
-						this.PlayerTargetHandle = null;
+					this.PlayerTargetHandle = ActorService.Instance.ActorTable.Get<ActorBasicMemory>(currentPlayerTargetPtr);
 				}
 
 				this.RaisePropertyChanged(nameof(TargetService.PlayerTargetHandle));
@@ -579,16 +580,13 @@ public class TargetService : ServiceBase<TargetService>
 				break;
 			}
 		}
-
-		Log.Verbose("Tick thread cancelled");
 	}
 
 	private void RefreshActorRefreshStatus()
 	{
 		foreach (var pin in this.PinnedActors)
 		{
-			if (pin.Memory?.IsValid == true)
-				pin.Memory.Do(a => a.RaiseRefreshChanged());
+			pin.Memory?.Do(a => a.RaiseRefreshChanged());
 		}
 	}
 

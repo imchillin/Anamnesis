@@ -113,8 +113,6 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 		// As we do not actively update non-pinned actors, synchronize first
 		foreach (var handle in actorHandles)
 		{
-			Log.Verbose($"Loading in actor with address: {handle.Address}");
-
 			if (!handle.IsValid)
 				continue;
 

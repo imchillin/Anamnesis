@@ -79,40 +79,39 @@ public class Skeleton : INotifyPropertyChanged
 	public Quaternion RootRotation => this.Actor?.Do(a => a.ModelObject)?.Transform?.Rotation ?? Quaternion.Identity;
 
 	/// <summary> Gets a value indicating whether the actor has a tail.</summary>
-	public bool HasTail => this.Actor?.Do(a => a.Customize)?.Race == ActorCustomizeMemory.Races.Miqote
-		|| this.Actor?.Do(a => a.Customize)?.Race == ActorCustomizeMemory.Races.AuRa
-		|| this.Actor?.Do(a => a.Customize)?.Race == ActorCustomizeMemory.Races.Hrothgar
-		|| this.IsIVCS;
+	public bool HasTail => (this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Miqote
+		|| a.Customize?.Race == ActorCustomizeMemory.Races.AuRa
+		|| a.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar) == true) || this.IsIVCS;
 
 	/// <summary>Gets a value indicating whether the actor has a standard face.</summary>
 	public bool IsStandardFace => this.Actor == null || (!this.IsMiqote && !this.IsHrothgar && !this.IsViera);
 
 	/// <summary>Gets a value indicating whether the actor is a Miqote.</summary>
-	public bool IsMiqote => this.Actor?.Do(a => a.Customize)?.Race == ActorCustomizeMemory.Races.Miqote;
+	public bool IsMiqote => this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Miqote) == true;
 
 	/// <summary>Gets a value indicating whether the actor is a Viera.</summary>
-	public bool IsViera => this.Actor?.Do(a => a.Customize)?.Race == ActorCustomizeMemory.Races.Viera;
+	public bool IsViera => this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Viera) == true;
 
 	/// <summary>Gets a value indicating whether the actor is an Elezen.</summary>
-	public bool IsElezen => this.Actor?.Do(a => a.Customize)?.Race == ActorCustomizeMemory.Races.Elezen;
+	public bool IsElezen => this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Elezen) == true;
 
 	/// <summary>Gets a value indicating whether the actor is a Hrothgar.</summary>
-	public bool IsHrothgar => this.Actor?.Do(a => a.Customize)?.Race == ActorCustomizeMemory.Races.Hrothgar;
+	public bool IsHrothgar => this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar) == true;
 
 	/// <summary>Gets a value indicating whether the actor has a tail or ears.</summary>
 	public bool HasTailOrEars => this.IsViera || this.HasTail;
 
 	/// <summary>Gets a value indicating whether the actor is a Viera and has ears type 01.</summary>
-	public bool IsEars01 => this.IsViera && this.Actor?.Do(a => a.Customize)?.TailEarsType <= 1;
+	public bool IsEars01 => this.IsViera && this.Actor?.Do(a => a.Customize?.TailEarsType <= 1) == true;
 
 	/// <summary>Gets a value indicating whether the actor is a Viera and has ears type 02.</summary>
-	public bool IsEars02 => this.IsViera && this.Actor?.Do(a => a.Customize)?.TailEarsType == 2;
+	public bool IsEars02 => this.IsViera && this.Actor?.Do(a => a.Customize?.TailEarsType == 2) == true;
 
 	/// <summary>Gets a value indicating whether the actor is a Viera and has ears type 03.</summary>
-	public bool IsEars03 => this.IsViera && this.Actor?.Do(a => a.Customize)?.TailEarsType == 3;
+	public bool IsEars03 => this.IsViera && this.Actor?.Do(a => a.Customize?.TailEarsType == 3) == true;
 
 	/// <summary>Gets a value indicating whether the actor is a Viera and has ears type 04.</summary>
-	public bool IsEars04 => this.IsViera && this.Actor?.Do(a => a.Customize)?.TailEarsType == 4;
+	public bool IsEars04 => this.IsViera && this.Actor?.Do(a => a.Customize?.TailEarsType == 4) == true;
 
 	/// <summary>Gets a value indicating whether the skeleton has IVCS bones.</summary>
 	public bool IsIVCS { get; private set; }
@@ -174,7 +173,7 @@ public class Skeleton : INotifyPropertyChanged
 	public virtual Bone? GetBone(string name)
 	{
 		// Only process valid skeletons that have atleast one partial skeleton
-		if (this.Actor?.Do(a => a.ModelObject)?.Skeleton == null || this.Actor.Do(a => a.ModelObject!.Skeleton!.Length) <= 0)
+		if (this.Actor?.Do(a => a.ModelObject?.Skeleton == null || a.ModelObject!.Skeleton!.Length <= 0) ?? true)
 			return null;
 
 		string? modernName = LegacyBoneNameConverter.GetModernName(name);
