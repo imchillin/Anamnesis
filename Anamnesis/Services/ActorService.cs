@@ -64,7 +64,7 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	/// </exception>
 	public void Refresh()
 	{
-		if (!MemoryService.Read(AddressService.ActorTable, this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes)))
+		if (!MemoryService.Read(AddressService.ObjectTable, this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes)))
 			throw new Exception("Failed to read object table from memory.");
 
 		Span<IntPtr> newSpan = MemoryMarshal.Cast<byte, IntPtr>(this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes));
@@ -104,7 +104,7 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	/// <param name="address">The address of the object to search for.</param>
 	/// <returns>A new <see cref="ObjectHandle"/> for the specified address, or null if not found.</returns>
 	public ObjectHandle<T>? Get<T>(IntPtr address)
-		where T : ActorBasicMemory, new()
+		where T : GameObjectMemory, new()
 	{
 		this.Refresh();
 
@@ -118,24 +118,24 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	/// Gets all objects from the object table.
 	/// </summary>
 	/// <remarks>
-	/// This method can only return objects of type <see cref="ActorBasicMemory"/> as we cannot
+	/// This method can only return objects of type <see cref="GameObjectMemory"/> as we cannot
 	/// verify the type of each object in the object table without additional context.
 	/// </remarks>
 	/// <returns>
 	/// A collection of all memory objects found in the object table.
 	/// </returns>
-	public List<ObjectHandle<ActorBasicMemory>> GetAll()
+	public List<ObjectHandle<GameObjectMemory>> GetAll()
 	{
 		this.Refresh();
 
-		List<ObjectHandle<ActorBasicMemory>> handles = [];
+		List<ObjectHandle<GameObjectMemory>> handles = [];
 
 		foreach (var ptr in this.objTable)
 		{
 			if (ptr == IntPtr.Zero)
 				continue;
 
-			handles.Add(new ObjectHandle<ActorBasicMemory>(ptr, this));
+			handles.Add(new ObjectHandle<GameObjectMemory>(ptr, this));
 		}
 
 		return handles;
@@ -198,11 +198,11 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 /// </summary>
 /// <typeparam name="T">
 /// The type of the memory object.
-/// Either <see cref="ActorBasicMemory"/> or a derived type.
+/// Either <see cref="GameObjectMemory"/> or a derived type.
 /// </typeparam>
 [AddINotifyPropertyChangedInterface]
 public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
-	where T : ActorBasicMemory, new()
+	where T : GameObjectMemory, new()
 {
 	private static readonly ConcurrentDictionary<(IntPtr, Type), CacheEntry> s_cache = [];
 	private readonly ObjectTable table;
@@ -426,12 +426,12 @@ public class ActorService : ServiceBase<ActorService>
 	private const int OVERWORLD_PLAYER_INDEX = 0;
 	private const int GPOSE_PLAYER_INDEX = 201;
 
-	private readonly ObjectTable actorTable = new();
+	private readonly ObjectTable objectTable = new();
 
 	/// <summary>
 	/// Gets the instance of the actor object table.
 	/// </summary>
-	public ObjectTable ActorTable => this.actorTable;
+	public ObjectTable ObjectTable => this.objectTable;
 
 	/// <inheritdoc/>
 	protected override IEnumerable<IService> Dependencies => [AddressService.Instance];
@@ -472,7 +472,7 @@ public class ActorService : ServiceBase<ActorService>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsGPoseActor(IntPtr actorAddress)
 	{
-		int objectIndex = this.actorTable.GetIndexOf(actorAddress);
+		int objectIndex = this.objectTable.GetIndexOf(actorAddress);
 		if (objectIndex == -1)
 			return false;
 
@@ -491,7 +491,7 @@ public class ActorService : ServiceBase<ActorService>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsLocalOverworldPlayer(IntPtr actorAddress)
 	{
-		int objectIndex = this.actorTable.GetIndexOf(actorAddress);
+		int objectIndex = this.objectTable.GetIndexOf(actorAddress);
 		if (objectIndex == -1)
 			return false;
 
@@ -504,7 +504,7 @@ public class ActorService : ServiceBase<ActorService>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsLocalGPosePlayer(IntPtr actorAddress)
 	{
-		int objectIndex = this.actorTable.GetIndexOf(actorAddress);
+		int objectIndex = this.objectTable.GetIndexOf(actorAddress);
 		if (objectIndex == -1)
 			return false;
 
@@ -535,7 +535,7 @@ public class ActorService : ServiceBase<ActorService>
 			try
 			{
 				if (GameService.Ready)
-					this.actorTable.Refresh();
+					this.objectTable.Refresh();
 
 				await Task.Delay(TICK_DELAY, cancellationToken);
 			}

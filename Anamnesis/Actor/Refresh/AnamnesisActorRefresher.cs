@@ -6,7 +6,7 @@ namespace Anamnesis.Actor.Refresh;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using System.Threading.Tasks;
-using static Anamnesis.Memory.ActorBasicMemory;
+using static Anamnesis.Memory.GameObjectMemory;
 
 public class AnamnesisActorRefresher : IActorRefresher
 {

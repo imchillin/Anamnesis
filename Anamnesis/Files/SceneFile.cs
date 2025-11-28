@@ -165,7 +165,7 @@ public class SceneFile : JsonFileBase
 
 		if (mode.HasFlagUnsafe(Mode.Camera))
 		{
-			var basicHandle = ActorService.InstanceOrNull?.ActorTable.Get<ActorBasicMemory>(targetActor.Address);
+			var basicHandle = ActorService.InstanceOrNull?.ObjectTable.Get<GameObjectMemory>(targetActor.Address);
 			if (basicHandle != null)
 			{
 				this.CameraShot!.Apply(CameraService.Instance, basicHandle);
@@ -198,7 +198,7 @@ public class SceneFile : JsonFileBase
 		this.TargetActorName = targetActor.DisplayName ?? "Unknown";
 
 		this.CameraShot = new();
-		var basicHandle = ActorService.InstanceOrNull?.ActorTable.Get<ActorBasicMemory>(targetActor.Memory.Address);
+		var basicHandle = ActorService.InstanceOrNull?.ObjectTable.Get<GameObjectMemory>(targetActor.Memory.Address);
 		if (basicHandle != null)
 		{
 			this.CameraShot.WriteToFile(CameraService.Instance, basicHandle);

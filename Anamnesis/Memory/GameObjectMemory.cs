@@ -9,7 +9,7 @@ using FontAwesome.Sharp;
 using PropertyChanged;
 using System;
 
-public class ActorBasicMemory : MemoryBase
+public class GameObjectMemory : MemoryBase
 {
 	public enum RenderModes : uint
 	{
@@ -33,7 +33,7 @@ public class ActorBasicMemory : MemoryBase
 
 	public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.Address}";
 	public string IdNoAddress => $"n{this.NameHash}_d{this.DataId}"; ////_k{this.ObjectKind}";
-	public int Index => ActorService.Instance.ActorTable.GetIndexOf(this.Address);
+	public int Index => ActorService.Instance.ObjectTable.GetIndexOf(this.Address);
 	public IconChar Icon => this.ObjectKind.GetIcon();
 	public double DistanceFromPlayer => Math.Sqrt(
 		(this.DistanceFromPlayerX * this.DistanceFromPlayerX) +
@@ -74,7 +74,7 @@ public class ActorBasicMemory : MemoryBase
 	[DependsOn(nameof(ObjectIndex), nameof(Address))]
 	public bool IsValid
 	{
-		get => this.Address != IntPtr.Zero && ActorService.InstanceOrNull?.ActorTable.GetIndexOf(this.Address) == this.ObjectIndex;
+		get => this.Address != IntPtr.Zero && ActorService.InstanceOrNull?.ObjectTable.GetIndexOf(this.Address) == this.ObjectIndex;
 	}
 
 	/// <summary>
@@ -83,13 +83,13 @@ public class ActorBasicMemory : MemoryBase
 	/// once inside of gpose, the owner becomes itself. Thanks SQEX.
 	/// </summary>
 	/// <returns>This actors owner actor.</returns>
-	public ObjectHandle<ActorBasicMemory>? GetOwner()
+	public ObjectHandle<GameObjectMemory>? GetOwner()
 	{
 		// do we own ourselves?
 		if (this.OwnerId == this.ObjectId)
 			return null;
 
-		var handles = ActorService.Instance.ActorTable.GetAll();
+		var handles = ActorService.Instance.ObjectTable.GetAll();
 
 		foreach (var handle in handles)
 		{

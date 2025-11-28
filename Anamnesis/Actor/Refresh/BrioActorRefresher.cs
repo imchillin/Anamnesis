@@ -39,7 +39,7 @@ public class BrioActorRefresher : IActorRefresher
 		{
 			// Save the current pose
 			var poseFile = new PoseFile();
-			var actorHandle = ActorService.Instance.ActorTable.Get<ActorMemory>(actor.Address);
+			var actorHandle = ActorService.Instance.ObjectTable.Get<ActorMemory>(actor.Address);
 			if (actorHandle == null)
 			{
 				Log.Warning($"Failed to refresh actor {actor.Id} as they are not part of the object table");

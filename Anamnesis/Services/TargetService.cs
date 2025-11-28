@@ -56,7 +56,7 @@ public class TargetService : ServiceBase<TargetService>
 	/// <summary>
 	/// Gets a handle to player target actor.
 	/// </summary>
-	public ObjectHandle<ActorBasicMemory>? PlayerTargetHandle { get; private set; }
+	public ObjectHandle<GameObjectMemory>? PlayerTargetHandle { get; private set; }
 
 	/// <summary>
 	/// Gets a value indicating whether the player target is pinnable.
@@ -105,7 +105,7 @@ public class TargetService : ServiceBase<TargetService>
 	/// <param name="handle">An object handle to the target actor to pin.</param>
 	/// <param name="select">A flag indicating whether to select the actor after pinning.</param>
 	/// <returns>A task representing the asynchronous operation.</returns>
-	public static async Task PinActor(ObjectHandle<ActorBasicMemory> handle, bool select = false)
+	public static async Task PinActor(ObjectHandle<GameObjectMemory> handle, bool select = false)
 	{
 		if (!handle.IsValid)
 			return;
@@ -136,7 +136,7 @@ public class TargetService : ServiceBase<TargetService>
 				}
 			}
 
-			var actorMemHandle = ActorService.Instance.ActorTable.Get<ActorMemory>(handle.Address);
+			var actorMemHandle = ActorService.Instance.ObjectTable.Get<ActorMemory>(handle.Address);
 			if (actorMemHandle != null)
 			{
 				var pinned = new PinnedActor(actorMemHandle);
@@ -163,7 +163,7 @@ public class TargetService : ServiceBase<TargetService>
 	/// Gets the memory of the player target.
 	/// </summary>
 	/// <returns>The memory of the player target.</returns>
-	public static ObjectHandle<ActorBasicMemory>? GetTargetedActor()
+	public static ObjectHandle<GameObjectMemory>? GetTargetedActor()
 	{
 		Instance.UpdatePlayerTarget();
 		return Instance.PlayerTargetHandle;
@@ -200,7 +200,7 @@ public class TargetService : ServiceBase<TargetService>
 	/// <param name="actor">The actor to search for.</param>
 	/// <returns>The pinned actor if found, otherwise null.</returns>
 	public static PinnedActor? GetPinned<T>(ObjectHandle<T> actor)
-		where T : ActorBasicMemory, new()
+		where T : GameObjectMemory, new()
 	{
 		var targetId = actor.Do(a => a.Id);
 		foreach (PinnedActor pinned in Instance.PinnedActors.ToList())
@@ -221,7 +221,7 @@ public class TargetService : ServiceBase<TargetService>
 	/// <param name="actor">The actor to check.</param>
 	/// <returns>True if the actor is pinned, otherwise false.</returns>
 	public static bool IsPinned<T>(ObjectHandle<T> actor)
-		where T : ActorBasicMemory, new() => GetPinned(actor) != null;
+		where T : GameObjectMemory, new() => GetPinned(actor) != null;
 
 	/// <summary>
 	/// Sets the player target to the specified pinned actor.
@@ -239,7 +239,7 @@ public class TargetService : ServiceBase<TargetService>
 	/// Sets the player target to the specified actor.
 	/// </summary>
 	/// <param name="actor">The actor to set as the new player target.</param>
-	public static void SetPlayerTarget(ActorBasicMemory actor)
+	public static void SetPlayerTarget(GameObjectMemory actor)
 	{
 		if (actor.IsValid)
 		{
@@ -436,7 +436,7 @@ public class TargetService : ServiceBase<TargetService>
 			{
 				bool isGpose = GposeService.GetIsGPose();
 
-				var actorHandles = ActorService.Instance.ActorTable.GetAll();
+				var actorHandles = ActorService.Instance.ObjectTable.GetAll();
 
 				// We want the first non-hidden actor with a name in the same mode as the game
 				foreach (var handle in actorHandles)
@@ -483,7 +483,7 @@ public class TargetService : ServiceBase<TargetService>
 	{
 		if (ptr != null && ptr != IntPtr.Zero)
 		{
-			if (ActorService.Instance.ActorTable.Contains((IntPtr)ptr))
+			if (ActorService.Instance.ObjectTable.Contains((IntPtr)ptr))
 			{
 				if (GposeService.Instance.IsGpose)
 				{
@@ -523,7 +523,7 @@ public class TargetService : ServiceBase<TargetService>
 				}
 				else
 				{
-					this.PlayerTargetHandle = ActorService.Instance.ActorTable.Get<ActorBasicMemory>(currentPlayerTargetPtr);
+					this.PlayerTargetHandle = ActorService.Instance.ObjectTable.Get<GameObjectMemory>(currentPlayerTargetPtr);
 				}
 
 				this.RaisePropertyChanged(nameof(TargetService.PlayerTargetHandle));

@@ -15,7 +15,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class ActorMemory : ActorBasicMemory, IDisposable
+public class ActorMemory : GameObjectMemory, IDisposable
 {
 	private const int REFRESH_DEBOUNCE_TIMEOUT = 200;
 

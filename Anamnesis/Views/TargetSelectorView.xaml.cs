@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using XivToolsWpf;
 
-public abstract class TargetSelectorDrawer : SelectorDrawer<ObjectHandle<ActorBasicMemory>>
+public abstract class TargetSelectorDrawer : SelectorDrawer<ObjectHandle<GameObjectMemory>>
 {
 }
 
@@ -92,7 +92,7 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 	}
 #pragma warning restore CA1822
 
-	public static void Show(Action<ObjectHandle<ActorBasicMemory>> sectionChanged)
+	public static void Show(Action<ObjectHandle<GameObjectMemory>> sectionChanged)
 	{
 		var view = new TargetSelectorView();
 		view.SelectionChanged += (b) =>
@@ -108,7 +108,7 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 
 	protected override Task LoadItems()
 	{
-		var actorHandles = ActorService.Instance.ActorTable.GetAll();
+		var actorHandles = ActorService.Instance.ObjectTable.GetAll();
 
 		// As we do not actively update non-pinned actors, synchronize first
 		foreach (var handle in actorHandles)
@@ -123,7 +123,7 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 		return Task.CompletedTask;
 	}
 
-	protected override int Compare(ObjectHandle<ActorBasicMemory> actorA, ObjectHandle<ActorBasicMemory> actorB)
+	protected override int Compare(ObjectHandle<GameObjectMemory> actorA, ObjectHandle<GameObjectMemory> actorB)
 	{
 		if (actorA.Do(a => a.IsGPoseActor) && !actorB.Do(a => a.IsGPoseActor))
 			return -1;
@@ -134,7 +134,7 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 		return actorA.Do(a => a.DistanceFromPlayer).CompareTo(actorB.Do(a => a.DistanceFromPlayer));
 	}
 
-	protected override bool Filter(ObjectHandle<ActorBasicMemory> handle, string[]? search)
+	protected override bool Filter(ObjectHandle<GameObjectMemory> handle, string[]? search)
 	{
 		return handle.Do(actor =>
 		{
@@ -204,7 +204,7 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 			var nextActorId = await Brio.Spawn();
 			if (nextActorId != -1)
 			{
-				var actorHandles = ActorService.Instance.ActorTable.GetAll();
+				var actorHandles = ActorService.Instance.ObjectTable.GetAll();
 				var newActorHandle = actorHandles.SingleOrDefault(h => h.Do(a => a.ObjectIndex) == nextActorId);
 				if (newActorHandle != null && newActorHandle.IsValid)
 				{
@@ -221,7 +221,7 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 
 							await newActorHandle.DoAsync(async actor =>
 							{
-								var upgradedActorHandle = ActorService.Instance.ActorTable.Get<ActorMemory>(newActorHandle.Address);
+								var upgradedActorHandle = ActorService.Instance.ObjectTable.Get<ActorMemory>(newActorHandle.Address);
 								if (upgradedActorHandle != null)
 								{
 									var skeleton = new Skeleton(upgradedActorHandle);

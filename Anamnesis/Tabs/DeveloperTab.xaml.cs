@@ -46,7 +46,7 @@ public partial class DeveloperTab : UserControl
 	{
 		TargetSelectorView.Show((a) =>
 		{
-			var actorHandle = ActorService.Instance.ActorTable.Get<ActorMemory>(a.Address);
+			var actorHandle = ActorService.Instance.ObjectTable.Get<ActorMemory>(a.Address);
 			if (actorHandle != null)
 			{
 				NpcAppearanceSearch.Search(actorHandle);

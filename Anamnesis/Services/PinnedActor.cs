@@ -131,7 +131,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 				return;
 			}
 
-			if (!ActorService.Instance.ActorTable.Contains(this.Memory.Address))
+			if (!ActorService.Instance.ObjectTable.Contains(this.Memory.Address))
 			{
 				Log.Information($"Actor: {this} was not in actor table");
 				this.Retarget();
@@ -253,10 +253,10 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 			this.Memory?.Do(a => a.PropertyChanged -= this.OnViewModelPropertyChanged);
 
-			ObjectHandle<ActorBasicMemory>? newHandle = null;
+			ObjectHandle<GameObjectMemory>? newHandle = null;
 			bool isGPose = GposeService.GetIsGPose();
 
-			var actorHandles = ActorService.Instance.ActorTable.GetAll();
+			var actorHandles = ActorService.Instance.ObjectTable.GetAll();
 
 			// As we do not actively update non-pinned actors, synchronize first
 			foreach (var handle in actorHandles)
@@ -332,7 +332,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 			{
 				IntPtr? oldAddress = this.Memory?.Address;
 				this.Memory?.Dispose();
-				this.Memory = ActorService.Instance.ActorTable.Get<ActorMemory>(newHandle.Address);
+				this.Memory = ActorService.Instance.ObjectTable.Get<ActorMemory>(newHandle.Address);
 				this.Memory?.Do(a => a.Pinned = this);
 
 				this.UpdateActorInfo();
