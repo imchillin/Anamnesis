@@ -301,13 +301,13 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 				{
 					if (!removedEntry.Object.IsDisposed)
 						removedEntry.Object.Dispose();
-
-					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Unsafe)));
-					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsValid)));
-					Invalidated?.Invoke(this);
 				}
 			}
 		}
+
+		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Unsafe)));
+		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsValid)));
+		Invalidated?.Invoke(this);
 
 		GC.SuppressFinalize(this);
 	}

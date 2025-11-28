@@ -76,7 +76,7 @@
 						Height="32"
 						Click="OnCopyAssociatedAddressesClick"/>
 
-				<inspector:InspectorView Target="{Binding TargetService.PlayerTargetHandle.Unsafe}" Height="350"/>
+				<inspector:InspectorView Target="{Binding TargetService.PlayerTargetHandle.Unsafe, Mode=OneWay}" Height="350"/>
 			</StackPanel>
 		</GroupBox>
 
