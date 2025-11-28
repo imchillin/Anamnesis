@@ -514,9 +514,13 @@ public class TargetService : ServiceBase<TargetService>
 
 		try
 		{
-			if (this.PlayerTargetHandle?.Address != currentPlayerTargetPtr)
+			bool wasNull = this.PlayerTargetHandle == null;
+			bool willBeNull = currentPlayerTargetPtr == IntPtr.Zero;
+
+			if (wasNull != willBeNull || (!willBeNull && (this.PlayerTargetHandle?.Address != currentPlayerTargetPtr)))
 			{
-				if (currentPlayerTargetPtr == IntPtr.Zero)
+				// Only raise property changed if transitioning between null and non-null
+				if (willBeNull)
 				{
 					this.PlayerTargetHandle?.Dispose();
 					this.PlayerTargetHandle = null;
@@ -536,17 +540,27 @@ public class TargetService : ServiceBase<TargetService>
 		}
 
 		// Tick the actor if it still exists
-		if (this.PlayerTargetHandle?.IsValid == true)
+		var handle = this.PlayerTargetHandle;
+		if (handle?.IsValid == true)
 		{
 			try
 			{
-				var pinnedActor = this.PinnedActors.FirstOrDefault(pinned => pinned.Memory?.Address == this.PlayerTargetHandle.Address);
+				PinnedActor? pinnedActor = null;
+				for (int i = 0, count = this.PinnedActors.Count; i < count; i++)
+				{
+					var pinned = this.PinnedActors[i];
+					if (pinned.Memory?.Address == handle.Address)
+					{
+						pinnedActor = pinned;
+						break;
+					}
+				}
 
 				// If the player target is pinned, synchronize through the pinned actor class. Otherwise synchronize directly.
 				if (pinnedActor != null)
 					pinnedActor.Tick();
 				else
-					this.PlayerTargetHandle.Do(a => a.Synchronize());
+					handle.Do(a => a.Synchronize());
 			}
 			catch
 			{
