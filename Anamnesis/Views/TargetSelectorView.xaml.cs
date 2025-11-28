@@ -125,13 +125,25 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 
 	protected override int Compare(ObjectHandle<GameObjectMemory> actorA, ObjectHandle<GameObjectMemory> actorB)
 	{
-		if (actorA.Do(a => a.IsGPoseActor) && !actorB.Do(a => a.IsGPoseActor))
+		if (actorA.Do(a => a.IsGPoseActor) == true && actorB.Do(a => a.IsGPoseActor) == false)
 			return -1;
 
-		if (!actorA.Do(a => a.IsGPoseActor) && actorB.Do(a => a.IsGPoseActor))
+		if (actorA.Do(a => a.IsGPoseActor) == false && actorB.Do(a => a.IsGPoseActor) == true)
 			return 1;
 
-		return actorA.Do(a => a.DistanceFromPlayer).CompareTo(actorB.Do(a => a.DistanceFromPlayer));
+		double? distanceA = actorA.Do(a => a.DistanceFromPlayer);
+		double? distanceB = actorB.Do(a => a.DistanceFromPlayer);
+
+		if (distanceA == null && distanceB == null)
+			return 0;
+
+		if (distanceA == null)
+			return 1;
+
+		if (distanceB == null)
+			return -1;
+
+		return distanceA.Value.CompareTo(distanceB.Value);
 	}
 
 	protected override bool Filter(ObjectHandle<GameObjectMemory> handle, string[]? search)
@@ -177,7 +189,7 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 			}
 
 			return true;
-		});
+		}) == true;
 	}
 
 	protected override void OnSelectionChanged(bool close)

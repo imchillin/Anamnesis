@@ -76,7 +76,7 @@ public class Skeleton : INotifyPropertyChanged
 	public ObjectHandle<ActorMemory> Actor { get; private set; }
 
 	/// <summary>Gets the model space root rotation of the skeleton.</summary>
-	public Quaternion RootRotation => this.Actor?.Do(a => a.ModelObject)?.Transform?.Rotation ?? Quaternion.Identity;
+	public Quaternion RootRotation => this.Actor?.DoRef(a => a.ModelObject)?.Transform?.Rotation ?? Quaternion.Identity;
 
 	/// <summary> Gets a value indicating whether the actor has a tail.</summary>
 	public bool HasTail => (this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Miqote
@@ -124,7 +124,7 @@ public class Skeleton : INotifyPropertyChanged
 			if (!this.IsViera)
 				return false;
 
-			ActorCustomizeMemory? customize = this.Actor?.Do(a => a.Customize);
+			ActorCustomizeMemory? customize = this.Actor?.DoRef(a => a.Customize);
 
 			if (customize == null)
 				return false;
@@ -239,7 +239,7 @@ public class Skeleton : INotifyPropertyChanged
 		{
 			this.snapshot.Clear();
 
-			return this.Actor?.Do(a =>
+			return this.Actor?.DoRef(a =>
 			{
 				if (a.ModelObject == null || a.ModelObject?.Skeleton == null)
 					return this.snapshot;

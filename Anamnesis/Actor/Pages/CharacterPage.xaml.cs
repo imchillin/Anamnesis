@@ -68,7 +68,7 @@ public partial class CharacterPage : UserControl
 			// One of the weapons must not be null and have a non-zero set to be dyable.
 			return this.Actor.Do(a =>
 				(a.MainHand != null && a.MainHand.Set != 0) ||
-				(a.OffHand != null && a.OffHand.Set != 0));
+				(a.OffHand != null && a.OffHand.Set != 0)) == true;
 		}
 	}
 
@@ -664,7 +664,7 @@ public partial class CharacterPage : UserControl
 
 		Application.Current.Dispatcher.InvokeAsync(() =>
 		{
-			bool hasValidSelection = actorHandle != null && actorHandle.Do(a => a.ObjectKind.IsSupportedType());
+			bool hasValidSelection = actorHandle != null && actorHandle.Do(a => a.ObjectKind.IsSupportedType()) == true;
 			this.IsEnabled = hasValidSelection;
 		});
 	}

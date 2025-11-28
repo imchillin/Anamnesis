@@ -24,9 +24,9 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		if (!handle.IsValid)
 			throw new ArgumentException("Cannot pin an invalid actor handle");
 
-		this.Id = handle.Do(a => a.Id) ?? string.Empty;
-		this.IdNoAddress = handle.Do(a => a.IdNoAddress) ?? string.Empty;
-		this.Name = handle.Do(a => a.Name);
+		this.Id = handle.DoRef(a => a.Id) ?? string.Empty;
+		this.IdNoAddress = handle.DoRef(a => a.IdNoAddress) ?? string.Empty;
+		this.Name = handle.DoRef(a => a.Name);
 		this.Memory = handle;
 		handle.Do(a => a.Pinned = this);
 
@@ -63,7 +63,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	public bool IsGPoseActor => this.Memory?.Do(a => a.IsGPoseActor) ?? false;
 
 	[DependsOn(nameof(Memory))]
-	public string? DisplayName => this.Memory?.Do(a => a.DisplayName) ?? this.Name;
+	public string? DisplayName => this.Memory?.DoRef(a => a.DisplayName) ?? this.Name;
 
 	public bool IsRetargeting { get; private set; } = false;
 
@@ -138,7 +138,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 				return;
 			}
 
-			if (this.Memory.Do(a => a.IsGPoseActor) && !GposeService.Instance.IsGpose)
+			if (this.Memory.Do(a => a.IsGPoseActor) == true && !GposeService.Instance.IsGpose)
 			{
 				Log.Information($"Actor: {this} was a gpose actor and we are now in the overworld");
 				this.Retarget();
@@ -285,7 +285,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 					return true;
 				});
 
-				if (result)
+				if (result == true)
 				{
 					newHandle = handle;
 					break;
@@ -320,7 +320,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 						return true;
 					});
 
-					if (result)
+					if (result == true)
 					{
 						newHandle = handle;
 						break;
@@ -365,11 +365,16 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		if (this.Memory == null)
 			return;
 
-		this.Id = this.Memory.Do(a => a.Id) ?? string.Empty;
-		this.IdNoAddress = this.Memory.Do(a => a.IdNoAddress) ?? string.Empty;
-		this.Name = this.Memory.Do(a => a.Name);
+		this.Id = this.Memory.DoRef(a => a.Id) ?? string.Empty;
+		this.IdNoAddress = this.Memory.DoRef(a => a.IdNoAddress) ?? string.Empty;
+		this.Name = this.Memory.DoRef(a => a.Name);
 		this.Pointer = this.Memory.Address;
-		this.Icon = this.Memory.Do(a => a.ObjectKind).GetIcon();
+
+		var objectKind = this.Memory.Do(a => a.ObjectKind);
+		if (objectKind != null)
+		{
+			this.Icon = ((ActorTypes)objectKind).GetIcon();
+		}
 
 		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Kind)));
 		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsGPoseActor)));
@@ -388,14 +393,19 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 		if (e.PropertyName == nameof(ActorMemory.DisplayName))
 		{
-			this.UpdateInitials(this.Memory.Do(a => a.DisplayName));
+			this.UpdateInitials(this.Memory.DoRef(a => a.DisplayName));
 			return;
 		}
 
 		if (e.PropertyName == nameof(ActorMemory.ObjectKind))
 		{
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Kind)));
-			this.Icon = this.Memory.Do(a => a.ObjectKind).GetIcon();
+			var objectKind = this.Memory.Do(a => a.ObjectKind);
+			if (objectKind != null)
+			{
+				this.Icon = ((ActorTypes)objectKind).GetIcon();
+			}
+
 			return;
 		}
 

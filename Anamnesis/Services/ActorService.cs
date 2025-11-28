@@ -327,25 +327,47 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	}
 
 	/// <summary>
-	/// Performs the specified function on the underlying object if the handle is valid and returns the result.
+	/// Executes the specified function on the underlying object if the handle is valid and returns the result.
+	/// This variant is intended for value types (<typeparamref name="TResult"/> : struct).
 	/// </summary>
-	/// <typeparam name="TResult">The type of the result.</typeparam>
-	/// <param name="func">The function to perform.</param>
-	/// <remarks>
-	/// Exert caution when using this method, especially when expecting a boolean result, as the default value
-	/// is returned if the handle is not valid, which in the case of booleans is false.
-	/// </remarks>
-	/// <returns>The result of the function, or default if the handle is not valid.</returns>
+	/// <typeparam name="TResult">The value type result.</typeparam>
+	/// <param name="func">The function to execute on the object.</param>
+	/// <returns>
+	/// The result of the function, or <c>null</c> if the handle is not valid.
+	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public TResult? Do<TResult>(Func<T, TResult> func)
+		where TResult : struct
 	{
 		if (!this.IsValid)
-			return default;
+			return null;
 
 		if (s_cache.TryGetValue((this.ptr, typeof(T)), out var entry))
 			return func(entry.Object);
 
-		return default;
+		return null;
+	}
+
+	/// <summary>
+	/// Executes the specified function on the underlying object if the handle is valid and returns the result.
+	/// This variant is intended for reference types (<typeparamref name="TResult"/> : class).
+	/// </summary>
+	/// <typeparam name="TResult">The reference type result.</typeparam>
+	/// <param name="func">The function to execute on the object.</param>
+	/// <returns>
+	/// The result of the function, or <c>null</c> if the handle is not valid.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public TResult? DoRef<TResult>(Func<T, TResult> func)
+		where TResult : class?
+	{
+		if (!this.IsValid)
+			return null;
+
+		if (s_cache.TryGetValue((this.ptr, typeof(T)), out var entry))
+			return func(entry.Object);
+
+		return null;
 	}
 
 	/// <summary>
@@ -364,25 +386,47 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	}
 
 	/// <summary>
-	/// Performs the specified asynchronous function on the underlying object if the handle is valid and returns the result.
+	/// Executes the specified asynchronous function on the underlying object if the handle is valid and returns the result.
+	/// This variant is intended for value types (<typeparamref name="TResult"/> : struct).
 	/// </summary>
-	/// <typeparam name="TResult">The type of the result.</typeparam>
-	/// <param name="func">The asynchronous function to perform.</param>
-	/// <remarks>
-	/// Exert caution when using this method, especially when expecting a boolean result, as the default value
-	/// is returned if the handle is not valid, which in the case of booleans is false.
-	/// </remarks>
-	/// <returns>The result of the function, or default if the handle is not valid.</returns>
+	/// <typeparam name="TResult">The value type result.</typeparam>
+	/// <param name="func">The asynchronous function to execute on the object.</param>
+	/// <returns>
+	/// A task representing the asynchronous operation, with the result of the function or <c>null</c> if the handle is not valid.
+	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public async Task<TResult?> DoAsync<TResult>(Func<T, Task<TResult>> func)
+		where TResult : struct
 	{
 		if (!this.IsValid)
-			return default;
+			return null;
 
 		if (s_cache.TryGetValue((this.ptr, typeof(T)), out var entry))
 			return await func(entry.Object);
 
-		return default;
+		return null;
+	}
+
+	/// <summary>
+	/// Executes the specified asynchronous function on the underlying object if the handle is valid and returns the result.
+	/// This variant is intended for reference types (<typeparamref name="TResult"/> : class).
+	/// </summary>
+	/// <typeparam name="TResult">The reference type result.</typeparam>
+	/// <param name="func">The asynchronous function to execute on the object.</param>
+	/// <returns>
+	/// A task representing the asynchronous operation, with the result of the function or <c>null</c> if the handle is not valid.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public async Task<TResult?> DoRefAsync<TResult>(Func<T, Task<TResult>> func)
+		where TResult : class
+	{
+		if (!this.IsValid)
+			return null;
+
+		if (s_cache.TryGetValue((this.ptr, typeof(T)), out var entry))
+			return await func(entry.Object);
+
+		return null;
 	}
 
 	/// <summary>

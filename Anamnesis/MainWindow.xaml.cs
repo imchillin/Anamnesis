@@ -332,7 +332,8 @@ public partial class MainWindow : ChromedWindow
 
 			try
 			{
-				if (await Brio.Brio.Despawn(actor.Memory.Do(a => a.ObjectIndex)))
+				ushort objectIndex = actor.Memory.Do(a => a.ObjectIndex) ?? throw new Exception("Actor has no object index");
+				if (await Brio.Brio.Despawn(objectIndex))
 				{
 					TargetService.UnpinActor(actor);
 				}

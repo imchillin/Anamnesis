@@ -36,7 +36,7 @@ public class SkeletonVisual3D : ModelVisual3D, IDisposable
 		this.Initialize(skeleton);
 
 		this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
-		if (this.Skeleton.Actor.Do(a => a.ModelObject?.Transform != null))
+		if (this.Skeleton.Actor.Do(a => a.ModelObject?.Transform != null) == true)
 		{
 			this.Skeleton.Actor.Do(a => a.ModelObject!.Transform!.PropertyChanged += this.OnTransformPropertyChanged);
 		}
@@ -93,7 +93,7 @@ public class SkeletonVisual3D : ModelVisual3D, IDisposable
 			if (disposing)
 			{
 				// Dispose managed resources
-				if (this.Skeleton.Actor.Do(a => a.ModelObject?.Transform != null))
+				if (this.Skeleton.Actor.Do(a => a.ModelObject?.Transform != null) == true)
 				{
 					this.Skeleton.Actor.Do(a => a.ModelObject!.Transform!.PropertyChanged -= this.OnTransformPropertyChanged);
 				}

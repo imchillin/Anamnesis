@@ -370,7 +370,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.FaceGuiView.DataContext = null;
 		this.MatrixView.DataContext = null;
 
-		if (this.Actor == null || this.Actor.Do(a => a.ModelObject == null))
+		if (this.Actor == null || this.Actor.Do(a => a.ModelObject == null) != false)
 		{
 			this.Skeleton?.Clear();
 			this.Skeleton = null;
@@ -976,7 +976,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		this.selectedBonesTooltipCache = count switch
 		{
-			0 => (TargetService.SelectedActor != null) ? TargetService.SelectedActor.Do(a => a.DisplayName) : string.Empty,
+			0 => (TargetService.SelectedActor != null) ? TargetService.SelectedActor.DoRef(a => a.DisplayName) ?? string.Empty : string.Empty,
 			1 => selectedBones.First().Tooltip,
 			<= 3 => string.Join(", ", selectedBones.Select(b => b.Tooltip)),
 			_ => string.Join(", ", selectedBones.Take(3).Select(b => b.Tooltip)) + LocalizationService.GetStringFormatted("Pose_SelectedBones_TooltipTrimmed", (count - 3).ToString()),

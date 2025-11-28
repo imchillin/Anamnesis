@@ -47,7 +47,7 @@ public class SceneFile : JsonFileBase
 	{
 		await Task.Yield();
 
-		if (TargetService.Instance.PinnedActors.Where(i => !i.IsValid || i.Memory?.Do(a => a.ModelObject) == null).Any())
+		if (TargetService.Instance.PinnedActors.Where(i => !i.IsValid || i.Memory?.DoRef(a => a.ModelObject) == null).Any())
 			throw new Exception("All pinned actors must be valid and have a model");
 
 		// First up, ensure we have the actors mapped
@@ -90,9 +90,8 @@ public class SceneFile : JsonFileBase
 		if (targetActor == null)
 			throw new Exception($"Failed to locate target actor: {this.TargetActorName} in scene");
 
-		var pinnedTarget = TargetService.GetPinned(targetActor);
-		if (pinnedTarget == null)
-			throw new Exception($"Failed to locate pinned target actor: {this.TargetActorName} in scene");
+		var pinnedTarget = TargetService.GetPinned(targetActor)
+			?? throw new Exception($"Failed to locate pinned target actor: {this.TargetActorName} in scene");
 
 		TargetService.SetPlayerTarget(pinnedTarget);
 
@@ -115,7 +114,8 @@ public class SceneFile : JsonFileBase
 			rootActor.Do(a => a.ModelObject!.Transform!.Rotation = rootActorEntry.Rotation);
 		}
 
-		Vector3 rootPosition = rootActor!.Do(a => a.ModelObject!.Transform!.Position);
+		Vector3 rootPosition = rootActor!.Do(a => a.ModelObject!.Transform!.Position)
+			?? throw new Exception("Failed to get root actor position");
 		Quaternion rootRotation = new Quaternion(0, 0, 0, 1) * rootActorEntry.Rotation;
 		rootActor.Do(a => a.ModelObject!.Transform!.Rotation = rootRotation);
 
@@ -180,7 +180,7 @@ public class SceneFile : JsonFileBase
 		this.DayOfMonth = TimeService.Instance.DayOfMonth;
 		this.TimeOfDay = TimeService.Instance.TimeOfDay;
 
-		if (TargetService.Instance.PinnedActors.Where(i => !i.IsValid || i.Memory?.Do(a => a.ModelObject) == null).Any())
+		if (TargetService.Instance.PinnedActors.Where(i => !i.IsValid || i.Memory?.DoRef(a => a.ModelObject) == null).Any())
 			throw new Exception("All pinned actors must be valid and have a model");
 
 		var actorHandles = TargetService.Instance.PinnedActors.Select(i => i.Memory!).ToList();
@@ -189,7 +189,7 @@ public class SceneFile : JsonFileBase
 			throw new Exception("No pinned actors found");
 
 		ObjectHandle<ActorMemory> rootActor = actorHandles[0];
-		this.RootActorName = rootActor.Do(a => a.DisplayName) ?? "Unknown";
+		this.RootActorName = rootActor.DoRef(a => a.DisplayName) ?? "Unknown";
 
 		PinnedActor? targetActor = TargetService.GetPlayerTarget();
 		if (targetActor == null || !targetActor.IsValid || targetActor.Memory == null)
@@ -206,15 +206,20 @@ public class SceneFile : JsonFileBase
 
 		this.ActorEntries = new();
 
-		Vector3 rootPosition = rootActor!.Do(a => a.ModelObject!.Transform!.Position);
-		Quaternion rootRotation = rootActor!.Do(a => a.ModelObject!.Transform!.Rotation);
+		Vector3 rootPosition = rootActor!.Do(a => a.ModelObject!.Transform!.Position)
+			?? throw new Exception("Failed to get root actor position");
+		Quaternion rootRotation = rootActor!.Do(a => a.ModelObject!.Transform!.Rotation)
+			?? throw new Exception("Failed to get root actor rotation");
 		Quaternion invertedRootRotation = Quaternion.Inverse(rootRotation);
 
 		foreach (ObjectHandle<ActorMemory> actor in actorHandles)
 		{
-			Vector3 actorPosition = actor.Do(a => a.ModelObject!.Transform!.Position);
-			Vector3 actorScale = actor.Do(a => a.ModelObject!.Transform!.Scale);
-			Quaternion actorRotation = actor.Do(a => a.ModelObject!.Transform!.Rotation);
+			Vector3 actorPosition = actor.Do(a => a.ModelObject!.Transform!.Position)
+				?? throw new Exception("Failed to get actor position");
+			Vector3 actorScale = actor.Do(a => a.ModelObject!.Transform!.Scale)
+				?? throw new Exception("Failed to get actor scale");
+			Quaternion actorRotation = actor.Do(a => a.ModelObject!.Transform!.Rotation)
+				?? throw new Exception("Failed to get actor rotation");
 
 			Vector3 relativePosition = actorPosition - rootPosition;
 
@@ -245,7 +250,7 @@ public class SceneFile : JsonFileBase
 			entry.Appearance = characterFile;
 			entry.Pose = poseFile;
 
-			var displayName = actor.Do(a => a.DisplayName) ?? "Unknown";
+			var displayName = actor.DoRef(a => a.DisplayName) ?? "Unknown";
 			if (this.ActorEntries.ContainsKey(displayName))
 				throw new Exception($"Duplicate actor name: {displayName} in scene.");
 
@@ -261,7 +266,7 @@ public class SceneFile : JsonFileBase
 			if (actorHandle == null)
 				continue;
 
-			if (actorHandle.Do(a => a.DisplayName == name))
+			if (actorHandle.Do(a => a.DisplayName == name) == true)
 				return actorHandle;
 		}
 

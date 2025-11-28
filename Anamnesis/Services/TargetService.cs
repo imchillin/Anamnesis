@@ -61,7 +61,7 @@ public class TargetService : ServiceBase<TargetService>
 	/// <summary>
 	/// Gets a value indicating whether the player target is pinnable.
 	/// </summary>
-	public bool IsPlayerTargetPinnable => this.PlayerTargetHandle != null && this.PlayerTargetHandle.Do(a => a.ObjectKind.IsSupportedType());
+	public bool IsPlayerTargetPinnable => this.PlayerTargetHandle != null && this.PlayerTargetHandle.Do(a => a.ObjectKind.IsSupportedType()) == true;
 
 	/// <summary>
 	/// Gets the currently pinned selected actor (if any).
@@ -121,7 +121,7 @@ public class TargetService : ServiceBase<TargetService>
 			return true;
 		});
 
-		if (!result)
+		if (result != true)
 			return;
 
 		try
@@ -202,13 +202,13 @@ public class TargetService : ServiceBase<TargetService>
 	public static PinnedActor? GetPinned<T>(ObjectHandle<T> actor)
 		where T : GameObjectMemory, new()
 	{
-		var targetId = actor.Do(a => a.Id);
+		var targetId = actor.DoRef(a => a.Id);
 		foreach (PinnedActor pinned in Instance.PinnedActors.ToList())
 		{
 			if (pinned.Memory == null)
 				continue;
 
-			if (pinned.Memory.Do(a => a.Id == targetId))
+			if (pinned.Memory.Do(a => a.Id == targetId) == true)
 				return pinned;
 		}
 
@@ -461,7 +461,7 @@ public class TargetService : ServiceBase<TargetService>
 						return true;
 					});
 
-					if (result)
+					if (result == true)
 					{
 						await PinActor(handle);
 						break;

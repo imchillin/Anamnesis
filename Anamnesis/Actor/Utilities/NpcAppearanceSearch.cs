@@ -149,7 +149,7 @@ public static class NpcAppearanceSearch
 			}
 
 			return true;
-		});
+		}) == true;
 	}
 
 	// We dont check everything here, just enough to get unique.
