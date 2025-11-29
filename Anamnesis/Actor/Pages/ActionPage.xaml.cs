@@ -36,12 +36,12 @@ public partial class ActionPage : UserControl
 	public static GposeService GposeService => GposeService.Instance;
 	public static AnimationService AnimationService => AnimationService.Instance;
 	public static PoseService PoseService => PoseService.Instance;
-	public ActorMemory? Actor { get; private set; }
+	public ObjectHandle<ActorMemory>? Actor { get; private set; }
 	public IEnumerable<ActionTimeline> LipSyncTypes { get; private set; }
 
 	public UserAnimationOverride AnimationOverride { get; private set; } = new();
 
-	public ConditionalWeakTable<ActorMemory, UserAnimationOverride> UserAnimationOverrides { get; private set; } = [];
+	public ConditionalWeakTable<ObjectHandle<ActorMemory>, UserAnimationOverride> UserAnimationOverrides { get; private set; } = [];
 
 	private static IEnumerable<ActionTimeline> GenerateLipList()
 	{
@@ -52,38 +52,45 @@ public partial class ActionPage : UserControl
 
 	private void OnLoaded(object sender, RoutedEventArgs e)
 	{
-		this.OnActorChanged(this.DataContext as ActorMemory);
+		this.OnActorChanged(this.DataContext as ObjectHandle<ActorMemory>);
 	}
 
 	private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 	{
-		this.OnActorChanged(this.DataContext as ActorMemory);
+		this.OnActorChanged(this.DataContext as ObjectHandle<ActorMemory>);
 	}
 
-	private void OnActorChanged(ActorMemory? actor)
+	private void OnActorChanged(ObjectHandle<ActorMemory>? actorHandle)
 	{
 		if (this.Actor != null) // Save the current settings
 			this.UserAnimationOverrides.AddOrUpdate(this.Actor, this.AnimationOverride);
 
-		this.Actor = actor;
+		this.Actor = actorHandle;
 
 		Application.Current.Dispatcher.InvokeAsync(() =>
 		{
-			bool hasValidSelection = actor != null && actor.ObjectKind.IsSupportedType();
-			this.IsEnabled = hasValidSelection;
+			this.IsEnabled = this.Actor?.Do(a => a.ObjectKind.IsSupportedType()) == true;
 		});
 
-		if (actor != null)
+		if (actorHandle != null)
 		{
-			if (this.UserAnimationOverrides.TryGetValue(actor, out UserAnimationOverride? userAnimationOverride))
+			if (this.UserAnimationOverrides.TryGetValue(actorHandle, out UserAnimationOverride? userAnimationOverride))
 			{
 				this.AnimationOverride = userAnimationOverride;
 			}
 			else
 			{
+				ushort? baseAnimId = actorHandle?.Do(a =>
+				{
+					if (a.Animation == null || a.Animation.AnimationIds == null)
+						return default;
+
+					return a.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody].Value;
+				});
+
 				this.AnimationOverride = new()
 				{
-					BaseAnimationId = actor.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody].Value,
+					BaseAnimationId = baseAnimId ?? 0,
 					BlendAnimationId = 0,
 				};
 			}
@@ -134,43 +141,37 @@ public partial class ActionPage : UserControl
 
 	private void OnApplyOverrideAnimation(object sender, RoutedEventArgs e)
 	{
-		if (this.Actor?.IsValid != true)
-			return;
-
-		AnimationService.ApplyAnimationOverride(this.Actor, this.AnimationOverride.BaseAnimationId, this.AnimationOverride.Interrupt);
+		this.Actor?.Do(actor =>
+		{
+			AnimationService.ApplyAnimationOverride(actor, this.AnimationOverride.BaseAnimationId, this.AnimationOverride.Interrupt);
+		});
 	}
 
 	private void OnDrawWeaponOverrideAnimation(object sender, RoutedEventArgs e)
 	{
-		if (this.Actor?.IsValid != true)
-			return;
-
-		AnimationService.DrawWeapon(this.Actor);
+		this.Actor?.Do(AnimationService.DrawWeapon);
 	}
 
 	private async void OnBlendAnimation(object sender, RoutedEventArgs e)
 	{
-		if (this.Actor?.IsValid != true)
+		if (this.Actor == null)
 			return;
 
-		await AnimationService.BlendAnimation(this.Actor, this.AnimationOverride.BlendAnimationId);
-		this.AnimationBlendButton.Focus(); // Refocus on the button as the blend lock changes state in the function call above
+		await this.Actor.DoAsync(async actor =>
+		{
+			await AnimationService.BlendAnimation(actor, this.AnimationOverride.BlendAnimationId);
+			this.AnimationBlendButton.Focus(); // Refocus on the button as the blend lock changes state in the function call above
+		});
 	}
 
 	private void OnIdleOverrideAnimation(object sender, RoutedEventArgs e)
 	{
-		if (this.Actor?.IsValid != true)
-			return;
-
-		AnimationService.ApplyIdle(this.Actor);
+		this.Actor?.Do(AnimationService.ApplyIdle);
 	}
 
 	private void OnResetOverrideAnimation(object sender, RoutedEventArgs e)
 	{
-		if (this.Actor?.IsValid != true)
-			return;
-
-		AnimationService.ResetAnimationOverride(this.Actor);
+		this.Actor?.Do(AnimationService.ResetAnimationOverride);
 	}
 
 	private void OnResumeAll(object sender, RoutedEventArgs e) => this.OnResumeAll();
