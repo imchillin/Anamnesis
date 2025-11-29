@@ -109,7 +109,6 @@
 					Margin="3"
 					Width="32"
 					Click="OnCreateFolderClicked"
-					IsEnabled="{Binding FileSource.CanWrite}"
 					Style="{StaticResource TransparentButton}">
 
 				<Button.ToolTip>
@@ -135,8 +134,10 @@
 			</ToggleButton>
 
 			<ComboBox Grid.Column="5"
-					  Margin="6, 3, 6, 0"
+					  Margin="6, 0, 6, 0"
 					  Height="22"
+					  VerticalContentAlignment="Center"
+					  Foreground="{DynamicResource MaterialDesignBodyLight}"
 					  Style="{StaticResource MaterialDesignDataGridComboBox}"
 					  SelectedIndex="{Binding SortModeInt, Mode=TwoWay}">
 
