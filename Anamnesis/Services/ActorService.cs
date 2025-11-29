@@ -204,6 +204,7 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	where T : GameObjectMemory, new()
 {
+	private static readonly Lock s_cacheLock = new();
 	private static readonly ConcurrentDictionary<(IntPtr, Type), CacheEntry> s_cache = [];
 	private readonly ObjectTable table;
 	private IntPtr ptr;
@@ -228,22 +229,25 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 			throw new InvalidOperationException("Cannot create a handle for an object not part of the object table.");
 
 		var cacheKey = (ptr, typeof(T));
-		if (!s_cache.TryGetValue(cacheKey, out var entry))
+		lock (s_cacheLock)
 		{
-			try
+			if (!s_cache.TryGetValue(cacheKey, out var entry))
 			{
-				var obj = new T();
-				obj.SetAddress(ptr);
-				s_cache.TryAdd(cacheKey, new CacheEntry(obj));
+				try
+				{
+					var obj = new T();
+					obj.SetAddress(ptr);
+					s_cache.TryAdd(cacheKey, new CacheEntry(obj));
+				}
+				catch (Exception ex)
+				{
+					Log.Warning(ex, $"Failed to create memory object from address: {ptr}");
+				}
 			}
-			catch (Exception ex)
+			else
 			{
-				Log.Warning(ex, $"Failed to create memory object from address: {ptr}");
+				Interlocked.Increment(ref entry.RefCount);
 			}
-		}
-		else
-		{
-			Interlocked.Increment(ref entry.RefCount);
 		}
 	}
 
@@ -292,15 +296,18 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 		this.ptr = IntPtr.Zero;
 		this.table.TableChanged -= this.OnTableChanged;
 
-		if (s_cache.TryGetValue(cacheKey, out var entry))
+		lock (s_cacheLock)
 		{
-			int newCount = Interlocked.Decrement(ref entry.RefCount);
-			if (newCount <= 0)
+			if (s_cache.TryGetValue(cacheKey, out var entry))
 			{
-				if (s_cache.TryRemove(cacheKey, out var removedEntry))
+				int newCount = Interlocked.Decrement(ref entry.RefCount);
+				if (newCount <= 0)
 				{
-					if (!removedEntry.Object.IsDisposed)
-						removedEntry.Object.Dispose();
+					if (s_cache.TryRemove(cacheKey, out var removedEntry))
+					{
+						if (!removedEntry.Object.IsDisposed)
+							removedEntry.Object.Dispose();
+					}
 				}
 			}
 		}
