@@ -52,7 +52,7 @@ public class PoseFile : JsonFileBase
 		return boneName != "n_root" ? BoneProcessingModes.FullLoad : BoneProcessingModes.Ignore;
 	}
 
-	public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ActorMemory? actor, Skeleton? skeleton, HashSet<string>? bones = null, bool editMeta = false)
+	public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ObjectHandle<ActorMemory>? actor, Skeleton? skeleton, HashSet<string>? bones = null, bool editMeta = false)
 	{
 		if (actor == null || skeleton == null)
 			return null;
@@ -74,7 +74,43 @@ public class PoseFile : JsonFileBase
 		return result.Directory;
 	}
 
-	public void WriteToFile(ActorMemory actor, Skeleton skeleton, HashSet<string>? bones)
+	public void WriteToFile(ObjectHandle<ActorMemory> actor, Skeleton skeleton, HashSet<string>? bones)
+	{
+		actor.Do(a => this.WriteToFile(a, skeleton, bones));
+	}
+
+	public void Apply(ObjectHandle<ActorMemory> actor, Skeleton skeleton, HashSet<string>? bones, Mode mode, bool doFacialExpressionHack)
+	{
+		actor.Do(a => this.Apply(a, skeleton, bones, mode, doFacialExpressionHack));
+	}
+
+	public bool IsPreDTPoseFile()
+	{
+		if (this.Bones == null)
+			return false;
+
+		// Check to see if we have *any* face bones at all.
+		// If not, then the file is backwards compatibile.
+		bool hasFaceBones = false;
+		foreach ((string name, Bone? bone) in this.Bones)
+		{
+			if (name.StartsWith("j_f_"))
+			{
+				hasFaceBones = true;
+				break;
+			}
+		}
+
+		// Looking for the tongue-A bone, a new bone common to all races and genders added in DT.
+		// If we dont have it, we are assumed to be a pre-DT pose file.
+		// This doesn't account for users manually editing the JSON.
+		if (!hasFaceBones || !this.Bones.ContainsKey("j_f_bero_01"))
+			return true;
+
+		return false;
+	}
+
+	private void WriteToFile(ActorMemory actor, Skeleton skeleton, HashSet<string>? bones)
 	{
 		if (actor.ModelObject == null || actor.ModelObject.Transform == null)
 			throw new Exception("No model in actor");
@@ -97,7 +133,7 @@ public class PoseFile : JsonFileBase
 		}
 	}
 
-	public void Apply(ActorMemory actor, Skeleton skeleton, HashSet<string>? bones, Mode mode, bool doFacialExpressionHack)
+	private void Apply(ActorMemory actor, Skeleton skeleton, HashSet<string>? bones, Mode mode, bool doFacialExpressionHack)
 	{
 		ArgumentNullException.ThrowIfNull(actor);
 
@@ -309,32 +345,6 @@ public class PoseFile : JsonFileBase
 		skeletonMem.WriteDelayedBinds();
 
 		PoseService.Instance.CanEdit = true;
-	}
-
-	public bool IsPreDTPoseFile()
-	{
-		if (this.Bones == null)
-			return false;
-
-		// Check to see if we have *any* face bones at all.
-		// If not, then the file is backwards compatibile.
-		bool hasFaceBones = false;
-		foreach ((string name, Bone? bone) in this.Bones)
-		{
-			if (name.StartsWith("j_f_"))
-			{
-				hasFaceBones = true;
-				break;
-			}
-		}
-
-		// Looking for the tongue-A bone, a new bone common to all races and genders added in DT.
-		// If we dont have it, we are assumed to be a pre-DT pose file.
-		// This doesn't account for users manually editing the JSON.
-		if (!hasFaceBones || !this.Bones.ContainsKey("j_f_bero_01"))
-			return true;
-
-		return false;
 	}
 
 	[Serializable]

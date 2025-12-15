@@ -35,7 +35,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="1" IsEnabled="{Binding Actor.CanAnimate}">
+            <StackPanel Grid.Row="1" IsEnabled="{Binding Actor.Unsafe.CanAnimate}">
                 <GroupBox Style="{StaticResource PanelGroupBox}">
                     <GroupBox.Header>
                         <XivToolsWpf:Header Key="Character_Action_AnimationOverride"
@@ -106,7 +106,7 @@
                                 <XivToolsWpf:TextBlock Key="Character_Action_AnimationApply"/>
                             </Button>
 
-                            <Button Grid.Row="0" Grid.Column="1"  Click="OnResetOverrideAnimation" IsEnabled="{Binding Actor.IsAnimationOverridden}" Style="{StaticResource TransparentButton}">
+							<Button Grid.Row="0" Grid.Column="1"  Click="OnResetOverrideAnimation" IsEnabled="{Binding Actor.Unsafe.IsAnimationOverridden}" Style="{StaticResource TransparentButton}">
                                 <XivToolsWpf:TextBlock Key="Character_Action_AnimationReset"/>
                             </Button>
 
@@ -119,12 +119,12 @@
                             </Button>
                         </Grid>
 
-                        <XivToolsWpf:InfoControl Visibility="{Binding Actor.CanAnimate, Converter={StaticResource !B2V}}" Grid.RowSpan="4" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideBlocked" />
+						<XivToolsWpf:InfoControl Visibility="{Binding Actor.Unsafe.CanAnimate, Converter={StaticResource !B2V}}" Grid.RowSpan="4" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideBlocked" />
                     </Grid>
                 </GroupBox>
             </StackPanel>
 
-            <StackPanel Grid.Row="2" IsEnabled="{Binding Actor.IsAnimationOverridden}">
+			<StackPanel Grid.Row="2" IsEnabled="{Binding Actor.Unsafe.IsAnimationOverridden}">
                 <GroupBox Style="{StaticResource PanelGroupBox}">
                     <GroupBox.Header>
                         <XivToolsWpf:Header Key="Character_Action_AnimationBlending"
@@ -169,11 +169,11 @@
                         </Grid>
 
 
-						<Button x:Name="AnimationBlendButton" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Click="OnBlendAnimation" IsEnabled="{Binding Actor.Animation.BlendLocked, Converter={StaticResource NotConverter}, Mode=OneWay}" Style="{StaticResource TransparentButton}">
+						<Button x:Name="AnimationBlendButton" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Click="OnBlendAnimation" IsEnabled="{Binding Actor.Unsafe.Animation.BlendLocked, Converter={StaticResource NotConverter}, Mode=OneWay}" Style="{StaticResource TransparentButton}">
                             <XivToolsWpf:TextBlock Key="Character_Action_AnimationBlend"/>
                         </Button>
 
-                        <XivToolsWpf:InfoControl Visibility="{Binding Actor.IsAnimationOverridden, Converter={StaticResource !B2V}}" Grid.RowSpan="2" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideBlendBlocked" />
+						<XivToolsWpf:InfoControl Visibility="{Binding Actor.Unsafe.IsAnimationOverridden, Converter={StaticResource !B2V}}" Grid.RowSpan="2" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideBlendBlocked" />
                     </Grid>
                 </GroupBox>
             </StackPanel>
@@ -199,7 +199,7 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
 
-                        <ToggleButton Grid.Column="0" Grid.Row="0" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding Actor.Animation.LinkSpeeds}">
+						<ToggleButton Grid.Column="0" Grid.Row="0" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding Actor.Unsafe.Animation.LinkSpeeds}">
                             <ToggleButton.ToolTip>
                                 <XivToolsWpf:TextBlock Key="Character_Action_LinkSpeed"/>
                             </ToggleButton.ToolTip>
@@ -210,11 +210,11 @@
                         </ToggleButton>
 
 
-                        <views:AnimationSpeedControl Grid.Row="0" Grid.Column="1" Slot="FullBody" Speed="{Binding Actor.Animation.Speeds[0].Value}" />
-                        <views:AnimationSpeedControl Grid.Row="1" Grid.Column="1" Slot="UpperBody" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[1].Value}" />
-                        <views:AnimationSpeedControl Grid.Row="2" Grid.Column="1" Slot="Facial" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[2].Value}" />
-                        <views:AnimationSpeedControl Grid.Row="3" Grid.Column="1" Slot="Add" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[3].Value}" />
-                        <views:AnimationSpeedControl Grid.Row="4" Grid.Column="1" Slot="Lips" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[7].Value}" />
+						<views:AnimationSpeedControl Grid.Row="0" Grid.Column="1" Slot="FullBody" Speed="{Binding Actor.Unsafe.Animation.Speeds[0].Value}" />
+						<views:AnimationSpeedControl Grid.Row="1" Grid.Column="1" Slot="UpperBody" IsEnabled="{Binding Actor.Unsafe.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Unsafe.Animation.Speeds[1].Value}" />
+						<views:AnimationSpeedControl Grid.Row="2" Grid.Column="1" Slot="Facial" IsEnabled="{Binding Actor.Unsafe.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Unsafe.Animation.Speeds[2].Value}" />
+						<views:AnimationSpeedControl Grid.Row="3" Grid.Column="1" Slot="Add" IsEnabled="{Binding Actor.Unsafe.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Unsafe.Animation.Speeds[3].Value}" />
+						<views:AnimationSpeedControl Grid.Row="4" Grid.Column="1" Slot="Lips" IsEnabled="{Binding Actor.Unsafe.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Unsafe.Animation.Speeds[7].Value}" />
 
                         <XivToolsWpf:InfoControl Visibility="{Binding AnimationService.SpeedControlEnabled, Converter={StaticResource !B2V}}"  Grid.RowSpan="6" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideSpeedControlDisable" />
                         <XivToolsWpf:InfoControl Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}"  Grid.RowSpan="6" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideSpeedBlocked" />
@@ -255,7 +255,7 @@
 			                Grid.Column="0"
 			                Style="{StaticResource Label}"/>
 
-                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Source={x:Static anaMem:ActorType.AllActorTypes}}" SelectedIndex="{Binding Actor.ObjectKindInt}">
+						<ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Source={x:Static anaMem:ActorType.AllActorTypes}}" SelectedIndex="{Binding Actor.Unsafe.ObjectKindInt}">
                             <ComboBox.ItemContainerStyle>
                                 <Style TargetType="{x:Type ComboBoxItem}">
                                     <Setter Property="IsEnabled" Value="{Binding IsSupportedType}"/>
@@ -279,9 +279,9 @@
 			                Grid.Row="1"
 			                Grid.Column="1"
 			                Height="26"
-			                DataHead="{Binding Actor.ModelObject.DataHead}"
-			                DataPath="{Binding Actor.ModelObject.DataPath}"
-			                Tribe="{Binding Actor.Customize.Tribe}"
+			                DataHead="{Binding Actor.Unsafe.ModelObject.DataHead}"
+			                DataPath="{Binding Actor.Unsafe.ModelObject.DataPath}"
+			                Tribe="{Binding Actor.Unsafe.Customize.Tribe}"
 			            />
 
                         <XivToolsWpf:TextBlock Key="Character_Action_ModelRow"
@@ -289,7 +289,7 @@
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
 
-                        <XivToolsWpf:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding Actor.ModelType}"  Buttons="True"
+						<XivToolsWpf:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding Actor.Unsafe.ModelType}"  Buttons="True"
 										   Minimum="0"
 										   TickFrequency="1" />
 
@@ -298,7 +298,7 @@
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
 
-                        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding LipSyncTypes, Mode=OneTime}" SelectedValue="{Binding Actor.Animation.LipsOverride, Mode=TwoWay}" SelectedValuePath="AnimationId" DisplayMemberPath="Name" />
+						<ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding LipSyncTypes, Mode=OneTime}" SelectedValue="{Binding Actor.Unsafe.Animation.LipsOverride, Mode=TwoWay}" SelectedValuePath="AnimationId" DisplayMemberPath="Name" />
                     </Grid>
                 </GroupBox>
             </StackPanel>
@@ -343,7 +343,7 @@
                                  Grid.ColumnSpan="2"
 								 Style="{StaticResource MaterialDesignTextBox}"
                                  IsReadOnly="True"
-								 Text="{Binding Path=Actor.CharacterMode, FallbackValue='?'}">
+								 Text="{Binding Path=Actor.Unsafe.CharacterMode, FallbackValue='?'}">
                                 <TextBox.ToolTip>
                                     <XivToolsWpf:TextBlock Key="Character_Action_ModeName"/>
                                 </TextBox.ToolTip>
@@ -353,7 +353,7 @@
 								 Grid.Column="1"
 								 Style="{StaticResource MaterialDesignTextBox}"
                                  IsReadOnly="True"
-								 Text="{Binding Path=Actor.CharacterModeRaw}">
+								 Text="{Binding Path=Actor.Unsafe.CharacterModeRaw}">
                                 <TextBox.ToolTip>
                                     <XivToolsWpf:TextBlock Key="Character_Action_ModeId"/>
                                 </TextBox.ToolTip>
@@ -363,18 +363,18 @@
 								 Grid.Column="2"
 								 Style="{StaticResource MaterialDesignTextBox}"
                                  IsReadOnly="True"
-								 Text="{Binding Path=Actor.CharacterModeInput}">
+								 Text="{Binding Path=Actor.Unsafe.CharacterModeInput}">
                                 <TextBox.ToolTip>
                                     <XivToolsWpf:TextBlock Key="Character_Action_ModeInput"/>
                                 </TextBox.ToolTip>
                             </TextBox>
                         </Grid>
 
-                        <views:AnimationStatusControl Grid.Row="1" Slot="FullBody" Speed="{Binding Actor.Animation.Speeds[0].Value}" AnimationId="{Binding Actor.Animation.AnimationIds[0].Value}" />
-                        <views:AnimationStatusControl Grid.Row="2" Slot="UpperBody" Speed="{Binding Actor.Animation.Speeds[1].Value}" AnimationId="{Binding Actor.Animation.AnimationIds[1].Value}" />
-                        <views:AnimationStatusControl Grid.Row="3" Slot="Facial" Speed="{Binding Actor.Animation.Speeds[2].Value}" AnimationId="{Binding Actor.Animation.AnimationIds[2].Value}" />
-                        <views:AnimationStatusControl Grid.Row="4" Slot="Add" Speed="{Binding Actor.Animation.Speeds[3].Value}" AnimationId="{Binding Actor.Animation.AnimationIds[3].Value}" />
-                        <views:AnimationStatusControl Grid.Row="5" Slot="Lips" Speed="{Binding Actor.Animation.Speeds[7].Value}" AnimationId="{Binding Actor.Animation.AnimationIds[7].Value}" />
+						<views:AnimationStatusControl Grid.Row="1" Slot="FullBody" Speed="{Binding Actor.Unsafe.Animation.Speeds[0].Value}" AnimationId="{Binding Actor.Unsafe.Animation.AnimationIds[0].Value}" />
+						<views:AnimationStatusControl Grid.Row="2" Slot="UpperBody" Speed="{Binding Actor.Unsafe.Animation.Speeds[1].Value}" AnimationId="{Binding Actor.Unsafe.Animation.AnimationIds[1].Value}" />
+						<views:AnimationStatusControl Grid.Row="3" Slot="Facial" Speed="{Binding Actor.Unsafe.Animation.Speeds[2].Value}" AnimationId="{Binding Actor.Unsafe.Animation.AnimationIds[2].Value}" />
+						<views:AnimationStatusControl Grid.Row="4" Slot="Add" Speed="{Binding Actor.Unsafe.Animation.Speeds[3].Value}" AnimationId="{Binding Actor.Unsafe.Animation.AnimationIds[3].Value}" />
+						<views:AnimationStatusControl Grid.Row="5" Slot="Lips" Speed="{Binding Actor.Unsafe.Animation.Speeds[7].Value}" AnimationId="{Binding Actor.Unsafe.Animation.AnimationIds[7].Value}" />
                     </Grid>
                 </GroupBox>
             </StackPanel>
@@ -461,10 +461,10 @@
 				</GroupBox.Header>
 
 				<Grid>
-					<controls:TransformEditor ActorTransform="{Binding Actor.ModelObject.Transform}" IsEnabled="{Binding GposeService.IsGpose}">
+					<controls:TransformEditor ActorTransform="{Binding Actor.Unsafe.ModelObject.Transform}" IsEnabled="{Binding GposeService.IsGpose}">
 						<controls:TransformEditor.CanTranslateOverride>
 							<MultiBinding Converter="{StaticResource MultiBoolOr}">
-								<Binding Path="Actor.IsMotionDisabled"/>
+								<Binding Path="Actor.Unsafe.IsMotionDisabled"/>
 								<Binding Path="PoseService.FreezeWorldPosition"/>
 							</MultiBinding>
 						</controls:TransformEditor.CanTranslateOverride>
@@ -473,7 +473,7 @@
 					<XivToolsWpf:InfoControl Key="Pose_WarningNotFrozen" Margin="0,0,-2,46">
 						<XivToolsWpf:InfoControl.Visibility>
 							<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
-								<Binding Path="Actor.IsMotionEnabled"/>
+								<Binding Path="Actor.Unsafe.IsMotionEnabled"/>
 								<Binding Path="PoseService.WorldPositionNotFrozen"/>
 							</MultiBinding>
 						</XivToolsWpf:InfoControl.Visibility>

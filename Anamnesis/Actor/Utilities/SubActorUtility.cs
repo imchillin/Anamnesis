@@ -64,7 +64,11 @@ public class SubActorUtility
 		try
 		{
 			CharacterFile apFile = npc.ToFile();
-			apFile.Apply(targetActor, CharacterFile.SaveModes.EquipmentGear);
+			var handle = ActorService.Instance.ObjectTable.Get<ActorMemory>(targetActor.Address);
+			if (handle != null)
+			{
+				apFile.Apply(handle, CharacterFile.SaveModes.EquipmentGear);
+			}
 		}
 		catch (Exception ex)
 		{

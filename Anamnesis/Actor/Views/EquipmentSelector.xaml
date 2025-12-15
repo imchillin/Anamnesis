@@ -118,9 +118,12 @@
 
 		<ComboBox Grid.Row="0"
 				  Grid.Column="1"
-				  Margin="6, 3, 6, 0"
+				  Margin="6, 0, 6, 0"
 				  Height="22"
+				  MinWidth="22"
 				  HorizontalAlignment="Right"
+				  VerticalContentAlignment="Center"
+				  Foreground="{DynamicResource MaterialDesignBodyLight}"
 				  Style="{StaticResource MaterialDesignDataGridComboBox}"
 				  SelectedIndex="{Binding SortModeInt, Mode=TwoWay}">
 
@@ -133,7 +136,7 @@
 					<XivToolsWpf:TextBlock Key="EquipmentSelector_SortAlpha" />
 				</ComboBoxItem.ToolTip>
 
-				<XivToolsWpf:IconBlock Icon="SortAlphaDown" FontSize="16"/>
+				<XivToolsWpf:IconBlock Icon="SortAlphaDown" FontSize="13"/>
 			</ComboBoxItem>
 
 			<ComboBoxItem>
@@ -141,7 +144,7 @@
 					<XivToolsWpf:TextBlock Key="EquipmentSelector_SortRow" />
 				</ComboBoxItem.ToolTip>
 
-				<XivToolsWpf:IconBlock Icon="CalendarAlt" FontSize="16"/>
+				<XivToolsWpf:IconBlock Icon="CalendarAlt" FontSize="13"/>
 			</ComboBoxItem>
 
 			<ComboBoxItem>
@@ -149,7 +152,7 @@
 					<XivToolsWpf:TextBlock Key="EquipmentSelector_SortLevel" />
 				</ComboBoxItem.ToolTip>
 
-				<XivToolsWpf:IconBlock Icon="SortAmountDown" FontSize="16"/>
+				<XivToolsWpf:IconBlock Icon="SortAmountDown" FontSize="13"/>
 			</ComboBoxItem>
 
 		</ComboBox>

@@ -152,6 +152,8 @@ public partial class FileBrowserView : FileBrowserDrawer
 		}
 	}
 
+	public string FileExtension => this.filters.Any() ? this.filters.First().Extension : string.Empty;
+
 	public ObservableCollection<Shortcut> Shortcuts { get; } = new ObservableCollection<Shortcut>();
 
 	public bool UseFileBrowser { get; set; }

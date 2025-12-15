@@ -29,7 +29,7 @@
 		<Grid
 			Grid.RowSpan="2"
 			Grid.Column="0"
-			IsEnabled="{Binding Actor.CanRefresh}">
+			IsEnabled="{Binding Actor.Unsafe.CanRefresh}">
 
 			<GroupBox
 				Padding="3,0,3,0"
@@ -40,7 +40,7 @@
 						Icon="ConciergeBell" />
 				</GroupBox.Header>
 
-				<views:CustomizeEditor DataContext="{Binding Actor}" />
+				<views:CustomizeEditor DataContext="{Binding Actor.Unsafe}" />
 			</GroupBox>
 
 		</Grid>
@@ -53,9 +53,9 @@
 
 			<Grid>
 				<StackPanel Height="20" Margin="0,-18,-4,0" HorizontalAlignment="Right" VerticalAlignment="Top"
-							IsEnabled="{Binding Actor.CanRefresh}" Orientation="Horizontal">
+							IsEnabled="{Binding Actor.Unsafe.CanRefresh}" Orientation="Horizontal">
 					<Button Click="OnRaceGearClicked" Style="{StaticResource TransparentIconButton}"
-							Visibility="{Binding Actor.IsHuman, Converter={StaticResource B2V}}">
+							Visibility="{Binding Actor.Unsafe.IsHuman, Converter={StaticResource B2V}}">
 						<Button.ToolTip>
 							<XivToolsWpf:TextBlock Key="Character_Equipment_RaceGear"/>
 						</Button.ToolTip>
@@ -64,7 +64,7 @@
 					</Button>
 
 					<Button Click="OnNpcSmallclothesClicked" Style="{StaticResource TransparentIconButton}"
-							Visibility="{Binding Actor.IsHuman, Converter={StaticResource B2V}}">
+							Visibility="{Binding Actor.Unsafe.IsHuman, Converter={StaticResource B2V}}">
 						<Button.ToolTip>
 							<XivToolsWpf:TextBlock Key="Character_Equipment_NpcSmallclothes"/>
 						</Button.ToolTip>
@@ -272,7 +272,7 @@
 					</Button>
 				</StackPanel>
 
-				<views:EquipmentEditor Margin="0,0,0,-10" DataContext="{Binding Actor}"/>
+				<views:EquipmentEditor Margin="0,0,0,-10" DataContext="{Binding Actor.Unsafe}"/>
 			</Grid>
 		</GroupBox>
 
@@ -280,7 +280,7 @@
 		<XivToolsWpf:InfoControl Key="Character_WarningGposeWorldPosFrozen" Grid.Column="0" Grid.ColumnSpan="2" Margin="12">
 			<XivToolsWpf:InfoControl.Visibility>
 				<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
-					<Binding Path="Actor.CanRefresh" Converter="{StaticResource !B}"/>
+					<Binding Path="Actor.Unsafe.CanRefresh" Converter="{StaticResource !B}"/>
 					<Binding Path="PoseService.FreezeWorldPosition"/>
 				</MultiBinding>
 			</XivToolsWpf:InfoControl.Visibility>
@@ -289,7 +289,7 @@
 		<XivToolsWpf:InfoControl Key="Character_WarningGpose" Grid.Column="0" Grid.ColumnSpan="2" Margin="12">	
 			<XivToolsWpf:InfoControl.Visibility>
 				<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
-					<Binding Path="Actor.CanRefresh" Converter="{StaticResource !B}"/>
+					<Binding Path="Actor.Unsafe.CanRefresh" Converter="{StaticResource !B}"/>
 					<Binding Path="PoseService.WorldPositionNotFrozen"/>
 				</MultiBinding>
 			</XivToolsWpf:InfoControl.Visibility>
@@ -336,18 +336,18 @@
 
 							<XivToolsWpf:TextBlock Key="Character_Actor_Nickname" Grid.Row="0" Grid.Column="0" Style="{StaticResource Label}"/>
 							<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
-									 Style="{StaticResource MaterialDesignTextBox}" Text="{Binding Actor.Nickname, UpdateSourceTrigger=PropertyChanged}"/>
+									 Style="{StaticResource MaterialDesignTextBox}" Text="{Binding Actor.Unsafe.Nickname, UpdateSourceTrigger=PropertyChanged}"/>
 
 							<XivToolsWpf:TextBlock Key="Character_Actor_Alpha" Grid.Row="4" Grid.Column="0" Style="{StaticResource Label}"/>
-							<XivToolsWpf:NumberBox Grid.Row="4" Grid.Column="1" Value="{Binding Actor.Transparency}" Minimum="0.01" Maximum="1"
+							<XivToolsWpf:NumberBox Grid.Row="4" Grid.Column="1" Value="{Binding Actor.Unsafe.Transparency}" Minimum="0.01" Maximum="1"
 												   Slider="Absolute" TickFrequency="0.1"/>
 
 							<XivToolsWpf:TextBlock Key="Character_Equipment_Tint" Grid.Row="5" Grid.Column="0" Style="{StaticResource Label}"/>
-							<anaControls:RgbColorControl Grid.Row="5" Grid.Column="2" Value="{Binding Actor.ModelObject.Tint}"/>
+							<anaControls:RgbColorControl Grid.Row="5" Grid.Column="2" Value="{Binding Actor.Unsafe.ModelObject.Tint}"/>
 
 							<XivToolsWpf:TextBlock Key="Character_Actor_Voice" Grid.Row="6" Grid.Column="0" Style="{StaticResource Label}"/>
-							<ComboBox Grid.Row="6" Grid.Column="1" IsEnabled="{Binding Actor.IsPlayer}" ItemsSource="{Binding VoiceEntries, Mode=OneTime}"
-									  SelectedValue="{Binding Actor.Voice, Mode=TwoWay}" SelectedValuePath="VoiceId">
+							<ComboBox Grid.Row="6" Grid.Column="1" IsEnabled="{Binding Actor.Unsafe.IsPlayer}" ItemsSource="{Binding VoiceEntries, Mode=OneTime}"
+									  SelectedValue="{Binding Actor.Unsafe.Voice, Mode=TwoWay}" SelectedValuePath="VoiceId">
 								<ComboBox.GroupStyle>
 									<GroupStyle>
 										<GroupStyle.HeaderTemplate>
@@ -369,16 +369,16 @@
 						<!-- Subactor and Facewear Settings -->
 						<XivToolsWpf:Header Grid.Row="1" Key="SubActor_Title" Margin="0,0,6,0" Icon="Horse"/>
 						<StackPanel Grid.Row="2" Grid.Column="0" Margin="0,6,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
-							<views:SubActorEditor Margin="3,0" Actor="{Binding Actor}"
-												  SubActor="{Binding Actor.Mount}"
+							<views:SubActorEditor Margin="3,0" Actor="{Binding Actor.Unsafe}"
+												  SubActor="{Binding Actor.Unsafe.Mount}"
 												  SubActorType="Mount" />
-							<views:SubActorEditor Margin="3,0" Actor="{Binding Actor}"
-												  SubActor="{Binding Actor.Companion}"
+							<views:SubActorEditor Margin="3,0" Actor="{Binding Actor.Unsafe}"
+												  SubActor="{Binding Actor.Unsafe.Companion}"
 												  SubActorType="Companion" />
-							<views:SubActorEditor Margin="3,0" Actor="{Binding Actor}"
-												  SubActor="{Binding Actor.Ornament}"
+							<views:SubActorEditor Margin="3,0" Actor="{Binding Actor.Unsafe}"
+												  SubActor="{Binding Actor.Unsafe.Ornament}"
 												  SubActorType="Ornament" />
-							<views:GlassesItemView Grid.Column="0" Margin="3,0" DataContext="{Binding Actor}"
+							<views:GlassesItemView Grid.Column="0" Margin="3,0" DataContext="{Binding Actor.Unsafe}"
 												   GlassesModel="{Binding Glasses}"
 												   IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
 						</StackPanel>
@@ -388,22 +388,22 @@
 				<!-- Actor Height and Some Model Settings -->
 				<GroupBox
 					Style="{StaticResource PanelGroupBox}"
-					Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
+					Visibility="{Binding Actor.Unsafe.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
 					<GroupBox.Header>
 						<XivToolsWpf:Header Key="Character_Model_Header" Icon="GraduationCap" />
 					</GroupBox.Header>
 
-					<views:CharacterModelEditor DataContext="{Binding Actor}" />
+					<views:CharacterModelEditor DataContext="{Binding Actor.Unsafe}" />
 				</GroupBox>
 
 				<!-- Extended Appearance Settings -->
 				<GroupBox Style="{StaticResource PanelGroupBox}"
-					Visibility="{Binding Actor.ModelObject.ExtendedAppearance, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}">
+					Visibility="{Binding Actor.Unsafe.ModelObject.ExtendedAppearance, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}">
 					<GroupBox.Header>
 						<XivToolsWpf:Header Key="Character_ExAppearance_Header" Icon="UserCog"/>
 					</GroupBox.Header>
 
-					<views:ExtendedAppearanceEditor DataContext="{Binding Actor.ModelObject.ExtendedAppearance}"/>
+					<views:ExtendedAppearanceEditor DataContext="{Binding Actor.Unsafe.ModelObject.ExtendedAppearance}"/>
 				</GroupBox>
 			</StackPanel>
 
@@ -414,10 +414,10 @@
 
 				<Grid.Visibility>
 					<MultiBinding Converter="{StaticResource NpcFaceWarningConverter}">
-						<Binding Path="Actor.ObjectKind" />
-						<Binding Path="Actor.Customize.Head" />
-						<Binding Path="Actor.Customize.Race" />
-						<Binding Path="Actor.Customize.Gender" />
+						<Binding Path="Actor.Unsafe.ObjectKind" />
+						<Binding Path="Actor.Unsafe.Customize.Head" />
+						<Binding Path="Actor.Unsafe.Customize.Race" />
+						<Binding Path="Actor.Unsafe.Customize.Gender" />
 					</MultiBinding>
 				</Grid.Visibility>
 
@@ -451,8 +451,8 @@
 
 				<XivToolsWpf:InfoControl.Visibility>
 					<MultiBinding Converter="{StaticResource MinionGposeWarningConverter}">
-						<Binding Path="Actor.ObjectKind"/>
-						<Binding Path="Actor.ModelType"/>
+						<Binding Path="Actor.Unsafe.ObjectKind"/>
+						<Binding Path="Actor.Unsafe.ModelType"/>
 					</MultiBinding>
 				</XivToolsWpf:InfoControl.Visibility>
 			</XivToolsWpf:InfoControl>
@@ -473,7 +473,7 @@
 					<!-- Appearance reset button -->
 					<MenuItem HorizontalAlignment="Right" anaUtils:Behaviours.Tooltip="Character_Reset_Tooltip" Click="OnResetClicked"
 							  Header="Character_Reset" Icon="UndoAlt" Style="{StaticResource ButtonMenuItem}"
-							  IsEnabled="{Binding Actor.Pinned.OriginalCharacterBackup, Converter={StaticResource NotNullToBoolConverter}}"/>
+							  IsEnabled="{Binding Actor.Unsafe.Pinned.OriginalCharacterBackup, Converter={StaticResource NotNullToBoolConverter}}"/>
 				</Menu>
 
 				<Menu Margin="0,3,3,4" Style="{StaticResource AnaMenu}">

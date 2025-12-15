@@ -120,11 +120,11 @@ public partial class ActorTab : UserControl
 		this.loading = false;
 	}
 
-	private void OnActorSelected(ActorMemory? actor)
+	private void OnActorSelected(ObjectHandle<ActorMemory>? actorHandle)
 	{
 		foreach (var page in this.Pages)
 		{
-			page.DataContext = actor;
+			page.DataContext = actorHandle;
 		}
 	}
 

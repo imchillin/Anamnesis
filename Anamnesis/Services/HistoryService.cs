@@ -61,11 +61,11 @@ public class HistoryService : ServiceBase<HistoryService>
 	/// <param name="context">The new history context.</param>
 	public static void SetContext(HistoryContext context)
 	{
-		ActorMemory? actor = TargetService.Instance.SelectedActor;
-		if (actor is null)
+		var handle = TargetService.Instance.SelectedActor;
+		if (handle is null)
 			return;
 
-		actor.History.CurrentContext = context;
+		handle.Do(a => a.History.CurrentContext = context);
 	}
 
 	/// <inheritdoc/>
@@ -92,22 +92,20 @@ public class HistoryService : ServiceBase<HistoryService>
 	/// </summary>
 	public void Clear()
 	{
-		ActorMemory? actor = TargetService.Instance.SelectedActor;
-
-		if (actor is null)
+		var handle = TargetService.Instance.SelectedActor;
+		if (handle is null)
 			return;
 
 		lock (this.LockObject)
 		{
-			actor.History.Clear();
+			handle.Do(a => a.History.Clear());
 		}
 	}
 
 	private void Step(bool forward)
 	{
-		ActorMemory? actor = TargetService.Instance.SelectedActor;
-
-		if (actor is null)
+		var handle = TargetService.Instance.SelectedActor;
+		if (handle is null)
 			return;
 
 		// Lock the object to prevent any dependent operations from
@@ -116,20 +114,24 @@ public class HistoryService : ServiceBase<HistoryService>
 		{
 			this.IsRestoring = true;
 
-			actor.PauseSynchronization = true;
-
-			if (forward)
+			handle.Do(actor =>
 			{
-				actor.History.StepForward();
-			}
-			else
-			{
-				actor.History.StepBack();
-			}
+				actor.PauseSynchronization = true;
 
-			actor.WriteDelayedBinds();
-			OnHistoryApplied?.Invoke();
-			actor.PauseSynchronization = false;
+				if (forward)
+				{
+					actor.History.StepForward();
+				}
+				else
+				{
+					actor.History.StepBack();
+				}
+
+				actor.WriteDelayedBinds();
+				OnHistoryApplied?.Invoke();
+				actor.PauseSynchronization = false;
+			});
+
 			this.IsRestoring = false;
 		}
 	}

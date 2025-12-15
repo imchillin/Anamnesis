@@ -3,8 +3,8 @@
 
 namespace Anamnesis.Actor.Views;
 
-using System.Windows.Controls;
 using PropertyChanged;
+using System.Windows.Controls;
 
 /// <summary>
 /// Interaction logic for EquipmentView.xaml.

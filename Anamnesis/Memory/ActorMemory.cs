@@ -3,20 +3,32 @@
 
 namespace Anamnesis.Memory;
 
+using Anamnesis.Actor.Refresh;
 using Anamnesis.Core.Extensions;
 using Anamnesis.Services;
 using Anamnesis.Utils;
 using PropertyChanged;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class ActorMemory : ActorBasicMemory, IDisposable
+public class ActorMemory : GameObjectMemory, IDisposable
 {
 	private const int REFRESH_DEBOUNCE_TIMEOUT = 200;
+
+	private static readonly List<IActorRefresher> s_actorRefreshers =
+	[
+		new BrioActorRefresher(),
+		new PenumbraActorRefresher(),
+		new AnamnesisActorRefresher(),
+	];
+
 	private readonly System.Timers.Timer refreshDebounceTimer;
 	private readonly FuncQueue backupQueue;
+
 	private int isRefreshing = 0;
 
 	public ActorMemory()
@@ -54,6 +66,7 @@ public class ActorMemory : ActorBasicMemory, IDisposable
 		HeadgearEarsHidden = 1 << 5,
 	}
 
+	[Bind(0x0100, BindFlags.Pointer)] public new ActorModelMemory? ModelObject { get; set; }
 	[Bind(0x01CA)] public byte ClassJob { get; set; } // Source: CharacterData; Calculated using GameObject size + ClassJob offset
 	[Bind(0x0670, BindFlags.Pointer)] public ActorMemory? Mount { get; set; } // Targets object within MountContainer
 	[Bind(0x0678)] public ushort MountId { get; set; }
@@ -90,7 +103,7 @@ public class ActorMemory : ActorBasicMemory, IDisposable
 	public bool IsWeaponDirty { get; set; } = false;
 
 	[DependsOn(nameof(IsValid), nameof(IsOverworldActor), nameof(Name), nameof(RenderMode))]
-	public bool CanRefresh => ActorService.InstanceOrNull?.CanRefreshActor(this) == true;
+	public bool CanRefresh => CanRefreshActor(this);
 
 	public bool IsHuman => this.ModelObject != null && this.ModelObject.IsHuman;
 
@@ -166,11 +179,51 @@ public class ActorMemory : ActorBasicMemory, IDisposable
 	[DependsOn(nameof(CharacterMode))]
 	public bool IsAnimationOverridden => this.CharacterMode == CharacterModes.AnimLock;
 
+	/// <summary>Determines if the actor can be refreshed.</summary>
+	/// <param name="actor">The actor to check.</param>
+	/// <returns>True if the actor can be refreshed, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool CanRefreshActor(ActorMemory actor)
+	{
+		if (!actor.IsValid)
+			return false;
+
+		foreach (IActorRefresher actorRefresher in s_actorRefreshers)
+		{
+			if (actorRefresher.CanRefresh(actor))
+				return true;
+		}
+
+		return false;
+	}
+
+	/// <summary>Refreshes the specified actor.</summary>
+	/// <param name="actor">The actor to refresh.</param>
+	/// <returns>True if the actor was refreshed, otherwise false.</returns>
+	public static async Task<bool> RefreshActor(ActorMemory actor)
+	{
+		if (CanRefreshActor(actor))
+		{
+			foreach (IActorRefresher actorRefresher in s_actorRefreshers)
+			{
+				if (actorRefresher.CanRefresh(actor))
+				{
+					Log.Information($"Executing {actorRefresher.GetType().Name} refresh for actor address: {actor.Address}");
+					await actorRefresher.RefreshActor(actor);
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	public override void Dispose()
 	{
 		this.PropertyChanged -= this.HandlePropertyChanged;
 		this.refreshDebounceTimer?.Dispose();
 		base.Dispose();
+		GC.SuppressFinalize(this);
 	}
 
 	public override void Synchronize()
@@ -204,7 +257,7 @@ public class ActorMemory : ActorBasicMemory, IDisposable
 
 			this.IsRefreshing = true;
 
-			if (await ActorService.Instance.RefreshActor(this))
+			if (await RefreshActor(this))
 			{
 				Log.Information($"Completed actor refresh for actor address: {this.Address}");
 			}

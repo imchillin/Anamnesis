@@ -254,7 +254,7 @@
 							Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}, Mode=OneWay}">
 				<ContentControl.ContentTemplate>
 					<DataTemplate>
-						<ana:VectorEditor Value="{Binding Scale}" Minimum="0" Maximum="float.MaxValue" TickFrequency="0.01"
+						<ana:VectorEditor Value="{Binding Transform.Scale}" Minimum="0" Maximum="float.MaxValue" TickFrequency="0.01"
 										  DefaultValue="1" CanLink="True" Linked="True" SliderMode="Relative"
 										  DecimalPlaces="{Binding Settings.SliderPrecision, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
 										  ShowSliderThumb="{Binding Settings.ShowSliderThumb, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"

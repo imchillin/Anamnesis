@@ -109,7 +109,6 @@
 					Margin="3"
 					Width="32"
 					Click="OnCreateFolderClicked"
-					IsEnabled="{Binding FileSource.CanWrite}"
 					Style="{StaticResource TransparentButton}">
 
 				<Button.ToolTip>
@@ -135,8 +134,10 @@
 			</ToggleButton>
 
 			<ComboBox Grid.Column="5"
-					  Margin="6, 3, 6, 0"
+					  Margin="6, 0, 6, 0"
 					  Height="22"
+					  VerticalContentAlignment="Center"
+					  Foreground="{DynamicResource MaterialDesignBodyLight}"
 					  Style="{StaticResource MaterialDesignDataGridComboBox}"
 					  SelectedIndex="{Binding SortModeInt, Mode=TwoWay}">
 
@@ -217,7 +218,7 @@
 
 							<XivToolsWpf:IconBlock 
 								VerticalAlignment="Center"
-								FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 5 Free Solid"
+								FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 6 Free Solid"
 								FontSize="16"
 								Icon="FileAlt"
 								Margin="3,0,6,0"/>
@@ -235,7 +236,7 @@
 							Grid.Column="0"
 							Margin="3,0,6,0"
 							VerticalAlignment="Center"
-							FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 5 Free Solid"
+							FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 6 Free Solid"
 							FontSize="16"
 							Foreground="#FFDA70"
 							Icon="Folder"
