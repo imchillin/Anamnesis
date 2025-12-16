@@ -9,7 +9,7 @@ using Anamnesis.Services;
 using Lumina.Excel;
 
 /// <summary>Represents an executable actor action in the game data.</summary>
-[Sheet("Action", 0xF87A2103)]
+[Sheet("Action", 0xC5217018)]
 public readonly struct Action(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Action>, IAnimation
 {
