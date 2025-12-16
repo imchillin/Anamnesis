@@ -6,13 +6,8 @@ namespace Anamnesis.Memory;
 /// <summary>
 /// Represents the memory structure for a weapon model in FFXIV.
 /// </summary>
-public class WeaponModelMemory : MemoryBase
+public class WeaponModelMemory : DrawObjectMemory
 {
-	/// <summary>
-	/// Gets or sets the weapon model's transform memory (position, rotation, scale).
-	/// </summary>
-	[Bind(0x050)] public TransformMemory? Transform { get; set; }
-
 	/// <summary>Gets or sets the skeleton memory of the weapon model.</summary>
 	/// <remarks>
 	/// Available only in GPose. Internally an array of <see cref="PartialSkeletonMemory"/> elements.

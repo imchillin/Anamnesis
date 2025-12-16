@@ -29,13 +29,13 @@ public readonly struct ActionTimeline(ExcelPage page, uint offset, uint row)
 	public readonly string Key => page.ReadString(offset, offset).ToString();
 
 	/// <summary>Gets the type of the action timeline.</summary>
-	public readonly byte Type => page.ReadUInt8(offset + 8);
+	public readonly byte Type => page.ReadUInt8(offset + 9);
 
 	/// <summary>Gets the animation slot of the action timeline.</summary>
-	public readonly AnimationMemory.AnimationSlots Slot => (AnimationMemory.AnimationSlots)page.ReadUInt8(offset + 11);
+	public readonly AnimationMemory.AnimationSlots Slot => (AnimationMemory.AnimationSlots)page.ReadUInt8(offset + 12);
 
 	/// <summary>Gets a value indicating whether the action timeline is a looping animation.</summary>
-	public readonly bool IsLoop => page.ReadPackedBool(offset + 19, 5);
+	public readonly bool IsLoop => page.ReadPackedBool(offset + 20, 5);
 
 	/// <inheritdoc/>
 	public readonly string? Name => this.Key;

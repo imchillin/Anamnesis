@@ -54,9 +54,9 @@ public partial class CharacterPage : UserControl
 
 	public static PoseService PoseService => PoseService.Instance;
 
-	public ActorMemory? Actor { get; private set; }
+	public ObjectHandle<ActorMemory>? Actor { get; private set; }
 	public ListCollectionView VoiceEntries { get; private set; }
-	public bool CanDyeEquipment => this.Actor != null && this.Actor.Equipment != null;
+	public bool CanDyeEquipment => this.Actor?.Do(a => a.Equipment != null) == true;
 
 	public bool CanDyeWeapons
 	{
@@ -66,8 +66,9 @@ public partial class CharacterPage : UserControl
 				return false;
 
 			// One of the weapons must not be null and have a non-zero set to be dyable.
-			return (this.Actor.MainHand != null && this.Actor?.MainHand?.Set != 0) ||
-				   (this.Actor.OffHand != null && this.Actor?.OffHand?.Set != 0);
+			return this.Actor.Do(a =>
+				(a.MainHand != null && a.MainHand.Set != 0) ||
+				(a.OffHand != null && a.OffHand.Set != 0)) == true;
 		}
 	}
 
@@ -106,12 +107,12 @@ public partial class CharacterPage : UserControl
 
 	private void OnLoaded(object sender, RoutedEventArgs e)
 	{
-		this.OnActorChanged(this.DataContext as ActorMemory);
+		this.OnActorChanged(this.DataContext as ObjectHandle<ActorMemory>);
 	}
 
 	private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 	{
-		this.OnActorChanged(this.DataContext as ActorMemory);
+		this.OnActorChanged(this.DataContext as ObjectHandle<ActorMemory>);
 	}
 
 	private void OnClearClicked(object? sender = null, RoutedEventArgs? e = null)
@@ -119,22 +120,38 @@ public partial class CharacterPage : UserControl
 		if (this.Actor == null)
 			return;
 
-		this.Actor.MainHand?.Clear(this.Actor.IsHuman);
-		this.Actor.OffHand?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Arms?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Chest?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Ear?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Feet?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Head?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Legs?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.LFinger?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Neck?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsHuman);
-		this.Actor.Glasses?.Clear();
+		this.Actor.Do(a =>
+		{
+			bool isHuman = a.IsHuman;
 
-		this.Actor?.ModelObject?.Weapons?.Hide();
-		this.Actor?.ModelObject?.Weapons?.SubModel?.Hide();
+			a.MainHand?.Clear(isHuman);
+			a.OffHand?.Clear(isHuman);
+
+			if (a.Equipment != null)
+			{
+				a.Equipment.Arms?.Clear(isHuman);
+				a.Equipment.Chest?.Clear(isHuman);
+				a.Equipment.Ear?.Clear(isHuman);
+				a.Equipment.Feet?.Clear(isHuman);
+				a.Equipment.Head?.Clear(isHuman);
+				a.Equipment.Legs?.Clear(isHuman);
+				a.Equipment.LFinger?.Clear(isHuman);
+				a.Equipment.Neck?.Clear(isHuman);
+				a.Equipment.RFinger?.Clear(isHuman);
+				a.Equipment.Wrist?.Clear(isHuman);
+			}
+
+			a.Glasses?.Clear();
+
+			if (a.ModelObject != null)
+			{
+				if (a.ModelObject.ChildObject != null)
+					a.ModelObject.ChildObject.IsVisible = false;
+
+				if (a.ModelObject.ChildObject?.NextSiblingObject != null)
+					a.ModelObject.ChildObject.NextSiblingObject.IsVisible = false;
+			}
+		});
 	}
 
 	private void OnNpcSmallclothesClicked(object sender, RoutedEventArgs e)
@@ -142,25 +159,34 @@ public partial class CharacterPage : UserControl
 		if (this.Actor == null)
 			return;
 
-		if (!this.Actor.IsHuman)
+		this.Actor.Do(a =>
 		{
-			this.OnClearClicked(sender, e);
-			return;
-		}
+			bool isHuman = a.IsHuman;
+			if (!isHuman)
+			{
+				this.OnClearClicked(sender, e);
+				return;
+			}
 
-		this.Actor.MainHand?.Clear(this.Actor.IsHuman);
-		this.Actor.OffHand?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Ear?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Head?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.LFinger?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Neck?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Arms?.Equip(ItemUtility.NpcBodyItem);
-		this.Actor.Equipment?.Chest?.Equip(ItemUtility.NpcBodyItem);
-		this.Actor.Equipment?.Legs?.Equip(ItemUtility.NpcBodyItem);
-		this.Actor.Equipment?.Feet?.Equip(ItemUtility.NpcBodyItem);
-		this.Actor.Glasses?.Clear();
+			a.MainHand?.Clear(isHuman);
+			a.OffHand?.Clear(isHuman);
+
+			if (a.Equipment != null)
+			{
+				a.Equipment.Ear?.Clear(isHuman);
+				a.Equipment.Head?.Clear(isHuman);
+				a.Equipment.LFinger?.Clear(isHuman);
+				a.Equipment.Neck?.Clear(isHuman);
+				a.Equipment.RFinger?.Clear(isHuman);
+				a.Equipment.Wrist?.Clear(isHuman);
+				a.Equipment.Arms?.Equip(ItemUtility.NpcBodyItem);
+				a.Equipment.Chest?.Equip(ItemUtility.NpcBodyItem);
+				a.Equipment.Legs?.Equip(ItemUtility.NpcBodyItem);
+				a.Equipment.Feet?.Equip(ItemUtility.NpcBodyItem);
+			}
+
+			a.Glasses?.Clear();
+		});
 	}
 
 	private void OnEmperorsNewGearClicked(object sender, RoutedEventArgs e)
@@ -168,25 +194,34 @@ public partial class CharacterPage : UserControl
 		if (this.Actor == null)
 			return;
 
-		if (!this.Actor.IsHuman)
+		this.Actor.Do(a =>
 		{
-			this.OnClearClicked(sender, e);
-			return;
-		}
+			bool isHuman = a.IsHuman;
+			if (!isHuman)
+			{
+				this.OnClearClicked(sender, e);
+				return;
+			}
 
-		this.Actor.MainHand?.Clear(this.Actor.IsHuman);
-		this.Actor.OffHand?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Ear?.Equip(ItemUtility.EmperorsAccessoryItem);
-		this.Actor.Equipment?.Neck?.Equip(ItemUtility.EmperorsAccessoryItem);
-		this.Actor.Equipment?.Wrist?.Equip(ItemUtility.EmperorsAccessoryItem);
-		this.Actor.Equipment?.LFinger?.Equip(ItemUtility.EmperorsAccessoryItem);
-		this.Actor.Equipment?.RFinger?.Equip(ItemUtility.EmperorsAccessoryItem);
-		this.Actor.Equipment?.Head?.Equip(ItemUtility.EmperorsBodyItem);
-		this.Actor.Equipment?.Chest?.Equip(ItemUtility.EmperorsBodyItem);
-		this.Actor.Equipment?.Arms?.Equip(ItemUtility.EmperorsBodyItem);
-		this.Actor.Equipment?.Legs?.Equip(ItemUtility.EmperorsBodyItem);
-		this.Actor.Equipment?.Feet?.Equip(ItemUtility.EmperorsBodyItem);
-		this.Actor.Glasses?.Clear();
+			a.MainHand?.Clear(isHuman);
+			a.OffHand?.Clear(isHuman);
+
+			if (a.Equipment != null)
+			{
+				a.Equipment.Ear?.Equip(ItemUtility.EmperorsAccessoryItem);
+				a.Equipment.Neck?.Equip(ItemUtility.EmperorsAccessoryItem);
+				a.Equipment.Wrist?.Equip(ItemUtility.EmperorsAccessoryItem);
+				a.Equipment.LFinger?.Equip(ItemUtility.EmperorsAccessoryItem);
+				a.Equipment.RFinger?.Equip(ItemUtility.EmperorsAccessoryItem);
+				a.Equipment.Head?.Equip(ItemUtility.EmperorsBodyItem);
+				a.Equipment.Chest?.Equip(ItemUtility.EmperorsBodyItem);
+				a.Equipment.Arms?.Equip(ItemUtility.EmperorsBodyItem);
+				a.Equipment.Legs?.Equip(ItemUtility.EmperorsBodyItem);
+				a.Equipment.Feet?.Equip(ItemUtility.EmperorsBodyItem);
+			}
+
+			a.Glasses?.Clear();
+		});
 	}
 
 	private void OnRaceGearClicked(object sender, RoutedEventArgs e)
@@ -194,33 +229,41 @@ public partial class CharacterPage : UserControl
 		if (this.Actor == null)
 			return;
 
-		if (this.Actor.Customize?.Race == null)
-			return;
-
-		var race = GameDataService.Races.GetRow((uint)this.Actor.Customize.Race);
-
-		if (this.Actor.Customize.Gender == ActorCustomizeMemory.Genders.Masculine)
+		this.Actor.Do(a =>
 		{
-			this.Actor.Equipment?.Chest?.Equip(race.RSEMBody.Value);
-			this.Actor.Equipment?.Arms?.Equip(race.RSEMHands.Value);
-			this.Actor.Equipment?.Legs?.Equip(race.RSEMLegs.Value);
-			this.Actor.Equipment?.Feet?.Equip(race.RSEMFeet.Value);
-		}
-		else
-		{
-			this.Actor.Equipment?.Chest?.Equip(race.RSEFBody.Value);
-			this.Actor.Equipment?.Arms?.Equip(race.RSEFHands.Value);
-			this.Actor.Equipment?.Legs?.Equip(race.RSEFLegs.Value);
-			this.Actor.Equipment?.Feet?.Equip(race.RSEFFeet.Value);
-		}
+			if (a.Customize?.Race == null)
+				return;
 
-		this.Actor.Equipment?.Ear?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Head?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.LFinger?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Neck?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsHuman);
-		this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsHuman);
-		this.Actor.Glasses?.Clear();
+			var race = GameDataService.Races.GetRow((uint)a.Customize.Race);
+
+			if (a.Equipment != null)
+			{
+				if (a.Customize.Gender == ActorCustomizeMemory.Genders.Masculine)
+				{
+					a.Equipment.Chest?.Equip(race.RSEMBody.Value);
+					a.Equipment.Arms?.Equip(race.RSEMHands.Value);
+					a.Equipment.Legs?.Equip(race.RSEMLegs.Value);
+					a.Equipment.Feet?.Equip(race.RSEMFeet.Value);
+				}
+				else
+				{
+					a.Equipment.Chest?.Equip(race.RSEFBody.Value);
+					a.Equipment.Arms?.Equip(race.RSEFHands.Value);
+					a.Equipment.Legs?.Equip(race.RSEFLegs.Value);
+					a.Equipment.Feet?.Equip(race.RSEFFeet.Value);
+				}
+
+				bool isHuman = a.IsHuman;
+				a.Equipment.Ear?.Clear(isHuman);
+				a.Equipment.Head?.Clear(isHuman);
+				a.Equipment.LFinger?.Clear(isHuman);
+				a.Equipment.Neck?.Clear(isHuman);
+				a.Equipment.RFinger?.Clear(isHuman);
+				a.Equipment.Wrist?.Clear(isHuman);
+			}
+
+			a.Glasses?.Clear();
+		});
 	}
 
 	// Dye1 - ALL equipment
@@ -370,40 +413,47 @@ public partial class CharacterPage : UserControl
 		if (this.Actor == null || dye == null)
 			return;
 
-		if (this.CanDyeWeapons && dyeTarget.HasFlagUnsafe(DyeTarget.Weapons))
-			this.Actor.MainHand?.ApplyDye(dye, dyeSlot);
-
-		if (this.CanDyeWeapons && dyeTarget.HasFlagUnsafe(DyeTarget.Weapons))
-			this.Actor.OffHand?.ApplyDye(dye, dyeSlot);
-
-		if (this.CanDyeEquipment && dyeTarget.HasFlagUnsafe(DyeTarget.Clothing))
+		this.Actor.Do(a =>
 		{
-			this.Actor.Equipment?.Head?.ApplyDye(dye, dyeSlot);
-			this.Actor.Equipment?.Chest?.ApplyDye(dye, dyeSlot);
-			this.Actor.Equipment?.Arms?.ApplyDye(dye, dyeSlot);
-			this.Actor.Equipment?.Legs?.ApplyDye(dye, dyeSlot);
-			this.Actor.Equipment?.Feet?.ApplyDye(dye, dyeSlot);
-		}
+			if (this.CanDyeWeapons && dyeTarget.HasFlagUnsafe(DyeTarget.Weapons))
+				a.MainHand?.ApplyDye(dye, dyeSlot);
 
-		if (this.CanDyeEquipment && dyeTarget.HasFlagUnsafe(DyeTarget.Accessories))
-		{
-			this.Actor.Equipment?.Ear?.ApplyDye(dye, dyeSlot);
-			this.Actor.Equipment?.Neck?.ApplyDye(dye, dyeSlot);
-			this.Actor.Equipment?.Wrist?.ApplyDye(dye, dyeSlot);
-			this.Actor.Equipment?.RFinger?.ApplyDye(dye, dyeSlot);
-			this.Actor.Equipment?.LFinger?.ApplyDye(dye, dyeSlot);
-		}
+			if (this.CanDyeWeapons && dyeTarget.HasFlagUnsafe(DyeTarget.Weapons))
+				a.OffHand?.ApplyDye(dye, dyeSlot);
+
+			if (this.CanDyeEquipment && dyeTarget.HasFlagUnsafe(DyeTarget.Clothing))
+			{
+				a.Equipment?.Head?.ApplyDye(dye, dyeSlot);
+				a.Equipment?.Chest?.ApplyDye(dye, dyeSlot);
+				a.Equipment?.Arms?.ApplyDye(dye, dyeSlot);
+				a.Equipment?.Legs?.ApplyDye(dye, dyeSlot);
+				a.Equipment?.Feet?.ApplyDye(dye, dyeSlot);
+			}
+
+			if (this.CanDyeEquipment && dyeTarget.HasFlagUnsafe(DyeTarget.Accessories))
+			{
+				a.Equipment?.Ear?.ApplyDye(dye, dyeSlot);
+				a.Equipment?.Neck?.ApplyDye(dye, dyeSlot);
+				a.Equipment?.Wrist?.ApplyDye(dye, dyeSlot);
+				a.Equipment?.RFinger?.ApplyDye(dye, dyeSlot);
+				a.Equipment?.LFinger?.ApplyDye(dye, dyeSlot);
+			}
+		});
 	}
 
 	private async void OnResetClicked(object sender, RoutedEventArgs e)
 	{
-		if (this.Actor?.Pinned?.OriginalCharacterBackup == null)
+		if (this.Actor == null)
+			return;
+
+		var pinned = TargetService.GetPinned(this.Actor);
+		if (pinned?.OriginalCharacterBackup == null)
 			return;
 
 		if (await GenericDialog.ShowLocalizedAsync("Character_Reset_Confirm", "Character_Reset", MessageBoxButton.YesNo) != true)
 			return;
 
-		this.Actor.Pinned.RestoreCharacterBackup(PinnedActor.BackupModes.Original);
+		pinned.RestoreCharacterBackup(PinnedActor.BackupModes.Original);
 	}
 
 	private async void OnImportClicked(object sender, RoutedEventArgs e)
@@ -608,13 +658,13 @@ public partial class CharacterPage : UserControl
 		s_lastSaveDir = result.Directory;
 	}
 
-	private void OnActorChanged(ActorMemory? actor)
+	private void OnActorChanged(ObjectHandle<ActorMemory>? actorHandle)
 	{
-		this.Actor = actor;
+		this.Actor = actorHandle;
 
 		Application.Current.Dispatcher.InvokeAsync(() =>
 		{
-			bool hasValidSelection = actor != null && actor.ObjectKind.IsSupportedType();
+			bool hasValidSelection = actorHandle != null && actorHandle.Do(a => a.ObjectKind.IsSupportedType()) == true;
 			this.IsEnabled = hasValidSelection;
 		});
 	}

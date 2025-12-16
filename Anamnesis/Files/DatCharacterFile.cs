@@ -127,7 +127,28 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		return file;
 	}
 
-	public void WriteToFile(ActorMemory actor)
+	public void WriteToFile(ObjectHandle<ActorMemory> handle) => handle.Do(this.WriteToFile);
+
+	public override void Serialize(Stream stream)
+	{
+		stream.Write(this.Data);
+	}
+
+	public override FileBase Deserialize(Stream stream)
+	{
+		var file = new DatCharacterFile();
+
+		using var reader = new BinaryReader(stream);
+
+		stream.Seek(0x10, SeekOrigin.Begin);
+		file.Data = reader.ReadBytes(26);
+
+		stream.Seek(0x30, SeekOrigin.Begin);
+
+		return file;
+	}
+
+	private void WriteToFile(ActorMemory actor)
 	{
 		if (actor.Customize == null)
 			return;
@@ -259,24 +280,5 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		writer.Write(saveData); // Appearance + Timestamp
 
 		this.Data = buffer;
-	}
-
-	public override void Serialize(Stream stream)
-	{
-		stream.Write(this.Data);
-	}
-
-	public override FileBase Deserialize(Stream stream)
-	{
-		var file = new DatCharacterFile();
-
-		using var reader = new BinaryReader(stream);
-
-		stream.Seek(0x10, SeekOrigin.Begin);
-		file.Data = reader.ReadBytes(26);
-
-		stream.Seek(0x30, SeekOrigin.Begin);
-
-		return file;
 	}
 }

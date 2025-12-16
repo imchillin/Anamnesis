@@ -41,7 +41,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	private readonly Dictionary<string, Quaternion> initialRotations = [];
 	private readonly Dictionary<string, Vector3> initialScales = [];
 
-	private ActorMemory? currentActor;
+	private ObjectHandle<ActorMemory>? currentActor;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="TransformEditor"/> class.
@@ -54,7 +54,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 		if (TargetService.Instance.SelectedActor != null)
 		{
 			this.currentActor = TargetService.Instance.SelectedActor;
-			this.currentActor.PropertyChanged += this.OnActorPropertyChanged;
+			this.currentActor.Do(a => a.PropertyChanged += this.OnActorPropertyChanged);
 		}
 
 		TargetService.ActorSelected += this.OnSelectedActorChanged;
@@ -87,14 +87,14 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	}
 
 	/// <summary>Gets the selected actor.</summary>
-	public ActorMemory? SelectedActor => this.currentActor;
+	public ObjectHandle<ActorMemory>? SelectedActor => this.currentActor;
 
 	/// <summary>Gets all selected bones for linked skeleton.</summary>
 	/// <remarks>If the skeleton is not set, an empty collection is returned.</remarks>
 	public IEnumerable<Bone> SelectedBones => this.Skeleton?.SelectedBones ?? Enumerable.Empty<Bone>();
 
 	/// <summary>Gets a value indicating whether translation is allowed.</summary>
-	public bool CanTranslate => this.CanTranslateOverride ?? (this.Skeleton != null && this.Skeleton.SelectedBones != null && this.Skeleton.SelectedBones.All(b => b.CanTranslate) && TargetService.Instance.SelectedActor != null && (TargetService.Instance.SelectedActor.IsMotionDisabled || PoseService.Instance.FreezeWorldPosition));
+	public bool CanTranslate => this.CanTranslateOverride ?? (this.Skeleton != null && this.Skeleton.SelectedBones != null && this.Skeleton.SelectedBones.All(b => b.CanTranslate) && TargetService.Instance.SelectedActor != null && (TargetService.Instance.SelectedActor.Do(a => a.IsMotionDisabled) == true || PoseService.Instance.FreezeWorldPosition));
 
 	/// <summary>Gets a value indicating whether rotation is allowed.</summary>
 	public bool CanRotate => this.ActorTransform?.CanRotate ?? (this.Skeleton != null && this.Skeleton.SelectedBones != null && this.Skeleton.SelectedBones.All(b => b.CanRotate));
@@ -124,7 +124,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 
 			// If there is no selection, use the actor transform
 			if (!this.SelectedBones.Any())
-				return this.SelectedActor?.ModelObject?.Transform?.Position ?? Vector3.Zero;
+				return this.SelectedActor?.DoRef(a => a.ModelObject)?.Transform?.Position ?? Vector3.Zero;
 
 			// If there is a single bone selected, use its position
 			// For multiple bones, return the deviation from the initial position
@@ -146,9 +146,10 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 
 			if (!this.SelectedBones.Any())
 			{
-				if (this.SelectedActor?.ModelObject?.Transform != null)
+				var modelObject = this.SelectedActor?.DoRef(a => a.ModelObject);
+				if (modelObject?.Transform != null)
 				{
-					this.SelectedActor.ModelObject.Transform.Position = value;
+					modelObject.Transform!.Position = value;
 				}
 			}
 			else if (this.Skeleton.SelectedBones.Count() == 1)
@@ -188,7 +189,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 
 			// If there is no selection, use the actor transform
 			if (!this.SelectedBones.Any())
-				return this.SelectedActor?.ModelObject?.Transform?.Rotation ?? Quaternion.Identity;
+				return this.SelectedActor?.DoRef(a => a.ModelObject)?.Transform?.Rotation ?? Quaternion.Identity;
 
 			// If there is a single bone selected, use its rotation
 			// For multiple bones, return the deviation from the initial rotation
@@ -210,9 +211,10 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 
 			if (!this.SelectedBones.Any())
 			{
-				if (this.SelectedActor?.ModelObject?.Transform != null)
+				var modelObject = this.SelectedActor?.DoRef(a => a.ModelObject);
+				if (modelObject?.Transform != null)
 				{
-					this.SelectedActor.ModelObject.Transform.Rotation = value;
+					modelObject.Transform!.Rotation = value;
 				}
 			}
 			else if (this.Skeleton.SelectedBones.Count() == 1)
@@ -269,7 +271,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 
 			// If there is no selection, use the actor transform
 			if (!this.SelectedBones.Any())
-				return this.SelectedActor?.ModelObject?.Transform?.Scale ?? Vector3.Zero;
+				return this.SelectedActor?.DoRef(a => a.ModelObject)?.Transform?.Scale ?? Vector3.Zero;
 
 			// If there is a single bone selected, use its scale
 			// For multiple bones, return the deviation from the initial scale
@@ -291,9 +293,10 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 
 			if (!this.SelectedBones.Any())
 			{
-				if (this.SelectedActor?.ModelObject?.Transform != null)
+				var modelObject = this.SelectedActor?.DoRef(a => a.ModelObject);
+				if (modelObject?.Transform != null)
 				{
-					this.SelectedActor.ModelObject.Transform.Scale = value;
+					modelObject.Transform!.Scale = value;
 				}
 			}
 			else if (this.Skeleton.SelectedBones.Count() == 1)
@@ -482,19 +485,12 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	/// Handles changes to the selected actor.
 	/// </summary>
 	/// <param name="actor">The new selected actor.</param>
-	private void OnSelectedActorChanged(ActorMemory? actor)
+	private void OnSelectedActorChanged(ObjectHandle<ActorMemory>? actor)
 	{
 		// We already track skeleton changes so this is only used to keep track of actor property changes
-		if (this.currentActor != null)
-		{
-			this.currentActor.PropertyChanged -= this.OnActorPropertyChanged;
-		}
-
+		this.currentActor?.Do(a => a.PropertyChanged -= this.OnActorPropertyChanged);
 		this.currentActor = actor;
-		if (this.currentActor != null)
-		{
-			this.currentActor.PropertyChanged += this.OnActorPropertyChanged;
-		}
+		this.currentActor?.Do(a => a.PropertyChanged += this.OnActorPropertyChanged);
 
 		// Raise property changed for the entire TransformEditor
 		this.RaisePropertyChanged(string.Empty);

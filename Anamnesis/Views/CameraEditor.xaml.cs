@@ -4,7 +4,6 @@
 namespace Anamnesis.Views;
 
 using Anamnesis.Files;
-using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
 using Serilog;
@@ -49,12 +48,9 @@ public partial class CameraEditor : UserControl
 
 	private async void OnImportCamera(object sender, RoutedEventArgs e)
 	{
-		ActorBasicMemory? targetActor = TargetService.PlayerTarget;
-		if (targetActor == null || !targetActor.IsValid)
+		var playerTarget = TargetService.PlayerTargetHandle;
+		if (playerTarget == null || !playerTarget.IsValid)
 			return;
-
-		var actorMemory = new ActorMemory();
-		actorMemory.SetAddress(targetActor.Address);
 
 		try
 		{
@@ -71,7 +67,7 @@ public partial class CameraEditor : UserControl
 
 			if (result.File is CameraShotFile camFile)
 			{
-				camFile.Apply(CameraService.Instance, actorMemory);
+				camFile.Apply(CameraService.Instance, playerTarget);
 			}
 		}
 		catch (Exception ex)
@@ -82,12 +78,9 @@ public partial class CameraEditor : UserControl
 
 	private async void OnExportCamera(object sender, RoutedEventArgs e)
 	{
-		ActorBasicMemory? targetActor = TargetService.PlayerTarget;
-		if (targetActor == null || !targetActor.IsValid)
+		var playerTarget = TargetService.PlayerTargetHandle;
+		if (playerTarget == null || !playerTarget.IsValid)
 			return;
-
-		var actorMemory = new ActorMemory();
-		actorMemory.SetAddress(targetActor.Address);
 
 		SaveResult result = await FileService.Save<CameraShotFile>(s_lastSaveDir, FileService.DefaultCameraDirectory);
 
@@ -97,7 +90,7 @@ public partial class CameraEditor : UserControl
 		s_lastSaveDir = result.Directory;
 
 		var file = new CameraShotFile();
-		file.WriteToFile(CameraService.Instance, actorMemory);
+		file.WriteToFile(CameraService.Instance, playerTarget);
 
 		using var stream = new FileStream(result.Path.FullName, FileMode.Create);
 		file.Serialize(stream);
@@ -105,17 +98,17 @@ public partial class CameraEditor : UserControl
 
 	private void OnTargetActor(object sender, RoutedEventArgs e)
 	{
-		ActorBasicMemory? targetActor = TargetService.PlayerTarget;
-		if (targetActor == null || !targetActor.IsValid)
+		var playerTarget = TargetService.PlayerTargetHandle;
+		if (playerTarget == null || !playerTarget.IsValid)
 			return;
 
-		var actorMemory = new ActorMemory();
-		actorMemory.SetAddress(targetActor.Address);
+		playerTarget.Do(a =>
+		{
+			if (a.ModelObject?.Transform == null)
+				return;
 
-		if (actorMemory?.ModelObject?.Transform == null)
-			return;
-
-		CameraService.GPoseCamera.Position = actorMemory.ModelObject.Transform.Position;
+			CameraService.GPoseCamera.Position = a.ModelObject.Transform.Position;
+		});
 	}
 
 	private void OnSettingsChanged(object? sender, EventArgs e)

@@ -59,7 +59,7 @@
 								FontSize="10"
 								FontWeight="Bold"
 								BorderBrush="Transparent"
-								Visibility="{Binding Skeleton.SelectedBones, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+								Visibility="{Binding Skeleton.SelectedBones, Converter={StaticResource NotEmptyToVisibilityConverter}, Mode=OneWay}"
 								IsReadOnly="{Binding IsMultipleBonesSelected}"
 								Style="{StaticResource MaterialDesignTextBox}">
 								<TextBox.ToolTip>
@@ -72,13 +72,13 @@
 													HorizontalAlignment="Right"
 													FontSize="10"
 													VerticalAlignment="Top"
-													Visibility="{Binding IsSingleBoneSelected, Converter={StaticResource B2V}}"/>
+													Visibility="{Binding IsSingleBoneSelected, Converter={StaticResource B2V}, Mode=OneWay}"/>
 
 							<XivToolsWpf:TextBlock
 								Key="Pose_NothingSelected"
 								HorizontalAlignment="Left"
 								Style="{StaticResource Header}"
-								Visibility="{Binding Skeleton.SelectedBones, Converter={StaticResource IsEmptyToVisibilityConverter}}" />
+								Visibility="{Binding Skeleton.SelectedBones, Converter={StaticResource IsEmptyToVisibilityConverter}, Mode=OneWay}" />
 						</Grid>
 
 
@@ -160,7 +160,7 @@
 							<XivToolsWpf:InfoControl Key="Pose_WarningNotFrozen" Margin="0,0,0,46">
 								<XivToolsWpf:InfoControl.Visibility>
 									<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
-										<Binding Path="TargetService.SelectedActor.IsMotionEnabled"/>
+										<Binding Path="TargetService.SelectedActor.Unsafe.IsMotionEnabled"/>
 										<Binding Path="PoseService.WorldPositionNotFrozen"/>
 									</MultiBinding>
 								</XivToolsWpf:InfoControl.Visibility>
@@ -468,24 +468,24 @@
 				Margin="6, 7"
 				Grid.Row="0"
 				Grid.RowSpan="2"
-				Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}" />
+				Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}, Mode=OneWay}" />
 
-			<Grid Visibility="{Binding GposeService.IsGpose, Converter={StaticResource B2V}}"
+			<Grid Visibility="{Binding GposeService.IsGpose, Converter={StaticResource B2V}, Mode=OneWay}"
 				  Grid.Row="0"
 				  Grid.RowSpan="2">
 				<XivToolsWpf:InfoControl IsError="False" Key="Pose_NotEnabled" VerticalAlignment="Bottom" Margin="6, 7" 
-										 Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource !B2V}}"/>
+										 Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource !B2V}, Mode=OneWay}"/>
 			</Grid>
 		</Grid>
 
-		<Grid Visibility="{Binding Actor, Converter={StaticResource NotNullToVisibilityConverter}}">
-			<Grid Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
-				<Grid Visibility="{Binding Skeleton, Converter={StaticResource NullToVisibilityConverter}}">
+		<Grid Visibility="{Binding Actor, Converter={StaticResource NotNullToVisibilityConverter}, Mode=OneWay}">
+			<Grid Visibility="{Binding Actor.Unsafe.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}, Mode=OneWay}">
+				<Grid Visibility="{Binding Skeleton, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}">
 					<XivToolsWpf:InfoControl IsError="True" Key="Pose_NoSkeleton" VerticalAlignment="Bottom" Margin="12"/>
 				</Grid>
 			</Grid>
 
-			<Grid Visibility="{Binding Actor.ModelObject, Converter={StaticResource NullToVisibilityConverter}}">
+			<Grid Visibility="{Binding Actor.Unsafe.ModelObject, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}">
 				<XivToolsWpf:InfoControl IsError="True" Key="Pose_NoModel" VerticalAlignment="Bottom" Margin="12"/>
 			</Grid>
 		</Grid>

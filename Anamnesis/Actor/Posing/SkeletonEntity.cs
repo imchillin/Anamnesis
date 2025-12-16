@@ -23,7 +23,7 @@ using System.Windows.Input;
 /// </remarks>
 /// <param name="actor">The actor memory associated with this skeleton.</param>
 [AddINotifyPropertyChangedInterface]
-public class SkeletonEntity(ActorMemory actor) : Skeleton(actor)
+public class SkeletonEntity(ObjectHandle<ActorMemory> actor) : Skeleton(actor)
 {
 	private List<BoneEntity>? selectedBonesCache;
 	private List<BoneEntity>? hoveredBonesCache;
@@ -137,16 +137,19 @@ public class SkeletonEntity(ActorMemory actor) : Skeleton(actor)
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void WriteSkeleton()
 	{
-		if (this.Actor == null || this.Actor.ModelObject?.Skeleton == null)
-			return;
-
-		if (this.HasSelection && PoseService.Instance.IsEnabled)
+		this.Actor?.Do(actor =>
 		{
+			if (actor.ModelObject?.Skeleton == null)
+				return;
+
+			if (!this.HasSelection || !PoseService.Instance.IsEnabled)
+				return;
+
 			lock (HistoryService.Instance.LockObject)
 			{
 				try
 				{
-					this.Actor.PauseSynchronization = true;
+					actor.PauseSynchronization = true;
 
 					// Get all selected bones
 					var selectedBones = this.selectedBonesCache ??= this.Bones.Values.OfType<BoneEntity>().Where(b => b.IsSelected).ToList();
@@ -184,10 +187,10 @@ public class SkeletonEntity(ActorMemory actor) : Skeleton(actor)
 				}
 				finally
 				{
-					this.Actor.PauseSynchronization = false;
+					actor.PauseSynchronization = false;
 				}
 			}
-		}
+		});
 	}
 
 	/// <summary>Selects a bone.</summary>

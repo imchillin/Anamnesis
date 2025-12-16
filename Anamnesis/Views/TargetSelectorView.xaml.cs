@@ -11,7 +11,6 @@ using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
 using Serilog;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -19,7 +18,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using XivToolsWpf;
 
-public abstract class TargetSelectorDrawer : SelectorDrawer<ActorBasicMemory>
+public abstract class TargetSelectorDrawer : SelectorDrawer<ObjectHandle<GameObjectMemory>>
 {
 }
 
@@ -93,7 +92,7 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 	}
 #pragma warning restore CA1822
 
-	public static void Show(Action<ActorBasicMemory> sectionChanged)
+	public static void Show(Action<ObjectHandle<GameObjectMemory>> sectionChanged)
 	{
 		var view = new TargetSelectorView();
 		view.SelectionChanged += (b) =>
@@ -109,76 +108,88 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 
 	protected override Task LoadItems()
 	{
-		List<ActorBasicMemory> allActors = ActorService.Instance.GetAllActors();
+		var actorHandles = ActorService.Instance.ObjectTable.GetAll();
 
 		// As we do not actively update non-pinned actors, synchronize first
-		foreach (ActorBasicMemory actor in allActors)
+		foreach (var handle in actorHandles)
 		{
-			if (actor.IsDisposed)
+			if (!handle.IsValid)
 				continue;
 
-			actor.Synchronize();
+			handle.Do(actor => actor.Synchronize());
 		}
 
-		this.AddItems(allActors);
+		this.AddItems(actorHandles);
 		return Task.CompletedTask;
 	}
 
-	protected override int Compare(ActorBasicMemory actorA, ActorBasicMemory actorB)
+	protected override int Compare(ObjectHandle<GameObjectMemory> actorA, ObjectHandle<GameObjectMemory> actorB)
 	{
-		if (actorA.IsGPoseActor && !actorB.IsGPoseActor)
+		if (actorA.Do(a => a.IsGPoseActor) == true && actorB.Do(a => a.IsGPoseActor) == false)
 			return -1;
 
-		if (!actorA.IsGPoseActor && actorB.IsGPoseActor)
+		if (actorA.Do(a => a.IsGPoseActor) == false && actorB.Do(a => a.IsGPoseActor) == true)
 			return 1;
 
-		return actorA.DistanceFromPlayer.CompareTo(actorB.DistanceFromPlayer);
+		double? distanceA = actorA.Do(a => a.DistanceFromPlayer);
+		double? distanceB = actorB.Do(a => a.DistanceFromPlayer);
+
+		if (distanceA == null && distanceB == null)
+			return 0;
+
+		if (distanceA == null)
+			return 1;
+
+		if (distanceB == null)
+			return -1;
+
+		return distanceA.Value.CompareTo(distanceB.Value);
 	}
 
-	protected override bool Filter(ActorBasicMemory actor, string[]? search)
+	protected override bool Filter(ObjectHandle<GameObjectMemory> handle, string[]? search)
 	{
-		////if (GposeService.Instance.IsGpose != actor.IsGPoseActor)
-		////	return false;
-
-		if (!SearchUtility.Matches(actor.DisplayName, search) && !SearchUtility.Matches(actor.Name, search))
-			return false;
-
-		if (TargetService.IsPinned(actor))
-			return false;
-
-		if (!actor.IsValid)
-			return false;
-
-		if (!s_includeHidden && actor.IsHidden)
-			return false;
-
-		if (!s_includePlayers && actor.ObjectKind == Memory.ActorTypes.Player)
-			return false;
-
-		if (!s_includeCompanions && actor.ObjectKind == Memory.ActorTypes.Companion)
-			return false;
-
-		if (!s_includeMounts && actor.ObjectKind == Memory.ActorTypes.Mount)
-			return false;
-
-		if (!s_includeOrnaments && actor.ObjectKind == Memory.ActorTypes.Ornament)
-			return false;
-
-		if (!s_includeNPCs && (actor.ObjectKind == Memory.ActorTypes.BattleNpc || actor.ObjectKind == Memory.ActorTypes.EventNpc))
-			return false;
-
-		if (!s_includeOther
-			&& actor.ObjectKind != Memory.ActorTypes.Player
-			&& actor.ObjectKind != Memory.ActorTypes.Companion
-			&& actor.ObjectKind != Memory.ActorTypes.BattleNpc
-			&& actor.ObjectKind != Memory.ActorTypes.EventNpc
-			&& actor.ObjectKind != Memory.ActorTypes.Mount
-			&& actor.ObjectKind != Memory.ActorTypes.Ornament)
+		return handle.Do(actor =>
 		{
-			return false;
-		}
+			if (!SearchUtility.Matches(actor.DisplayName, search) && !SearchUtility.Matches(actor.Name, search))
+				return false;
 
-		return true;
+			if (TargetService.IsPinned(handle))
+				return false;
+
+			if (!actor.IsValid)
+				return false;
+
+			if (!s_includeHidden && actor.IsHidden)
+				return false;
+
+			if (!s_includePlayers && actor.ObjectKind == Memory.ActorTypes.Player)
+				return false;
+
+			if (!s_includeCompanions && actor.ObjectKind == Memory.ActorTypes.Companion)
+				return false;
+
+			if (!s_includeMounts && actor.ObjectKind == Memory.ActorTypes.Mount)
+				return false;
+
+			if (!s_includeOrnaments && actor.ObjectKind == Memory.ActorTypes.Ornament)
+				return false;
+
+			if (!s_includeNPCs && (actor.ObjectKind == Memory.ActorTypes.BattleNpc || actor.ObjectKind == Memory.ActorTypes.EventNpc))
+				return false;
+
+			if (!s_includeOther
+				&& actor.ObjectKind != Memory.ActorTypes.Player
+				&& actor.ObjectKind != Memory.ActorTypes.Companion
+				&& actor.ObjectKind != Memory.ActorTypes.BattleNpc
+				&& actor.ObjectKind != Memory.ActorTypes.EventNpc
+				&& actor.ObjectKind != Memory.ActorTypes.Mount
+				&& actor.ObjectKind != Memory.ActorTypes.Ornament)
+			{
+				return false;
+			}
+
+			return true;
+		}) == true;
 	}
 
 	protected override void OnSelectionChanged(bool close)
@@ -205,29 +216,36 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 			var nextActorId = await Brio.Spawn();
 			if (nextActorId != -1)
 			{
-				var actors = ActorService.Instance.GetAllActors();
-				var newActor = actors.SingleOrDefault(i => i.ObjectIndex == nextActorId);
-				if (newActor != null)
+				var actorHandles = ActorService.Instance.ObjectTable.GetAll();
+				var newActorHandle = actorHandles.SingleOrDefault(h => h.Do(a => a.ObjectIndex) == nextActorId);
+				if (newActorHandle != null && newActorHandle.IsValid)
 				{
 					if (PoseService.Instance.IsEnabled)
 					{
-						// We try and load the A-Pose if it's available
+						// Try to load the A-Pose if available
 						var path = FileService.ParseToFilePath(FileService.StandardPoseDirectory.Path);
-						path += Path.Combine("Unisex", "A-Pose.pose");
+						path = Path.Combine(path, "Unisex", "A-Pose.pose");
 
 						if (File.Exists(path))
 						{
 							if (new PoseFile().Deserialize(File.OpenRead(path)) is not PoseFile poseFile)
 								return;
 
-							ActorMemory fullActor = new();
-							fullActor.SetAddress(newActor.Address);
-							var skeleton = new Skeleton(fullActor);
-							poseFile.Apply(fullActor, skeleton, null, PoseFile.Mode.Rotation, true);
+							await newActorHandle.DoAsync(async actor =>
+							{
+								var upgradedActorHandle = ActorService.Instance.ObjectTable.Get<ActorMemory>(newActorHandle.Address);
+								if (upgradedActorHandle != null)
+								{
+									var skeleton = new Skeleton(upgradedActorHandle);
+									poseFile.Apply(upgradedActorHandle, skeleton, null, PoseFile.Mode.Rotation, true);
+								}
+
+								await Task.CompletedTask;
+							});
 						}
 					}
 
-					this.Value = newActor;
+					this.Value = newActorHandle;
 					this.OnSelectionChanged(true);
 				}
 			}

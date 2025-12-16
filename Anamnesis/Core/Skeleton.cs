@@ -63,7 +63,7 @@ public class Skeleton : INotifyPropertyChanged
 
 	/// <summary>Initializes a new instance of the <see cref="Skeleton"/> class.</summary>
 	/// <param name="actor">The actor memory associated with this skeleton.</param>
-	public Skeleton(ActorMemory actor)
+	public Skeleton(ObjectHandle<ActorMemory> actor)
 	{
 		this.Actor = actor;
 		this.SetActor(actor);
@@ -73,46 +73,45 @@ public class Skeleton : INotifyPropertyChanged
 	public event PropertyChangedEventHandler? PropertyChanged;
 
 	/// <summary>Gets the actor memory associated with this skeleton.</summary>
-	public ActorMemory Actor { get; private set; }
+	public ObjectHandle<ActorMemory> Actor { get; private set; }
 
 	/// <summary>Gets the model space root rotation of the skeleton.</summary>
-	public Quaternion RootRotation => this.Actor?.ModelObject?.Transform?.Rotation ?? Quaternion.Identity;
+	public Quaternion RootRotation => this.Actor?.DoRef(a => a.ModelObject)?.Transform?.Rotation ?? Quaternion.Identity;
 
 	/// <summary> Gets a value indicating whether the actor has a tail.</summary>
-	public bool HasTail => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Miqote
-		|| this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.AuRa
-		|| this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar
-		|| this.IsIVCS;
+	public bool HasTail => (this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Miqote
+		|| a.Customize?.Race == ActorCustomizeMemory.Races.AuRa
+		|| a.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar) == true) || this.IsIVCS;
 
 	/// <summary>Gets a value indicating whether the actor has a standard face.</summary>
 	public bool IsStandardFace => this.Actor == null || (!this.IsMiqote && !this.IsHrothgar && !this.IsViera);
 
 	/// <summary>Gets a value indicating whether the actor is a Miqote.</summary>
-	public bool IsMiqote => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Miqote;
+	public bool IsMiqote => this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Miqote) == true;
 
 	/// <summary>Gets a value indicating whether the actor is a Viera.</summary>
-	public bool IsViera => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Viera;
+	public bool IsViera => this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Viera) == true;
 
 	/// <summary>Gets a value indicating whether the actor is an Elezen.</summary>
-	public bool IsElezen => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Elezen;
+	public bool IsElezen => this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Elezen) == true;
 
 	/// <summary>Gets a value indicating whether the actor is a Hrothgar.</summary>
-	public bool IsHrothgar => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar;
+	public bool IsHrothgar => this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar) == true;
 
 	/// <summary>Gets a value indicating whether the actor has a tail or ears.</summary>
 	public bool HasTailOrEars => this.IsViera || this.HasTail;
 
 	/// <summary>Gets a value indicating whether the actor is a Viera and has ears type 01.</summary>
-	public bool IsEars01 => this.IsViera && this.Actor?.Customize?.TailEarsType <= 1;
+	public bool IsEars01 => this.IsViera && this.Actor?.Do(a => a.Customize?.TailEarsType <= 1) == true;
 
 	/// <summary>Gets a value indicating whether the actor is a Viera and has ears type 02.</summary>
-	public bool IsEars02 => this.IsViera && this.Actor?.Customize?.TailEarsType == 2;
+	public bool IsEars02 => this.IsViera && this.Actor?.Do(a => a.Customize?.TailEarsType == 2) == true;
 
 	/// <summary>Gets a value indicating whether the actor is a Viera and has ears type 03.</summary>
-	public bool IsEars03 => this.IsViera && this.Actor?.Customize?.TailEarsType == 3;
+	public bool IsEars03 => this.IsViera && this.Actor?.Do(a => a.Customize?.TailEarsType == 3) == true;
 
 	/// <summary>Gets a value indicating whether the actor is a Viera and has ears type 04.</summary>
-	public bool IsEars04 => this.IsViera && this.Actor?.Customize?.TailEarsType == 4;
+	public bool IsEars04 => this.IsViera && this.Actor?.Do(a => a.Customize?.TailEarsType == 4) == true;
 
 	/// <summary>Gets a value indicating whether the skeleton has IVCS bones.</summary>
 	public bool IsIVCS { get; private set; }
@@ -125,7 +124,7 @@ public class Skeleton : INotifyPropertyChanged
 			if (!this.IsViera)
 				return false;
 
-			ActorCustomizeMemory? customize = this.Actor?.Customize;
+			ActorCustomizeMemory? customize = this.Actor?.DoRef(a => a.Customize);
 
 			if (customize == null)
 				return false;
@@ -174,7 +173,7 @@ public class Skeleton : INotifyPropertyChanged
 	public virtual Bone? GetBone(string name)
 	{
 		// Only process valid skeletons that have atleast one partial skeleton
-		if (this.Actor?.ModelObject?.Skeleton == null || this.Actor.ModelObject.Skeleton.Length <= 0)
+		if (this.Actor?.Do(a => a.ModelObject?.Skeleton == null || a.ModelObject!.Skeleton!.Length <= 0) ?? true)
 			return null;
 
 		string? modernName = LegacyBoneNameConverter.GetModernName(name);
@@ -198,7 +197,7 @@ public class Skeleton : INotifyPropertyChanged
 	/// <summary>Reads the transforms of all bones in the skeleton.</summary>
 	public void ReadTransforms()
 	{
-		if (this.Bones == null || this.Actor?.ModelObject?.Skeleton == null || !GposeService.GetIsGPose())
+		if (this.Bones == null || (this.Actor?.Do(a => a.ModelObject?.Skeleton == null) ?? true) || !GposeService.GetIsGPose())
 			return;
 
 		// If history is restoring, wait until it's done.
@@ -240,83 +239,88 @@ public class Skeleton : INotifyPropertyChanged
 		{
 			this.snapshot.Clear();
 
-			if (this.Actor?.ModelObject?.Skeleton == null)
-				return this.snapshot;
-
-			this.Actor.ModelObject.Skeleton.EnableReading = false;
-
-			foreach (var (name, bone) in this.Bones)
+			return this.Actor?.DoRef(a =>
 			{
-				var transform = bone.TransformMemory;
-				if (transform == null)
-					continue;
+				if (a.ModelObject == null || a.ModelObject?.Skeleton == null)
+					return this.snapshot;
 
-				this.snapshot[name] = new Transform
+				a.ModelObject.Skeleton.EnableReading = false;
+
+				foreach (var (name, bone) in this.Bones)
 				{
-					Position = transform.Position,
-					Rotation = transform.Rotation,
-					Scale = transform.Scale,
-				};
-			}
+					var transform = bone.TransformMemory;
+					if (transform == null)
+						continue;
 
-			this.Actor.ModelObject.Skeleton.EnableReading = true;
+					this.snapshot[name] = new Transform
+					{
+						Position = transform.Position,
+						Rotation = transform.Rotation,
+						Scale = transform.Scale,
+					};
+				}
 
-			return this.snapshot;
+				a.ModelObject.Skeleton.EnableReading = true;
+				return this.snapshot;
+			}) ?? [];
 		}
 	}
 
 	/// <summary>Sets the actor memory for the skeleton and initializes all bones.</summary>
 	/// <param name="actor">The actor memory to set.</param>
-	protected virtual void SetActor(ActorMemory actor)
+	protected virtual void SetActor(ObjectHandle<ActorMemory> actor)
 	{
 		this.Actor = actor;
 
 		this.Clear();
 
-		if (!GposeService.Instance.IsGpose || this.Actor?.ModelObject?.Skeleton == null)
-			return;
-
-		actor.PauseSynchronization = true;
-
-		// Get all bones
-		this.AddBones(this.Actor.ModelObject.Skeleton);
-
-		if (this.Actor.MainHand?.Model?.Skeleton != null)
-			this.AddBones(this.Actor.MainHand.Model.Skeleton, "mh_");
-
-		if (this.Actor.OffHand?.Model?.Skeleton != null)
-			this.AddBones(this.Actor.OffHand.Model.Skeleton, "oh_");
-
-		actor.PauseSynchronization = false;
-
-		// Create Bone links from the link database
-		foreach ((string name, Bone bone) in this.Bones)
+		this.Actor.Do(a =>
 		{
-			foreach (LinkedBones.LinkSet links in LinkedBones.Links)
+			if (!GposeService.Instance.IsGpose || a.ModelObject?.Skeleton == null)
+				return;
+
+			a.PauseSynchronization = true;
+
+			// Get all bones
+			this.AddBones(a.ModelObject.Skeleton);
+
+			if (a.MainHand?.Model?.Skeleton != null)
+				this.AddBones(a.MainHand.Model.Skeleton, "mh_");
+
+			if (a.OffHand?.Model?.Skeleton != null)
+				this.AddBones(a.OffHand.Model.Skeleton, "oh_");
+
+			a.PauseSynchronization = false;
+
+			// Create Bone links from the link database
+			foreach ((string name, Bone bone) in this.Bones)
 			{
-				if (links.Tribe != null && this.Actor?.Customize?.Tribe != links.Tribe)
-					continue;
-
-				if (links.Gender != null && this.Actor?.Customize?.Gender != links.Gender)
-					continue;
-
-				if (!links.Contains(name))
-					continue;
-
-				foreach (string linkedBoneName in links.Bones)
+				foreach (LinkedBones.LinkSet links in LinkedBones.Links)
 				{
-					if (linkedBoneName == name)
+					if (links.Tribe != null && a.Customize?.Tribe != links.Tribe)
 						continue;
 
-					Bone? linkedBone = this.GetBone(linkedBoneName);
-
-					if (linkedBone == null)
+					if (links.Gender != null && a.Customize?.Gender != links.Gender)
 						continue;
 
-					bone.LinkedBones.Add(linkedBone);
+					if (!links.Contains(name))
+						continue;
+
+					foreach (string linkedBoneName in links.Bones)
+					{
+						if (linkedBoneName == name)
+							continue;
+
+						Bone? linkedBone = this.GetBone(linkedBoneName);
+
+						if (linkedBone == null)
+							continue;
+
+						bone.LinkedBones.Add(linkedBone);
+					}
 				}
 			}
-		}
+		});
 
 		// Read the initial transforms of all bones
 		var snapshot = this.TakeSnapshot();

@@ -22,17 +22,35 @@ public abstract class AnimationSelectorDrawer : SelectorDrawer<IAnimation>
 /// </summary>
 public partial class AnimationSelector : AnimationSelectorDrawer
 {
+	private AnimationSlotFilter localAnimationSlotFilter = new();
+
 	public AnimationSelector()
 	{
 		this.InitializeComponent();
 		this.DataContext = this;
 		GlobalAnimationTypeFilter.PropertyChanged += this.OnSelfPropertyChanged;
-		this.LocalAnimationSlotFilter.PropertyChanged += this.OnSelfPropertyChanged;
 		this.PropertyChanged += this.OnSelfPropertyChanged;
 	}
 
 	public static AnimationTypeFilter GlobalAnimationTypeFilter { get; set; } = new();
-	public AnimationSlotFilter LocalAnimationSlotFilter { get; set; } = new();
+
+	public AnimationSlotFilter LocalAnimationSlotFilter
+	{
+		get => this.localAnimationSlotFilter;
+		set
+		{
+			if (this.localAnimationSlotFilter != value)
+			{
+				if (this.localAnimationSlotFilter != null)
+					this.localAnimationSlotFilter.PropertyChanged -= this.OnSelfPropertyChanged;
+
+				this.localAnimationSlotFilter = value;
+
+				if (this.localAnimationSlotFilter != null)
+					this.localAnimationSlotFilter.PropertyChanged += this.OnSelfPropertyChanged;
+			}
+		}
+	}
 
 	protected override Task LoadItems()
 	{
@@ -149,7 +167,7 @@ public partial class AnimationSelector : AnimationSelectorDrawer
 
 	private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		if (e.PropertyName == nameof(this.LocalAnimationSlotFilter))
+		if (!this.IsLoaded)
 			return;
 
 		this.FilterItems();

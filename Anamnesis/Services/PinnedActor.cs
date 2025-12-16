@@ -12,7 +12,6 @@ using FontAwesome.Sharp;
 using PropertyChanged;
 using Serilog;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 [AddINotifyPropertyChangedInterface]
@@ -20,13 +19,16 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 {
 	private bool isRestoringBackup = false;
 
-	public PinnedActor(ActorMemory memory)
+	public PinnedActor(ObjectHandle<ActorMemory> handle)
 	{
-		this.Id = memory.Id;
-		this.IdNoAddress = memory.IdNoAddress;
-		this.Memory = memory;
-		this.Name = memory.Name;
-		this.Memory.Pinned = this;
+		if (!handle.IsValid)
+			throw new ArgumentException("Cannot pin an invalid actor handle");
+
+		this.Id = handle.DoRef(a => a.Id) ?? string.Empty;
+		this.IdNoAddress = handle.DoRef(a => a.IdNoAddress) ?? string.Empty;
+		this.Name = handle.DoRef(a => a.Name);
+		this.Memory = handle;
+		handle.Do(a => a.Pinned = this);
 
 		this.UpdateActorInfo();
 
@@ -45,7 +47,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		Original,
 	}
 
-	public ActorMemory? Memory { get; private set; }
+	public ObjectHandle<ActorMemory>? Memory { get; private set; }
 	public string? Name { get; private set; }
 	public string Id { get; private set; }
 	public string IdNoAddress { get; private set; }
@@ -55,13 +57,13 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	public bool IsValid { get; private set; }
 
 	[DependsOn(nameof(Memory))]
-	public ActorTypes Kind => this.Memory?.ObjectKind ?? ActorTypes.None;
+	public ActorTypes Kind => this.Memory?.Do(a => a.ObjectKind) ?? ActorTypes.None;
 
 	[DependsOn(nameof(Memory))]
-	public bool IsGPoseActor => this.Memory?.IsGPoseActor ?? false;
+	public bool IsGPoseActor => this.Memory?.Do(a => a.IsGPoseActor) ?? false;
 
 	[DependsOn(nameof(Memory))]
-	public string? DisplayName => this.Memory == null ? this.Name : this.Memory.DisplayName;
+	public string? DisplayName => this.Memory?.DoRef(a => a.DisplayName) ?? this.Name;
 
 	public bool IsRetargeting { get; private set; } = false;
 
@@ -94,8 +96,12 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 		if (this.Memory != null)
 		{
-			this.Memory.PropertyChanged -= this.OnViewModelPropertyChanged;
-			this.Memory.Pinned = null;
+			this.Memory.Do(a =>
+			{
+				a.PropertyChanged -= this.OnViewModelPropertyChanged;
+				a.Pinned = null;
+			});
+			this.Memory.Dispose();
 			this.Memory = null;
 		}
 
@@ -105,12 +111,6 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	public void SelectionChanged()
 	{
 		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsSelected)));
-	}
-
-	public ActorMemory? GetMemory()
-	{
-		this.Tick();
-		return this.Memory;
 	}
 
 	public override int GetHashCode()
@@ -125,30 +125,27 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 			if (this.IsRetargeting)
 				return;
 
-			if (!this.IsValid)
+			if (!this.IsValid || this.Memory == null || !this.Memory.IsValid)
 			{
 				this.Retarget();
 				return;
 			}
 
-			if (this.Memory == null || this.Memory.Address == IntPtr.Zero)
-				return;
-
-			if (!ActorService.Instance.IsActorInTable(this.Memory.Address))
+			if (!ActorService.Instance.ObjectTable.Contains(this.Memory.Address))
 			{
 				Log.Information($"Actor: {this} was not in actor table");
 				this.Retarget();
 				return;
 			}
 
-			if (this.Memory.IsGPoseActor && !GposeService.Instance.IsGpose)
+			if (this.Memory.Do(a => a.IsGPoseActor) == true && !GposeService.Instance.IsGpose)
 			{
 				Log.Information($"Actor: {this} was a gpose actor and we are now in the overworld");
 				this.Retarget();
 				return;
 			}
 
-			if (this.Memory.IsHidden && !this.Memory.IsGPoseActor && !this.Memory.IsRefreshing && GposeService.Instance.IsGpose)
+			if (this.Memory.Do(a => a.IsHidden && !a.IsGPoseActor && !a.IsRefreshing) == true && GposeService.Instance.IsGpose)
 			{
 				Log.Information($"Actor: {this} was hidden entering the gpose boundary");
 				this.Retarget();
@@ -157,7 +154,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 			try
 			{
-				this.Memory.Synchronize();
+				this.Memory.Do(a => a.Synchronize());
 			}
 			catch (Exception ex)
 			{
@@ -172,7 +169,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		if (this.isRestoringBackup)
 			return;
 
-		if (this.Memory == null)
+		if (this.Memory == null || !this.Memory.IsValid)
 		{
 			Log.Warning("Unable to create character backup, pinned actor has no memory");
 			return;
@@ -206,20 +203,19 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		if (backup == null)
 			return;
 
-		ActorMemory? memory = this.GetMemory();
-		if (memory == null)
+		if (this.Memory == null)
 		{
-			Log.Warning("Unable to create character backup, pinned actor has no memory");
+			Log.Warning("Unable to create character backup, pinned actor is not valid");
 			return;
 		}
 
 		this.isRestoringBackup = true;
-		backup.Apply(memory, slot == null ? CharacterFile.SaveModes.All : CharacterFile.SaveModes.EquipmentSlot, slot);
+		backup.Apply(this.Memory, slot == null ? CharacterFile.SaveModes.All : CharacterFile.SaveModes.EquipmentSlot, slot);
 
 		// If we were a player, really make sure we are again.
 		if (backup.ObjectKind == ActorTypes.Player)
 		{
-			memory.ObjectKind = backup.ObjectKind;
+			this.Memory.Do(a => a.ObjectKind = backup.ObjectKind);
 		}
 
 		this.isRestoringBackup = false;
@@ -229,7 +225,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	{
 		if (this.Memory != null)
 		{
-			this.Memory.Pinned = null;
+			this.Memory.Do(a => a.Pinned = null);
 			this.Memory.Dispose();
 			this.Memory = null;
 
@@ -255,103 +251,105 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		{
 			this.IsRetargeting = true;
 
-			if (this.Memory != null)
-				this.Memory.PropertyChanged -= this.OnViewModelPropertyChanged;
+			this.Memory?.Do(a => a.PropertyChanged -= this.OnViewModelPropertyChanged);
 
-			ActorBasicMemory? newBasic = null;
+			ObjectHandle<GameObjectMemory>? newHandle = null;
 			bool isGPose = GposeService.GetIsGPose();
 
-			List<ActorBasicMemory> allActors = ActorService.Instance.GetAllActors();
+			var actorHandles = ActorService.Instance.ObjectTable.GetAll();
 
 			// As we do not actively update non-pinned actors, synchronize first
-			foreach (ActorBasicMemory actor in allActors)
+			foreach (var handle in actorHandles)
 			{
-				if (actor.IsDisposed)
-					continue;
-
-				actor.Synchronize();
+				handle.Do(a => a.Synchronize());
 			}
 
 			// Search for an exact match first
-			foreach (ActorBasicMemory actor in allActors)
+			foreach (var handle in actorHandles)
 			{
-				if (!actor.IsValid)
-					continue;
-
-				if (actor.Id != this.Id || actor.Address == IntPtr.Zero)
-					continue;
-
-				// Don't consider hidden actors for retargeting
-				if (actor.IsHidden)
-					continue;
-
-				if (actor.IsGPoseActor != isGPose)
-					continue;
-
-				newBasic = actor;
-				break;
-			}
-
-			// fall back to ignoring addresses
-			if (newBasic == null)
-			{
-				foreach (ActorBasicMemory actor in allActors)
+				var result = handle.Do(a =>
 				{
-					if (!actor.IsValid)
-						continue;
+					if (!a.IsValid)
+						return false;
 
-					if (actor.IdNoAddress != this.IdNoAddress || actor.Address == IntPtr.Zero)
-						continue;
+					if (a.Id != this.Id || a.Address == IntPtr.Zero)
+						return false;
 
 					// Don't consider hidden actors for retargeting
-					if (actor.IsHidden)
-						continue;
+					if (a.IsHidden)
+						return false;
 
-					if (actor.IsGPoseActor != isGPose)
-						continue;
+					if (a.IsGPoseActor != isGPose)
+						return false;
 
-					// Is this actor memory already pinned to a differnet pin?
-					PinnedActor? pinned = TargetService.GetPinned(actor);
-					if (pinned != this && pinned != null)
-						continue;
+					return true;
+				});
 
-					newBasic = actor;
+				if (result == true)
+				{
+					newHandle = handle;
 					break;
 				}
 			}
 
-			if (newBasic != null)
+			// Fallback to ignoring the address for retargeting
+			if (newHandle == null)
 			{
+				foreach (var handle in actorHandles)
+				{
+					var result = handle.Do(a =>
+					{
+						if (!a.IsValid)
+							return false;
+
+						if (a.IdNoAddress != this.IdNoAddress || a.Address == IntPtr.Zero)
+							return false;
+
+						// Don't consider hidden actors for retargeting
+						if (a.IsHidden)
+							return false;
+
+						if (a.IsGPoseActor != isGPose)
+							return false;
+
+						// Is this actor memory already pinned to a different pin?
+						PinnedActor? pinned = TargetService.GetPinned(handle);
+						if (pinned != this && pinned != null)
+							return false;
+
+						return true;
+					});
+
+					if (result == true)
+					{
+						newHandle = handle;
+						break;
+					}
+				}
+			}
+
+			if (newHandle != null)
+			{
+				IntPtr? oldAddress = this.Memory?.Address;
 				this.Memory?.Dispose();
-
-				// Reusing the old actor can cause issues so we always recreate when retargeting.
-				this.Memory = new ActorMemory();
-				this.Memory.SetAddress(newBasic.Address);
-				this.Memory.Pinned = this;
-
-				IntPtr? oldPointer = this.Pointer;
+				this.Memory = ActorService.Instance.ObjectTable.Get<ActorMemory>(newHandle.Address);
+				this.Memory?.Do(a => a.Pinned = this);
 
 				this.UpdateActorInfo();
 
-				// dont log every time we just select an actor.
-				if (oldPointer != null && oldPointer != this.Pointer)
-				{
-					Log.Information($"Retargeted actor: {this} from {oldPointer} to {this.Pointer}");
-				}
+				// Dont log every time we just select an actor.
+				if (oldAddress != null && oldAddress != this.Pointer)
+					Log.Information($"Retargeted actor: {this} from {oldAddress} to {this.Pointer}");
 
 				if (this.IsSelected)
-				{
 					TargetService.Instance.SelectActor(this);
-				}
 
 				this.IsRetargeting = false;
-
 				this.OnRetargetedActor();
-
 				return;
 			}
 
-			if (this.Memory != null)
+			if (this.Memory?.IsValid == true)
 			{
 				Log.Warning($"Lost actor: {this}");
 				this.SetInvalid();
@@ -367,16 +365,21 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		if (this.Memory == null)
 			return;
 
-		this.Id = this.Memory.Id;
-		this.IdNoAddress = this.Memory.IdNoAddress;
-		this.Name = this.Memory.Name;
+		this.Id = this.Memory.DoRef(a => a.Id) ?? string.Empty;
+		this.IdNoAddress = this.Memory.DoRef(a => a.IdNoAddress) ?? string.Empty;
+		this.Name = this.Memory.DoRef(a => a.Name);
 		this.Pointer = this.Memory.Address;
-		this.Icon = this.Memory.ObjectKind.GetIcon();
+
+		var objectKind = this.Memory.Do(a => a.ObjectKind);
+		if (objectKind != null)
+		{
+			this.Icon = ((ActorTypes)objectKind).GetIcon();
+		}
 
 		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Kind)));
 		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsGPoseActor)));
 
-		this.Memory.PropertyChanged += this.OnViewModelPropertyChanged;
+		this.Memory.Do(a => a.PropertyChanged += this.OnViewModelPropertyChanged);
 
 		this.UpdateInitials(this.DisplayName);
 
@@ -390,14 +393,19 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 		if (e.PropertyName == nameof(ActorMemory.DisplayName))
 		{
-			this.UpdateInitials(this.Memory.DisplayName);
+			this.UpdateInitials(this.Memory.DoRef(a => a.DisplayName));
 			return;
 		}
 
 		if (e.PropertyName == nameof(ActorMemory.ObjectKind))
 		{
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Kind)));
-			this.Icon = this.Memory.ObjectKind.GetIcon();
+			var objectKind = this.Memory.Do(a => a.ObjectKind);
+			if (objectKind != null)
+			{
+				this.Icon = ((ActorTypes)objectKind).GetIcon();
+			}
+
 			return;
 		}
 

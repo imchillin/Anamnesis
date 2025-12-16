@@ -23,9 +23,9 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<local:ItemView Grid.Row="0" Grid.Column="0" ItemModel="{Binding MainHand}" ExtendedViewModel="{Binding ModelObject.Weapons, Mode=OneWay}"
+		<local:ItemView Grid.Row="0" Grid.Column="0" ItemModel="{Binding MainHand}" ExtendedViewModel="{Binding ModelObject.ChildObject, Mode=OneWay}"
 						Slot="MainHand" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}, Mode=OneWay}"/>
-		<local:ItemView Grid.Row="0" Grid.Column="1" ItemModel="{Binding OffHand}" ExtendedViewModel="{Binding ModelObject.Weapons.SubModel}"
+		<local:ItemView Grid.Row="0" Grid.Column="1" ItemModel="{Binding OffHand}" ExtendedViewModel="{Binding ModelObject.ChildObject.NextSiblingObject}"
 						Slot="OffHand" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}, Mode=OneWay}"/>
 		<local:ItemView Grid.Row="1" Grid.Column="0" ItemModel="{Binding Equipment.Head}" Slot="Head"/>
 		<local:ItemView Grid.Row="2" Grid.Column="0" ItemModel="{Binding Equipment.Chest}" Slot="Body" />

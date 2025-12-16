@@ -63,14 +63,14 @@
                 <Button 
                     Grid.Column="0"
                     Click="OnAddPlayerTargetActorClicked"
-					IsEnabled="{Binding TargetService.IsPlayerTargetPinnable}"
+					IsEnabled="{Binding TargetService.IsPlayerTargetPinnable, Mode=OneWay}"
 					Height="28"
 					Margin="6"
 					Style="{DynamicResource TransparentButton}">
 
                     <StackPanel Orientation="Horizontal">
                         <fa:IconBlock FontSize="12" Icon="Bullseye" Margin="0, 0, 6, 0"/>
-                        <TextBlock Text="{Binding TargetService.PlayerTarget.Name}" />
+                        <TextBlock Text="{Binding TargetService.PlayerTargetHandle.Unsafe.Name, Mode=OneWay}" />
                     </StackPanel>
                 </Button>
                 <Button 
@@ -101,20 +101,20 @@
                             <ColumnDefinition Width="48" />
                         </Grid.ColumnDefinitions>
 
-                        <fa:IconBlock Grid.Column="0" Icon="{Binding Icon}" />
+                        <fa:IconBlock Grid.Column="0" Icon="{Binding Unsafe.Icon}" />
 
                         <StackPanel Orientation="Horizontal" Grid.Column="1">
                             <TextBlock
 								Margin="6,0,0,0"
 								FontWeight="DemiBold"
 								Foreground="{DynamicResource MaterialDesignBody}"
-								Text="{Binding DisplayName}" />
+								Text="{Binding Unsafe.DisplayName, Mode=OneWay}" />
 
                             <XivToolsWpf:TextBlock
 								Margin="6,0,0,0"
 								FontWeight="Light"
 								Foreground="{DynamicResource MaterialDesignBody}"
-								Visibility="{Binding IsGPoseActor, Converter={StaticResource B2V}}"
+								Visibility="{Binding Unsafe.IsGPoseActor, Converter={StaticResource B2V}, Mode=OneWay}"
 								Key="Target_Gpose" />
                         </StackPanel>
 
@@ -124,7 +124,7 @@
 							HorizontalAlignment="Right"
 							FontWeight="Light"
 							Foreground="{DynamicResource MaterialDesignBody}"
-							Text="{Binding DistanceFromPlayer, StringFormat={}{0:#0} ym}" />
+							Text="{Binding Unsafe.DistanceFromPlayer, StringFormat={}{0:#0} ym, Mode=OneWay}" />
 
                         <Grid.ToolTip>
                             <TextBlock>

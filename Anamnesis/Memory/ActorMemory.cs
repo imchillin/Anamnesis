@@ -3,20 +3,32 @@
 
 namespace Anamnesis.Memory;
 
+using Anamnesis.Actor.Refresh;
 using Anamnesis.Core.Extensions;
 using Anamnesis.Services;
 using Anamnesis.Utils;
 using PropertyChanged;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class ActorMemory : ActorBasicMemory, IDisposable
+public class ActorMemory : GameObjectMemory, IDisposable
 {
 	private const int REFRESH_DEBOUNCE_TIMEOUT = 200;
+
+	private static readonly List<IActorRefresher> s_actorRefreshers =
+	[
+		new BrioActorRefresher(),
+		new PenumbraActorRefresher(),
+		new AnamnesisActorRefresher(),
+	];
+
 	private readonly System.Timers.Timer refreshDebounceTimer;
 	private readonly FuncQueue backupQueue;
+
 	private int isRefreshing = 0;
 
 	public ActorMemory()
@@ -54,27 +66,28 @@ public class ActorMemory : ActorBasicMemory, IDisposable
 		HeadgearEarsHidden = 1 << 5,
 	}
 
+	[Bind(0x0100, BindFlags.Pointer)] public new ActorModelMemory? ModelObject { get; set; }
 	[Bind(0x01CA)] public byte ClassJob { get; set; } // Source: CharacterData; Calculated using GameObject size + ClassJob offset
-	[Bind(0x0670, BindFlags.Pointer)] public ActorMemory? Mount { get; set; } // Targets object within MountContainer
-	[Bind(0x0678)] public ushort MountId { get; set; }
-	[Bind(0x06D8, BindFlags.Pointer)] public ActorMemory? Companion { get; set; } // Targets object within CompanionContainer
-	[Bind(0x06F8)] public WeaponMemory? MainHand { get; set; }
-	[Bind(0x0768)] public WeaponMemory? OffHand { get; set; }
-	[Bind(0x08B8)] public ActorEquipmentMemory? Equipment { get; set; }
-	[Bind(0x0908)] public ActorCustomizeMemory? Customize { get; set; }
-	[Bind(0x0926, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
-	[Bind(0x0927, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
-	[Bind(0x0928)] public GlassesMemory? Glasses { get; set; }
-	[Bind(0x0960, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; } // Targets object within OrnamentContainer
-	[Bind(0x0968)] public ushort OrnamentId { get; set; }
-	[Bind(0x0A20)] public AnimationMemory? Animation { get; set; }
-	[Bind(0x1A48)] public byte Voice { get; set; }
-	[Bind(0x1B28, BindFlags.ActorRefresh)] public int ModelType { get; set; } = -1; // Invalid by default to prevent false positive human checks
-	[Bind(0x1B94)] public bool IsMotionDisabled { get; set; }
-	[Bind(0x22D8)] public float Transparency { get; set; }
-	[Bind(0x2354)] public byte CharacterModeRaw { get; set; }
-	[Bind(0x2355)] public byte CharacterModeInput { get; set; }
-	[Bind(0x2374)] public byte AttachmentPoint { get; set; } // Part of Ornament
+	[Bind(0x0680, BindFlags.Pointer)] public ActorMemory? Mount { get; set; } // Targets object within MountContainer
+	[Bind(0x0688)] public ushort MountId { get; set; }
+	[Bind(0x06E8, BindFlags.Pointer)] public ActorMemory? Companion { get; set; } // Targets object within CompanionContainer
+	[Bind(0x0708)] public WeaponMemory? MainHand { get; set; }
+	[Bind(0x0778)] public WeaponMemory? OffHand { get; set; }
+	[Bind(0x08C8)] public ActorEquipmentMemory? Equipment { get; set; }
+	[Bind(0x0918)] public ActorCustomizeMemory? Customize { get; set; }
+	[Bind(0x0936, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
+	[Bind(0x0937, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
+	[Bind(0x0938)] public GlassesMemory? Glasses { get; set; }
+	[Bind(0x0970, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; } // Targets object within OrnamentContainer
+	[Bind(0x0978)] public ushort OrnamentId { get; set; }
+	[Bind(0x0A30)] public AnimationMemory? Animation { get; set; }
+	[Bind(0x1A58)] public byte Voice { get; set; }
+	[Bind(0x1B38, BindFlags.ActorRefresh)] public int ModelType { get; set; } = -1; // Invalid by default to prevent false positive human checks
+	[Bind(0x1BA4)] public bool IsMotionDisabled { get; set; }
+	[Bind(0x22E8)] public float Transparency { get; set; }
+	[Bind(0x2364)] public byte CharacterModeRaw { get; set; }
+	[Bind(0x2365)] public byte CharacterModeInput { get; set; }
+	[Bind(0x2384)] public byte AttachmentPoint { get; set; } // Part of Ornament
 
 	public PinnedActor? Pinned { get; set; }
 
@@ -90,7 +103,7 @@ public class ActorMemory : ActorBasicMemory, IDisposable
 	public bool IsWeaponDirty { get; set; } = false;
 
 	[DependsOn(nameof(IsValid), nameof(IsOverworldActor), nameof(Name), nameof(RenderMode))]
-	public bool CanRefresh => ActorService.InstanceOrNull?.CanRefreshActor(this) == true;
+	public bool CanRefresh => CanRefreshActor(this);
 
 	public bool IsHuman => this.ModelObject != null && this.ModelObject.IsHuman;
 
@@ -166,11 +179,51 @@ public class ActorMemory : ActorBasicMemory, IDisposable
 	[DependsOn(nameof(CharacterMode))]
 	public bool IsAnimationOverridden => this.CharacterMode == CharacterModes.AnimLock;
 
+	/// <summary>Determines if the actor can be refreshed.</summary>
+	/// <param name="actor">The actor to check.</param>
+	/// <returns>True if the actor can be refreshed, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool CanRefreshActor(ActorMemory actor)
+	{
+		if (!actor.IsValid)
+			return false;
+
+		foreach (IActorRefresher actorRefresher in s_actorRefreshers)
+		{
+			if (actorRefresher.CanRefresh(actor))
+				return true;
+		}
+
+		return false;
+	}
+
+	/// <summary>Refreshes the specified actor.</summary>
+	/// <param name="actor">The actor to refresh.</param>
+	/// <returns>True if the actor was refreshed, otherwise false.</returns>
+	public static async Task<bool> RefreshActor(ActorMemory actor)
+	{
+		if (CanRefreshActor(actor))
+		{
+			foreach (IActorRefresher actorRefresher in s_actorRefreshers)
+			{
+				if (actorRefresher.CanRefresh(actor))
+				{
+					Log.Information($"Executing {actorRefresher.GetType().Name} refresh for actor address: {actor.Address}");
+					await actorRefresher.RefreshActor(actor);
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	public override void Dispose()
 	{
 		this.PropertyChanged -= this.HandlePropertyChanged;
 		this.refreshDebounceTimer?.Dispose();
 		base.Dispose();
+		GC.SuppressFinalize(this);
 	}
 
 	public override void Synchronize()
@@ -204,7 +257,7 @@ public class ActorMemory : ActorBasicMemory, IDisposable
 
 			this.IsRefreshing = true;
 
-			if (await ActorService.Instance.RefreshActor(this))
+			if (await RefreshActor(this))
 			{
 				Log.Information($"Completed actor refresh for actor address: {this.Address}");
 			}

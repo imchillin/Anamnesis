@@ -7,7 +7,7 @@ using Anamnesis.GameData.Sheets;
 using Lumina.Excel;
 
 /// <summary>Represents player emotes in the game data.</summary>
-[Sheet("Emote", 0xF3AFDED2)]
+[Sheet("Emote", 0xAFF5D14E)]
 public readonly unsafe struct Emote(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Emote>
 {
@@ -45,7 +45,7 @@ public readonly unsafe struct Emote(ExcelPage page, uint offset, uint row)
 	/// <summary>
 	/// Gets the image reference of the emote icon.
 	/// </summary>
-	public ImgRef? Icon => new(page.ReadUInt16(offset + 28));
+	public ImgRef? Icon => new(page.ReadUInt32(offset + 4));
 
 	/// <summary>
 	/// Gets the action timelines collection of the emote.
@@ -62,5 +62,5 @@ public readonly unsafe struct Emote(ExcelPage page, uint offset, uint row)
 	static Emote IExcelRow<Emote>.Create(ExcelPage page, uint offset, uint row) =>
 		new(page, offset, row);
 
-	private static RowRef<ActionTimeline> ActionTimelineCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => new(page.Module, (uint)page.ReadUInt16(offset + 12 + (i * 2)), page.Language);
+	private static RowRef<ActionTimeline> ActionTimelineCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => new(page.Module, (uint)page.ReadUInt16(offset + 16 + (i * 2)), page.Language);
 }
