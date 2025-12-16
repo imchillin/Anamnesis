@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 using static Lumina.Excel.Sheets.CharaMakeType;
 
 /// <summary>Represents a unique character type (a combination of attributes) in the game data.</summary>
-[Sheet("CharaMakeType", 0x80D7DB6D)]
+[Sheet("CharaMakeType", 0x50CDBEEF)]
 public readonly unsafe struct CharaMakeType(ExcelPage page, uint offset, uint row)
 	: IExcelRow<CharaMakeType>
 {
@@ -24,7 +24,7 @@ public readonly unsafe struct CharaMakeType(ExcelPage page, uint offset, uint ro
 	/// <summary>
 	/// Gets the race reference object associated with the character type.
 	/// </summary>
-	public readonly RowRef<Race> Race => new(page.Module, (uint)page.ReadInt32(offset + 12392), page.Language);
+	public readonly RowRef<Race> Race => new(page.Module, (uint)page.ReadInt32(offset + 13064), page.Language);
 
 	/// <summary>
 	/// Gets the race customization value associated with the character type.
@@ -34,7 +34,7 @@ public readonly unsafe struct CharaMakeType(ExcelPage page, uint offset, uint ro
 	/// <summary>
 	/// Gets the tribe reference object associated with the character type.
 	/// </summary>
-	public readonly RowRef<Tribe> Tribe => new(page.Module, (uint)page.ReadInt32(offset + 12396), page.Language);
+	public readonly RowRef<Tribe> Tribe => new(page.Module, (uint)page.ReadInt32(offset + 13068), page.Language);
 
 	/// <summary>
 	/// Gets the tribe customization value associated with the character type.
@@ -44,7 +44,7 @@ public readonly unsafe struct CharaMakeType(ExcelPage page, uint offset, uint ro
 	/// <summary>
 	/// Gets the gender customization value associated with the character type.
 	/// </summary>
-	public readonly ActorCustomizeMemory.Genders Gender => (ActorCustomizeMemory.Genders)page.ReadInt8(offset + 12400);
+	public readonly ActorCustomizeMemory.Genders Gender => (ActorCustomizeMemory.Genders)page.ReadInt8(offset + 13072);
 
 	/// <summary>
 	/// Gets the voice collection associated with the character type.
@@ -121,9 +121,9 @@ public readonly unsafe struct CharaMakeType(ExcelPage page, uint offset, uint ro
 	static CharaMakeType IExcelRow<CharaMakeType>.Create(ExcelPage page, uint offset, uint row) =>
 		new(page, offset, row);
 
-	private static CharaMakeStructStruct CharaMakeStructCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => new(page, parentOffset, offset + (i * 428));
-	private static byte VoiceStructCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => page.ReadUInt8(offset + 11984 + i);
-	private static FacialFeatureOptionStruct FacialFeatureOptionCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => new(page, parentOffset, offset + 11996 + (i * 28));
+	private static CharaMakeStructStruct CharaMakeStructCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => new(page, parentOffset, offset + (i * 452));
+	private static byte VoiceStructCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => page.ReadUInt8(offset + 12656 + i);
+	private static FacialFeatureOptionStruct FacialFeatureOptionCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => new(page, parentOffset, offset + 12668 + (i * 28));
 }
 
 /// <summary>Represents a facial feature option structure in the game data.</summary>
