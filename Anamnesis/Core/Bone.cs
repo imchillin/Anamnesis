@@ -182,7 +182,7 @@ public class Bone : ITransform
 		Vector3 localPosition = modelTransform.Position - parentTransform.Position;
 
 		// Apply the inverse of the parent's character-relative rotation to the local position
-		Quaternion parentRotInverse = Quaternion.Inverse(parentTransform.Rotation);
+		Quaternion parentRotInverse = Quaternion.Conjugate(parentTransform.Rotation);
 		localPosition = Vector3.Transform(localPosition, parentRotInverse);
 
 		// Apply the inverse of the parent's character-relative rotation to the model rotation
@@ -308,12 +308,12 @@ public class Bone : ITransform
 	/// <param name="writeLinked">Whether to write the transforms of linked bones.</param>
 	public virtual void WriteTransform(bool writeChildren = true, bool writeLinked = true)
 	{
-		Stack<(Bone Bone, bool WriteLinked)> bonesToProcess = new();
-		bonesToProcess.Push((this, writeLinked));
+		Stack<(Bone Bone, bool WriteLinked, Transform? PrecalcParent)> bonesToProcess = new();
+		bonesToProcess.Push((this, writeLinked, null));
 
 		while (bonesToProcess.Count > 0)
 		{
-			var (currentBone, currentWriteLinked) = bonesToProcess.Pop();
+			var (currentBone, currentWriteLinked, precalcParent) = bonesToProcess.Pop();
 			var transformMemories = currentBone.TransformMemories;
 
 			if (transformMemories.Count == 0)
@@ -334,14 +334,9 @@ public class Bone : ITransform
 
 			if (currentBone.Parent != null)
 			{
-				var parentTransformMemory = currentBone.Parent.TransformMemory!;
-				Transform parentTransform = new()
-				{
-					Position = parentTransformMemory.Position,
-					Rotation = parentTransformMemory.Rotation,
-					Scale = parentTransformMemory.Scale,
-				};
-
+				// Workaround: Instead of retrieving the parent transform from game memory, use the local transform and convert it
+				// manually. This prevents bone drifting as the skeleton is unstable due to ocassional mid-frame updates.
+				Transform parentTransform = precalcParent ?? ComputeModelSpaceTransform(currentBone.Parent);
 				modelTransform = LocalToModelSpace(modelTransform, parentTransform);
 			}
 
@@ -385,7 +380,7 @@ public class Bone : ITransform
 							// TODO: Figure out how to sync linked bone positions
 							link.Rotation = currentBone.Rotation;
 							link.Scale = currentBone.Scale;
-							bonesToProcess.Push((link, false));
+							bonesToProcess.Push((link, false, null));
 						}
 					}
 
@@ -395,7 +390,7 @@ public class Bone : ITransform
 						{
 							if (PoseService.Instance.EnableParenting)
 							{
-								bonesToProcess.Push((child, currentWriteLinked));
+								bonesToProcess.Push((child, currentWriteLinked, modelTransform));
 							}
 							else
 							{
@@ -465,5 +460,55 @@ public class Bone : ITransform
 		this.Parent?.Children.Remove(this);
 		this.Parent = newParent;
 		newParent?.Children.Add(this);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static Transform ComputeModelSpaceTransform(Bone bone)
+	{
+		int depth = 0;
+		Bone? current = bone;
+		while (current != null)
+		{
+			depth++;
+			current = current.Parent;
+		}
+
+		Bone[] ancestors = System.Buffers.ArrayPool<Bone>.Shared.Rent(depth);
+		try
+		{
+			current = bone;
+			int index = 0;
+			while (current != null && index < depth)
+			{
+				ancestors[index++] = current;
+				current = current.Parent;
+			}
+
+			Transform modelTransform = new()
+			{
+				Position = Vector3.Zero,
+				Rotation = Quaternion.Identity,
+				Scale = Vector3.One,
+			};
+
+			for (int i = depth - 1; i >= 0; i--)
+			{
+				Bone ancestor = ancestors[i];
+				Transform localTransform = new()
+				{
+					Position = ancestor.Position,
+					Rotation = ancestor.Rotation,
+					Scale = ancestor.Scale,
+				};
+
+				modelTransform = LocalToModelSpace(localTransform, modelTransform);
+			}
+
+			return modelTransform;
+		}
+		finally
+		{
+			System.Buffers.ArrayPool<Bone>.Shared.Return(ancestors);
+		}
 	}
 }
