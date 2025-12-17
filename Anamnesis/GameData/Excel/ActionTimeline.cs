@@ -29,10 +29,12 @@ public readonly struct ActionTimeline(ExcelPage page, uint offset, uint row)
 	public readonly string Key => page.ReadString(offset, offset).ToString();
 
 	/// <summary>Gets the type of the action timeline.</summary>
-	public readonly byte Type => page.ReadUInt8(offset + 9);
+	/// <remarks>As reported in EXDSchema#84, the offset in the schema, which is used by Lumina.Excel, is incorrect.</remarks>
+	public readonly byte Type => page.ReadUInt8(offset + 8);
 
 	/// <summary>Gets the animation slot of the action timeline.</summary>
-	public readonly AnimationMemory.AnimationSlots Slot => (AnimationMemory.AnimationSlots)page.ReadUInt8(offset + 12);
+	/// <remarks>As reported in EXDSchema#84, the offset in the schema, which is used by Lumina.Excel, is incorrect.</remarks>
+	public readonly AnimationMemory.AnimationSlots Slot => (AnimationMemory.AnimationSlots)page.ReadUInt8(offset + 11);
 
 	/// <summary>Gets a value indicating whether the action timeline is a looping animation.</summary>
 	public readonly bool IsLoop => page.ReadPackedBool(offset + 20, 5);
