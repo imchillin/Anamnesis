@@ -15,8 +15,8 @@ public class CameraMemory : MemoryBase
 	[Bind(0x12C)] public float MaxZoom { get; set; }
 	[Bind(0x13C)] public float FieldOfView { get; set; }
 	[Bind(0x140)] public Vector2 Angle { get; set; }
-	[Bind(0x15C)] public float YMin { get; set; }
-	[Bind(0x158)] public float YMax { get; set; }
+	[Bind(0x158)] public float YMin { get; set; }
+	[Bind(0x15C)] public float YMax { get; set; }
 	[Bind(0x160)] public Vector2 Pan { get; set; }
 	[Bind(0x170)] public float Rotation { get; set; }
 

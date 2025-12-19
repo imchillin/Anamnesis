@@ -25,6 +25,9 @@ public class AnimationMemory : MemoryBase
 		UpperBody = 1,
 		Facial = 2,
 		Add = 3,
+		Unk0 = 4, // 4 - 6: Unknown purpose
+		Unk1 = 5,
+		Unk2 = 6,
 		Lips = 7,
 		Parts1 = 8,
 		Parts2 = 9,
