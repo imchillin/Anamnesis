@@ -112,9 +112,9 @@ public partial class ActionPage : UserControl
 
 		animSelector.LocalAnimationSlotFilter = new()
 		{
-			IncludeBlendable = false,
+			IncludeBlendable = true,
 			IncludeFullBody = true,
-			SlotsLocked = true,
+			SlotsLocked = false,
 		};
 	}
 
@@ -134,7 +134,7 @@ public partial class ActionPage : UserControl
 		animSelector.LocalAnimationSlotFilter = new()
 		{
 			IncludeBlendable = true,
-			IncludeFullBody = true,
+			IncludeFullBody = false,
 			SlotsLocked = false,
 		};
 	}
