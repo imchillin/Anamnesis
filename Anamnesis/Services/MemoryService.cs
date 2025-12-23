@@ -422,7 +422,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// </remarks>
 	public static bool WriteExecutable(IntPtr address, byte[] buffer)
 	{
-		VirtualProtectEx(Handle, address, buffer.Length, (uint)MemoryProtection.PAGE_EXECUTE_READWRITE, out _);
+		VirtualProtectEx(Handle, address, buffer.Length, (uint)MemoryProtectionType.PAGE_EXECUTE_READWRITE, out _);
 
 		unsafe
 		{
@@ -444,7 +444,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// </remarks>
 	public static bool WriteExecutable(IntPtr address, Span<byte> buffer)
 	{
-		VirtualProtectEx(Handle, address, buffer.Length, (uint)MemoryProtection.PAGE_EXECUTE_READWRITE, out _);
+		VirtualProtectEx(Handle, address, buffer.Length, (uint)MemoryProtectionType.PAGE_EXECUTE_READWRITE, out _);
 
 		unsafe
 		{
@@ -623,6 +623,9 @@ public partial class MemoryService : ServiceBase<MemoryService>
 		}
 
 		Scanner = new SignatureScanner(process.MainModule);
+
+		var injector = new Injector(Process);
+		injector.Inject("Anamnesis.Memory.RemoteController.dll", "RemoteControllerEntry");
 	}
 
 	/// <summary>

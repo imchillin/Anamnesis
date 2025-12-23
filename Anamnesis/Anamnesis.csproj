@@ -26,6 +26,13 @@
     <CETCompat>false</CETCompat>
     <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
+  <Target Name="PublishRemoteController" BeforeTargets="BeforeBuild"
+          Inputs="$(SolutionDir)RemoteController\**\*.cs;$(SolutionDir)RemoteController\RemoteController.csproj"
+          Outputs="$(ProjectDir)obj\$(Platform)\$(Configuration)\Remote\RemoteController.dll">
+    <Message Importance="high" Text="Changes detected in RemoteController project. Triggering target publish..." />
+    <MakeDir Directories="$(ProjectDir)obj\$(Platform)\$(Configuration)\Remote" />
+    <Exec Command="dotnet publish &quot;$(SolutionDir)RemoteController\RemoteController.csproj&quot; -c $(Configuration) -r win-x64 -o &quot;$(ProjectDir)obj\$(Platform)\$(Configuration)\Remote&quot; --self-contained true" WorkingDirectory="$(SolutionDir)" />
+  </Target>
   <ItemGroup>
     <PackageReference Include="Fody" Version="6.9.1">
       <PrivateAssets>all</PrivateAssets>
@@ -116,6 +123,17 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lib\XivToolsWpf\XivToolsWpf.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RemoteController\RemoteController.csproj">
+      <Private>false</Private>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(IntermediateOutputPath)Remote\RemoteController.dll">
+      <LogicalName>Anamnesis.Memory.RemoteController.dll</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Resources.Designer.cs">
