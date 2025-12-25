@@ -20,7 +20,7 @@ public static class VersionInfo
 	/// - Revision: The revision of the tool. This should reset to 0 on every build.
 	///   - Bump the revision number for hotfixes and urgent patches.
 	/// </remarks>
-	public static readonly Version ApplicationVersion = new(7, 40, 0, 2);
+	public static readonly Version ApplicationVersion = new(7, 40, 0, 3);
 
 #if CI_BUILD
 	public static readonly bool IsDevelopmentBuild = false;
@@ -31,5 +31,5 @@ public static class VersionInfo
 	/// <summary>
 	/// The latest game version that the tool has been validated for.
 	/// </summary>
-	public static readonly string ValidatedGameVersion = "2025.12.18.0000.0000";
+	public static readonly string ValidatedGameVersion = "2025.12.23.0000.0000";
 }
