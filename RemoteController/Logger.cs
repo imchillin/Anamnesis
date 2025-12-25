@@ -1,14 +1,9 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace RemoteController;
+
+using Serilog;
 
 /// <summary>
 /// A thin wrapper around Serilog for logging within the remote controller.

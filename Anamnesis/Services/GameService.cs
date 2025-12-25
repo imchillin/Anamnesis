@@ -36,7 +36,7 @@ public class GameService : ServiceBase<GameService>
 	}
 
 	/// <inheritdoc/>
-	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GameDataService.Instance];
+	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GameDataService.Instance, MemoryService.Instance];
 
 	/// <summary>
 	/// Checks if the user is signed into a character by probing the game process' memory.

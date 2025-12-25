@@ -172,12 +172,7 @@ public class AddressService : ServiceBase<AddressService>
 			GetAddressFromSignature("TargetSystem", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 3B C6 0F 95 C0", 3, (p) => { TargetSystem = p; }),
 			GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { s_cameraManager = p; }),
 			GetAddressFromTextSignature("TimeAsm", "48 89 87 ?? ?? ?? ?? 48 69 C0", (p) => TimeAsm = p),
-			GetAddressFromTextSignature("Framework", "48 C7 05 ?? ?? ?? ?? 00 00 00 00 E8 ?? ?? ?? ?? 48 8D ?? ?? ?? 00 00 E8 ?? ?? ?? ?? 48 8D", (p) =>
-				{
-					int frameworkOffset = MemoryService.Read<int>(p + 3);
-					IntPtr frameworkPtr = MemoryService.ReadPtr(p + 11 + frameworkOffset);
-					Framework = frameworkPtr;
-				}),
+			GetAddressFromSignature("Framework", "48 8B 1D ?? ?? ?? ?? 8B 7C 24", 3, (p) => Framework = MemoryService.ReadPtr(p)),
 			GetAddressFromTextSignature("SkeletonFreezePhysics (1/2/3)", "0F 11 00 41 0F 10 4C 24 ?? 0F 11 48 10 41 0F 10 44 24 ?? 0F 11 40 20 48 8B 46 28", (p) =>
 				{
 					SkeletonFreezePhysics2 = p;

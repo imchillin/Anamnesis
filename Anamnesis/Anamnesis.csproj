@@ -25,10 +25,9 @@
     <PublishTrimmed>false</PublishTrimmed>
     <CETCompat>false</CETCompat>
     <NeutralLanguage>en</NeutralLanguage>
+    <TrimmerRootAssembly>Serilog; RemoteController</TrimmerRootAssembly>
   </PropertyGroup>
-  <Target Name="PublishRemoteController" BeforeTargets="BeforeBuild"
-          Inputs="$(SolutionDir)RemoteController\**\*.cs;$(SolutionDir)RemoteController\RemoteController.csproj"
-          Outputs="$(ProjectDir)obj\$(Platform)\$(Configuration)\Remote\RemoteController.dll">
+  <Target Name="PublishRemoteController" BeforeTargets="BeforeBuild" Inputs="$(SolutionDir)RemoteController\**\*.cs;$(SolutionDir)RemoteController\RemoteController.csproj" Outputs="$(ProjectDir)obj\$(Platform)\$(Configuration)\Remote\RemoteController.dll">
     <Message Importance="high" Text="Changes detected in RemoteController project. Triggering target publish..." />
     <MakeDir Directories="$(ProjectDir)obj\$(Platform)\$(Configuration)\Remote" />
     <Exec Command="dotnet publish &quot;$(SolutionDir)RemoteController\RemoteController.csproj&quot; -c $(Configuration) -r win-x64 -o &quot;$(ProjectDir)obj\$(Platform)\$(Configuration)\Remote&quot; --self-contained true" WorkingDirectory="$(SolutionDir)" />
@@ -125,15 +124,25 @@
     <ProjectReference Include="..\Lib\XivToolsWpf\XivToolsWpf.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RemoteController\RemoteController.csproj">
-      <Private>false</Private>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
+    <ProjectReference Include="..\Lib\SharedMemoryIPC\SharedMemoryIPC\SharedMemoryIPC.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RemoteController\RemoteController.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="obj\x64\Debug\Remote\RemoteController.dll" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(IntermediateOutputPath)Remote\RemoteController.dll">
       <LogicalName>Anamnesis.Memory.RemoteController.dll</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="$(IntermediateOutputPath)Remote\FASMX64.dll">
+      <LogicalName>Anamnesis.Memory.FASMX64.dll</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <TrimmerRootAssembly Include="Serilog" />
+    <TrimmerRootAssembly Include="RemoteController" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Resources.Designer.cs">

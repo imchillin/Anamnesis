@@ -31,12 +31,18 @@ internal sealed class Injector : IDisposable
 {
 	private const int DLL_DELETE_RETRY_COUNT = 5;
 	private const int DLL_DELETE_RETRY_DELAY_MS = 500;
+	private const string FASM_RESOURCE = $"Anamnesis.Memory.{FASM_RESOURCE_FILENAME}";
+	private const string FASM_RESOURCE_FILENAME = "FASMX64.dll";
+	private const string ANAM_CTRL_RESOURCE = "Anamnesis.Memory.RemoteController.dll";
+	private const string ANAM_CTRL_RESOURCE_FILENAME = "ANAMCTRL.dll";
+	private const string ANAM_CTRL_ENTRY_POINT = "RemoteControllerEntry";
 
 	private readonly Process targetProcess;
 	private readonly IntPtr loadLibraryFuncAddr;
 	private readonly IntPtr getProcAddressFuncAddr;
 	private readonly IntPtr freeLibraryFuncAddr;
 	private string? remoteCtrlDllPath;
+	private string? fasmDllPath;
 	private bool isDisposed;
 
 	/// <summary>
@@ -91,37 +97,32 @@ internal sealed class Injector : IDisposable
 	}
 
 	/// <summary>
-	/// Injects a managed DLL resource into the target process and invokes a specified
+	/// Injects the remote controller into the target process and invokes its
 	/// entry point within the injected module.
 	/// </summary>
 	/// <remarks>
 	/// The method does not block for the completion of the remote entry point execution.
 	/// </remarks>
-	/// <param name="resourceName">
-	/// The name of the embedded DLL resource to extract and inject.
-	/// Cannot be null, empty, or consist only of white-space characters.
-	/// </param>
-	/// <param name="entryPoint">
-	/// The name of the exported entry point method to invoke within the injected DLL.
-	/// Cannot be null, empty, or consist only of white-space characters.
-	/// </param>
 	/// <exception cref="InvalidOperationException">
 	/// Thrown if the DLL fails to load in the target process or if the injection
 	/// process encounters an error.
 	/// </exception>
-	public void Inject(string resourceName, string entryPoint)
+	public void Inject()
 	{
 		ObjectDisposedException.ThrowIf(this.isDisposed, this);
-		ArgumentException.ThrowIfNullOrWhiteSpace(resourceName);
-		ArgumentException.ThrowIfNullOrWhiteSpace(entryPoint);
 
 		bool dllInjected = false;
 		IntPtr moduleBaseAddress = IntPtr.Zero;
 
 		try
 		{
-			this.remoteCtrlDllPath = ExtractResourceToTemp(resourceName);
-			Log.Information($"[Injector]  Extracted resource to temp: {this.remoteCtrlDllPath}");
+			string tempDir = Path.GetTempPath();
+			this.remoteCtrlDllPath = ExtractResourceToDirectory(ANAM_CTRL_RESOURCE, tempDir, ANAM_CTRL_RESOURCE_FILENAME);
+			Log.Information($"[Injector] Extracted remote controller DLL to: {this.remoteCtrlDllPath}");
+
+			this.fasmDllPath = ExtractResourceToDirectory(FASM_RESOURCE, tempDir, FASM_RESOURCE_FILENAME);
+			Log.Information($"[Injector] Extracted FASM DLL to: {this.fasmDllPath}");
+
 			this.InjectDll(this.remoteCtrlDllPath);
 			Log.Information($"[Injector] Injected DLL into process {this.targetProcess.Id}");
 
@@ -138,7 +139,7 @@ internal sealed class Injector : IDisposable
 			Log.Information($"[Injector] Module loaded at base address 0x{moduleBaseAddress.ToInt64():X}");
 
 			// Run the entry point asynchronously
-			Task.Run(() => this.CallExport(moduleBaseAddress, entryPoint))
+			Task.Run(() => this.CallExport(moduleBaseAddress, ANAM_CTRL_ENTRY_POINT))
 				.ContinueWith(t => Log.Error(t.Exception, "Failed to start up entry point"), TaskContinuationOptions.OnlyOnFaulted);
 		}
 		catch (Exception ex)
@@ -161,46 +162,95 @@ internal sealed class Injector : IDisposable
 		}
 	}
 
-	private static string ExtractResourceToTemp(string resourceName)
+	private static string ExtractResourceToDirectory(string resourceName, string targetDir, string fileName)
 	{
 		var assembly = Assembly.GetExecutingAssembly();
-		using Stream? stream = assembly.GetManifestResourceStream(resourceName)
-			?? throw new InvalidOperationException($"Resource '{resourceName}' not found in assembly.");
+		using Stream stream = assembly.GetManifestResourceStream(resourceName)
+			?? throw new InvalidOperationException($"Resource '{resourceName}' not found.");
 
-		// Generate a unique temporary file path
-		string tempPath = Path.Combine(Path.GetTempPath(), $"anam_ctrl_{Guid.NewGuid():N}.dll");
-		using var fileStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write);
+		// Calculate hash of the resource
+		string currentHash;
+		using (var sha256 = System.Security.Cryptography.SHA256.Create())
+		{
+			byte[] hashBytes = sha256.ComputeHash(stream);
+			currentHash = Convert.ToHexStringLower(hashBytes);
+		}
+
+		stream.Position = 0;
+		string nameNoExt = Path.GetFileNameWithoutExtension(fileName);
+		string ext = Path.GetExtension(fileName);
+
+		// Scan existing Anamnesis resource files for a matching hash
+		var existingFiles = Directory.GetFiles(targetDir, $"{nameNoExt}.*{ext}");
+		foreach (var filePath in existingFiles)
+		{
+			if (FileMatchesHash(filePath, currentHash))
+			{
+				Log.Information($"[Injector] {fileName} hash matches existing file {Path.GetFileName(filePath)}. Reusing.");
+				return filePath;
+			}
+		}
+
+		string targetPath = Path.Combine(targetDir, fileName);
+		bool useSuffixedName = false;
+		if (File.Exists(targetPath))
+		{
+			try
+			{
+				File.Delete(targetPath);
+			}
+			catch
+			{
+				/* File is likely in use, continue with hash check */
+				useSuffixedName = true;
+			}
+		}
+
+		if (useSuffixedName)
+		{
+			string uniqueSuffix = DateTime.UtcNow.Ticks.ToString("x");
+			targetPath = Path.Combine(targetDir, $"{nameNoExt}.{uniqueSuffix}{ext}");
+		}
+
+		using var fileStream = new FileStream(targetPath, FileMode.Create, FileAccess.Write);
 		stream.CopyTo(fileStream);
 
-		return tempPath;
+		Log.Information($"[Injector] Extracted new resource file: {Path.GetFileName(targetPath)}");
+		return targetPath;
 	}
 
-	private static void TryDeleteFile(string path)
+	private static bool FileMatchesHash(string filePath, string expectedHash)
+	{
+		try
+		{
+			using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+			using var sha256 = System.Security.Cryptography.SHA256.Create();
+			string actualHash = Convert.ToHexStringLower(sha256.ComputeHash(fs));
+			return actualHash == expectedHash;
+		}
+		catch
+		{
+			return false; // Assume it's not a match on error
+		}
+	}
+
+	private static void ScheduleForDeletion(string path)
 	{
 		if (!File.Exists(path))
 			return;
 
-		for (int i = 0; i < DLL_DELETE_RETRY_COUNT; i++)
-		{
-			try
-			{
-				File.Delete(path);
-				return;
-			}
-			catch
-			{
-				Thread.Sleep(DLL_DELETE_RETRY_DELAY_MS);
-			}
-		}
-
 		// Fallback
 		MoveFileEx(path, null, (uint)MoveFileFlag.MOVEFILE_DELAY_UNTIL_REBOOT);
-		Log.Information($"[Injector] Could not delete temp DLL; Scheduled for deletion on OS reboot: {path}");
+		Log.Information($"[Injector] Scheduled file for deletion on OS reboot: {path}");
 	}
 
 	private void CallExport(IntPtr hModule, string funcName)
 	{
-		var nameBytes = Encoding.ASCII.GetBytes(funcName + '\0');
+		string exportName = funcName.Length > 0 && funcName[^1] == '\0'
+			? funcName
+			: funcName + '\0';
+
+		var nameBytes = Encoding.ASCII.GetBytes(exportName);
 		int codeOffset = (nameBytes.Length + 15) & ~15; // Align to 16 bytes
 		IntPtr remoteMem = this.Alloc((uint)codeOffset + 512); // [String] + [Code]
 		if (remoteMem == IntPtr.Zero)
@@ -260,7 +310,7 @@ internal sealed class Injector : IDisposable
 				throw new Win32Exception(Marshal.GetLastWin32Error(), "Failed to set memory protection");
 
 			// Execute and check result
-			uint exitCode = this.RunRemoteThread(codeAddr, IntPtr.Zero, false);
+			uint exitCode = this.RunRemoteThread(codeAddr, IntPtr.Zero);
 			if (exitCode == 0)
 				throw new InvalidOperationException($"GetProcAddress could not find export '{funcName}'. Ensure the DLL is compiled with native AOT.");
 
@@ -319,7 +369,7 @@ internal sealed class Injector : IDisposable
 		VirtualFreeEx(this.targetProcess.Handle, addr, 0, (uint)MemoryFreeType.MEM_RELEASE);
 	}
 
-	private uint RunRemoteThread(IntPtr startAddress, IntPtr parameter, bool waitForExit = true)
+	private uint RunRemoteThread(IntPtr startAddress, IntPtr parameter)
 	{
 		IntPtr hThread = CreateRemoteThread(this.targetProcess.Handle, IntPtr.Zero, 0, startAddress, parameter, 0, out _);
 		if (hThread == IntPtr.Zero)
@@ -327,9 +377,6 @@ internal sealed class Injector : IDisposable
 
 		try
 		{
-			if (!waitForExit)
-				return 1; // Non-zero value to indicate success
-
 			uint waitResult = WaitForSingleObject(hThread, uint.MaxValue);
 			if (waitResult != 0) // WAIT_OBJECT_0 is 0, all other exit codes are either an error or timeout
 				throw new Win32Exception(Marshal.GetLastWin32Error(), $"WaitForSingleObject failed with result: {waitResult}");
@@ -351,11 +398,15 @@ internal sealed class Injector : IDisposable
 		if (this.isDisposed)
 			return;
 
-		// Clean up the temp file if it exists
+		// Clean up temp files
 		if (this.remoteCtrlDllPath != null)
 		{
-			string path = this.remoteCtrlDllPath;
-			Task.Run(() => TryDeleteFile(path));
+			ScheduleForDeletion(this.remoteCtrlDllPath);
+		}
+
+		if (this.fasmDllPath != null)
+		{
+			ScheduleForDeletion(this.fasmDllPath);
 		}
 
 		this.isDisposed = true;

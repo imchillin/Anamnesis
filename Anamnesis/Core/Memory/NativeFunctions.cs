@@ -24,7 +24,7 @@ internal static partial class NativeFunctions
 		WM_SYSKEYUP = 0x0105,
 	}
 
-	public enum HookType : int
+	public enum WinHookType : int
 	{
 		/// <summary>
 		/// Installs a hook procedure that records input messages posted to the system message

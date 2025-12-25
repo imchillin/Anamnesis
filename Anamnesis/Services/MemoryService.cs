@@ -625,7 +625,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 		Scanner = new SignatureScanner(process.MainModule);
 
 		var injector = new Injector(Process);
-		injector.Inject("Anamnesis.Memory.RemoteController.dll", "RemoteControllerEntry");
+		injector.Inject();
 	}
 
 	/// <summary>

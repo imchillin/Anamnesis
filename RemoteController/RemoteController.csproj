@@ -7,11 +7,27 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PublishAot>true</PublishAot>
+    <NoWarn>$(NoWarn);IL2104</NoWarn>
+    <NoWarn>$(NoWarn);IL3000</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Reloaded.Hooks" Version="4.3.3" />
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Lib\SharedMemoryIPC\SharedMemoryIPC\SharedMemoryIPC.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TrimmerRootAssembly Include="Serilog" />
+    <TrimmerRootAssembly Include="Reloaded.Hooks" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RemoteController.SourceGenerators\RemoteController.SourceGenerators.csproj"
+                      OutputItemType="Analyzer" />
+  </ItemGroup>
 </Project>

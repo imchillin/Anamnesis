@@ -38,7 +38,7 @@ public partial class Hook
 			return;
 
 		this.hook = this.HookCallback;
-		s_hookId = SetWindowsHookEx((int)HookType.WH_KEYBOARD_LL, this.hook, IntPtr.Zero, 0);
+		s_hookId = SetWindowsHookEx((int)WinHookType.WH_KEYBOARD_LL, this.hook, IntPtr.Zero, 0);
 		this.isStarted = true;
 	}
 

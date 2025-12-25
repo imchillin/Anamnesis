@@ -1,21 +1,9 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Metadata;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
 namespace RemoteController;
+
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// A static class for Windows interop native functions.
@@ -89,4 +77,49 @@ internal static partial class NativeFunctions
 	/// </param>
 	[LibraryImport("kernel32.dll", SetLastError = true)]
 	public static partial void FreeLibraryAndExitThread(IntPtr hModule, uint dwExitCode);
+
+	/// <summary>
+	/// Retrieves the thread identifier of the calling thread.
+	/// </summary>
+	/// <returns>
+	/// The return value is the thread identifier of the calling thread.
+	/// </returns>
+	/// <remarks>
+	/// Until the thread terminates, the thread identifier uniquely identifies the thread throughout the system.
+	/// </remarks>
+	[LibraryImport("kernel32.dll")]
+	public static partial uint GetCurrentThreadId();
+
+	/// <summary>
+	/// Retrieves the fully qualified path for the file that contains the specified module. The module must have
+	/// been loaded by the current process.
+	///
+	/// To locate the file for a module that was loaded by another process, use the GetModuleFileNameEx function.
+	/// </summary>
+	/// <param name="hModule">
+	/// A handle to the loaded module whose path is being requested. If this parameter is NULL, GetModuleFileName
+	/// retrieves the path of the executable file of the current process.
+	///
+	/// The GetModuleFileName function does not retrieve the path for modules that were loaded using the
+	/// LOAD_LIBRARY_AS_DATAFILE flag.For more information, see LoadLibraryEx.
+	/// </param>
+	/// <param name="lpFilename">
+	/// A pointer to a buffer that receives the fully qualified path of the module. If the length of the path is
+	/// less than the size that the nSize parameter specifies, the function succeeds and the path is returned as
+	/// a null-terminated string.
+	///
+	/// If the length of the path equals or exceeds the value specified by nSize, the function succeeds and the
+	/// string is truncated to nSize characters(including the terminating null character).
+	/// </param>
+	/// <param name="nSize">
+	/// The size of the lpFilename buffer, in WCHARs.
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, the return value is the length of the string that is copied to the buffer, in
+	/// characters, not including the terminating null character. If the buffer is too small to hold the module
+	/// name, the string is truncated to nSize characters including the terminating null character, the function
+	/// returns nSize, and the function sets the last error to ERROR_INSUFFICIENT_BUFFER.
+	/// </returns>
+	[LibraryImport("kernel32.dll", SetLastError = true, EntryPoint = "GetModuleFileNameW")]
+	public static unsafe partial uint GetModuleFileName(IntPtr hModule, char* lpFilename, uint nSize);
 }
