@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
+using System.IO.MemoryMappedFiles;
 using System.Runtime.CompilerServices;
 
 /// <summary>
@@ -19,14 +21,20 @@ using System.Runtime.CompilerServices;
 /// patterns. Unlike Dalamud's implementation, this class uses the Win32 API to read memory. This is because
 /// Anamnesis does not have access to protected memory regions.
 /// <para>
-/// This class is largely based on Dalamud's SigScanner class, which can be found at:
-/// https://github.com/goatcorp/Dalamud/blob/master/Dalamud/Game/SigScanner.cs.
+/// This class is bastard child of Dalamud and Penumbra's signature scanners, which can be found at:
+/// - https://github.com/goatcorp/Dalamud/blob/master/Dalamud/Game/SigScanner.cs.
+/// - https://github.com/xivdev/Penumbra/blob/master/Penumbra/Interop/Hooks/ResourceLoading/PeSigScanner.cs.
 /// </para>
 /// </remarks>
 public sealed unsafe class SignatureScanner
 {
-	/// <summary>The size of each chunk of memory to scan at a time.</summary>
-	private const int SCAN_CHUNK_SIZE = 1024; // 1kB
+	private readonly MemoryMappedFile file;
+	private readonly MemoryMappedViewAccessor textSectionAccessor;
+	private readonly MemoryMappedViewAccessor dataSectionAccessor;
+
+	private readonly nint moduleBaseAddress;
+	private readonly uint textSectionVirtualAddress;
+	private readonly uint dataSectionVirtualAddress;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SignatureScanner"/> class.
@@ -36,106 +44,35 @@ public sealed unsafe class SignatureScanner
 	{
 		Debug.Assert(module != null, "Process module cannot be null.");
 		this.Module = module;
+		this.moduleBaseAddress = module.BaseAddress;
+
+		string? fileName = module.FileName;
+		if (string.IsNullOrEmpty(fileName))
+			throw new ArgumentException("Unable to obtain module path.");
+
+		// Open the file on disk to map it
+		this.file = MemoryMappedFile.CreateFromFile(fileName, FileMode.Open, null, 0, MemoryMappedFileAccess.Read);
 
 		// Limit the search space to .text section.
-		this.SetupSearchSpace(module);
+		SetupSearchSpace(module, out SectionInfo textSection, out SectionInfo dataSection);
+		this.textSectionVirtualAddress = textSection.VirtualAddress;
+		this.dataSectionVirtualAddress = dataSection.VirtualAddress;
 
-		Log.Information($"Signature Scanner Created: {module.ModuleName}");
-		Log.Information($"Module Text base: {this.TextSectionBase}");
-		Log.Information($"Module Text size: {this.TextSectionSize}");
-		Log.Information($"Module Data base: {this.DataSectionBase}");
-		Log.Information($"Module Data size: {this.DataSectionSize}");
+		this.textSectionAccessor = this.file.CreateViewAccessor(textSection.Offset, textSection.Size, MemoryMappedFileAccess.Read);
+		this.dataSectionAccessor = this.file.CreateViewAccessor(dataSection.Offset, dataSection.Size, MemoryMappedFileAccess.Read);
 
-		if (this.TextSectionSize <= 0 || this.DataSectionSize <= 0)
+		Log.Information($"Signature Scanner (MMF) Created: {module.ModuleName}");
+		Log.Information($"Text Section: Offset=0x{textSection.Offset:X}, Virtual Address=0x{textSection.VirtualAddress:X}, Size=0x{textSection.Size:X}");
+		Log.Information($"Data Section: Offset=0x{dataSection.Offset:X}, Virtual Address=0x{dataSection.VirtualAddress:X}, Size=0x{dataSection.Size:X}");
+
+		if (textSection.Size <= 0 || dataSection.Size <= 0)
 		{
 			throw new ArgumentException("Process module is invalid");
 		}
 	}
 
-	/// <summary>Gets the base address of the module the scanner is attached to.</summary>
-	public IntPtr SearchBase => this.Module.BaseAddress;
-
-	/// <summary>Gets the base address of the .text section within the module.</summary>
-	public IntPtr TextSectionBase => new(this.SearchBase.ToInt64() + this.TextSectionOffset);
-
-	/// <summary>Gets the offset of the .text section within the module.</summary>
-	public long TextSectionOffset { get; private set; }
-
-	/// <summary>Gets the size of the .text section within the module.</summary>
-	public int TextSectionSize { get; private set; }
-
-	/// <summary>Gets the base address of the .data section within the module.</summary>
-	public IntPtr DataSectionBase => new(this.SearchBase.ToInt64() + this.DataSectionOffset);
-
-	/// <summary>Gets the offset of the .data section within the module.</summary>
-	public long DataSectionOffset { get; private set; }
-
-	/// <summary>Gets the size of the .data section within the module.</summary>
-	public int DataSectionSize { get; private set; }
-
 	/// <summary>Gets the process module the scanner is attached to.</summary>
 	public ProcessModule Module { get; }
-
-	/// <summary>
-	/// Scans a specified memory region for a given byte signature.
-	/// </summary>
-	/// <param name="baseAddress">The base address of the memory region to scan.</param>
-	/// <param name="size">The size of the memory region to scan.</param>
-	/// <param name="signature">The byte signature to search for. The signature needs to follow the IDA format. </param>
-	/// <returns>The address where the signature is found, or <see cref="IntPtr.Zero"/> if the process is not alive.</returns>
-	/// <exception cref="KeyNotFoundException">Thrown if the signature is not found in the specified memory region.</exception>
-	/// <note>
-	/// - The signature must be in the format of a string of hexadecimal bytes separated by spaces.
-	/// - The signature can contain wildcard characters represented by "??".
-	/// - This algorithm uses the Boyer-Moore algorithm for fast searching by employing a bad character shift table.
-	/// It also searches in chunks to prevent reading large amounts of memory at once, which can cause a significant
-	/// spike in memory usage, leaving the Large Object Heap (LOH) largely fragmented.
-	/// </note>
-	public static IntPtr Scan(IntPtr baseAddress, int size, string signature)
-	{
-		if (!MemoryService.IsProcessAlive)
-			return IntPtr.Zero;
-
-		var (needle, mask, badCharShift) = ParseSignature(signature);
-
-		Debug.Assert(needle != null && needle.Length > 0, "Parsed needle must not be null or empty.");
-		Debug.Assert(mask != null && mask.Length == needle.Length, "Parsed mask must not be null and must match the length of the needle.");
-		Debug.Assert(badCharShift != null && badCharShift.Length == 256, "Bad character shift table must have 256 entries.");
-
-		unsafe
-		{
-			int overlap = needle.Length - 1;
-
-			// Iterate over the memory in chunks
-			for (long offset = 0; offset < size;)
-			{
-				// Calculate the number of bytes to read in the current chunk
-				int bytesToRead = Math.Min(SCAN_CHUNK_SIZE, size - (int)offset);
-				Span<byte> chunkBuffer = new byte[bytesToRead + overlap];
-
-				// Read memory into the chunk buffer, including the overlap
-				IntPtr currentAddress = IntPtr.Add(baseAddress, (int)offset);
-				MemoryService.Read(currentAddress, chunkBuffer);
-
-				// Scan the chunk buffer for the signature
-				for (int chunkOffset = 0; chunkOffset < bytesToRead;)
-				{
-					// Check if the current slice of the chunk buffer matches the needle
-					if (IsMatch(needle, mask, chunkBuffer.Slice(chunkOffset, needle.Length)))
-						return IntPtr.Add(currentAddress, chunkOffset);
-
-					// Use the bad character shift table to determine the next offset
-					chunkOffset += badCharShift[chunkBuffer[chunkOffset + needle.Length - 1]];
-				}
-
-				// Move to the next chunk, excluding the overlap to ensure no matches are missed
-				offset += bytesToRead;
-			}
-		}
-
-		// Throw an exception if the signature is not found
-		throw new KeyNotFoundException($"Signature \"{signature}\" not found.");
-	}
 
 	/// <summary>
 	/// Resolve a RVA address.
@@ -149,6 +86,39 @@ public sealed unsafe class SignatureScanner
 			throw new NotSupportedException("32-bit processes are not supported.");
 
 		return nextInstAddr + relOffset;
+	}
+
+	/// <summary>
+	/// Scans a specified memory region for a given byte signature.
+	/// </summary>
+	/// <param name="section">The memory-mapped view accessor for the memory region to scan.</param>
+	/// <param name="signature">The byte signature to search for (IDA format).</param>
+	/// <returns>
+	/// The address where the signature is found, or <see cref="IntPtr.Zero"/> if the process
+	/// is not alive.
+	/// </returns>
+	/// <exception cref="KeyNotFoundException">
+	/// Thrown if the signature is not found in the specified memory region.
+	/// </exception>
+	/// <note>
+	/// - The signature must be in the format of a string of hexadecimal bytes separated
+	///   by spaces.
+	/// - The signature can contain wildcard characters represented by "??".
+	/// - This algorithm uses the Boyer-Moore algorithm for fast searching by employing
+	///   a bad character shift table.
+	/// </note>
+	public IntPtr Scan(MemoryMappedViewAccessor section, string signature)
+	{
+		if (!MemoryService.IsProcessAlive)
+			return IntPtr.Zero;
+
+		var (needle, mask, badCharShift) = ParseSignature(signature);
+
+		var index = IndexOf(section, needle, mask, badCharShift);
+		if (index < 0)
+			throw new KeyNotFoundException($"Signature \"{signature}\" not found.");
+
+		return (nint)(this.moduleBaseAddress + index - section.PointerOffset + this.textSectionVirtualAddress);
 	}
 
 	/// <summary>
@@ -167,14 +137,13 @@ public sealed unsafe class SignatureScanner
 	{
 		ArgumentNullException.ThrowIfNull(signature);
 
-		IntPtr scanRet = Scan(this.TextSectionBase, this.TextSectionSize, signature);
-
+		IntPtr scanRet = this.Scan(this.textSectionAccessor, signature);
 		var startByte = MemoryService.ReadByte(scanRet);
 		if (startByte == 0xE8 || startByte == 0xE9)
 		{
 			scanRet = ReadJmpCallSig(scanRet);
-			var rel = scanRet.ToInt64() - this.Module.BaseAddress.ToInt64();
-			if (rel < 0 || rel >= this.TextSectionSize)
+			var rel = scanRet.ToInt64() - this.moduleBaseAddress.ToInt64();
+			if (rel < 0 || rel >= (int)this.textSectionAccessor.Capacity)
 			{
 				throw new KeyNotFoundException(
 					$"Signature \"{signature}\" resolved to 0x{rel:X} which is outside the .text section. Possible signature conflicts?");
@@ -183,6 +152,13 @@ public sealed unsafe class SignatureScanner
 
 		return scanRet;
 	}
+
+	/// <summary>
+	/// Scan for a byte signature in the .data section.
+	/// </summary>
+	/// <param name="signature">The signature.</param>
+	/// <returns>The real offset of the found signature.</returns>
+	public nint ScanData(string signature) => this.Scan(this.dataSectionAccessor, signature);
 
 	/// <summary>
 	/// Get a .data address by scanning for the signature in the .text memory region.
@@ -233,20 +209,6 @@ public sealed unsafe class SignatureScanner
 	}
 
 	/// <summary>
-	/// Scan for a byte signature in the .data section.
-	/// </summary>
-	/// <param name="signature">The signature.</param>
-	/// <returns>The real offset of the found signature.</returns>
-	public IntPtr ScanData(string signature) => Scan(this.DataSectionBase, this.DataSectionSize, signature);
-
-	/// <summary>
-	/// Scan for a byte signature in the whole module search area.
-	/// </summary>
-	/// <param name="signature">The signature.</param>
-	/// <returns>The real offset of the found signature.</returns>
-	public IntPtr ScanModule(string signature) => Scan(this.SearchBase, this.Module.ModuleMemorySize, signature);
-
-	/// <summary>
 	/// Build a bad character shift table for the Boyer-Moore algorithm, taking into account the bitmask.
 	/// </summary>
 	/// <param name="needle">The byte signature to search for.</param>
@@ -258,7 +220,7 @@ public sealed unsafe class SignatureScanner
 		int idx;
 		var last = needle.Length - 1;
 		var badShift = new int[256];
-		for (idx = last; idx > 0 && mask[idx]; --idx)
+		for (idx = last; idx > 0 && !mask[idx]; --idx)
 		{
 		}
 
@@ -297,34 +259,15 @@ public sealed unsafe class SignatureScanner
 			if (hexString.SequenceEqual("??") || hexString.SequenceEqual("**"))
 			{
 				needle[i] = 0;
-				mask[i] = false;
+				mask[i] = true;
 				continue;
 			}
 
 			needle[i] = byte.Parse(hexString, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
-			mask[i] = true;
+			mask[i] = false;
 		}
 
 		return (needle, mask, BuildBadCharTable(needle, mask));
-	}
-
-	/// <summary>
-	/// Check if the buffer matches the needle.
-	/// </summary>
-	/// <param name="needle">The byte signature to search for.</param>
-	/// <param name="mask">The mask to indicate wildcard bytes.</param>
-	/// <param name="buffer">The buffer to search in.</param>
-	/// <returns>True if the buffer matches the needle, false otherwise.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe bool IsMatch(byte[] needle, bool[] mask, Span<byte> buffer)
-	{
-		for (int i = 0; i < needle.Length; i++)
-		{
-			if (mask[i] && needle[i] != buffer[i])
-				return false;
-		}
-
-		return true;
 	}
 
 	/// <summary>
@@ -339,13 +282,45 @@ public sealed unsafe class SignatureScanner
 		return IntPtr.Add(sigLocation, 5 + jumpOffset);
 	}
 
-	/// <summary>
-	/// Sets up the search space by identifying the offsets and sizes of the .text and .data sections
-	/// within the specified process module.
-	/// </summary>
-	/// <param name="module">The process module to analyze.</param>
-	private void SetupSearchSpace(ProcessModule module)
+	private static int IndexOf(MemoryMappedViewAccessor section, byte[] needle, bool[] mask, int[] badCharShift)
 	{
+		if (needle.Length > section.Capacity)
+			return -1;
+
+		var badShift = BuildBadCharTable(needle, mask);
+		var last = needle.Length - 1;
+		var offset = 0;
+		var maxOffset = section.Capacity - needle.Length;
+
+		byte* buffer = null;
+		section.SafeMemoryMappedViewHandle.AcquirePointer(ref buffer);
+		try
+		{
+			while (offset <= maxOffset)
+			{
+				int position;
+				for (position = last; needle[position] == *(buffer + position + offset) || mask[position]; position--)
+				{
+					if (position == 0)
+						return offset;
+				}
+
+				offset += badShift[*(buffer + offset + last)];
+			}
+		}
+		finally
+		{
+			section.SafeMemoryMappedViewHandle.ReleasePointer();
+		}
+
+		return -1;
+	}
+
+	private static void SetupSearchSpace(ProcessModule module, out SectionInfo textSection, out SectionInfo dataSection)
+	{
+		textSection = default;
+		dataSection = default;
+
 		IntPtr baseAddress = module.BaseAddress;
 
 		// We don't want to read all of IMAGE_DOS_HEADER or IMAGE_NT_HEADER stuff so we cheat here.
@@ -355,40 +330,40 @@ public sealed unsafe class SignatureScanner
 		// IMAGE_NT_HEADER
 		IntPtr fileHeader = ntHeader + 4;
 		short numSections = MemoryService.ReadInt16(ntHeader, 6);
-
-		// IMAGE_OPTIONAL_HEADER
-		IntPtr optionalHeader = fileHeader + 20;
-
-		IntPtr sectionHeader;
-		if (Environment.Is64BitProcess) // IMAGE_OPTIONAL_HEADER64
-			sectionHeader = optionalHeader + 240;
-		else // IMAGE_OPTIONAL_HEADER32
-			sectionHeader = optionalHeader + 224;
+		short sizeOfOptionalHeader = MemoryService.ReadInt16(ntHeader, 20);
+		IntPtr sectionHeaderStart = ntHeader + 24 + sizeOfOptionalHeader; // IMAGE_OPTIONAL_HEADER
 
 		// IMAGE_SECTION_HEADER
-		IntPtr sectionCursor = sectionHeader;
 		for (int i = 0; i < numSections; i++)
 		{
+			IntPtr sectionCursor = sectionHeaderStart + (i * 40);
 			long sectionName = MemoryService.ReadInt64(sectionCursor);
-
-			// .text
 			switch (sectionName)
 			{
 				case 0x747865742E: // .text
-					this.TextSectionOffset = MemoryService.ReadInt32(sectionCursor, 12);
-					this.TextSectionSize = MemoryService.ReadInt32(sectionCursor, 8);
+					var textSize = MemoryService.ReadInt32(sectionCursor, 8);               // VirtualSize
+					var textVirtualAddr = (uint)MemoryService.ReadInt32(sectionCursor, 12); // VirtualAddress
+					var textOffset = MemoryService.ReadInt32(sectionCursor, 20);            // PointerToRawData
+					textSection = new SectionInfo(textOffset, textSize, textVirtualAddr);
 					break;
 				case 0x617461642E: // .data
-					this.DataSectionOffset = MemoryService.ReadInt32(sectionCursor, 12);
-					this.DataSectionSize = MemoryService.ReadInt32(sectionCursor, 8);
+					var dataSize = MemoryService.ReadInt32(sectionCursor, 8);               // VirtualSize
+					var dataVirtualAddr = (uint)MemoryService.ReadInt32(sectionCursor, 12); // VirtualAddress
+					var dataOffset = MemoryService.ReadInt32(sectionCursor, 20);            // PointerToRawData
+					dataSection = new SectionInfo(dataOffset, dataSize, dataVirtualAddr);
 					break;
 			}
-
-			sectionCursor += 40;
 		}
 
-		Debug.Assert(this.TextSectionSize > 0, "Text section size must be greater than 0.");
-		Debug.Assert(this.DataSectionSize > 0, "Data section size must be greater than 0.");
+		Debug.Assert(textSection.Size > 0, "Text section size must be greater than 0.");
+		Debug.Assert(dataSection.Size > 0, "Data section size must be greater than 0.");
+	}
+
+	internal readonly struct SectionInfo(long offset, int size, uint virtualAddress)
+	{
+		public long Offset { get; } = offset;
+		public int Size { get; } = size;
+		public uint VirtualAddress { get; } = virtualAddress;
 	}
 
 	private unsafe class UnsafeCodeReader(byte* address, int length) : CodeReader
