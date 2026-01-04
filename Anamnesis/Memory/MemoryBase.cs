@@ -55,6 +55,8 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <summary>List of child memory objects.</summary>
 	protected readonly List<MemoryBase> Children = new();
 
+	private const int LOCK_TIMEOUT_MS = 5000;
+
 	private static readonly ObjectPool<Queue<MemoryBase>> s_queuePool = ObjectPool.Create<Queue<MemoryBase>>();
 	private static readonly ObjectPool<Stack<MemoryBase>> s_stackPool = ObjectPool.Create<Stack<MemoryBase>>();
 
@@ -359,21 +361,39 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		{
 			if (managedResources)
 			{
-				/* Dispose managed resources here */
-				this.parent?.Children.Remove(this);
-
-				this.Address = IntPtr.Zero;
-				this.parent = null;
-				this.parentBind = null;
-
-				for (int i = this.Children.Count - 1; i >= 0; i--)
+				this.ClaimLocks();
+				try
 				{
-					this.Children[i].Dispose();
-				}
+					// If there is a parent, claim its lock before removing self
+					if (this.parent != null)
+					{
+						bool parentLockTaken = this.parent.lockObject.TryEnter(LOCK_TIMEOUT_MS);
+						try
+						{
+							this.parent.Children.Remove(this);
+						}
+						finally
+						{
+							if (parentLockTaken)
+								this.parent.lockObject.Exit();
+						}
+					}
 
-				this.Children.Clear();
-				this.delayedBinds.Clear();
-				this.SuppressPropNotifications.Dispose();
+					this.Address = IntPtr.Zero;
+					this.parent = null;
+					this.parentBind = null;
+
+					for (int i = this.Children.Count - 1; i >= 0; --i)
+						this.Children[i].Dispose();
+
+					this.Children.Clear();
+					this.delayedBinds.Clear();
+					this.SuppressPropNotifications.Dispose();
+				}
+				finally
+				{
+					this.ReleaseLocks();
+				}
 			}
 
 			/* Dispose unmanaged resources here if any */
@@ -529,7 +549,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			while (queue.Count > 0)
 			{
 				MemoryBase current = queue.Dequeue();
-				if (!current.lockObject.TryEnter(5000))
+				if (!current.lockObject.TryEnter(LOCK_TIMEOUT_MS))
 					throw new Exception("Failed to claim lock on memory object. Possible deadlock?");
 
 				foreach (MemoryBase child in current.Children)
@@ -605,6 +625,9 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <param name="bind">The property bind information.</param>
 	protected virtual void ReadFromMemory(PropertyBindInfo bind)
 	{
+		if (this.disposed)
+			return;
+
 		if (!this.CanRead(bind))
 			return;
 
@@ -667,9 +690,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 					{
 						this.SetValueWithoutNotification(bind, null);
 						bind.LastValue = null;
-						memory.ReleaseLocks();
 						memory.Dispose();
-						this.Children.Remove(memory);
 					}
 					else
 					{
