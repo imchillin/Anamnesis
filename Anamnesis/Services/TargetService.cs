@@ -434,7 +434,7 @@ public class TargetService : ServiceBase<TargetService>
 		{
 			try
 			{
-				bool isGpose = GposeService.GetIsGPose();
+				bool isGpose = GposeService.IsInGpose();
 
 				var actorHandles = ActorService.Instance.ObjectTable.GetAll();
 

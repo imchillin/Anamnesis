@@ -197,7 +197,7 @@ public class Skeleton : INotifyPropertyChanged
 	/// <summary>Reads the transforms of all bones in the skeleton.</summary>
 	public void ReadTransforms()
 	{
-		if (this.Bones == null || (this.Actor?.Do(a => a.ModelObject?.Skeleton == null) ?? true) || !GposeService.GetIsGPose())
+		if (this.Bones == null || (this.Actor?.Do(a => a.ModelObject?.Skeleton == null) ?? true) || !GposeService.IsInGpose())
 			return;
 
 		// If history is restoring, wait until it's done.
@@ -214,10 +214,10 @@ public class Skeleton : INotifyPropertyChanged
 
 			foreach (var rootBone in rootBones)
 			{
-				rootBone.ReadTransform(true, snapshot);
+					rootBone.ReadTransform(true, snapshot);
+				}
 			}
 		}
-	}
 
 	/// <summary>
 	/// Prepend a prefix to the bone name and return the converted bone name.

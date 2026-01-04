@@ -98,7 +98,7 @@ public partial class DeveloperTab : UserControl
 
 		actorHandle.Do(async a =>
 		{
-			bool result = a.IsInGpose();
+			bool result = GposeService.IsInGpose();
 			await Dispatch.MainThread();
 			await GenericDialog.ShowAsync($"IsInGpose: {result}", "Hook Invocation", MessageBoxButton.OK);
 		});

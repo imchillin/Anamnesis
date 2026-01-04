@@ -9,7 +9,6 @@ using Anamnesis.Services;
 using Anamnesis.Utils;
 using PropertyChanged;
 using RemoteController.Interop.Delegates;
-using RemoteController.IPC;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,7 +29,6 @@ public class ActorMemory : GameObjectMemory, IDisposable
 
 	private static readonly Lock s_hookLock = new();
 	private static HookHandle? s_isWandererHook = null;
-	private static HookHandle? s_isInGposeHook = null;
 
 	private readonly System.Timers.Timer refreshDebounceTimer;
 	private readonly FuncQueue backupQueue;
@@ -42,7 +40,6 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		lock (s_hookLock)
 		{
 			s_isWandererHook ??= ControllerService.Instance.RegisterWrapper<Character.IsWanderer>();
-			s_isInGposeHook ??= ControllerService.Instance.RegisterWrapper<GameMain.IsInGPose>();
 		}
 
 		this.backupQueue = new(this.BackupAsync, 250);
@@ -307,35 +304,14 @@ public class ActorMemory : GameObjectMemory, IDisposable
 
 	public bool IsWanderer()
 	{
-		if (s_isWandererHook == null || !s_isWandererHook.IsValid)
+		try
+		{
+			return ControllerService.Instance.InvokeHook<bool>(s_isWandererHook!, args: this.Address) ?? false;
+		}
+		catch
+		{
 			return false;
-
-		byte[] argsPayload = MarshalUtils.Serialize(this.Address);
-		return ControllerService.Instance.InvokeHook<Character.IsWanderer, bool>(
-			s_isWandererHook.HookId,
-			argsPayload) ?? false;
-	}
-
-	public bool IsInGpose()
-	{
-		if (s_isInGposeHook == null || !s_isInGposeHook.IsValid)
-			return false;
-
-		System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
-		byte[] argsPayload = [];
-		bool? result = ControllerService.Instance.InvokeHook<GameMain.IsInGPose, bool>(
-			s_isInGposeHook.HookId,
-			argsPayload);
-
-		if (result == null)
-			Log.Warning("IsInGpose hook returned null result.");
-
-		stopwatch.Stop();
-		long microsecondsResult = stopwatch.ElapsedTicks * 1_000_000 / System.Diagnostics.Stopwatch.Frequency;
-		long nanosecondsResult = stopwatch.ElapsedTicks * 1_000_000_000 / System.Diagnostics.Stopwatch.Frequency;
-		Log.Debug($"IsInGpose executed in {microsecondsResult}μs ({nanosecondsResult}ns)");
-		return result ?? false;
+		}
 	}
 
 	protected virtual void OnRefreshed()
