@@ -12,6 +12,8 @@ using Anamnesis.GUI.Dialogs;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
+using RemoteController.Interop;
+using RemoteController.Interop.Delegates;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -19,6 +21,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,6 +39,8 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 {
 	public const double DRAG_THRESHOLD = 20;
 
+	public static readonly Lazy<WorkQueue> WorkQueue = new(() => new WorkQueue());
+
 	private static readonly Type[] s_poseFileTypes =
 	[
 		typeof(PoseFile),
@@ -48,6 +53,9 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		FileService.StandardPoseDirectory,
 		FileService.CMToolPoseSaveDir,
 	];
+
+	private static readonly Lock s_hookLock = new();
+	private static HookHandle? s_renderSkeletonHook = null;
 
 	private static DirectoryInfo? s_lastLoadDir;
 	private static DirectoryInfo? s_lastSaveDir;
@@ -72,6 +80,18 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.InitializeComponent();
 
 		this.ContentArea.DataContext = this;
+
+		lock (s_hookLock)
+		{
+			s_renderSkeletonHook ??= ControllerService.Instance.RegisterInterceptor<Framework.RenderGraphics>(
+				HookBehavior.After,
+				this.RenderSkeletonDetour);
+
+			if (s_renderSkeletonHook != null && s_renderSkeletonHook.IsValid)
+			{
+				WorkQueue.Value.Enabled = true;
+			}
+		}
 
 		// Initialize the debounce timer
 		this.refreshDebounceTimer = new(200) { AutoReset = false };
@@ -363,47 +383,50 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private async Task Refresh()
 	{
-		await Dispatch.MainThread();
-
-		this.ThreeDView.DataContext = null;
-		this.BodyGuiView.DataContext = null;
-		this.FaceGuiView.DataContext = null;
-		this.MatrixView.DataContext = null;
-
-		if (this.Actor == null || this.Actor.Do(a => a.ModelObject == null) != false)
+		WorkQueue.Value.Enqueue(async () =>
 		{
-			this.Skeleton?.Clear();
-			this.Skeleton = null;
-			return;
-		}
+			await Dispatch.MainThread();
 
-		try
-		{
-			if (this.Skeleton != null)
+			this.ThreeDView.DataContext = null;
+			this.BodyGuiView.DataContext = null;
+			this.FaceGuiView.DataContext = null;
+			this.MatrixView.DataContext = null;
+
+			if (this.Actor == null || this.Actor.Do(a => a.ModelObject == null) != false)
 			{
-				this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+				this.Skeleton?.Clear();
+				this.Skeleton = null;
+				return;
 			}
 
-			this.Skeleton = new SkeletonEntity(this.Actor);
-			BoneViewManager.Instance.SetSkeleton(this.Skeleton);
-
-			this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
-
-			this.ThreeDView.DataContext = this.Skeleton;
-			this.BodyGuiView.DataContext = this.Skeleton;
-			this.FaceGuiView.DataContext = this.Skeleton;
-			this.MatrixView.DataContext = this.Skeleton;
-
-			// Start the skeleton read/write tasks
-			if (this.skeletonUpdateThread == null || this.skeletonUpdateThread.IsCompleted || this.skeletonUpdateThread.IsFaulted)
+			try
 			{
-				this.skeletonUpdateThread = Task.Run(this.SkeletonUpdateThread);
+				if (this.Skeleton != null)
+				{
+					this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+				}
+
+				this.Skeleton = new SkeletonEntity(this.Actor);
+				BoneViewManager.Instance.SetSkeleton(this.Skeleton);
+
+				this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
+
+				this.ThreeDView.DataContext = this.Skeleton;
+				this.BodyGuiView.DataContext = this.Skeleton;
+				this.FaceGuiView.DataContext = this.Skeleton;
+				this.MatrixView.DataContext = this.Skeleton;
+
+				// Start the skeleton read/write tasks
+				if (this.skeletonUpdateThread == null || this.skeletonUpdateThread.IsCompleted || this.skeletonUpdateThread.IsFaulted)
+				{
+					this.skeletonUpdateThread = Task.Run(this.SkeletonUpdateThread);
+				}
 			}
-		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, "Failed to bind skeleton to view");
-		}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to bind skeleton to view");
+			}
+		});
 	}
 
 	private void OnSkeletonPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -906,12 +929,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			if (this.Skeleton == null)
 				return;
 
-			// Only update transforms while the pose service is disabled
-			if (!PoseService.Instance.IsEnabled)
-			{
-				this.Skeleton.ReadTransforms();
-			}
-			else
+			if (PoseService.Instance.IsEnabled)
 			{
 				this.Skeleton.WriteSkeleton();
 			}
@@ -988,5 +1006,46 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.RaisePropertyChanged(nameof(this.SelectedBonesTooltip));
 		this.RaisePropertyChanged(nameof(this.SelectedBoneName));
 		this.RaisePropertyChanged(nameof(this.SelectedBonesText));
+	}
+
+	private byte[] RenderSkeletonDetour(byte[] args)
+	{
+		// IMPORTANT: Do not throw in the hook detour!
+		// Sync the skeleton first, then process pending pose-related work
+		if (!PoseService.Instance.IsEnabled && GposeService.IsGpose)
+		{
+			this.Skeleton?.Actor?.Do(actor =>
+			{
+				var skeleton = actor.ModelObject?.Skeleton;
+				if (skeleton == null || skeleton.Address == IntPtr.Zero)
+					return;
+
+				try
+				{
+					skeleton.Synchronize();
+				}
+				catch (Exception ex)
+				{
+					Log.Verbose(ex, "Failed to sync skeleton during skeleton finalization.");
+				}
+			});
+		}
+
+		try
+		{
+			WorkQueue.Value.ProcessPending();
+		}
+		catch (Exception ex)
+		{
+			Log.Warning(ex, "Failed to process task.");
+		}
+
+		// Read transforms after processing to ensure we have the latest data
+		if (!PoseService.Instance.IsEnabled && GposeService.IsGpose)
+		{
+			// this.Skeleton?.ReadTransforms();
+		}
+
+		return [];
 	}
 }

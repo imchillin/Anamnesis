@@ -22,9 +22,9 @@ public static class Character
 
 public static class Framework
 {
-	[FunctionBind("E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 41 8B FF")]
+	[FunctionBind("40 53 55 57 41 55 48 83 EC ?? ?? 48 ?? ?? ?? ?? ?? ?? ?? 48")]
 	[UnmanagedFunctionPointer(CallingConvention.StdCall)]
-	public delegate void RenderSkeleton(long a1);
+	public delegate void RenderGraphics(long a1);
 }
 
 public static class GameMain

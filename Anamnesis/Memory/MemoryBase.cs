@@ -13,7 +13,6 @@ using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -292,11 +291,11 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		this.ClaimLocks(locked, inclGroups, exclGroups);
 		try
 		{
-			this.SynchronizeInternal(locked, inclGroups, exclGroups);
+			this.SynchronizeInternal(locked);
 
 			// Write delayed binds to memory after synchronization.
 			// This ensures that writes are not blocked by ongoing reads.
-			this.WriteDelayedBindsInternal(locked);
+			WriteDelayedBindsInternal(locked);
 		}
 		catch (Exception ex)
 		{
@@ -321,7 +320,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		this.ClaimLocks(locked, null, null);
 		try
 		{
-			this.WriteDelayedBindsInternal(locked);
+			WriteDelayedBindsInternal(locked);
 		}
 		catch (Exception ex)
 		{
@@ -710,7 +709,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		try
 		{
 			// Make sure that all delayed binds are written before this bind to preserve order
-			this.WriteDelayedBindsInternal(locked);
+			WriteDelayedBindsInternal(locked);
 
 			this.WriteToMemory(bind);
 		}
@@ -890,62 +889,6 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	}
 
 	/// <summary>
-	/// Internal method to synchronize the memory object.
-	/// </summary>
-	/// <param name="locked">
-	/// The list of currently locked memory objects.
-	/// </param>
-	/// <param name="inclGroups">
-	/// The synchronization groups to include in the synchronization.
-	/// If null, all groups are included.
-	/// </param>
-	/// <param name="exclGroups">
-	/// The synchronization groups to exclude from the synchronization.
-	/// If null, no groups are excluded.
-	/// </param>
-	/// <remarks>
-	/// An internal method is used to allow for recursion on locked objects.
-	/// </remarks>
-	private void SynchronizeInternal(List<MemoryBase> locked, IReadOnlySet<string>? inclGroups = null, IReadOnlySet<string>? exclGroups = null)
-	{
-		if (this.Address == IntPtr.Zero)
-			return;
-
-		try
-		{
-			SetIsSynchronizing(locked, true);
-
-			for (int i = 0; i < locked.Count; ++i)
-			{
-				var current = locked[i];
-
-				// Process standard binds
-				foreach (PropertyBindInfo bind in current.Binds.Values)
-				{
-					try
-					{
-						current.ReadFromMemory(bind, locked);
-					}
-					catch (Exception ex)
-					{
-						throw new Exception($"Failed to read {current.GetType()} - {bind.Name}", ex);
-					}
-				}
-
-				// If array, process its indexed elements.
-				if (current is IArrayMemory arrayMemory)
-				{
-					arrayMemory.ReadArrayMemory(locked);
-				}
-			}
-		}
-		finally
-		{
-			SetIsSynchronizing(locked, false);
-		}
-	}
-
-	/// <summary>
 	/// Internal method to write delayed binds to memory.
 	/// </summary>
 	/// <param name="targets">
@@ -954,7 +897,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <remarks>
 	/// An internal method is used to allow for recursion on locked objects.
 	/// </remarks>
-	private void WriteDelayedBindsInternal(List<MemoryBase> targets)
+	private static void WriteDelayedBindsInternal(List<MemoryBase> targets)
 	{
 		for (int i = 0; i < targets.Count; ++i)
 		{
@@ -1007,6 +950,54 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				if (!current.delayedBinds.IsEmpty)
 					Log.Warning($"Failed to write all delayed binds, remaining: {current.delayedBinds.Count}");
 			}
+		}
+	}
+
+	/// <summary>
+	/// Internal method to synchronize the memory object.
+	/// </summary>
+	/// <param name="locked">
+	/// The list of currently locked memory objects.
+	/// </param>
+	/// <remarks>
+	/// An internal method is used to allow for recursion on locked objects.
+	/// </remarks>
+	private void SynchronizeInternal(List<MemoryBase> locked)
+	{
+		if (this.Address == IntPtr.Zero)
+			return;
+
+		try
+		{
+			SetIsSynchronizing(locked, true);
+
+			for (int i = 0; i < locked.Count; ++i)
+			{
+				var current = locked[i];
+
+				// Process standard binds
+				foreach (PropertyBindInfo bind in current.Binds.Values)
+				{
+					try
+					{
+						current.ReadFromMemory(bind, locked);
+					}
+					catch (Exception ex)
+					{
+						throw new Exception($"Failed to read {current.GetType()} - {bind.Name}", ex);
+					}
+				}
+
+				// If array, process its indexed elements.
+				if (current is IArrayMemory arrayMemory)
+				{
+					arrayMemory.ReadArrayMemory(locked);
+				}
+			}
+		}
+		finally
+		{
+			SetIsSynchronizing(locked, false);
 		}
 	}
 

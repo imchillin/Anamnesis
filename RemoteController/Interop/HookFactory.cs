@@ -145,15 +145,15 @@ public static class DetourBuilder
 			{
 				byte[] argsPayload = MarshalUtils.SerializeArgs(args);
 
-				long count = s_messageCounters.AddOrUpdate(hookId, 1, static (_, c) => c + 1);
+				long count = s_messageCounters.AddOrUpdate(hookId, 1, static (_, c) => ++c);
 
-				if (count % 1000 == 0)
+				if (count % 100 == 0)
 				{
 					var start = Stopwatch.GetTimestamp();
 					var response = Controller.SendInterceptRequest(hookId, argsPayload, HookBehavior.Before);
 					var end = Stopwatch.GetTimestamp();
 					var elapsedMicroseconds = (end - start) * 1_000_000 / Stopwatch.Frequency;
-					Log.Information($"Detour round-trip time (sampled): {elapsedMicroseconds} us");
+					Log.Information($"[ID: {hookId}] Detour round-trip time (sampled): {elapsedMicroseconds} us");
 				}
 				else
 				{
@@ -178,15 +178,36 @@ public static class DetourBuilder
 
 			try
 			{
-				byte[] argsPayload = MarshalUtils.SerializeArgs(args);
-				byte[] resultPayload = MarshalUtils.SerializeBoxed(result);
+				long count = s_messageCounters.AddOrUpdate(hookId, 1, static (_, c) => ++c);
 
-				byte[] payload = new byte[4 + argsPayload.Length + resultPayload.Length];
-				BitConverter.GetBytes(argsPayload.Length).CopyTo(payload, 0);
-				argsPayload.CopyTo(payload, 4);
-				resultPayload.CopyTo(payload, 4 + argsPayload.Length);
+				if (count % 100 == 0)
+				{
+					var start = Stopwatch.GetTimestamp();
+					byte[] argsPayload = MarshalUtils.SerializeArgs(args);
+					byte[] resultPayload = MarshalUtils.SerializeBoxed(result);
 
-				Controller.SendInterceptRequest(hookId, payload, HookBehavior.After);
+					byte[] payload = new byte[4 + argsPayload.Length + resultPayload.Length];
+					BitConverter.GetBytes(argsPayload.Length).CopyTo(payload, 0);
+					argsPayload.CopyTo(payload, 4);
+					resultPayload.CopyTo(payload, 4 + argsPayload.Length);
+
+					Controller.SendInterceptRequest(hookId, payload, HookBehavior.After);
+					var end = Stopwatch.GetTimestamp();
+					var elapsedMicroseconds = (end - start) * 1_000_000 / Stopwatch.Frequency;
+					Log.Information($"[ID: {hookId}] Detour round-trip time (sampled): {elapsedMicroseconds} us");
+				}
+				else
+				{
+					byte[] argsPayload = MarshalUtils.SerializeArgs(args);
+					byte[] resultPayload = MarshalUtils.SerializeBoxed(result);
+
+					byte[] payload = new byte[4 + argsPayload.Length + resultPayload.Length];
+					BitConverter.GetBytes(argsPayload.Length).CopyTo(payload, 0);
+					argsPayload.CopyTo(payload, 4);
+					resultPayload.CopyTo(payload, 4 + argsPayload.Length);
+
+					Controller.SendInterceptRequest(hookId, payload, HookBehavior.After);
+				}
 			}
 			catch (Exception ex)
 			{

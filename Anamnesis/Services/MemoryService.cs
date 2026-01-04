@@ -161,7 +161,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// <returns>The value read from the specified memory address.</returns>
 	/// <exception cref="Exception">Thrown if the address is invalid or the read operation fails after multiple attempts.</exception>
 	public static T Read<T>(IntPtr address)
-	where T : struct
+		where T : struct
 	{
 		if (address == IntPtr.Zero)
 			throw new ArgumentException("Invalid address", nameof(address));
@@ -760,7 +760,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// <summary>
 	/// Special struct for handling 1-byte bool marshaling.
 	/// </summary>
-	private struct OneByteBool
+	public struct OneByteBool
 	{
 #pragma warning disable CS0649
 		[MarshalAs(UnmanagedType.I1)]

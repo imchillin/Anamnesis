@@ -27,10 +27,18 @@
     <NeutralLanguage>en</NeutralLanguage>
     <TrimmerRootAssembly>Serilog; RemoteController</TrimmerRootAssembly>
   </PropertyGroup>
-  <Target Name="PublishRemoteController" BeforeTargets="BeforeBuild" Inputs="$(SolutionDir)RemoteController\**\*.cs;$(SolutionDir)RemoteController\RemoteController.csproj" Outputs="$(ProjectDir)obj\$(Platform)\$(Configuration)\Remote\RemoteController.dll">
-    <Message Importance="high" Text="Changes detected in RemoteController project. Triggering target publish..." />
-    <MakeDir Directories="$(ProjectDir)obj\$(Platform)\$(Configuration)\Remote" />
-    <Exec Command="dotnet publish &quot;$(SolutionDir)RemoteController\RemoteController.csproj&quot; -c $(Configuration) -r win-x64 -o &quot;$(ProjectDir)obj\$(Platform)\$(Configuration)\Remote&quot; --self-contained true" WorkingDirectory="$(SolutionDir)" />
+  <Target Name="PublishRemoteController"
+        BeforeTargets="BeforeBuild;PrepareForPublish"
+        Inputs="$(SolutionDir)RemoteController\RemoteController.csproj;$(SolutionDir)RemoteController\**\*.cs"
+        Outputs="$(ProjectDir)obj\RemotePublish\RemoteController.dll">
+
+    <PropertyGroup>
+      <RemotePublishDir>$(SolutionDir)obj\RemotePublish\</RemotePublishDir>
+    </PropertyGroup>
+
+    <Message Importance="high" Text="Changes detected in RemoteController. Publishing..." />
+    <MakeDir Directories="$(RemotePublishDir)" />
+    <Exec Command="dotnet publish &quot;$(SolutionDir)RemoteController\RemoteController.csproj&quot; -c $(Configuration) -r win-x64 -o &quot;$(RemotePublishDir)/&quot; --self-contained true" WorkingDirectory="$(SolutionDir)" />
   </Target>
   <ItemGroup>
     <PackageReference Include="Fody" Version="6.9.1">
@@ -59,7 +67,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-	<PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
+    <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\*.*" />
@@ -133,10 +141,10 @@
     <EmbeddedResource Remove="obj\x64\Debug\Remote\RemoteController.dll" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="$(IntermediateOutputPath)Remote\RemoteController.dll">
+    <EmbeddedResource Include="$(SolutionDir)obj\RemotePublish\RemoteController.dll">
       <LogicalName>Anamnesis.Memory.RemoteController.dll</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="$(IntermediateOutputPath)Remote\FASMX64.dll">
+    <EmbeddedResource Include="$(SolutionDir)obj\RemotePublish\FASMX64.dll">
       <LogicalName>Anamnesis.Memory.FASMX64.dll</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

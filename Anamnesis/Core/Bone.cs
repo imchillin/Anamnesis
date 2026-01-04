@@ -25,6 +25,10 @@ public class Bone : ITransform
 	private static readonly HashSet<string> s_attachmentBoneNames = new() { "n_buki_r", "n_buki_l", "j_buki_sebo_r", "j_buki_sebo_l" };
 	private static bool s_scaleLinked = true;
 	private bool hasInitialReading = false;
+	private bool isDirty = false;
+	private Vector3 position;
+	private Quaternion rotation;
+	private Vector3 scale;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Bone"/> class.
@@ -84,7 +88,18 @@ public class Bone : ITransform
 	/// <remarks>
 	/// If you want to get character-relative position, use the position in <see cref="TransformMemory"/> property instead.
 	/// </remarks>
-	public Vector3 Position { get; set; }
+	public Vector3 Position
+	{
+		get => this.position;
+		set
+		{
+			if (!this.position.IsApproximately(value, EQUALITY_TOLERANCE))
+			{
+				this.position = value;
+				this.isDirty = true;
+			}
+		}
+	}
 
 	/// <inheritdoc/>
 	public bool CanRotate => PoseService.Instance.FreezeRotation && !this.IsTransformLocked;
@@ -96,7 +111,18 @@ public class Bone : ITransform
 	/// <remarks>
 	/// If you want to get character-relative rotation, use the rotation in <see cref="TransformMemory"/> property instead.
 	/// </remarks>
-	public Quaternion Rotation { get; set; }
+	public Quaternion Rotation
+	{
+		get => this.rotation;
+		set
+		{
+			if (!this.rotation.IsApproximately(value, EQUALITY_TOLERANCE))
+			{
+				this.rotation = value;
+				this.isDirty = true;
+			}
+		}
+	}
 
 	/// <summary>Gets the root rotation of the bone.</summary>
 	public Quaternion RootRotation => this.Parent == null
@@ -107,7 +133,18 @@ public class Bone : ITransform
 	public bool CanScale => PoseService.Instance.FreezeScale && !this.IsTransformLocked;
 
 	/// <summary>Gets or sets the scale of the bone.</summary>
-	public Vector3 Scale { get; set; }
+	public Vector3 Scale
+	{
+		get => this.scale;
+		set
+		{
+			if (!this.scale.IsApproximately(value, EQUALITY_TOLERANCE))
+			{
+				this.scale = value;
+				this.isDirty = true;
+			}
+		}
+	}
 
 	/// <summary>Gets a value indicating whether this bone is an attachment bone.</summary>
 	/// <remarks>
@@ -137,6 +174,16 @@ public class Bone : ITransform
 				SettingsService.Current.PosingBoneLinks.Set(link.Name, value);
 			}
 		}
+	}
+
+	/// <summary>
+	/// Gets a value indicating whether the object's transform
+	/// has been modified since the last synchronization.
+	/// </summary>
+	public bool IsDirty
+	{
+		get => this.isDirty;
+		private set => this.isDirty = value;
 	}
 
 	/// <summary>Sorts the specified bones by their depth in the skeleton hierarchy.</summary>
@@ -373,6 +420,7 @@ public class Bone : ITransform
 
 				if (changed)
 				{
+					this.isDirty = false;
 					if (currentWriteLinked && currentBone.EnableLinkedBones)
 					{
 						foreach (var link in currentBone.LinkedBones)
