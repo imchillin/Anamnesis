@@ -1,10 +1,331 @@
-﻿// © Anamnesis. // Licensed under the MIT license.  namespace RemoteController.IPC;  using System; using System.Diagnostics.CodeAnalysis; using System.Reflection; using System.Runtime.CompilerServices; using System.Runtime.InteropServices;  /// <summary> /// Utility methods for marshaling data between managed and unmanaged memory. /// </summary> [RequiresUnreferencedCode("MarshalUtils uses reflection for certain operations.")] [RequiresDynamicCode("MarshalUtils uses Marshal.SizeOf which requires dynamic code.")] public static class MarshalUtils {
+﻿// © Anamnesis.
+// Licensed under the MIT license.
+
+namespace RemoteController.IPC;
+
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+/// <summary>
+/// Utility methods for marshaling data between managed and unmanaged memory.
+/// </summary>
+[RequiresUnreferencedCode("MarshalUtils uses reflection for certain operations.")]
+[RequiresDynamicCode("MarshalUtils uses Marshal.SizeOf which requires dynamic code.")]
+public static class MarshalUtils
+{
 	[RequiresDynamicCode("MarshalUtils uses Marshal.SizeOf which requires dynamic code.")]
 	private static class DelegateCache<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] TDelegate>
 		where TDelegate : Delegate
 	{
 		public static readonly ParameterInfo[] Parameters = typeof(TDelegate).GetMethod("Invoke")!.GetParameters();
 	}
- 	private const int STACKALLOC_MAX_BYTE_SIZE = 128;  	// A thread-local buffer to reduce allocations 	[ThreadStatic] 	private static byte[]? s_threadBuffer;  	/// <summary> 	/// Reads an unmanaged value from a span. 	/// </summary> 	/// <typeparam name="T">The unmanaged type.</typeparam> 	/// <param name="data">The source span.</param> 	/// <returns>The deserialized value, or default(T) if the span is too small.</returns> 	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	public static T Deserialize<T>(ReadOnlySpan<byte> data) 		where T : unmanaged 	{ 		return data.Length >= Unsafe.SizeOf<T>() ? MemoryMarshal.Read<T>(data) : default; 	}  	/// <summary> 	/// Serializes an unmanaged value to a byte array. 	/// </summary> 	/// <typeparam name="T">The unmanaged type.</typeparam> 	/// <param name="value">The value to serialize.</param> 	/// <returns>A byte array containing the serialized value.</returns> 	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	public static byte[] Serialize<T>(T value) 		where T : unmanaged 	{ 		byte[] bytes = new byte[Unsafe.SizeOf<T>()]; 		MemoryMarshal.Write(bytes, in value); 		return bytes; 	}  	/// <summary> 	/// Writes an unmanaged value to a span. 	/// </summary> 	/// <typeparam name="T">The unmanaged type.</typeparam> 	/// <param name="destination">The destination span.</param> 	/// <param name="value">The value to write.</param> 	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	public static void Write<T>(Span<byte> destination, in T value) 		where T : unmanaged 	{ 		MemoryMarshal.Write(destination, in value); 	}  	/// <summary> 	/// Reads an unmanaged value from a span. 	/// </summary> 	/// <typeparam name="T">The unmanaged type.</typeparam> 	/// <param name="source">The source span.</param> 	/// <returns>The value read from the span.</returns> 	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	public static T Read<T>(ReadOnlySpan<byte> source) 		where T : unmanaged 	{ 		return MemoryMarshal.Read<T>(source); 	}
 
-	/// <summary> 	/// Serializes arguments and invokes a callback with the result span. 	/// </summary> 	/// <typeparam name="TResult">The callback return type.</typeparam> 	/// <param name="args">Arguments to serialize.</param> 	/// <param name="callback">Callback invoked with the serialized span.</param> 	/// <returns>The result of the callback.</returns> 	public static TResult SerializeArgs<TResult>(object?[] args, SpanFunc<byte, TResult> callback) 	{ 		if (args.Length == 0) 			return callback([]);  		if (args.Length == 1 && args[0] != null) 			return SerializeBoxed(args[0], callback);  		int totalSize = 0; 		foreach (object? arg in args) 		{ 			if (arg != null) 				totalSize += GetSerializedSize(arg); 		}  		if (totalSize == 0) 			return callback([]);  		Span<byte> buffer = totalSize <= STACKALLOC_MAX_BYTE_SIZE 			? stackalloc byte[totalSize] 			: GetThreadBuffer(totalSize);  		int offset = 0; 		foreach (object? arg in args) 		{ 			if (arg != null) 				offset += WriteToSpan(buffer[offset..], arg); 		}  		return callback(buffer[..offset]); 	}  	/// <summary> 	/// Serializes arguments to a byte array. 	/// </summary> 	/// <param name="args">Arguments to serialize.</param> 	/// <returns>A byte array containing the serialized arguments.</returns> 	public static byte[] SerializeArgs(object?[] args) 	{ 		return SerializeArgs(args, static span => span.ToArray()); 	}  	/// <summary> 	/// Deserializes arguments to an object array. 	/// </summary> 	/// <typeparam name="TDelegate">The delegate type.</typeparam> 	/// <param name="payload">The serialized arguments.</param> 	/// <returns>An array of deserialized arguments.</returns> 	public static object?[] DeserializeArgs<TDelegate>(byte[] payload) where TDelegate : Delegate 	{ 		ParameterInfo[] parameters = DelegateCache<TDelegate>.Parameters; 		object?[] args = new object?[parameters.Length];  		int offset = 0; 		for (int i = 0; i < parameters.Length; i++) 		{ 			args[i] = ReadFromSpan(payload.AsSpan(offset), parameters[i].ParameterType, out int bytesRead); 			offset += bytesRead; 		}  		return args; 	}  	/// <summary> 	/// Serializes a boxed value and invokes a callback with the result span. 	/// </summary> 	/// <typeparam name="TResult">The callback return type.</typeparam> 	/// <param name="result">The value to serialize.</param> 	/// <param name="callback">Callback invoked with the serialized span.</param> 	/// <returns>The result of the callback.</returns> 	public static TResult SerializeBoxed<TResult>(object? result, SpanFunc<byte, TResult> callback) 	{ 		if (result == null) 			return callback([]);  		int size = GetSerializedSize(result);  		Span<byte> buffer = size <= STACKALLOC_MAX_BYTE_SIZE 			? stackalloc byte[size] 			: GetThreadBuffer(size);  		int written = WriteToSpan(buffer, result); 		return callback(buffer[..written]); 	}  	/// <summary> 	/// Serializes a boxed value to a byte array. 	/// </summary> 	/// <param name="result">The value to serialize.</param> 	/// <returns>A byte array containing the serialized value.</returns> 	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	public static byte[] SerializeBoxed(object? result) 	{ 		return SerializeBoxed(result, static span => span.ToArray()); 	}  	/// <summary> 	/// Serializes a boxed value to a span. 	/// </summary> 	/// <param name="result">The value to serialize.</param> 	/// <param name="destination">The destination span.</param> 	/// <returns>The number of bytes written.</returns> 	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	public static int SerializeBoxed(object? result, Span<byte> destination) 	{ 		return result == null ? 0 : WriteToSpan(destination, result); 	}  	/// <summary> 	/// Deserializes a boxed value from a byte array. 	/// </summary> 	/// <param name="data">The source byte array.</param> 	/// <param name="returnType">The type to deserialize.</param> 	/// <returns>The deserialized value, or null.</returns> 	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	public static object? DeserializeBoxed(byte[] data, Type returnType) 	{ 		return data.Length == 0 || returnType == typeof(void) ? null : ReadFromSpan(data, returnType, out _); 	}  	private static byte[] GetThreadBuffer(int minSize) 	{ 		byte[]? buffer = s_threadBuffer; 		if (buffer == null || buffer.Length < minSize) 			s_threadBuffer = buffer = new byte[Math.Max(256, minSize)]; 		return buffer; 	}  	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	private static int GetSerializedSize(object arg) => arg switch 	{ 		bool or byte or sbyte => 1, 		short or ushort => 2, 		int or uint or float => 4, 		long or ulong or double => 8, 		nint or nuint => IntPtr.Size, 		_ => Marshal.SizeOf(arg), 	};  	private static int WriteToSpan(Span<byte> dest, object arg) => arg switch 	{ 		bool b => WriteBool(dest, b), 		byte by => WriteByte(dest, by), 		sbyte sb => WriteSByte(dest, sb), 		short s => WritePrimitive(dest, s), 		ushort us => WritePrimitive(dest, us), 		int i => WritePrimitive(dest, i), 		uint ui => WritePrimitive(dest, ui), 		long l => WritePrimitive(dest, l), 		ulong ul => WritePrimitive(dest, ul), 		float f => WritePrimitive(dest, f), 		double d => WritePrimitive(dest, d), 		nint ptr => WritePrimitive(dest, ptr), 		nuint uptr => WritePrimitive(dest, uptr), 		_ => WriteStruct(dest, arg), 	};  	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	private static int WriteBool(Span<byte> dest, bool value) { dest[0] = value ? (byte)1 : (byte)0; return 1; }  	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	private static int WriteByte(Span<byte> dest, byte value) { dest[0] = value; return 1; }  	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	private static int WriteSByte(Span<byte> dest, sbyte value) { dest[0] = (byte)value; return 1; }  	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	private static int WritePrimitive<T>(Span<byte> dest, T value) where T : unmanaged 	{ 		MemoryMarshal.Write(dest, in value); 		return Unsafe.SizeOf<T>(); 	}  	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	private static int WriteStruct(Span<byte> dest, object value) 	{ 		byte[] bytes = SerializeStruct(value); 		bytes.CopyTo(dest); 		return bytes.Length; 	}  	private static object? ReadFromSpan(ReadOnlySpan<byte> data, Type type, out int bytesRead) 	{ 		if (type == typeof(bool)) return ReadBool(data, out bytesRead); 		if (type == typeof(byte)) return ReadByte(data, out bytesRead); 		if (type == typeof(sbyte)) return ReadSByte(data, out bytesRead); 		if (type == typeof(short)) return ReadPrimitive<short>(data, out bytesRead); 		if (type == typeof(ushort)) return ReadPrimitive<ushort>(data, out bytesRead); 		if (type == typeof(int)) return ReadPrimitive<int>(data, out bytesRead); 		if (type == typeof(uint)) return ReadPrimitive<uint>(data, out bytesRead); 		if (type == typeof(long)) return ReadPrimitive<long>(data, out bytesRead); 		if (type == typeof(ulong)) return ReadPrimitive<ulong>(data, out bytesRead); 		if (type == typeof(float)) return ReadPrimitive<float>(data, out bytesRead); 		if (type == typeof(double)) return ReadPrimitive<double>(data, out bytesRead); 		if (type == typeof(nint)) return ReadPrimitive<nint>(data, out bytesRead); 		if (type == typeof(nuint)) return ReadPrimitive<nuint>(data, out bytesRead);  		bytesRead = 0; 		return null; 	}  	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	private static bool ReadBool(ReadOnlySpan<byte> data, out int bytesRead) { bytesRead = 1; return data[0] != 0; }  	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	private static byte ReadByte(ReadOnlySpan<byte> data, out int bytesRead) { bytesRead = 1; return data[0]; }  	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	private static sbyte ReadSByte(ReadOnlySpan<byte> data, out int bytesRead) { bytesRead = 1; return (sbyte)data[0]; }  	[MethodImpl(MethodImplOptions.AggressiveInlining)] 	private static T ReadPrimitive<T>(ReadOnlySpan<byte> data, out int bytesRead) where T : unmanaged 	{ 		bytesRead = Unsafe.SizeOf<T>(); 		return MemoryMarshal.Read<T>(data); 	}  	private static byte[] SerializeStruct(object value) 	{ 		int size = Marshal.SizeOf(value); 		byte[] bytes = new byte[size]; 		nint ptr = Marshal.AllocHGlobal(size); 		try 		{ 			Marshal.StructureToPtr(value, ptr, false); 			Marshal.Copy(ptr, bytes, 0, size); 			return bytes; 		} 		finally 		{ 			Marshal.FreeHGlobal(ptr); 		} 	} }  /// <summary> /// Delegate for span-based callbacks that return a result. /// </summary> public delegate TResult SpanFunc<T, TResult>(ReadOnlySpan<T> span);
+	private const int STACKALLOC_MAX_BYTE_SIZE = 128;
+
+	// A thread-local buffer to reduce allocations
+	[ThreadStatic]
+	private static byte[]? s_threadBuffer;
+
+	/// <summary>
+	/// Reads an unmanaged value from a span.
+	/// </summary>
+	/// <typeparam name="T">The unmanaged type.</typeparam>
+	/// <param name="data">The source span.</param>
+	/// <returns>The deserialized value, or default(T) if the span is too small.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static T Deserialize<T>(ReadOnlySpan<byte> data)
+		where T : unmanaged
+	{
+		return data.Length >= Unsafe.SizeOf<T>() ? MemoryMarshal.Read<T>(data) : default;
+	}
+
+	/// <summary>
+	/// Serializes an unmanaged value to a byte array.
+	/// </summary>
+	/// <typeparam name="T">The unmanaged type.</typeparam>
+	/// <param name="value">The value to serialize.</param>
+	/// <returns>A byte array containing the serialized value.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static byte[] Serialize<T>(T value)
+		where T : unmanaged
+	{
+		byte[] bytes = new byte[Unsafe.SizeOf<T>()];
+		MemoryMarshal.Write(bytes, in value);
+		return bytes;
+	}
+
+	/// <summary>
+	/// Writes an unmanaged value to a span.
+	/// </summary>
+	/// <typeparam name="T">The unmanaged type.</typeparam>
+	/// <param name="destination">The destination span.</param>
+	/// <param name="value">The value to write.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void Write<T>(Span<byte> destination, in T value)
+		where T : unmanaged
+	{
+		MemoryMarshal.Write(destination, in value);
+	}
+
+	/// <summary>
+	/// Reads an unmanaged value from a span.
+	/// </summary>
+	/// <typeparam name="T">The unmanaged type.</typeparam>
+	/// <param name="source">The source span.</param>
+	/// <returns>The value read from the span.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static T Read<T>(ReadOnlySpan<byte> source)
+		where T : unmanaged
+	{
+		return MemoryMarshal.Read<T>(source);
+	}
+
+	/// <summary>
+	/// Serializes arguments and invokes a callback with the result span.
+	/// </summary>
+	/// <typeparam name="TResult">The callback return type.</typeparam>
+	/// <param name="args">Arguments to serialize.</param>
+	/// <param name="callback">Callback invoked with the serialized span.</param>
+	/// <returns>The result of the callback.</returns>
+	public static TResult SerializeArgs<TResult>(object?[] args, SpanFunc<byte, TResult> callback)
+	{
+		if (args.Length == 0)
+			return callback([]);
+
+		if (args.Length == 1 && args[0] != null)
+			return SerializeBoxed(args[0], callback);
+
+		int totalSize = 0;
+		foreach (object? arg in args)
+		{
+			if (arg != null)
+				totalSize += GetSerializedSize(arg);
+		}
+
+		if (totalSize == 0)
+			return callback([]);
+
+		Span<byte> buffer = totalSize <= STACKALLOC_MAX_BYTE_SIZE
+			? stackalloc byte[totalSize]
+			: GetThreadBuffer(totalSize);
+
+		int offset = 0;
+		foreach (object? arg in args)
+		{
+			if (arg != null)
+				offset += WriteToSpan(buffer[offset..], arg);
+		}
+
+		return callback(buffer[..offset]);
+	}
+
+	/// <summary>
+	/// Serializes arguments to a byte array.
+	/// </summary>
+	/// <param name="args">Arguments to serialize.</param>
+	/// <returns>A byte array containing the serialized arguments.</returns>
+	public static byte[] SerializeArgs(object?[] args)
+	{
+		return SerializeArgs(args, static span => span.ToArray());
+	}
+
+	/// <summary>
+	/// Deserializes arguments to an object array.
+	/// </summary>
+	/// <typeparam name="TDelegate">The delegate type.</typeparam>
+	/// <param name="payload">The serialized arguments.</param>
+	/// <returns>An array of deserialized arguments.</returns>
+	public static object?[] DeserializeArgs<TDelegate>(byte[] payload) where TDelegate : Delegate
+	{
+		ParameterInfo[] parameters = DelegateCache<TDelegate>.Parameters;
+		object?[] args = new object?[parameters.Length];
+
+		int offset = 0;
+		for (int i = 0; i < parameters.Length; i++)
+		{
+			args[i] = ReadFromSpan(payload.AsSpan(offset), parameters[i].ParameterType, out int bytesRead);
+			offset += bytesRead;
+		}
+
+		return args;
+	}
+
+	/// <summary>
+	/// Serializes a boxed value and invokes a callback with the result span.
+	/// </summary>
+	/// <typeparam name="TResult">The callback return type.</typeparam>
+	/// <param name="result">The value to serialize.</param>
+	/// <param name="callback">Callback invoked with the serialized span.</param>
+	/// <returns>The result of the callback.</returns>
+	public static TResult SerializeBoxed<TResult>(object? result, SpanFunc<byte, TResult> callback)
+	{
+		if (result == null)
+			return callback([]);
+
+		int size = GetSerializedSize(result);
+
+		Span<byte> buffer = size <= STACKALLOC_MAX_BYTE_SIZE
+			? stackalloc byte[size]
+			: GetThreadBuffer(size);
+
+		int written = WriteToSpan(buffer, result);
+		return callback(buffer[..written]);
+	}
+
+	/// <summary>
+	/// Serializes a boxed value to a byte array.
+	/// </summary>
+	/// <param name="result">The value to serialize.</param>
+	/// <returns>A byte array containing the serialized value.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static byte[] SerializeBoxed(object? result)
+	{
+		return SerializeBoxed(result, static span => span.ToArray());
+	}
+
+	/// <summary>
+	/// Serializes a boxed value to a span.
+	/// </summary>
+	/// <param name="result">The value to serialize.</param>
+	/// <param name="destination">The destination span.</param>
+	/// <returns>The number of bytes written.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static int SerializeBoxed(object? result, Span<byte> destination)
+	{
+		return result == null ? 0 : WriteToSpan(destination, result);
+	}
+
+	/// <summary>
+	/// Deserializes a boxed value from a byte array.
+	/// </summary>
+	/// <param name="data">The source byte array.</param>
+	/// <param name="returnType">The type to deserialize.</param>
+	/// <returns>The deserialized value, or null.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static object? DeserializeBoxed(byte[] data, Type returnType)
+	{
+		return data.Length == 0 || returnType == typeof(void) ? null : ReadFromSpan(data, returnType, out _);
+	}
+
+	private static byte[] GetThreadBuffer(int minSize)
+	{
+		byte[]? buffer = s_threadBuffer;
+		if (buffer == null || buffer.Length < minSize)
+			s_threadBuffer = buffer = new byte[Math.Max(256, minSize)];
+		return buffer;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static int GetSerializedSize(object arg) => arg switch
+	{
+		bool or byte or sbyte => 1,
+		short or ushort => 2,
+		int or uint or float => 4,
+		long or ulong or double => 8,
+		nint or nuint => IntPtr.Size,
+		_ => Marshal.SizeOf(arg),
+	};
+
+	private static int WriteToSpan(Span<byte> dest, object arg) => arg switch
+	{
+		bool b => WriteBool(dest, b),
+		byte by => WriteByte(dest, by),
+		sbyte sb => WriteSByte(dest, sb),
+		short s => WritePrimitive(dest, s),
+		ushort us => WritePrimitive(dest, us),
+		int i => WritePrimitive(dest, i),
+		uint ui => WritePrimitive(dest, ui),
+		long l => WritePrimitive(dest, l),
+		ulong ul => WritePrimitive(dest, ul),
+		float f => WritePrimitive(dest, f),
+		double d => WritePrimitive(dest, d),
+		nint ptr => WritePrimitive(dest, ptr),
+		nuint uptr => WritePrimitive(dest, uptr),
+		_ => WriteStruct(dest, arg),
+	};
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static int WriteBool(Span<byte> dest, bool value) { dest[0] = value ? (byte)1 : (byte)0; return 1; }
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static int WriteByte(Span<byte> dest, byte value) { dest[0] = value; return 1; }
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static int WriteSByte(Span<byte> dest, sbyte value) { dest[0] = (byte)value; return 1; }
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static int WritePrimitive<T>(Span<byte> dest, T value) where T : unmanaged
+	{
+		MemoryMarshal.Write(dest, in value);
+		return Unsafe.SizeOf<T>();
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static int WriteStruct(Span<byte> dest, object value)
+	{
+		byte[] bytes = SerializeStruct(value);
+		bytes.CopyTo(dest);
+		return bytes.Length;
+	}
+
+	private static object? ReadFromSpan(ReadOnlySpan<byte> data, Type type, out int bytesRead)
+	{
+		if (type == typeof(bool)) return ReadBool(data, out bytesRead);
+		if (type == typeof(byte)) return ReadByte(data, out bytesRead);
+		if (type == typeof(sbyte)) return ReadSByte(data, out bytesRead);
+		if (type == typeof(short)) return ReadPrimitive<short>(data, out bytesRead);
+		if (type == typeof(ushort)) return ReadPrimitive<ushort>(data, out bytesRead);
+		if (type == typeof(int)) return ReadPrimitive<int>(data, out bytesRead);
+		if (type == typeof(uint)) return ReadPrimitive<uint>(data, out bytesRead);
+		if (type == typeof(long)) return ReadPrimitive<long>(data, out bytesRead);
+		if (type == typeof(ulong)) return ReadPrimitive<ulong>(data, out bytesRead);
+		if (type == typeof(float)) return ReadPrimitive<float>(data, out bytesRead);
+		if (type == typeof(double)) return ReadPrimitive<double>(data, out bytesRead);
+		if (type == typeof(nint)) return ReadPrimitive<nint>(data, out bytesRead);
+		if (type == typeof(nuint)) return ReadPrimitive<nuint>(data, out bytesRead);
+
+		bytesRead = 0;
+		return null;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static bool ReadBool(ReadOnlySpan<byte> data, out int bytesRead) { bytesRead = 1; return data[0] != 0; }
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static byte ReadByte(ReadOnlySpan<byte> data, out int bytesRead) { bytesRead = 1; return data[0]; }
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static sbyte ReadSByte(ReadOnlySpan<byte> data, out int bytesRead) { bytesRead = 1; return (sbyte)data[0]; }
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static T ReadPrimitive<T>(ReadOnlySpan<byte> data, out int bytesRead) where T : unmanaged
+	{
+		bytesRead = Unsafe.SizeOf<T>();
+		return MemoryMarshal.Read<T>(data);
+	}
+
+	private static byte[] SerializeStruct(object value)
+	{
+		int size = Marshal.SizeOf(value);
+		byte[] bytes = new byte[size];
+		nint ptr = Marshal.AllocHGlobal(size);
+		try
+		{
+			Marshal.StructureToPtr(value, ptr, false);
+			Marshal.Copy(ptr, bytes, 0, size);
+			return bytes;
+		}
+		finally
+		{
+			Marshal.FreeHGlobal(ptr);
+		}
+	}
+}
+
+/// <summary>
+/// Delegate for span-based callbacks that return a result.
+/// </summary>
+public delegate TResult SpanFunc<T, TResult>(ReadOnlySpan<T> span);

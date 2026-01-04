@@ -16,11 +16,11 @@ using System.Diagnostics.CodeAnalysis;
 public sealed class HookRegistry
 {
 	private static readonly Lazy<HookRegistry> s_instance = new(static () => new HookRegistry());
+	private static readonly Lazy<Reloaded.Hooks.ReloadedHooks> s_reloadedHooks = new(static () => new Reloaded.Hooks.ReloadedHooks());
 	private static readonly byte[] s_emptyPayload = [];
 
 	private readonly ConcurrentDictionary<uint, IFunctionHook> activeHooks = new();
 	private readonly ConcurrentDictionary<string, uint> keyToHookId = new();
-	private readonly Reloaded.Hooks.ReloadedHooks reloadedHooks = new();
 	
 	private uint nextHookID = 1; // Id 0 is reserved for "invalid" hooks.
 
@@ -104,7 +104,7 @@ public sealed class HookRegistry
 			uint hookId = this.AllocateHookId();
 			try
 			{
-				var registeredHook = HookDelegateRegistry.CreateHook(delegateKey, hookId, regData, this.reloadedHooks);
+				var registeredHook = HookDelegateRegistry.CreateHook(delegateKey, hookId, regData, s_reloadedHooks.Value);
 				if (registeredHook == null)
 				{
 					Log.Error($"Failed to create hook instance for: {delegateKey}");

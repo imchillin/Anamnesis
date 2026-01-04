@@ -98,7 +98,7 @@ public class Controller
 	{
 		var workerThread = new Thread(Main)
 		{
-			IsBackground = false,
+			IsBackground = true,
 			Name = "RemoteController.Main",
 		};
 		workerThread.Start();

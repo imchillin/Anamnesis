@@ -13,7 +13,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 using static Anamnesis.Memory.NativeFunctions;
@@ -123,6 +122,16 @@ internal sealed class Injector : IDisposable
 			this.fasmDllPath = ExtractResourceToDirectory(FASM_RESOURCE, tempDir, FASM_RESOURCE_FILENAME);
 			Log.Information($"[Injector] Extracted FASM DLL to: {this.fasmDllPath}");
 
+			try
+			{
+				ApplyCustomAclToProcess(this.targetProcess.Handle);
+				Log.Information("[Injector] Successfully applied custom ACL with target process.");
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "[Injector] Failed to synchronize ACLs. Hook registrations in remote controller may fail.");
+			}
+
 			this.InjectDll(this.remoteCtrlDllPath);
 			Log.Information($"[Injector] Injected DLL into process {this.targetProcess.Id}");
 
@@ -137,6 +146,15 @@ internal sealed class Injector : IDisposable
 			moduleBaseAddress = module.BaseAddress;
 			dllInjected = true;
 			Log.Information($"[Injector] Module loaded at base address 0x{moduleBaseAddress.ToInt64():X}");
+
+			var policy = default(ProcessMitigationDynamicCodePolicy);
+			if (GetProcessMitigationPolicy(this.targetProcess.Handle, PROCESS_DYNAMIC_CODE_POLICY, out policy, Marshal.SizeOf(policy)))
+			{
+				if (policy.ProhibitDynamicCode)
+				{
+					Log.Warning("Arbitrary Code Guard (ACG) is enabled. This may cause issues with remote controller.");
+				}
+			}
 
 			// Run the entry point asynchronously
 			Task.Run(() => this.CallExport(moduleBaseAddress, ANAM_CTRL_ENTRY_POINT))

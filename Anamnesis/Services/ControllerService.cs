@@ -261,6 +261,8 @@ public class ControllerService : ServiceBase<ControllerService>
 				return null;
 			}
 
+			Log.Verbose($"Resolved signature for {delegateKey} to address 0x{targetAddress:X}");
+
 			if (targetAddress == 0)
 			{
 				Log.Error($"Failed to resolve signature for: {delegateKey}");

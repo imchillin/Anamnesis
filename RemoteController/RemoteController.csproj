@@ -22,8 +22,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TrimmerRootAssembly Include="Iced" />
     <TrimmerRootAssembly Include="Serilog" />
+    <TrimmerRootAssembly Include="Serilog.Sinks.File" />
+    <TrimmerRootAssembly Include="Reloaded.Assembler" />
     <TrimmerRootAssembly Include="Reloaded.Hooks" />
+    <TrimmerRootAssembly Include="Reloaded.Hooks.Definitions" />
+    <TrimmerRootAssembly Include="Reloaded.Memory" />
+    <TrimmerRootAssembly Include="Reloaded.Memory.Buffers" />
+    <TrimmerRootAssembly Include="System.Diagnostics.Process" />
   </ItemGroup>
 
   <ItemGroup>

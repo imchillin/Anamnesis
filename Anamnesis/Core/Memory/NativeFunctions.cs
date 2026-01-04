@@ -1,16 +1,37 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
+using Serilog;
 using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace Anamnesis.Memory;
 
+#pragma warning disable SA1121 // Use built-in type alias
 /// <summary>
 /// A static class for Windows interop native functions.
 /// </summary>
 internal static partial class NativeFunctions
 {
+	public const IntPtr INVALID_HANDLE_VALUE = -1;
+	public const UInt32 GRANT_ACCESS = 1;
+
+	public const UInt32 STANDARD_RIGHTS_ALL = 0x001F0000;
+	public const UInt32 SPECIFIC_RIGHTS_ALL = 0x0000FFFF;
+	public const UInt32 PROCESS_VM_WRITE = 0x0020;
+
+	public const int PROCESS_DYNAMIC_CODE_POLICY = 2;
+
+	public const string SE_DEBUG_NAME = "SeDebugPrivilege";
+	public const uint SE_PRIVILEGE_ENABLED = 0x2;
+	public const int TOKEN_ADJUST_PRIVILEGES = 0x0020;
+	public const int TOKEN_QUERY = 0x0008;
+	public const int ERROR_NO_TOKEN = 0x3F0;
+	public const int ERROR_NOT_ALL_ASSIGNED = 0x514;
+	public const string ENV_COMPAT_LAYER_VARNAME = "__COMPAT_LAYER";
+	public const string ENV_COMPAT_RUN_AS_ENVOKER = "RunAsInvoker";
+
 	public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
 	/// <summary>
@@ -411,6 +432,302 @@ internal static partial class NativeFunctions
 	}
 
 	/// <summary>
+	/// Contains values that specify security impersonation levels. Security impersonation levels govern the
+	/// degree to which a server process can act on behalf of a client process.
+	/// </summary>
+	public enum SecurityImpersonationLevel : int
+	{
+		/// <summary>
+		/// The server process cannot obtain identification information about the client, and it cannot
+		/// impersonate the client. It is defined with no value given, and thus, by ANSI C rules, defaults
+		/// to a value of zero.
+		/// </summary>
+		SecurityAnonymous,
+
+		/// <summary>
+		/// The server process can obtain information about the client, such as security identifiers and privileges,
+		/// but it cannot impersonate the client. This is useful for servers that export their own objects, for
+		/// example, database products that export tables and views. Using the retrieved client-security information,
+		/// the server can make access-validation decisions without being able to use other services that are using
+		/// the client's security context.
+		/// </summary>
+		SecurityIdentification,
+
+		/// <summary>
+		/// The server process can impersonate the client's security context on its local system. The server cannot
+		/// impersonate the client on remote systems.
+		/// </summary>
+		SecurityImpersonation,
+
+		/// <summary>
+		/// The server process can impersonate the client's security context on remote systems.
+		/// </summary>
+		SecurityDelegation,
+	}
+
+	/// <summary>
+	/// An enumeration that contains the types of Windows objects that support security.
+	/// </summary>
+	public enum SeObjectType : int
+	{
+		/// <summary>
+		/// Unknown object type.
+		/// </summary>
+		SE_UNKNOWN_OBJECT_TYPE,
+
+		/// <summary>
+		/// Indicates a file or directory.
+		/// </summary>
+		SE_FILE_OBJECT,
+
+		/// <summary>
+		/// Indicates a Windows service. A service object can be a local service,
+		/// such as ServiceName, or a remote service, such as \\ComputerName\ServiceName.
+		/// </summary>
+		SE_SERVICE,
+
+		/// <summary>
+		/// Indicates a printer. A printer object can be a local printer, such as
+		/// PrinterName, or a remote printer, such as \\ComputerName\PrinterName.
+		/// </summary>
+		SE_PRINTER,
+
+		/// <summary>
+		/// ndicates a registry key. A registry key object can be in the local
+		/// registry, such as CLASSES_ROOT\SomePath or in a remote registry,
+		/// such as \\ComputerName\CLASSES_ROOT\SomePath.
+		/// </summary>
+		SE_REGISTRY_KEY,
+
+		/// <summary>
+		/// Indicates a network share. A share object can be local, such as
+		/// ShareName, or remote, such as \\ComputerName\ShareName.
+		/// </summary>
+		SE_LMSHARE,
+
+		/// <summary>
+		/// Indicates a local kernel object.
+		/// </summary>
+		SE_KERNEL_OBJECT,
+
+		/// <summary>
+		/// Indicates a window station or desktop object on the local computer.
+		/// </summary>
+		SE_WINDOW_OBJECT,
+
+		/// <summary>
+		/// Indicates a directory service object or a property set or property
+		/// of a directory service object.
+		/// </summary>
+		SE_DS_OBJECT,
+
+		/// <summary>
+		/// Indicates a directory service object and all of its property sets
+		/// and properties.
+		/// </summary>
+		SE_DS_OBJECT_ALL,
+
+		/// <summary>
+		/// Indicates a provider-defined object.
+		/// </summary>
+		SE_PROVIDER_DEFINED_OBJECT,
+
+		/// <summary>
+		/// Indicates a WMI object.
+		/// </summary>
+		SE_WMIGUID_OBJECT,
+
+		/// <summary>
+		/// Indicates an object for a registry entry under WOW64.
+		/// </summary>
+		SE_REGISTRY_WOW64_32KEY,
+	}
+
+	/// <summary>
+	/// An enumeration that defines object-related security information
+	/// being set or queried.
+	/// </summary>
+	[Flags]
+	public enum SecurityInformation : uint
+	{
+		/// <summary>
+		/// The owner identifier of the object is being referenced.
+		/// </summary>
+		OWNER_SECURITY_INFORMATION = 0x00000001,
+
+		/// <summary>
+		/// The primary group identifier of the object is being referenced.
+		/// </summary>
+		GROUP_SECURITY_INFORMATION = 0x00000002,
+
+		/// <summary>
+		/// The DACL of the object is being referenced.
+		/// </summary>
+		DACL_SECURITY_INFORMATION = 0x00000004,
+
+		/// <summary>
+		/// The SACL of the object is being referenced.
+		/// </summary>
+		SACL_SECURITY_INFORMATION = 0x00000008,
+
+		/// <summary>
+		/// The mandatory integrity label is being referenced.
+		/// </summary>
+		LABEL_SECURITY_INFORMATION = 0x00000010,
+
+		/// <summary>
+		/// The SACL inherits access control entries (ACEs) from the parent
+		/// object.
+		/// </summary>
+		UNPROTECTED_SACL_SECURITY_INFORMATION = 0x10000000,
+
+		/// <summary>
+		/// The DACL inherits ACEs from the parent object.
+		/// </summary>
+		UNPROTECTED_DACL_SECURITY_INFORMATION = 0x20000000,
+
+		/// <summary>
+		/// The SACL cannot inherit ACEs.
+		/// </summary>
+		PROTECTED_SACL_SECURITY_INFORMATION = 0x40000000,
+
+		/// <summary>
+		/// The DACL cannot inherit ACEs.
+		/// </summary>
+		PROTECTED_DACL_SECURITY_INFORMATION = 0x80000000,
+
+		/// <summary>
+		/// A SYSTEM_RESOURCE_ATTRIBUTE_ACE is being referenced.
+		/// </summary>
+		ATTRIBUTE_SECURITY_INFORMATION = 0x00000020,
+
+		/// <summary>
+		/// A SYSTEM_SCOPED_POLICY_ID_ACE is being referenced.
+		/// </summary>
+		SCOPE_SECURITY_INFORMATION = 0x00000040,
+
+		/// <summary>
+		/// Reserved.
+		/// </summary>
+		PROCESS_TRUST_LABEL_SECURITY_INFORMATION = 0x00000080,
+
+		/// <summary>
+		/// The security descriptor is being accessed for use in a backup
+		/// operation.
+		/// </summary>
+		BACKUP_SECURITY_INFORMATION = 0x00010000,
+	}
+
+	/// <summary>
+	/// An enum that declares values that indicate whether a TRUSTEE
+	/// structure is an impersonation trustee.
+	/// </summary>
+	public enum MultipleTrusteeOperation : uint
+	{
+		/// <summary>
+		/// The trustee is not an impersonation trustee.
+		/// </summary>
+		NO_MULTIPLE_TRUSTEE,
+
+		/// <summary>
+		/// The trustee is an impersonation trustee. The pMultipleTrustee
+		/// member of the TRUSTEE structure points to a trustee for a
+		/// server that can impersonate the client trustee.
+		/// </summary>
+		TRUSTEE_IS_IMPERSONATE,
+	}
+
+	/// <summary>
+	/// An enum that declares values that indicate the type of data
+	/// pointed to by the ptstrName member of the TRUSTEE structure.
+	/// </summary>
+	public enum TrusteeForm : uint
+	{
+		/// <summary>
+		/// The ptstrName member is a pointer to a security identifier
+		/// (SID) that identifies the trustee.
+		/// </summary>
+		TRUSTEE_IS_SID,
+
+		/// <summary>
+		/// The ptstrName member is a pointer to a null-terminated
+		/// string that identifies the trustee.
+		/// </summary>
+		TRUSTEE_IS_NAME,
+
+		/// <summary>
+		/// Indicates a trustee form that is not valid.
+		/// </summary>
+		TRUSTEE_BAD_FORM,
+
+		/// <summary>
+		/// The ptstrName member is a pointer to an OBJECTS_AND_SID structure
+		/// that contains the SID of the trustee and the GUIDs of the object
+		/// types in an object-specific access control entry(ACE).
+		/// </summary>
+		TRUSTEE_IS_OBJECTS_AND_SID,
+
+		/// <summary>
+		/// The ptstrName member is a pointer to an OBJECTS_AND_NAME structure
+		/// that contains the name of the trustee and the names of the object
+		/// types in an object-specific ACE.
+		/// </summary>
+		TRUSTEE_IS_OBJECTS_AND_NAME,
+	}
+
+	/// <summary>
+	/// An enum that declares values that indicate the type of trustee
+	/// identified by a TRUSTEE structure.
+	/// </summary>
+	public enum TrusteeType : uint
+	{
+		/// <summary>
+		/// The trustee type is unknown, but it may be valid.
+		/// </summary>
+		TRUSTEE_IS_UNKNOWN,
+
+		/// <summary>
+		/// Indicates a user.
+		/// </summary>
+		TRUSTEE_IS_USER,
+
+		/// <summary>
+		/// Indicates a group.
+		/// </summary>
+		TRUSTEE_IS_GROUP,
+
+		/// <summary>
+		/// Indicates a domain.
+		/// </summary>
+		TRUSTEE_IS_DOMAIN,
+
+		/// <summary>
+		/// Indicates an alias.
+		/// </summary>
+		TRUSTEE_IS_ALIAS,
+
+		/// <summary>
+		/// Indicates a well-known group.
+		/// </summary>
+		TRUSTEE_IS_WELL_KNOWN_GROUP,
+
+		/// <summary>
+		/// Indicates a deleted account.
+		/// </summary>
+		TRUSTEE_IS_DELETED,
+
+		/// <summary>
+		/// Indicates a trustee type that is not valid.
+		/// </summary>
+		TRUSTEE_IS_INVALID,
+
+		/// <summary>
+		/// Indicates a computer.
+		/// </summary>
+		TRUSTEE_IS_COMPUTER,
+	}
+
+	/// <summary>
 	/// Status codes returned by Windows NT API functions.
 	/// </summary>
 	/// <remarks>
@@ -422,6 +739,148 @@ internal static partial class NativeFunctions
 	public enum NtStatus : uint
 	{
 		STATUS_SUCCESS = 0x00000000,
+	}
+
+	/// <summary>
+	/// Applies a custom access control list (ACL) to the target process.
+	/// This is necessary to allow hooks to allocate memory for their trampolines.
+	/// </summary>
+	/// <param name="hProcess">The target process handle.</param>
+	/// <remarks>
+	/// Dalamud's implementation was used as a loose reference:
+	/// https://github.com/goatcorp/Dalamud/blob/master/Dalamud.Injector/GameStart.cs.
+	/// </remarks>
+	public static void ApplyCustomAclToProcess(IntPtr hProcess)
+	{
+		var userName = Environment.UserName;
+		IntPtr pNewAcl = IntPtr.Zero;
+
+		try
+		{
+			var explicitAccess = new ExplicitAccess
+			{
+				GrfAccessPermissions = STANDARD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL,
+				GrfAccessMode = GRANT_ACCESS,
+				GrfInheritance = 0,
+				Trustee = new Trustee
+				{
+					PMultipleTrustee = IntPtr.Zero,
+					MultipleTrusteeOperation = 0,
+					TrusteeForm = TrusteeForm.TRUSTEE_IS_NAME,
+					TrusteeType = TrusteeType.TRUSTEE_IS_USER,
+					PtstrName = Marshal.StringToHGlobalAuto(userName),
+				},
+			};
+
+			uint result = SetEntriesInAcl(1, [explicitAccess], IntPtr.Zero, out pNewAcl);
+			if (result != 0)
+				throw new Win32Exception((int)result, "Failed to build new ACL.");
+
+			result = SetSecurityInfo(
+				hProcess,
+				(uint)SeObjectType.SE_KERNEL_OBJECT,
+				(uint)(SecurityInformation.DACL_SECURITY_INFORMATION | SecurityInformation.UNPROTECTED_DACL_SECURITY_INFORMATION),
+				IntPtr.Zero,
+				IntPtr.Zero,
+				pNewAcl,
+				IntPtr.Zero);
+
+			if (result != 0)
+				throw new Win32Exception((int)result, "Failed to apply security info to process.");
+
+			Log.Debug("ACL successfully applied to target process.");
+		}
+		finally
+		{
+			// SetEntriesInAcl allocates memory that must be freed with LocalFree
+			if (pNewAcl != IntPtr.Zero)
+				LocalFree(pNewAcl);
+		}
+	}
+
+	/// <summary>
+	/// Enables the SeDebugPrivilege for the current thread.
+	/// processes.
+	/// </summary>
+	/// <remarks>
+	/// Dalamud's implementation was used as a reference:
+	/// https://github.com/goatcorp/Dalamud/blob/master/Dalamud.Injector/GameStart.cs.
+	/// </remarks>
+	public static void ClaimSeDebugPrivilege()
+	{
+		IntPtr hToken = INVALID_HANDLE_VALUE;
+		try
+		{
+			// Try to open the process thread token. If not present, impersonate and retry
+			if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, out hToken))
+			{
+				int error = Marshal.GetLastWin32Error();
+				if (error != ERROR_NO_TOKEN)
+					throw new Win32Exception(error, "Failed to open thread token.");
+
+				if (!ImpersonateSelf((int)SecurityImpersonationLevel.SecurityImpersonation))
+					throw new Win32Exception(Marshal.GetLastWin32Error(), "Failed to impersonate self.");
+
+				if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, out hToken))
+					throw new Win32Exception(Marshal.GetLastWin32Error(), "Failed to open thread token after impersonation.");
+			}
+
+			// Lookup the LUID for SeDebugPrivilege
+			if (!LookupPrivilegeValue(null, SE_DEBUG_NAME, out Luid luid))
+				throw new Win32Exception(Marshal.GetLastWin32Error(), "Failed to lookup SeDebugPrivilege LUID.");
+
+			var tp = new TokenPrivileges
+			{
+				PrivilegeCount = 1,
+				Privileges = new LuidAndAttributes(luid, SE_PRIVILEGE_ENABLED),
+			};
+
+			// Adjust the token privileges
+			if (!AdjustTokenPrivileges(hToken, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero))
+				throw new Win32Exception(Marshal.GetLastWin32Error(), "Failed to adjust token privileges.");
+
+			if (Marshal.GetLastWin32Error() == ERROR_NOT_ALL_ASSIGNED)
+				Log.Debug("SeDebugPrivilege could not be assigned. It may already be enabled or not available.");
+			else
+				Log.Debug("SeDebugPrivilege claimed successfully.");
+		}
+		finally
+		{
+			if (hToken != INVALID_HANDLE_VALUE && hToken != IntPtr.Zero)
+			{
+				CloseHandle(hToken);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Sets the compatibility layer environment variable to "RunAsInvoker".
+	/// </summary>
+	public static void SetCompatibilityLayer()
+	{
+		try
+		{
+			var currentLayer = Environment.GetEnvironmentVariable(ENV_COMPAT_LAYER_VARNAME);
+
+			if (string.IsNullOrEmpty(currentLayer))
+			{
+				Environment.SetEnvironmentVariable(
+					ENV_COMPAT_LAYER_VARNAME,
+					ENV_COMPAT_RUN_AS_ENVOKER);
+			}
+			else if (!currentLayer.Contains(
+				ENV_COMPAT_RUN_AS_ENVOKER,
+				StringComparison.OrdinalIgnoreCase))
+			{
+				Environment.SetEnvironmentVariable(
+					ENV_COMPAT_LAYER_VARNAME,
+					$"{ENV_COMPAT_RUN_AS_ENVOKER} {currentLayer}");
+			}
+		}
+		catch (Exception ex)
+		{
+			Log.Warning(ex, $"Failed to set {ENV_COMPAT_LAYER_VARNAME} environment variable.");
+		}
 	}
 
 	/// <summary>
@@ -903,4 +1362,327 @@ internal static partial class NativeFunctions
 	/// </returns>
 	[LibraryImport("user32.dll", SetLastError = true)]
 	public static partial IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+	/// <summary>
+	/// Retrieves a pseudo handle for the current process.
+	/// </summary>
+	/// <returns>
+	/// The return value is a pseudo handle to the current process.
+	/// </returns>
+	[LibraryImport("kernel32.dll", SetLastError = true)]
+	public static partial IntPtr GetCurrentProcess();
+
+	/// <summary>
+	/// The ImpersonateSelf function obtains an access token that impersonates the security context of the
+	/// calling process. The token is assigned to the calling thread.
+	/// </summary>
+	/// <param name="impersonationLevel">
+	/// Specifies a SECURITY_IMPERSONATION_LEVEL enumerated type that supplies the impersonation level of
+	/// the new token.
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, the return value is nonzero.
+	///
+	/// If the function fails, the return value is zero.To get extended error information, call GetLastError.
+	/// </returns>
+	[LibraryImport("advapi32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static partial bool ImpersonateSelf(uint impersonationLevel);
+
+	/// <summary>
+	/// The OpenProcessToken function opens the access token associated with a process.
+	/// </summary>
+	/// <param name="ProcessHandle">
+	/// A handle to the process whose access token is opened. The process must have the
+	/// PROCESS_QUERY_LIMITED_INFORMATION access permission. See Process Security and Access Rights for more info.
+	/// </param>
+	/// <param name="DesiredAccess">
+	/// Specifies an access mask that specifies the requested types of access to the access token. These
+	/// requested access types are compared with the discretionary access control list (DACL) of the token
+	/// to determine which accesses are granted or denied.
+	/// </param>
+	/// <param name="TokenHandle">
+	/// A pointer to a handle that identifies the newly opened access token when the function returns.
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, the return value is nonzero.
+	///
+	/// If the function fails, the return value is zero.To get extended error information, call GetLastError.
+	/// </returns>
+	[LibraryImport("advapi32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static partial bool OpenProcessToken(IntPtr ProcessHandle, uint DesiredAccess, out IntPtr TokenHandle);
+
+	/// <summary>
+	/// Retrieves mitigation policy settings for the calling process.
+	/// </summary>
+	/// <param name="hProcess">
+	/// A handle to the process. This handle must have the PROCESS_QUERY_INFORMATION access right.
+	/// </param>
+	/// <param name="mitigationPolicy">
+	/// The mitigation policy to retrieve.
+	/// </param>
+	/// <param name="lpBuffer">
+	/// Different based on selected mitigation policy.
+	/// See https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy
+	/// for more details.
+	/// </param>
+	/// <param name="dwLength">
+	/// The size of lpBuffer, in bytes.
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, it returns TRUE. If the function fails, it returns FALSE. To retrieve
+	/// error values defined for this function, call GetLastError.
+	/// </returns>
+	[LibraryImport("kernel32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static partial bool GetProcessMitigationPolicy(IntPtr hProcess, int mitigationPolicy, out ProcessMitigationDynamicCodePolicy lpBuffer, int dwLength);
+
+	/// <summary>
+	/// The LookupPrivilegeValue function retrieves the locally unique identifier (LUID) used on a
+	/// specified system to locally represent the specified privilege name.
+	/// </summary>
+	/// <param name="lpSystemName">
+	/// A pointer to a null-terminated string that specifies the name of the system on which the
+	/// privilege name is retrieved. If a null string is specified, the function attempts to find
+	/// the privilege name on the local system.
+	/// </param>
+	/// <param name="lpName">
+	/// A pointer to a null-terminated string that specifies the name of the privilege, as defined
+	/// in the Winnt.h header file. For example, this parameter could specify the constant,
+	/// SE_SECURITY_NAME, or its corresponding string, "SeSecurityPrivilege".
+	/// </param>
+	/// <param name="lpLuid">
+	/// A pointer to a variable that receives the LUID by which the privilege is known on the
+	/// system specified by the lpSystemName parameter
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, the function returns nonzero.
+	///
+	/// If the function fails, it returns zero.To get extended error information, call GetLastErro
+	/// </returns>
+	[LibraryImport("advapi32.dll", SetLastError = true, EntryPoint = "LookupPrivilegeValueW", StringMarshalling = StringMarshalling.Utf16)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static partial bool LookupPrivilegeValue(string? lpSystemName, string lpName, out Luid lpLuid);
+
+	/// <summary>
+	/// The AdjustTokenPrivileges function enables or disables privileges in the specified access
+	/// token. Enabling or disabling privileges in an access token requires TOKEN_ADJUST_PRIVILEGES
+	/// access.
+	/// </summary>
+	/// <param name="tokenHandle">
+	/// A handle to the access token that contains the privileges to be modified. The handle must
+	/// have TOKEN_ADJUST_PRIVILEGES access to the token. If the PreviousState parameter is not
+	/// NULL, the handle must also have TOKEN_QUERY access.
+	/// </param>
+	/// <param name="disableAllPrivileges">
+	/// Specifies whether the function disables all of the token's privileges. If this value is
+	/// TRUE, the function disables all privileges and ignores the NewState parameter. If it is
+	/// FALSE, the function modifies privileges based on the information pointed to by the
+	/// NewState parameter.
+	/// </param>
+	/// <param name="newState">
+	/// A pointer to a TOKEN_PRIVILEGES structure that specifies an array of privileges and
+	/// their attributes. If the DisableAllPrivileges parameter is FALSE, the AdjustTokenPrivileges
+	/// function enables, disables, or removes these privileges for the token. The following table
+	/// describes the action taken by the AdjustTokenPrivileges function, based on the privilege
+	/// attribute.
+	/// </param>
+	/// <param name="bufferLength">
+	/// Specifies the size, in bytes, of the buffer pointed to by the PreviousState parameter.
+	/// This parameter can be zero if the PreviousState parameter is NULL.
+	/// </param>
+	/// <param name="previousState">
+	/// A pointer to a buffer that the function fills with a TOKEN_PRIVILEGES structure that
+	/// contains the previous state of any privileges that the function modifies. That is, if
+	/// a privilege has been modified by this function, the privilege and its previous state
+	/// are contained in the TOKEN_PRIVILEGES structure referenced by PreviousState. If the
+	/// PrivilegeCount member of TOKEN_PRIVILEGES is zero, then no privileges have been changed
+	/// by this function. This parameter can be NULL.
+	///
+	/// If you specify a buffer that is too small to receive the complete list of modified
+	/// privileges, the function fails and does not adjust any privileges.In this case, the
+	/// function sets the variable pointed to by the ReturnLength parameter to the number of
+	/// bytes required to hold the complete list of modified privileges.
+	/// </param>
+	/// <param name="returnLength">
+	/// A pointer to a variable that receives the required size, in bytes, of the buffer pointed
+	/// to by the PreviousState parameter. This parameter can be NULL if PreviousState is NULL.
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, the return value is nonzero. To determine whether the function
+	/// adjusted all of the specified privileges, call GetLastError, which returns one of the
+	/// following values when the function succeeds: ERROR_SUCCESS or ERROR_NOT_ALL_ASSIGNED.
+	/// </returns>
+	[LibraryImport("advapi32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static partial bool AdjustTokenPrivileges(
+		IntPtr tokenHandle,
+		[MarshalAs(UnmanagedType.Bool)] bool disableAllPrivileges,
+		ref TokenPrivileges newState,
+		int bufferLength,
+		IntPtr previousState,
+		IntPtr returnLength);
+
+	/// <summary>
+	/// The SetSecurityInfo function sets specified security information in the security
+	/// descriptor of a specified object. The caller identifies the object by a handle.
+	///
+	/// To set the SACL of an object, the caller must have the SE_SECURITY_NAME privilege
+	/// enabled.
+	/// </summary>
+	/// <param name="handle">
+	/// A handle to the object for which to set security information.
+	/// </param>
+	/// <param name="objectType">
+	/// A member of the SE_OBJECT_TYPE enumeration that indicates the type of object
+	/// identified by the handle parameter.
+	/// </param>
+	/// <param name="securityInfo">
+	/// A set of bit flags that indicate the type of security information to set.
+	/// This parameter can be a combination of the SECURITY_INFORMATION bit flags.
+	/// </param>
+	/// <param name="ppsidOwner">
+	/// A pointer to a SID that identifies the owner of the object. The SID must be one
+	/// that can be assigned as the owner SID of a security descriptor. The SecurityInfo
+	/// parameter must include the OWNER_SECURITY_INFORMATION flag. This parameter can be
+	/// NULL if you are not setting the owner SID.
+	/// </param>
+	/// <param name="ppsidGroup">
+	/// A pointer to a SID that identifies the primary group of the object. The
+	/// SecurityInfo parameter must include the GROUP_SECURITY_INFORMATION flag.
+	/// This parameter can be NULL if you are not setting the primary group SID.
+	/// </param>
+	/// <param name="ppDacl">
+	/// A pointer to the new DACL for the object. This parameter is ignored unless the
+	/// value of the SecurityInfo parameter includes the DACL_SECURITY_INFORMATION flag.
+	/// If the value of the SecurityInfo parameter includes the DACL_SECURITY_INFORMATION
+	/// flag and the value of this parameter is set to NULL, full access to the object is
+	/// granted to everyone. For information about null DACLs, see Creating a DACL.
+	/// </param>
+	/// <param name="ppSacl">
+	/// A pointer to the new SACL for the object. The SecurityInfo parameter must include
+	/// any of the following flags: SACL_SECURITY_INFORMATION, LABEL_SECURITY_INFORMATION,
+	/// ATTRIBUTE_SECURITY_INFORMATION, SCOPE_SECURITY_INFORMATION, or
+	/// BACKUP_SECURITY_INFORMATION. If setting SACL_SECURITY_INFORMATION or
+	/// SCOPE_SECURITY_INFORMATION, the caller must have the SE_SECURITY_NAME privilege
+	/// enabled. This parameter can be NULL if you are not setting the SACL.
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, the function returns ERROR_SUCCESS.
+	///
+	/// If the function fails, it returns a nonzero error code defined in WinError.h.
+	/// </returns>
+	[LibraryImport("advapi32.dll", SetLastError = true)]
+	public static partial uint SetSecurityInfo(
+		IntPtr handle,
+		uint objectType,
+		uint securityInfo,
+		IntPtr ppsidOwner,
+		IntPtr ppsidGroup,
+		IntPtr ppDacl,
+		IntPtr ppSacl);
+
+	/// <summary>
+	/// Frees the specified local memory object and invalidates its handle.
+	/// </summary>
+	/// <param name="hMem">
+	/// A handle to the local memory object. This handle is returned by either the LocalAlloc
+	/// or LocalReAlloc function. It is not safe to free memory allocated with GlobalAlloc.
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, the return value is NULL.
+	///
+	/// If the function fails, the return value is equal to a handle to the local memory
+	/// object. To get extended error information, call GetLastError.
+	/// </returns>
+	[LibraryImport("kernel32.dll", SetLastError = true)]
+	public static partial uint LocalFree(IntPtr hMem);
+
+	/// <summary>
+	/// The SetEntriesInAcl function creates a new access control list (ACL) by merging new access
+	/// control or audit control information into an existing ACL structure.
+	/// </summary>
+	/// <param name="cCountOfExplicitEntries">
+	/// The number of EXPLICIT_ACCESS structures in the pListOfExplicitEntries array.
+	/// </param>
+	/// <param name="pListOfExplicitEntries">
+	/// A pointer to an array of EXPLICIT_ACCESS structures that describe the access
+	/// control information to merge into the existing ACL.
+	/// </param>
+	/// <param name="OldAcl">
+	/// A pointer to the existing ACL. This parameter can be NULL, in which case, the function
+	/// creates a new ACL based on the EXPLICIT_ACCESS entries.
+	/// </param>
+	/// <param name="NewAcl">
+	/// A pointer to a variable that receives a pointer to the new ACL. If the function succeeds,
+	/// you must call the LocalFree function to free the returned buffer.
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, the function returns ERROR_SUCCESS.
+	///
+	/// If the function fails, it returns a nonzero error code defined in WinError.h.
+	/// </returns>
+	[LibraryImport("advapi32.dll", SetLastError = true, EntryPoint = "SetEntriesInAclW")]
+	public static partial uint SetEntriesInAcl(
+		uint cCountOfExplicitEntries,
+		[MarshalAs(UnmanagedType.LPArray)] ExplicitAccess[] pListOfExplicitEntries,
+		IntPtr OldAcl,
+		out IntPtr NewAcl);
+
+	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 0)]
+	public struct ExplicitAccess
+	{
+		public uint GrfAccessPermissions;
+		public uint GrfAccessMode;
+		public uint GrfInheritance;
+		public Trustee Trustee;
+	}
+
+	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 0)]
+	public struct Trustee : IDisposable
+	{
+		public IntPtr PMultipleTrustee;
+		public MultipleTrusteeOperation MultipleTrusteeOperation;
+		public TrusteeForm TrusteeForm;
+		public TrusteeType TrusteeType;
+		public IntPtr PtstrName;
+
+		public readonly string Name => Marshal.PtrToStringAuto(this.PtstrName) ?? string.Empty;
+
+		readonly void IDisposable.Dispose()
+		{
+			if (this.PtstrName != IntPtr.Zero)
+				Marshal.Release(this.PtstrName);
+		}
+	}
+
+	// Src: https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_dynamic_code_policy
+	public struct ProcessMitigationDynamicCodePolicy
+	{
+		public uint Flags;
+		public readonly bool ProhibitDynamicCode => (this.Flags & 0x1) != 0;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct Luid
+	{
+		public UInt32 LowPart;
+		public Int32 HighPart;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct LuidAndAttributes(Luid luid, UInt32 attributes)
+	{
+		public Luid Luid = luid;
+		public UInt32 Attributes = attributes;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct TokenPrivileges
+	{
+		public UInt32 PrivilegeCount;
+		public LuidAndAttributes Privileges; // Size defined as 1 in the public header Winnt.h
+	}
 }
+#pragma warning restore SA1121

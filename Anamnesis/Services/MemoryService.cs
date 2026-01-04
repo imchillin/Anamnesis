@@ -600,6 +600,8 @@ public partial class MemoryService : ServiceBase<MemoryService>
 #endif
 		}
 
+		SetCompatibilityLayer();
+		ClaimSeDebugPrivilege();
 		Handle = NativeFunctions.OpenProcess(0x001F0FFF, true, process.Id);
 		if (Handle == IntPtr.Zero)
 		{
