@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory;
 
 using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// Represents a fixed-length array with data stored as a pointer elsewhere in memory.
@@ -18,14 +19,14 @@ public abstract class FixedArrayMemory<TValue> : InplaceFixedArrayMemory<TValue>
 	public virtual int AddressOffset => 0x000;
 
 	/// <inheritdoc/>
-	public override void ReadArrayMemory()
+	public override void ReadArrayMemory(List<MemoryBase> locked)
 	{
 		if (this.Binds.TryGetValue(nameof(this.ArrayAddress), out PropertyBindInfo? arrayAddress)
 			&& this.CanRead(arrayAddress))
 		{
-			this.ReadFromMemory(arrayAddress);
+			this.ReadFromMemory(arrayAddress, locked);
 		}
 
-		base.ReadArrayMemory();
+		base.ReadArrayMemory(locked);
 	}
 }

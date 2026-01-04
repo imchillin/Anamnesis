@@ -7,6 +7,7 @@ using PropertyChanged;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 
 /// <summary>
 /// Represents an inplace fixed-length array in memory.
@@ -33,12 +34,9 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 	/// <summary> Gets the array's length.</summary>
 	public abstract int Length { get; }
 
-	/// <summary>Gets the size of each element in the array.</summary>
-	/// <note>
-	/// This property is expected to be constant for the lifetime of the object.
-	/// </note>
+	/// <inheritdoc/>
 	[DoNotNotify]
-	public abstract int ElementSize { get; }
+	public virtual int ElementSize => throw new NotImplementedException();
 
 	/// <summary>Gets or sets the element at the specified index.</summary>
 	/// <param name="index">The index of the element.</param>
@@ -93,7 +91,7 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 	/// This method does not claim the array memory object's read lock.
 	/// If not called by <see cref="MemoryBase"/>, make sure to claim the read lock.
 	/// </note>
-	public virtual void ReadArrayMemory()
+	public virtual void ReadArrayMemory(List<MemoryBase> locked)
 	{
 		// Update only if the array count or address have changed
 		if (this.lastLength == this.Length && this.lastAddress == this.ArrayAddress)
@@ -111,11 +109,7 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 				foreach (TValue item in this.items)
 				{
 					if (item is MemoryBase memory)
-					{
-						ReleaseLocksOn(memory);
 						memory.Dispose();
-						this.Children.Remove(memory);
-					}
 				}
 
 				this.items.Clear();
@@ -140,7 +134,9 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 						memory.Parent = this;
 						memory.ParentBind = new ArrayBindInfo(this, i);
 						memory.Address = address;
-						ClaimLocksOn(memory);
+						ClaimLocks(memory);
+						SetIsSynchronizing(memory, true);
+						locked.Add(memory);
 						this.Children.Add(memory);
 						this.items.Add(instance);
 					}
@@ -153,7 +149,7 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 						}
 						else
 						{
-							Log.Warning($"Failed to read array element at address: {address}");
+							Log.Warning($"Failed to read array element at address: 0x{address:X}");
 						}
 					}
 
@@ -190,7 +186,12 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 		public override Type Type => typeof(TValue);
 
 		/// <inheritdoc/>
+		public override string? SyncGroup => throw new NotSupportedException();
+
+		/// <inheritdoc/>
 		public override BindFlags Flags => BindFlags.None;
+
+		private InplaceFixedArrayMemory<TValue> TypedMemory => (InplaceFixedArrayMemory<TValue>)this.Memory;
 
 		/// <inheritdoc/>
 		/// <exception cref="NotSupportedException">
@@ -198,7 +199,7 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 		/// </exception>
 		public override IntPtr GetAddress()
 		{
-			throw new NotSupportedException();
+			return this.TypedMemory.ArrayAddress + (this.Index * this.TypedMemory.ElementSize);
 		}
 	}
 }

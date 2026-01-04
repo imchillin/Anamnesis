@@ -235,7 +235,8 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		GC.SuppressFinalize(this);
 	}
 
-	public override void Synchronize()
+	/// <inheritdoc/>
+	public override void Synchronize(IReadOnlySet<string>? inclGroups = null, IReadOnlySet<string>? exclGroups = null)
 	{
 		this.History.Tick();
 
@@ -243,7 +244,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		if (this.IsRefreshing)
 			return;
 
-		base.Synchronize();
+		base.Synchronize(inclGroups, exclGroups);
 	}
 
 	/// <summary>

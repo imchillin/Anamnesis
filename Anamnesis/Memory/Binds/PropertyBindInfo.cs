@@ -19,6 +19,12 @@ public class PropertyBindInfo : BindInfo
 	/// <summary>The bind attribute associated with the property.</summary>
 	public readonly BindAttribute Attribute;
 
+	/// <summary>
+	/// Gets a value indicating whether the bound property is a
+	/// <see cref="MemoryBase"/> object type.
+	/// </summary>
+	public readonly bool IsMemoryBase;
+
 	/// <summary>Cached bind flags.</summary>
 	private readonly BindFlags flags;
 
@@ -46,6 +52,8 @@ public class PropertyBindInfo : BindInfo
 
 		if (this.cachedOffsets == null || this.cachedOffsets.Length == 0)
 			throw new NullReferenceException("Cached offsets are not initialized.");
+
+		this.IsMemoryBase = typeof(MemoryBase).IsAssignableFrom(property.PropertyType);
 	}
 
 	/// <summary>Gets the name of the bound property.</summary>
@@ -56,6 +64,9 @@ public class PropertyBindInfo : BindInfo
 
 	/// <summary>Gets the type of the bound property.</summary>
 	public override Type Type => this.Property.PropertyType;
+
+	/// <summary>Gets the synchronization group of the bound property.</summary>
+	public override string? SyncGroup => this.Attribute.SyncGroup;
 
 	/// <summary>Gets the bind flags.</summary>
 	public override BindFlags Flags => this.flags;
