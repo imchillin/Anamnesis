@@ -17,16 +17,4 @@ public abstract class FixedArrayMemory<TValue> : InplaceFixedArrayMemory<TValue>
 
 	/// <summary>Gets the offset of the array address.</summary>
 	public virtual int AddressOffset => 0x000;
-
-	/// <inheritdoc/>
-	public override void ReadArrayMemory(List<MemoryBase> locked)
-	{
-		if (this.Binds.TryGetValue(nameof(this.ArrayAddress), out PropertyBindInfo? arrayAddress)
-			&& this.CanRead(arrayAddress))
-		{
-			this.ReadFromMemory(arrayAddress, locked);
-		}
-
-		base.ReadArrayMemory(locked);
-	}
 }

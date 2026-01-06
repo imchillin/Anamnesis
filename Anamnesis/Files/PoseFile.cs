@@ -246,13 +246,13 @@ public class PoseFile : JsonFileBase
 				Log.Error($"Bone {bone.Name} has no transform memory");
 			}
 
-			if (!bone.TransformMemory!.Binds.TryGetValue("Position", out PropertyBindInfo? bindInfo))
+			if (!bone.TransformMemory!.Binds.TryGetValue("Transform", out PropertyBindInfo? bindInfo))
 			{
-				Log.Error($"Failed to find position bind for bone: {bone.Name}");
+				Log.Error($"Failed to find transform bind for bone: {bone.Name}");
 				continue;
 			}
 
-			PropertyChange change = new(bindInfo, bone.TransformMemory.Position, bone.TransformMemory.Position, PropertyChange.Origins.User);
+			PropertyChange change = new(bindInfo, bone.TransformMemory.Transform, bone.TransformMemory.Transform, PropertyChange.Origins.User);
 			change.ConfigureBindPath();
 			actor.History.Record(change);
 		}

@@ -1043,7 +1043,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		// Read transforms after processing to ensure we have the latest data
 		if (!PoseService.Instance.IsEnabled && GposeService.IsGpose)
 		{
-			// this.Skeleton?.ReadTransforms();
+			this.Skeleton?.ReadTransforms();
 		}
 
 		return [];

@@ -22,16 +22,4 @@ public abstract class ArrayMemory<TValue, TCount> : FixedArrayMemory<TValue>
 
 	/// <inheritdoc/>
 	public override int Length => Convert.ToInt32(this.ArrayLength);
-
-	/// <inheritdoc/>
-	public override void ReadArrayMemory(List<MemoryBase> locked)
-	{
-		if (this.Binds.TryGetValue(nameof(this.ArrayLength), out PropertyBindInfo? arrayLength)
-			&& this.CanRead(arrayLength))
-		{
-			this.ReadFromMemory(arrayLength, locked);
-		}
-
-		base.ReadArrayMemory(locked);
-	}
 }
