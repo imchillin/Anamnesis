@@ -29,7 +29,8 @@ public class TransformMemory : MemoryBase, ITransform
 	public static Quaternion RootRotation => Quaternion.Identity;
 
 	[AlsoNotifyFor(nameof(Position), nameof(Rotation), nameof(Scale))]
-	[Bind(0x000)] public TransformStruct Transform
+	[Bind(0x000)]
+	public TransformStruct Transform
 	{
 		get
 		{

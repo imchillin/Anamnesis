@@ -1008,7 +1008,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.RaisePropertyChanged(nameof(this.SelectedBonesText));
 	}
 
-	private byte[] RenderSkeletonDetour(byte[] args)
+	private byte[] RenderSkeletonDetour(ReadOnlySpan<byte> args)
 	{
 		// IMPORTANT: Do not throw in the hook detour!
 		// Sync the skeleton first, then process pending pose-related work

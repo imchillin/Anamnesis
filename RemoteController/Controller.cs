@@ -27,11 +27,11 @@ public class Controller
 	private static readonly ArrayPool<byte> s_bufferPool = ArrayPool<byte>.Shared;
 	private static readonly ConcurrentDictionary<uint, PendingRequest<byte[]>> s_pendingHooks = new();
 	private static readonly ConcurrentDictionary<uint, byte> s_sequenceCounters = new(); // Key: Packed hook ID, Value: Sequence counter
-	private static readonly ObjectPool<PendingRequest<byte[]>> s_pendingRequestPool = new(maxSize: 64);
+	private static readonly ObjectPool<PendingRequest<byte[]>> s_pendingRequestPool = new(maxSize: 128);
 
 	private static Endpoint? s_outgoingEndpoint = null;
 	private static Endpoint? s_incomingEndpoint = null;
-	
+
 	private static long s_heartbeatTimestamp = 0;
 	private static Timer? s_watchdogTimer;
 	private static volatile bool s_running = true;
@@ -39,7 +39,25 @@ public class Controller
 	[RequiresDynamicCode("Requires dynamic code")]
 	private static unsafe void* NativePtr() => (delegate* unmanaged<void>)&RemoteControllerEntry;
 
-	public static byte[] SendInterceptRequest(uint hookIndex, ReadOnlySpan<byte> argsPayload, HookBehavior msgCtx)
+	/// <summary>
+	/// Sends an intercept request to the host application and waits for a response.
+	/// </summary>
+	/// <param name="hookIndex">
+	/// The index of the hook that is being intercepted.
+	/// </param>
+	/// <param name="argsPayload">
+	/// The serialized arguments payload for the intercept request.
+	/// </param>
+	/// <returns>
+	/// The serialized response payload from the host application.
+	/// </returns>
+	/// <remarks>
+	/// For <see cref="HookBehavior.After"/> hooks, the request payload
+	/// layout is as follows: [Int32 ArgsLength] [Args Data] [Result Data].
+	/// You can use the utility function <see cref="HookUtils.DeserializeAfterPayload"/> 
+	/// to parse this layout.
+	/// </remarks>
+	public static byte[] SendInterceptRequest(uint hookIndex, ReadOnlySpan<byte> argsPayload)
 	{
 		if (!s_running || s_outgoingEndpoint == null)
 			return s_emptyPayload;
@@ -54,14 +72,10 @@ public class Controller
 			return s_emptyPayload;
 		}
 
-		int payloadLength = argsPayload.Length;
-		byte[] payload = s_bufferPool.Rent(payloadLength);
 		try
 		{
-			argsPayload.CopyTo(payload);
-			var header = new MessageHeader(msgId, PayloadType.Request, (ulong)payloadLength);
-
-			if (!s_outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS))
+			var header = new MessageHeader(msgId, PayloadType.Request, (ulong)argsPayload.Length);
+			if (!s_outgoingEndpoint.Write(header, argsPayload, IPC_TIMEOUT_MS))
 			{
 				Log.Warning($"Failed to send intercept request for hook {hookIndex}");
 				return s_emptyPayload;
@@ -78,7 +92,6 @@ public class Controller
 		}
 		finally
 		{
-			s_bufferPool.Return(payload);
 			s_pendingHooks.TryRemove(msgId, out _);
 			pending.Reset();
 			s_pendingRequestPool.Return(pending);
@@ -309,9 +322,8 @@ public class Controller
 
 		var registerPayload = MemoryMarshal.Read<HookRegistrationData>(data);
 		string delegateKey = registerPayload.GetKey();
-		Log.Debug($"Registering hook for: {delegateKey} at 0x{registerPayload.Address:X}");
-
 		uint hookId = HookRegistry.Instance.RegisterHook(registerPayload);
+
 		if (hookId != 0)
 		{
 			byte[] payload = BitConverter.GetBytes(hookId);
@@ -360,7 +372,7 @@ public class Controller
 				}
 				catch (Exception ex)
 				{
-					Log.Error(ex, $"Error invoking wrapper hook {state.HookIndex}");
+					Log.Error(ex, $"Error invoking wrapper hook[ID: {state.HookIndex}].");
 					SendWrapperResult(state.MsgId, []);
 				}
 				finally

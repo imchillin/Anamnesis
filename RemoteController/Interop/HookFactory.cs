@@ -7,10 +7,12 @@ using Reloaded.Hooks;
 using Reloaded.Hooks.Definitions;
 using RemoteController.IPC;
 using Serilog;
-using System.Diagnostics;
+using System;
+using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// Factory for creating hooks at runtime using DetourBuilder.
@@ -98,7 +100,7 @@ public static class HookFactory
 [RequiresDynamicCode("This class requires dynamic code due to hook reflection")]
 public static class DetourBuilder
 {
-	private static readonly System.Collections.Concurrent.ConcurrentDictionary<uint, long> s_messageCounters = new();
+	private static readonly ArrayPool<byte> s_pool = ArrayPool<byte>.Shared;
 
 	/// <summary>
 	/// Builds a compiled detour lambda based on the specified hook behavior.
@@ -141,28 +143,31 @@ public static class DetourBuilder
 	{
 		return CreateDetour<TDelegate>(parameters, returnType, (args, invoker) =>
 		{
+			byte[]? rentedBuffer = null;
+
 			try
 			{
-				byte[] argsPayload = MarshalUtils.SerializeArgs(args);
-
-				long count = s_messageCounters.AddOrUpdate(hookId, 1, static (_, c) => ++c);
-
-				if (count % 100 == 0)
+				int size = MarshalUtils.ComputeArgsSize(args);
+				if (size > 0)
 				{
-					var start = Stopwatch.GetTimestamp();
-					var response = Controller.SendInterceptRequest(hookId, argsPayload, HookBehavior.Before);
-					var end = Stopwatch.GetTimestamp();
-					var elapsedMicroseconds = (end - start) * 1_000_000 / Stopwatch.Frequency;
-					Log.Information($"[ID: {hookId}] Detour round-trip time (sampled): {elapsedMicroseconds} us");
+					rentedBuffer = s_pool.Rent(size);
+					Span<byte> buffer = rentedBuffer.AsSpan(0, size);
+					MarshalUtils.SerializeArgs(buffer, args);
+					Controller.SendInterceptRequest(hookId, buffer);
 				}
 				else
 				{
-					Controller.SendInterceptRequest(hookId, argsPayload, HookBehavior.Before);
+					Controller.SendInterceptRequest(hookId, []);
 				}
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex, $"Error in Before detour for hook {hookId}");
+				Log.Error(ex, $"Error in before detour for hook {hookId}");
+			}
+			finally
+			{
+				if (rentedBuffer != null)
+					s_pool.Return(rentedBuffer);
 			}
 
 			return invoker(holder.Original, args);
@@ -176,42 +181,33 @@ public static class DetourBuilder
 		{
 			object? result = invoker(holder.Original, args);
 
+			byte[]? rentedBuffer = null;
 			try
 			{
-				long count = s_messageCounters.AddOrUpdate(hookId, 1, static (_, c) => ++c);
+				int argsSize = MarshalUtils.ComputeArgsSize(args);
+				int resultSize = returnType != typeof(void) ? MarshalUtils.GetSerializedSize(result!) : 0;
+				int totalSize = sizeof(int) + argsSize + resultSize; // Payload: [Int32 ArgsLength] [Args Data] [Result Data]
 
-				if (count % 100 == 0)
-				{
-					var start = Stopwatch.GetTimestamp();
-					byte[] argsPayload = MarshalUtils.SerializeArgs(args);
-					byte[] resultPayload = MarshalUtils.SerializeBoxed(result);
+				rentedBuffer = s_pool.Rent(totalSize);
+				Span<byte> buffer = rentedBuffer.AsSpan(0, totalSize);
+				MemoryMarshal.Write(buffer, in argsSize);
 
-					byte[] payload = new byte[4 + argsPayload.Length + resultPayload.Length];
-					BitConverter.GetBytes(argsPayload.Length).CopyTo(payload, 0);
-					argsPayload.CopyTo(payload, 4);
-					resultPayload.CopyTo(payload, 4 + argsPayload.Length);
+				if (argsSize > 0)
+					MarshalUtils.SerializeArgs(buffer.Slice(sizeof(int), argsSize), args);
 
-					Controller.SendInterceptRequest(hookId, payload, HookBehavior.After);
-					var end = Stopwatch.GetTimestamp();
-					var elapsedMicroseconds = (end - start) * 1_000_000 / Stopwatch.Frequency;
-					Log.Information($"[ID: {hookId}] Detour round-trip time (sampled): {elapsedMicroseconds} us");
-				}
-				else
-				{
-					byte[] argsPayload = MarshalUtils.SerializeArgs(args);
-					byte[] resultPayload = MarshalUtils.SerializeBoxed(result);
+				if (resultSize > 0)
+					MarshalUtils.WriteToSpan(buffer.Slice(sizeof(int) + argsSize, resultSize), result!);
 
-					byte[] payload = new byte[4 + argsPayload.Length + resultPayload.Length];
-					BitConverter.GetBytes(argsPayload.Length).CopyTo(payload, 0);
-					argsPayload.CopyTo(payload, 4);
-					resultPayload.CopyTo(payload, 4 + argsPayload.Length);
-
-					Controller.SendInterceptRequest(hookId, payload, HookBehavior.After);
-				}
+				Controller.SendInterceptRequest(hookId, buffer);
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex, $"Error in After detour for hook {hookId}");
+				Log.Error(ex, $"Error in after detour for hook {hookId}");
+			}
+			finally
+			{
+				if (rentedBuffer != null)
+					s_pool.Return(rentedBuffer);
 			}
 
 			return result;
@@ -225,16 +221,38 @@ public static class DetourBuilder
 
 		return CreateDetour<TDelegate>(parameters, returnType, (args, _) =>
 		{
+			byte[]? rentedBuffer = null;
 			try
 			{
-				byte[] argsPayload = MarshalUtils.SerializeArgs(args);
-				var response = Controller.SendInterceptRequest(hookId, argsPayload, HookBehavior.Replace);
+				int size = MarshalUtils.ComputeArgsSize(args);
+				ReadOnlySpan<byte> response;
+
+				if (size > 0)
+				{
+					rentedBuffer = s_pool.Rent(size);
+					Span<byte> buffer = rentedBuffer.AsSpan(0, size);
+					MarshalUtils.SerializeArgs(buffer, args);
+
+					byte[] responseArray = Controller.SendInterceptRequest(hookId, buffer);
+					response = responseArray.AsSpan();
+				}
+				else
+				{
+					byte[] responseArray = Controller.SendInterceptRequest(hookId, []);
+					response = responseArray.AsSpan();
+				}
+
 				return hasReturn ? MarshalUtils.DeserializeBoxed(response, returnType) : null;
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex, $"Error in Replace detour for hook {hookId}");
+				Log.Error(ex, $"Error in replace detour for hook {hookId}");
 				return hasReturn ? GetDefault(returnType) : null;
+			}
+			finally
+			{
+				if (rentedBuffer != null)
+					s_pool.Return(rentedBuffer);
 			}
 		});
 	}

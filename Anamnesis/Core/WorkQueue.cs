@@ -105,9 +105,9 @@ public class WorkQueue
 			{
 				// Capture the exception and rethrow it to the waiting thread (if any).
 				if (item.Tcs != null)
-                    item.Tcs.TrySetException(ex);
-                else
-                    throw;
+					item.Tcs.TrySetException(ex);
+				else
+					throw;
 			}
 		}
 	}

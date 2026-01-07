@@ -19,11 +19,27 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
+/// <summary>
+/// Represents a handle to a registered hook.
+/// Returned upon hook registration via <see cref="ControllerService"/>.
+/// </summary>
 public sealed class HookHandle : IDisposable
 {
 	private readonly ControllerService service;
 	private bool disposed;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="HookHandle"/> class.
+	/// </summary>
+	/// <param name="service">
+	/// A reference to the controller service that created this hook.
+	/// </param>
+	/// <param name="hookId">
+	/// The unique identifier of the hook.
+	/// </param>
+	/// <param name="delegateKey">
+	/// A unique identifier for the delegate type associated with this hook.
+	/// </param>
 	internal HookHandle(ControllerService service, uint hookId, string delegateKey)
 	{
 		this.service = service;
@@ -31,17 +47,31 @@ public sealed class HookHandle : IDisposable
 		this.DelegateKey = delegateKey;
 	}
 
+	/// <summary>
+	/// Gets the unique identifier of the hook.
+	/// </summary>
 	public uint HookId { get; }
+
+	/// <summary>
+	/// Gets the unique identifier for the delegate type associated with this hook.
+	/// </summary>
 	public string DelegateKey { get; }
+
+	/// <summary>
+	/// Gets a value indicating whether the hook handle is still valid.
+	/// </summary>
 	public bool IsValid => this.HookId != 0 && !this.disposed;
 
+	/// <summary>
+	/// Disposes the hook handle, unregistering the associated hook.
+	/// </summary>
 	public void Dispose()
 	{
 		if (this.disposed)
 			return;
 
-		this.disposed = true;
 		this.service.UnregisterHookInternal(this.HookId);
+		this.disposed = true;
 	}
 }
 
@@ -60,13 +90,14 @@ public class ControllerService : ServiceBase<ControllerService>
 	private const int IPC_TIMEOUT_MS = 100;
 	private const int IPC_REGISTER_TIMEOUT_MS = 1000;
 	private const int HEARTBEAT_INTERVAL_MS = 15_000;
+	private const int STACKALLOC_THRESHOLD = 255;
 
 	private static readonly Func<uint, byte, byte> s_incrementFunc = static (_, v) => (byte)((v + 1) & 0xFF);
 
 	private readonly ConcurrentDictionary<uint, PendingRequest<byte[]>> pendingWrapperRequests = new();
 	private readonly ConcurrentDictionary<uint, PendingRequest<uint>> pendingRegistrations = new();
 	private readonly ConcurrentDictionary<uint, PendingRequest<bool>> pendingUnregistrations = new();
-	private readonly ConcurrentDictionary<uint, Func<byte[], byte[]>> handlers = new();
+	private readonly ConcurrentDictionary<uint, Func<ReadOnlySpan<byte>, byte[]>> handlers = new();
 	private readonly ConcurrentDictionary<uint, byte> sequenceCounters = new();
 	private readonly ConcurrentDictionary<string, uint> delegateKeyToHookId = new();
 	private readonly ObjectPool<PendingRequest<byte[]>> wrapperRequestPool = new(maxSize: 64);
@@ -109,27 +140,78 @@ public class ControllerService : ServiceBase<ControllerService>
 		await base.Shutdown();
 	}
 
+	/// <summary>
+	/// Invokes the registered wrapper hook synchronously.
+	/// The original function will be called by the remote controller.
+	/// </summary>
+	/// <typeparam name="TResult">The expected return type of the hooked function.</typeparam>
+	/// <param name="handle">
+	/// The handle of the registered hook.
+	/// </param>
+	/// <param name="timeoutMs">
+	/// The timeout in milliseconds for the invocation to return.
+	/// </param>
+	/// <param name="args">
+	/// The arguments to pass to the hooked function.
+	/// </param>
+	/// <returns>
+	/// A typed result from the hooked function, or the default value of <c>TResult</c>
+	/// if the invocation failed or timed out.
+	/// </returns>
+	/// <exception cref="ArgumentException">
+	/// Thrown if the provided hook handle is invalid.
+	/// </exception>
 	public TResult? InvokeHook<TResult>(HookHandle handle, int timeoutMs = IPC_TIMEOUT_MS, params object[] args)
 		where TResult : unmanaged
 	{
 		if (handle == null || !handle.IsValid)
 			throw new ArgumentException("Invalid hook handle.", nameof(handle));
 
-		byte[] argsPayload = args.Length switch
+		int size = MarshalUtils.ComputeArgsSize(args);
+		if (size <= STACKALLOC_THRESHOLD)
 		{
-			0 => [],
-			1 => MarshalUtils.SerializeBoxed(args[0]),
-			_ => MarshalUtils.SerializeBoxed(args),
-		};
-
-		return this.InvokeHook<Delegate, TResult>(handle.HookId, argsPayload, timeoutMs);
+			Span<byte> buffer = stackalloc byte[size];
+			MarshalUtils.SerializeArgs(buffer, args);
+			return this.InvokeHook<TResult>(handle.HookId, buffer, timeoutMs);
+		}
+		else
+		{
+			byte[] poolBuffer = ArrayPool<byte>.Shared.Rent(size);
+			try
+			{
+				Span<byte> buffer = poolBuffer.AsSpan(0, size);
+				MarshalUtils.SerializeArgs(buffer, args);
+				return this.InvokeHook<TResult>(handle.HookId, buffer, timeoutMs);
+			}
+			finally
+			{
+				ArrayPool<byte>.Shared.Return(poolBuffer);
+			}
+		}
 	}
 
 	/// <summary>
-	/// Invokes a wrapper hook asynchronously. The remote controller will call the original function.
+	/// Invokes the registered wrapper hook synchronously.
+	/// The original function will be called by the remote controller.
 	/// </summary>
-	public TResult? InvokeHook<TDelegate, TResult>(uint hookId, byte[] argsPayload, int timeoutMs = IPC_TIMEOUT_MS)
-		where TDelegate : Delegate
+	/// <typeparam name="TResult">The expected return type of the hooked function.</typeparam>
+	/// <param name="hookId">
+	/// The ID of the registered hook.
+	/// </param>
+	/// <param name="argsPayload">
+	/// The timeout in milliseconds for the invocation to return.
+	/// </param>
+	/// <param name="timeoutMs">
+	/// The serialized arguments to pass to the hooked function.
+	/// </param>
+	/// <returns>
+	/// A typed result from the hooked function, or the default value of <c>TResult</c>
+	/// if the invocation failed or timed out.
+	/// </returns>
+	/// <exception cref="ArgumentException">
+	/// Thrown if the provided hook handle is invalid.
+	/// </exception>
+	public TResult? InvokeHook<TResult>(uint hookId, ReadOnlySpan<byte> argsPayload, int timeoutMs = IPC_TIMEOUT_MS)
 		where TResult : unmanaged
 	{
 		if (this.outgoingEndpoint == null)
@@ -148,7 +230,8 @@ public class ControllerService : ServiceBase<ControllerService>
 			{
 				if (!this.outgoingEndpoint.Write(header, argsPayload, IPC_TIMEOUT_MS))
 				{
-					throw new InvalidOperationException("Failed to send wrapper request.");
+					Log.Warning($"Hook[ID: {hookId}] invocation failed to send.");
+					return default;
 				}
 			}
 			catch (NullReferenceException ex)
@@ -182,41 +265,118 @@ public class ControllerService : ServiceBase<ControllerService>
 		}
 	}
 
-	// TODO: Cleanup & docs
-	public HookHandle? RegisterWrapper<TDelegate>(
-		Func<byte[],
-		byte[]>? handler = null,
-		int timeoutMs = IPC_REGISTER_TIMEOUT_MS)
+	/// <summary>
+	/// Registers a function wrapper around a native function.
+	/// </summary>
+	/// <typeparam name="TDelegate">
+	/// The delegate type representing the function signature to hook.
+	/// </typeparam>
+	/// <param name="timeoutMs">
+	/// The timeout in milliseconds for the registration to complete.
+	/// </param>
+	/// <returns>
+	/// Returns a <see cref="HookHandle"/> if the
+	/// registration was successful; otherwise, <c>null</c>.
+	/// </returns>
+	public HookHandle? RegisterWrapper<TDelegate>(int timeoutMs = IPC_REGISTER_TIMEOUT_MS)
 		where TDelegate : Delegate
 	{
-			return this.RegisterHook<TDelegate>(
-			HookType.Wrapper,
-			HookBehavior.Before, // Doesn't matter for wrappers
-			handler,
-			timeoutMs);
-	}
-
-	// TODO: Cleanup & docs
-	public HookHandle? RegisterInterceptor<TDelegate>(
-		HookBehavior behavior,
-		Func<byte[], byte[]> handler,
-		int timeoutMs = IPC_REGISTER_TIMEOUT_MS)
-		where TDelegate : Delegate
-	{
-		return this.RegisterHook<TDelegate>(
-			HookType.Interceptor,
-			behavior,
-			handler,
-			timeoutMs);
+		// Hook behavior here doesn't matter as we ignore it
+		return this.RegisterHook<TDelegate>(HookType.Wrapper, HookBehavior.Before, null, timeoutMs);
 	}
 
 	/// <summary>
-	/// Registers a function hook/wrapper.
+	/// Registers a function interceptor hook.
 	/// </summary>
-	public HookHandle? RegisterHook<TDelegate>(
+	/// <typeparam name="TDelegate">
+	/// The delegate type representing the function signature to hook.
+	/// </typeparam>
+	/// <param name="behavior">
+	/// The behavior of the interceptor (Before, After, Replace).
+	/// </param>
+	/// <param name="handler">
+	/// A function that will be called as part of the hook detour.
+	/// </param>
+	/// <param name="timeoutMs">
+	/// The timeout in milliseconds for the registration to complete.
+	/// </param>
+	/// <returns>
+	/// Returns a <see cref="HookHandle"/> if the
+	/// registration was successful; otherwise, <c>null</c>.
+	/// </returns>
+	public HookHandle? RegisterInterceptor<TDelegate>(
+		HookBehavior behavior,
+		Func<ReadOnlySpan<byte>, byte[]> handler,
+		int timeoutMs = IPC_REGISTER_TIMEOUT_MS)
+		where TDelegate : Delegate
+	{
+		return this.RegisterHook<TDelegate>(HookType.Interceptor, behavior, handler, timeoutMs);
+	}
+
+	/// <summary>
+	/// Unregisters a previously registered hook.
+	/// </summary>
+	/// <param name="handle">
+	/// The handle of the registered hook to unregister.
+	/// </param>
+	/// <param name="timeoutMs">
+	/// The timeout in milliseconds for the unregistration to complete.
+	/// </param>
+	/// <returns>
+	/// True if the unregistration was successful; otherwise, false.
+	/// </returns>
+	/// <remarks>
+	/// Hooks are unregistered automatically when the <see cref="HookHandle"/> is
+	/// disposed or when <see cref="ControllerService.Shutdown"/> is called.
+	/// </remarks>
+	public bool UnregisterHook(HookHandle handle, int timeoutMs = IPC_TIMEOUT_MS)
+	{
+		if (!handle.IsValid)
+			return false;
+
+		return this.UnregisterHookById(handle.HookId, timeoutMs);
+	}
+
+	internal void UnregisterHookInternal(uint hookId)
+	{
+		this.UnregisterHookById(hookId, IPC_TIMEOUT_MS);
+	}
+
+	/// <inheritdoc/>
+	protected override async Task OnStart()
+	{
+		this.CancellationTokenSource = new CancellationTokenSource();
+
+		try
+		{
+			this.outgoingEndpoint = new Endpoint(BUF_SHMEM_OUTGOING, BUF_BLK_COUNT, BUF_BLK_SIZE);
+			this.incomingEndpoint = new Endpoint(BUF_SHMEM_INCOMING, BUF_BLK_COUNT, BUF_BLK_SIZE);
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Failed to initialize IPC endpoints.");
+			this.outgoingEndpoint?.Dispose();
+			this.outgoingEndpoint = null;
+			this.incomingEndpoint?.Dispose();
+			this.incomingEndpoint = null;
+			throw;
+		}
+
+		this.heartbeatTimer = new Timer(this.SendHeartbeat, null, HEARTBEAT_INTERVAL_MS, HEARTBEAT_INTERVAL_MS);
+
+		this.BackgroundTask = Task.Factory.StartNew(
+			() => this.ProcessIncomingMessages(this.CancellationToken),
+			this.CancellationToken,
+			TaskCreationOptions.LongRunning,
+			TaskScheduler.Default);
+
+		await base.OnStart();
+	}
+
+	private HookHandle? RegisterHook<TDelegate>(
 		HookType hookType,
 		HookBehavior behavior,
-		Func<byte[], byte[]>? handler = null,
+		Func<ReadOnlySpan<byte>, byte[]>? handler = null,
 		int timeoutMs = IPC_REGISTER_TIMEOUT_MS)
 		where TDelegate : Delegate
 	{
@@ -318,53 +478,6 @@ public class ControllerService : ServiceBase<ControllerService>
 				this.pendingRegistrations.TryRemove(requestId, out _);
 			}
 		}).GetAwaiter().GetResult();
-	}
-
-	/// <summary>
-	/// Unregisters a hook by its handle.
-	/// </summary>
-	public bool UnregisterHook(HookHandle handle, int timeoutMs = IPC_TIMEOUT_MS)
-	{
-		if (!handle.IsValid)
-			return false;
-
-		return this.UnregisterHookById(handle.HookId, timeoutMs);
-	}
-
-	internal void UnregisterHookInternal(uint hookId)
-	{
-		this.UnregisterHookById(hookId, IPC_TIMEOUT_MS);
-	}
-
-	/// <inheritdoc/>
-	protected override async Task OnStart()
-	{
-		this.CancellationTokenSource = new CancellationTokenSource();
-
-		try
-		{
-			this.outgoingEndpoint = new Endpoint(BUF_SHMEM_OUTGOING, BUF_BLK_COUNT, BUF_BLK_SIZE);
-			this.incomingEndpoint = new Endpoint(BUF_SHMEM_INCOMING, BUF_BLK_COUNT, BUF_BLK_SIZE);
-		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, "Failed to initialize IPC endpoints.");
-			this.outgoingEndpoint?.Dispose();
-			this.outgoingEndpoint = null;
-			this.incomingEndpoint?.Dispose();
-			this.incomingEndpoint = null;
-			throw;
-		}
-
-		this.heartbeatTimer = new Timer(this.SendHeartbeat, null, HEARTBEAT_INTERVAL_MS, HEARTBEAT_INTERVAL_MS);
-
-		this.BackgroundTask = Task.Factory.StartNew(
-			() => this.ProcessIncomingMessages(this.CancellationToken),
-			this.CancellationToken,
-			TaskCreationOptions.LongRunning,
-			TaskScheduler.Default);
-
-		await base.OnStart();
 	}
 
 	private bool UnregisterHookById(uint hookId, int timeoutMs)
@@ -567,13 +680,13 @@ public class ControllerService : ServiceBase<ControllerService>
 	private void HandleInterceptRequest(uint msgId, ReadOnlySpan<byte> payload)
 	{
 		uint hookId = HookMessageId.GetHookId(msgId);
-
 		byte[] response;
+
 		if (this.handlers.TryGetValue(hookId, out var handler))
 		{
 			try
 			{
-				response = handler(payload.ToArray());
+				response = handler(payload);
 			}
 			catch (Exception ex)
 			{

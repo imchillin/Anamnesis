@@ -200,10 +200,10 @@ public class HookDelegateRegistryGenerator : IIncrementalGenerator
 		sb.AppendLine("\t// ==========================================");
 		sb.AppendLine();
 		sb.AppendLine("""
-				/// <summary>
-				/// Delegate for span-based invokers that avoid array allocations on input.
-				/// </summary>
-				public delegate byte[] HookInvoker(ReadOnlySpan<byte> argsPayload);
+			/// <summary>
+			/// Delegate for span-based invokers that avoid array allocations on input.
+			/// </summary>
+			public delegate byte[] HookInvoker(ReadOnlySpan<byte> argsPayload);
 		""");
 
 		sb.AppendLine("\tprivate static readonly ConcurrentDictionary<uint, HookInvoker> s_typedInvokers = new();");
@@ -401,12 +401,9 @@ public class HookDelegateRegistryGenerator : IIncrementalGenerator
 
 			foreach (var param in del.Parameters)
 			{
-				var (readExpr, size) = GetReadCall(param);
+				var (readExpr, sizeExpr) = GetReadCall(param);
 				sb.AppendLine($"\t\t{param.TypeName} {param.Name} = {readExpr};");
-				if (size > 0)
-				{
-					sb.AppendLine($"\t\toffset += {size};");
-				}
+				sb.AppendLine($"\t\toffset += {sizeExpr};");
 			}
 			sb.AppendLine();
 		}
@@ -430,46 +427,27 @@ public class HookDelegateRegistryGenerator : IIncrementalGenerator
 		sb.AppendLine();
 	}
 
-	private static (string Expression, int Size) GetReadCall(ParameterInfo param)
+	private static (string Expression, string SizeExpr) GetReadCall(ParameterInfo param)
 	{
-		// Handle pointer types
 		if (param.IsPointer)
 		{
-			var cleanType = param.TypeName.Replace("global::", string.Empty);
-			return ($"({cleanType})(nint)System.Buffers.Binary.BinaryPrimitives.ReadInt64LittleEndian(argsPayload.Slice(offset))", 8);
+			string cleanType = param.TypeName.Replace("global::", string.Empty);
+			return ($"({cleanType})MarshalUtils.Read<nint>(argsPayload.Slice(offset))", "IntPtr.Size");
 		}
 
-		// Handle IntPtr/nint
 		if (param.TypeName.Contains("nint") || param.TypeName.Contains("IntPtr"))
 		{
-			return ("(nint)System.Buffers.Binary.BinaryPrimitives.ReadInt64LittleEndian(argsPayload.Slice(offset))", 8);
+			return ("(nint)System.Buffers.Binary.BinaryPrimitives.ReadInt64LittleEndian(argsPayload.Slice(offset))", "IntPtr.Size");
 		}
 
-		// Handle primitive types
-		return param.TypeName switch
-		{
-			"global::System.Boolean" or "bool" => ("argsPayload[offset] != 0", 1),
-			"global::System.Byte" or "byte" => ("argsPayload[offset]", 1),
-			"global::System.SByte" or "sbyte" => ("(sbyte)argsPayload[offset]", 1),
-			"global::System.Int16" or "short" => ("System.Buffers.Binary.BinaryPrimitives.ReadInt16LittleEndian(argsPayload.Slice(offset))", 2),
-			"global::System.UInt16" or "ushort" => ("System.Buffers.Binary.BinaryPrimitives.ReadUInt16LittleEndian(argsPayload.Slice(offset))", 2),
-			"global::System.Int32" or "int" => ("System.Buffers.Binary.BinaryPrimitives.ReadInt32LittleEndian(argsPayload.Slice(offset))", 4),
-			"global::System.UInt32" or "uint" => ("System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(argsPayload.Slice(offset))", 4),
-			"global::System.Int64" or "long" => ("System.Buffers.Binary.BinaryPrimitives.ReadInt64LittleEndian(argsPayload.Slice(offset))", 8),
-			"global::System.UInt64" or "ulong" => ("System.Buffers.Binary.BinaryPrimitives.ReadUInt64LittleEndian(argsPayload.Slice(offset))", 8),
-			"global::System.Single" or "float" => ("System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(argsPayload.Slice(offset))", 4),
-			"global::System.Double" or "double" => ("System.Buffers.Binary.BinaryPrimitives.ReadDoubleLittleEndian(argsPayload.Slice(offset))", 8),
-			_ => ($"MarshalUtils.Deserialize<{param.TypeName}>(argsPayload.Slice(offset))", 0),
-		};
+		return ($"MarshalUtils.Read<{param.TypeName}>(argsPayload.Slice(offset))", $"System.Runtime.CompilerServices.Unsafe.SizeOf<{param.TypeName}>()");
 	}
 
 	private static string GetSerializeType(string returnType)
 	{
-		// For pointer return types, cast to nint
 		if (returnType.Contains("*"))
-		{
-			return "nint";
-		}
+			return "nint"; // Cast pointers to nint for serialization
+
 		return returnType.Replace("global::", string.Empty);
 	}
 

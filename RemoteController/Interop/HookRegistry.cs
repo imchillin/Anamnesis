@@ -21,7 +21,7 @@ public sealed class HookRegistry
 
 	private readonly ConcurrentDictionary<uint, IFunctionHook> activeHooks = new();
 	private readonly ConcurrentDictionary<string, uint> keyToHookId = new();
-	
+
 	private uint nextHookID = 1; // Id 0 is reserved for "invalid" hooks.
 
 	private HookRegistry()
@@ -190,20 +190,9 @@ public sealed class HookRegistry
 	public byte[] InvokeOriginal(uint hookId, ReadOnlySpan<byte> argsPayload)
 	{
 		if (!this.activeHooks.TryGetValue(hookId, out var hook))
-		{
-			Log.Verbose($"Failed to handle invoke request: Unknown hook[ID: {hookId}].");
 			return s_emptyPayload;
-		}
 
-		try
-		{
-			return hook.InvokeOriginal(argsPayload);
-		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, $"Failed to handle invoke request: hook[ID: {hookId}].");
-			return s_emptyPayload;
-		}
+		return hook.InvokeOriginal(argsPayload);
 	}
 
 	private uint AllocateHookId()
