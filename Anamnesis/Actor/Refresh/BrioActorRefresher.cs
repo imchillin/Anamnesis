@@ -3,6 +3,8 @@
 
 namespace Anamnesis.Actor.Refresh;
 
+using Anamnesis.Actor.Pages;
+using Anamnesis.Actor.Posing;
 using Anamnesis.Brio;
 using Anamnesis.Core;
 using Anamnesis.Files;
@@ -59,15 +61,8 @@ public class BrioActorRefresher : IActorRefresher
 
 				if (result == "\"Full\"")
 				{
-					new Task(async () =>
-					{
-						await Task.Delay(500);
-						await Dispatch.MainThread();
-
-						// Restore current pose
-						skeleton = new Skeleton(actorHandle);
-						poseFile.Apply(actorHandle, skeleton, null, PoseFile.Mode.All, true);
-					}).Start();
+					var skeletonEntity = new SkeletonEntity(actorHandle);
+					await PosePage.ImportPose(actorHandle, skeletonEntity, PosePage.PoseImportOptions.Character, PoseMode.All & ~PoseMode.Scale);
 				}
 			}
 			finally

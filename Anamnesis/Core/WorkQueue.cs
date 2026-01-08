@@ -56,31 +56,61 @@ public class WorkQueue
 	/// True if the item was enqueued successfully; otherwise, false.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public bool Enqueue(Action action) => this.Enabled && this.writer.TryWrite(new WorkItem(action));
-
-	/// <summary>
-	/// Enqueue a work item and block until it is completed.
-	/// </summary>
-	/// <param name="action">
-	/// The action to enqueue.
-	/// </param>
-	/// <returns>
-	/// True if the item was enqueued successfully and processed; otherwise, false.
-	/// </returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public bool EnqueueAndWait(Action action)
+	public Task<bool> Enqueue(Action action)
 	{
 		if (!this.Enabled)
-			return false;
+			return Task.FromResult(false);
 
 		var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 		if (this.writer.TryWrite(new WorkItem(action, tcs)))
 		{
-			tcs.Task.GetAwaiter().GetResult();
-			return true;
+			return tcs.Task.ContinueWith(_ => true, TaskScheduler.Default);
 		}
 
-		return false;
+		return Task.FromResult(false);
+	}
+
+	/// <summary>
+	/// Executes the action asynchronously immediately if the queue
+	/// is disabled, otherwise enqueues it asynchronously to be processed later.
+	/// </summary>
+	/// <param name="action">
+	/// The action to enqueue.
+	/// </param>
+	/// <remarks>
+	/// This method does not wait for the action to complete.
+	/// If you want to wait for completion, use <see cref="Enqueue(Action)"/> instead.
+	/// </remarks>
+	public void EnqueueOrDo(Action action)
+	{
+		if (this.Enabled)
+		{
+			_ = this.Enqueue(action);
+		}
+		else
+		{
+			action();
+		}
+	}
+
+	/// <summary>
+	/// Executes the action synchronously immediately if the queue
+	/// is disabled, otherwise enqueues it to be processed later and waits for completion.
+	/// </summary>
+	/// <param name="action">
+	/// The action to enqueue.
+	/// </param>
+	public void EnqueueAndWaitOrDo(Action action)
+	{
+		if (this.Enabled)
+		{
+			var task = this.Enqueue(action);
+			task.Wait();
+		}
+		else
+		{
+			action();
+		}
 	}
 
 	/// <summary>
