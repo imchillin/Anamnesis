@@ -26,11 +26,17 @@
     <CETCompat>false</CETCompat>
     <NeutralLanguage>en</NeutralLanguage>
     <TrimmerRootAssembly>Serilog; RemoteController</TrimmerRootAssembly>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
   </PropertyGroup>
+  <ItemGroup>
+    <RemoteControllerSources
+        Include="..\RemoteController\**\*.cs"
+        Exclude="..\RemoteController\obj\**;..\RemoteController\bin\**" />
+  </ItemGroup>
   <Target Name="PublishRemoteController"
         BeforeTargets="BeforeBuild;PrepareForPublish"
-        Inputs="$(SolutionDir)RemoteController\RemoteController.csproj;$(SolutionDir)RemoteController\**\*.cs"
-        Outputs="$(ProjectDir)obj\RemotePublish\RemoteController.dll">
+        Inputs="$(SolutionDir)RemoteController\RemoteController.csproj;@(RemoteControllerSources)"
+        Outputs="$(SolutionDir)obj\RemotePublish\RemoteController.dll">
 
     <PropertyGroup>
       <RemotePublishDir>$(SolutionDir)obj\RemotePublish\</RemotePublishDir>
