@@ -13,13 +13,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 
 using static Anamnesis.Memory.NativeFunctions;
 using static Iced.Intel.AssemblerRegisters;
-
-// TODO: Use GameService's IsSignedIn as a trigger to load in the remote controller
-// TODO: Check if the remote controller is already active before attempting to inject again
 
 /// <summary>
 /// A class to inject and run embedded resource DLLs into a target process.
@@ -40,9 +36,10 @@ internal sealed class Injector : IDisposable
 	private readonly IntPtr loadLibraryFuncAddr;
 	private readonly IntPtr getProcAddressFuncAddr;
 	private readonly IntPtr freeLibraryFuncAddr;
-	private string? remoteCtrlDllPath;
+	private string? remoteCtrlDllPath = null;
 	private string? fasmDllPath;
-	private bool isDisposed;
+	private bool isDisposed = false;
+	private bool dllInjected = false;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Injector"/> class.
@@ -88,6 +85,15 @@ internal sealed class Injector : IDisposable
 	/// </summary>
 	~Injector() => this.Dispose(false);
 
+	/// <summary>
+	/// Gets the file system path to the remote control DLL, if available.
+	/// </summary>
+	/// <remarks>
+	/// The availability of this path indicates that the DLL has been
+	/// successfully injected into the target process.
+	/// </remarks>
+	public string? RemoteCtrlDllPath => this.dllInjected ? this.remoteCtrlDllPath : null;
+
 	/// <inheritdoc/>
 	public void Dispose()
 	{
@@ -110,7 +116,7 @@ internal sealed class Injector : IDisposable
 	{
 		ObjectDisposedException.ThrowIf(this.isDisposed, this);
 
-		bool dllInjected = false;
+		this.dllInjected = false;
 		IntPtr moduleBaseAddress = IntPtr.Zero;
 
 		try
@@ -144,7 +150,7 @@ internal sealed class Injector : IDisposable
 				throw new InvalidOperationException("Module load failed silently in target process");
 
 			moduleBaseAddress = module.BaseAddress;
-			dllInjected = true;
+			this.dllInjected = true;
 			Log.Information($"[Injector] Module loaded at base address 0x{moduleBaseAddress.ToInt64():X}");
 
 			var policy = default(ProcessMitigationDynamicCodePolicy);
@@ -156,14 +162,13 @@ internal sealed class Injector : IDisposable
 				}
 			}
 
-			// Run the entry point asynchronously
-			Task.Run(() => this.CallExport(moduleBaseAddress, ANAM_CTRL_ENTRY_POINT))
-				.ContinueWith(t => Log.Error(t.Exception, "Failed to start up entry point"), TaskContinuationOptions.OnlyOnFaulted);
+			// Run the entry point
+			this.CallExport(moduleBaseAddress, ANAM_CTRL_ENTRY_POINT);
 		}
 		catch (Exception ex)
 		{
 			// If the DLL was injected but we encountered an error afterwards, attempt to unload it
-			if (dllInjected && moduleBaseAddress != IntPtr.Zero)
+			if (this.dllInjected && moduleBaseAddress != IntPtr.Zero)
 			{
 				try
 				{

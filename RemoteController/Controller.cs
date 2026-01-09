@@ -234,6 +234,7 @@ public class Controller
 	{
 		Log.Information("Running shutdown sequence...");
 		HookRegistry.Instance.UnregisterAll();
+		s_watchdogTimer?.Dispose();
 		s_outgoingEndpoint?.Dispose();
 		s_outgoingEndpoint = null;
 		s_incomingEndpoint?.Dispose();
@@ -241,6 +242,8 @@ public class Controller
 
 		Log.Information("Shutdown complete. Remember us...Remember...that we once lived.");
 		Logger.Deinitialize(); // Keep the logger as the last step
+		GC.Collect(2, GCCollectionMode.Forced, true);
+		GC.WaitForPendingFinalizers();
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

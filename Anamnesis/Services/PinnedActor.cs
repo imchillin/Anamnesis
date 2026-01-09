@@ -12,15 +12,11 @@ using FontAwesome.Sharp;
 using PropertyChanged;
 using Serilog;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 
 [AddINotifyPropertyChangedInterface]
 public class PinnedActor : INotifyPropertyChanged, IDisposable
 {
-	private static long s_syncCounter = 0;
-
 	private bool isRestoringBackup = false;
 
 	public PinnedActor(ObjectHandle<ActorMemory> handle)
@@ -158,20 +154,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 			try
 			{
-				long count = System.Threading.Interlocked.Increment(ref s_syncCounter);
-
-				if (count % 100 == 0)
-				{
-					var start = Stopwatch.GetTimestamp();
-					this.Memory.Do(a => a.Synchronize(exclGroups: TargetService.ExcludeSkeletonGroup));
-					var end = Stopwatch.GetTimestamp();
-					var elapsedMicroseconds = (end - start) * 1_000_000 / Stopwatch.Frequency;
-					Log.Information($"[PinnedActor] Synchronize round-trip time (sampled): {elapsedMicroseconds} us");
-				}
-				else
-				{
-					this.Memory.Do(a => a.Synchronize(exclGroups: TargetService.ExcludeSkeletonGroup));
-				}
+				this.Memory.Do(a => a.Synchronize(exclGroups: TargetService.ExcludeSkeletonGroup));
 			}
 			catch (Exception ex)
 			{

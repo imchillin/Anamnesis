@@ -311,6 +311,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		}
 		catch
 		{
+			Log.Verbose($"Failed to invoke 'IsWanderer' hook for actor at address 0x{this.Address:X}");
 			return false;
 		}
 	}

@@ -50,7 +50,7 @@ public sealed class HookHandle : IDisposable
 	/// <summary>
 	/// Gets the unique identifier of the hook.
 	/// </summary>
-	public uint HookId { get; }
+	public uint HookId { get; private set; }
 
 	/// <summary>
 	/// Gets the unique identifier for the delegate type associated with this hook.
@@ -70,8 +70,24 @@ public sealed class HookHandle : IDisposable
 		if (this.disposed)
 			return;
 
-		this.service.UnregisterHookInternal(this.HookId);
+		if (this.HookId != 0)
+		{
+			this.service.UnregisterHookInternal(this.HookId);
+		}
+
 		this.disposed = true;
+	}
+
+	/// <summary>
+	/// Sets the hook identifier.
+	/// </summary>
+	/// <remarks>
+	/// Intended to be used only by <see cref="ControllerService"/> during hook registration.
+	/// in cases where the remote controller is not able to register the hook immediately.
+	/// </remarks>
+	internal void SetHookId(uint id)
+	{
+		this.HookId = id;
 	}
 }
 
@@ -91,9 +107,11 @@ public class ControllerService : ServiceBase<ControllerService>
 	private const int IPC_REGISTER_TIMEOUT_MS = 1000;
 	private const int HEARTBEAT_INTERVAL_MS = 15_000;
 	private const int STACKALLOC_THRESHOLD = 255;
+	private const int CONN_CHECK_DELAY_MS = 1000;
 
 	private static readonly Func<uint, byte, byte> s_incrementFunc = static (_, v) => (byte)((v + 1) & 0xFF);
 
+	private readonly ConcurrentQueue<PendingHookRegistration> registrationQueue = new();
 	private readonly ConcurrentDictionary<uint, PendingRequest<byte[]>> pendingWrapperRequests = new();
 	private readonly ConcurrentDictionary<uint, PendingRequest<uint>> pendingRegistrations = new();
 	private readonly ConcurrentDictionary<uint, PendingRequest<bool>> pendingUnregistrations = new();
@@ -108,6 +126,7 @@ public class ControllerService : ServiceBase<ControllerService>
 	private Endpoint? outgoingEndpoint = null;
 	private Endpoint? incomingEndpoint = null;
 	private Timer? heartbeatTimer;
+	private bool isConnected = false;
 
 	/// <inheritdoc/>
 	protected override IEnumerable<IService> Dependencies => [GameService.Instance];
@@ -216,6 +235,12 @@ public class ControllerService : ServiceBase<ControllerService>
 	{
 		if (this.outgoingEndpoint == null)
 			throw new InvalidOperationException("Controller service not initialized.");
+
+		if (hookId == 0)
+		{
+			Log.Warning($"Attempted to invoke hook {hookId} before registration completed.");
+			return default;
+		}
 
 		byte seq = this.GetNextSequence(hookId);
 		uint msgId = HookMessageId.Pack(hookId, seq);
@@ -362,7 +387,11 @@ public class ControllerService : ServiceBase<ControllerService>
 			throw;
 		}
 
-		this.heartbeatTimer = new Timer(this.SendHeartbeat, null, HEARTBEAT_INTERVAL_MS, HEARTBEAT_INTERVAL_MS);
+		_ = Task.Factory.StartNew(
+			() => this.ConnectionMonitorLoop(this.CancellationToken),
+			this.CancellationToken,
+			TaskCreationOptions.LongRunning,
+			TaskScheduler.Default);
 
 		this.BackgroundTask = Task.Factory.StartNew(
 			() => this.ProcessIncomingMessages(this.CancellationToken),
@@ -373,6 +402,82 @@ public class ControllerService : ServiceBase<ControllerService>
 		await base.OnStart();
 	}
 
+	/// <summary>
+	/// An encapsulateion of the IPC request registration logic.
+	/// </summary>
+	/// <param name="handle">
+	/// The handle of the hook to register.
+	/// </param>
+	/// <param name="data">
+	/// The registration data for the hook.
+	/// </param>
+	/// <param name="handler">
+	/// The optional handler function for interceptors.
+	/// </param>
+	/// <param name="timeoutMs">
+	/// The timeout in milliseconds for the registration to complete.
+	/// </param>
+	/// <returns>
+	/// True if the registration was successful; otherwise, false.
+	/// </returns>
+	private bool RegisterHookIPC(
+		HookHandle handle,
+		HookRegistrationData data,
+		Func<ReadOnlySpan<byte>, byte[]>? handler,
+		int timeoutMs)
+	{
+		if (this.outgoingEndpoint == null)
+			return false;
+
+		byte[] payload = MarshalUtils.Serialize(data);
+		uint requestId = this.GetNextRequestId();
+
+		using var pending = new PendingRequest<uint>();
+		this.pendingRegistrations[requestId] = pending;
+		try
+		{
+			var header = new MessageHeader(requestId, PayloadType.Register, (ulong)payload.Length);
+
+			if (!this.outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS))
+			{
+				Log.Error($"Failed to send hook registration request for: {handle.DelegateKey}");
+				return false;
+			}
+
+			if (!pending.Wait(timeoutMs))
+			{
+				Log.Error($"Hook registration timed out for: {handle.DelegateKey}");
+				return false;
+			}
+
+			if (!pending.TryGetResult(out uint hookId) || hookId == 0)
+			{
+				Log.Error($"Hook registration failed for: {handle.DelegateKey}");
+				return false;
+			}
+
+			if (handler != null)
+			{
+				this.handlers[hookId] = handler;
+			}
+
+			handle.SetHookId(hookId);
+			this.delegateKeyToHookId[handle.DelegateKey] = hookId;
+
+			Log.Information($"Registered hook[ID: {hookId}] for: {handle.DelegateKey}");
+			return true;
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, $"Exception during IPC registration for {handle.DelegateKey}");
+			return false;
+		}
+		finally
+		{
+			this.pendingRegistrations.TryRemove(requestId, out _);
+		}
+	}
+
 	private HookHandle? RegisterHook<TDelegate>(
 		HookType hookType,
 		HookBehavior behavior,
@@ -380,104 +485,76 @@ public class ControllerService : ServiceBase<ControllerService>
 		int timeoutMs = IPC_REGISTER_TIMEOUT_MS)
 		where TDelegate : Delegate
 	{
-		return Task.Run(() =>
+		if (this.outgoingEndpoint == null)
+			throw new InvalidOperationException("Controller service not initialized.");
+
+		string delegateKey = HookUtils.GetKey(typeof(TDelegate));
+
+		if (this.delegateKeyToHookId.ContainsKey(delegateKey))
 		{
-			if (this.outgoingEndpoint == null)
-				throw new InvalidOperationException("Controller service not initialized.");
+			Log.Warning($"Hook already registered for: {delegateKey}");
+			return null;
+		}
 
-			string delegateKey = HookUtils.GetKey(typeof(TDelegate));
+		if (typeof(TDelegate).GetCustomAttributes(typeof(FunctionBindAttribute), false)
+			.FirstOrDefault() is not FunctionBindAttribute attr)
+		{
+			Log.Error($"Delegate {delegateKey} is not decorated with FunctionBindAttribute");
+			return null;
+		}
 
-			if (this.delegateKeyToHookId.ContainsKey(delegateKey))
+		if (MemoryService.Scanner == null)
+			throw new Exception("No memory scanner");
+
+		nint targetAddress = 0;
+		try
+		{
+			if (attr.Offset != 0)
 			{
-				Log.Warning($"Hook already registered for: {delegateKey}");
-				return null;
+				targetAddress = MemoryService.Scanner.GetStaticAddressFromSig(attr.Signature, attr.Offset);
 			}
-
-			if (typeof(TDelegate).GetCustomAttributes(typeof(FunctionBindAttribute), false)
-				.FirstOrDefault() is not FunctionBindAttribute attr)
+			else
 			{
-				Log.Error($"Delegate {delegateKey} is not decorated with FunctionBindAttribute");
-				return null;
+				targetAddress = MemoryService.Scanner.ScanText(attr.Signature);
 			}
+		}
+		catch (KeyNotFoundException ex)
+		{
+			Log.Error(ex, $"Failed to resolve signature for: {delegateKey}");
+			return null;
+		}
 
-			if (MemoryService.Scanner == null)
-				throw new Exception("No memory scanner");
+		Log.Verbose($"Resolved signature for {delegateKey} to address 0x{targetAddress:X}");
 
-			nint targetAddress = 0;
-			try
-			{
-				if (attr.Offset != 0)
-				{
-					targetAddress = MemoryService.Scanner.GetStaticAddressFromSig(attr.Signature, attr.Offset);
-				}
-				else
-				{
-					targetAddress = MemoryService.Scanner.ScanText(attr.Signature);
-				}
-			}
-			catch (KeyNotFoundException ex)
-			{
-				Log.Error(ex, $"Failed to resolve signature for: {delegateKey}");
-				return null;
-			}
+		if (targetAddress == 0)
+		{
+			Log.Error($"Failed to resolve signature for: {delegateKey}");
+			return null;
+		}
 
-			Log.Verbose($"Resolved signature for {delegateKey} to address 0x{targetAddress:X}");
+		var registerPayload = new HookRegistrationData
+		{
+			Address = targetAddress,
+			HookType = hookType,
+			HookBehavior = behavior,
+			DelegateKeyLength = delegateKey.Length,
+		};
+		registerPayload.SetKey(delegateKey);
 
-			if (targetAddress == 0)
-			{
-				Log.Error($"Failed to resolve signature for: {delegateKey}");
-				return null;
-			}
+		var handle = new HookHandle(this, 0, delegateKey);
+		if (this.isConnected)
+		{
+			if (this.RegisterHookIPC(handle, registerPayload, handler, timeoutMs))
+				return handle;
 
-			var registerPayload = new HookRegistrationData
-			{
-				Address = targetAddress,
-				HookType = hookType,
-				HookBehavior = behavior,
-				DelegateKeyLength = delegateKey.Length,
-			};
-			registerPayload.SetKey(delegateKey);
-			byte[] payload = MarshalUtils.Serialize(registerPayload);
-			uint requestId = this.GetNextRequestId();
-			using var pending = new PendingRequest<uint>();
-			this.pendingRegistrations[requestId] = pending;
-
-			try
-			{
-				var header = new MessageHeader(requestId, PayloadType.Register, (ulong)payload.Length);
-				if (!this.outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS))
-				{
-					Log.Error($"Failed to send hook registration request for: {delegateKey}");
-					return null;
-				}
-
-				if (!pending.Wait(timeoutMs))
-				{
-					Log.Error($"Hook registration timed out for: {delegateKey}");
-					return null;
-				}
-
-				if (!pending.TryGetResult(out uint hookId) || hookId == 0)
-				{
-					Log.Error($"Hook registration failed for: {delegateKey}");
-					return null;
-				}
-
-				if (handler != null)
-				{
-					this.handlers[hookId] = handler;
-				}
-
-				this.delegateKeyToHookId[delegateKey] = hookId;
-
-				Log.Information($"Registered hook[ID: {hookId}] for: {delegateKey}");
-				return new HookHandle(this, hookId, delegateKey);
-			}
-			finally
-			{
-				this.pendingRegistrations.TryRemove(requestId, out _);
-			}
-		}).GetAwaiter().GetResult();
+			return null; // Registration failed
+		}
+		else
+		{
+			Log.Information($"Remote controller not available. Queueing hook[Key: {delegateKey}] for later registration.");
+			this.registrationQueue.Enqueue(new PendingHookRegistration(handle, registerPayload, handler));
+			return handle;
+		}
 	}
 
 	private bool UnregisterHookById(uint hookId, int timeoutMs)
@@ -526,6 +603,75 @@ public class ControllerService : ServiceBase<ControllerService>
 		finally
 		{
 			this.pendingUnregistrations.TryRemove(hookId, out _);
+		}
+	}
+
+	private Task SendPendingRegistrations()
+	{
+		// Process the entire queue
+		while (this.registrationQueue.TryPeek(out _))
+		{
+			if (!this.registrationQueue.TryDequeue(out var pendingItem))
+				break;
+
+			// Skip already registered hooks
+			if (pendingItem.Handle.HookId != 0)
+				continue;
+
+			// Perform registration synchronously on this thread
+			bool success = this.RegisterHookIPC(
+				pendingItem.Handle,
+				pendingItem.Data,
+				pendingItem.Handler,
+				IPC_REGISTER_TIMEOUT_MS);
+
+			if (!success)
+			{
+				Log.Error($"Queued registration failed for {pendingItem.Handle.DelegateKey}");
+			}
+		}
+
+		return Task.CompletedTask;
+	}
+
+	private async Task ConnectionMonitorLoop(CancellationToken ct)
+	{
+		Log.Information("Started task to track remote controller availability.");
+
+		while (!ct.IsCancellationRequested)
+		{
+			try
+			{
+				if (!GameService.Injected)
+				{
+					if (this.isConnected)
+					{
+						// NOTE: The heartbeat timer is stopped not to flood the ring buffer
+						// while the remote controller is not available.
+						Log.Warning("Connection lost with remote controller.");
+						this.heartbeatTimer?.Dispose();
+						this.heartbeatTimer = null;
+						this.isConnected = false;
+					}
+
+					await Task.Delay(CONN_CHECK_DELAY_MS, ct);
+					continue;
+				}
+
+				if (!this.isConnected)
+				{
+					Log.Information("Connection established with remote controller.");
+					await this.SendPendingRegistrations();
+					this.heartbeatTimer ??= new Timer(this.SendHeartbeat, null, HEARTBEAT_INTERVAL_MS, HEARTBEAT_INTERVAL_MS);
+					this.isConnected = true;
+				}
+
+				await Task.Delay(CONN_CHECK_DELAY_MS, ct);
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Error in connection handshake.");
+			}
 		}
 	}
 
@@ -741,4 +887,9 @@ public class ControllerService : ServiceBase<ControllerService>
 		else
 			Log.Warning("Remote controller shutdown reported failure.");
 	}
+
+	private record PendingHookRegistration(
+		HookHandle Handle,
+		HookRegistrationData Data,
+		Func<ReadOnlySpan<byte>, byte[]>? Handler);
 }

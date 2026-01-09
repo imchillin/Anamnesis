@@ -51,9 +51,19 @@ public class GposeService : ServiceBase<GposeService>
 		if (s_isInGposeHook == null || !s_isInGposeHook.IsValid)
 			return false;
 
-		bool? result = ControllerService.Instance.InvokeHook<bool>(s_isInGposeHook);
-		if (result == null)
-			Log.Warning("IsInGpose hook returned null result.");
+		bool? result = null;
+		try
+		{
+			result = ControllerService.Instance.InvokeHook<bool>(s_isInGposeHook);
+			if (result == null)
+			{
+				Log.Warning("Gpose check hook did not return a result.");
+			}
+		}
+		catch
+		{
+			Log.Verbose($"Failed to invoke 'IsGpose' hook.");
+		}
 
 		return result ?? false;
 	}
