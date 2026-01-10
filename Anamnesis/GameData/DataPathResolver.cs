@@ -146,7 +146,7 @@ public static class DataPathResolver
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static string ResolveFacePath(DataPaths raceSexId, ushort faceId)
-		 => $"chara/human/c{(short)raceSexId:D4}/obj/face/f{faceId:D4}/model/c{(short)raceSexId:D4}f{faceId:D4}_fac.mdl";
+		 => $"chara/human/c{(short)raceSexId:D4}/obj/face/f{faceId:D4}/material/mt_c{(short)raceSexId:D4}f{faceId:D4}_etc_a.mtrl";
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static string ResolveHairPath(DataPaths raceSexId, ushort hairId)
