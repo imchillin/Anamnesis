@@ -154,7 +154,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 			try
 			{
-				this.Memory.Do(a => a.Synchronize());
+				this.Memory.Synchronize();
 			}
 			catch (Exception ex)
 			{
