@@ -41,6 +41,8 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	public static readonly Lazy<WorkQueue> WorkQueue = new(() => new WorkQueue());
 
+	private const int MAX_SKELETON_CREATION_ATTEMPTS = 3;
+
 	private static readonly Type[] s_poseFileTypes =
 	[
 		typeof(PoseFile),
@@ -72,6 +74,8 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	private string? selectedBonesTooltipCache;
 	private string? selectedBoneNameCache;
 	private string? selectedBoneTextCache;
+
+	private int pendingSkeletonRetryAttempts = 0;
 
 	public PosePage()
 	{
@@ -615,15 +619,22 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 					this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
 				}
 
-				this.Skeleton = new SkeletonEntity(this.Actor);
-				BoneViewManager.Instance.SetSkeleton(this.Skeleton);
+				try
+				{
+					this.Skeleton = new SkeletonEntity(this.Actor);
+				}
+				catch (ArgumentOutOfRangeException)
+				{
+					this.pendingSkeletonRetryAttempts = MAX_SKELETON_CREATION_ATTEMPTS;
+					this.Skeleton = null;
+					Log.Warning("Skeleton creation failed, will retry in detour.");
+					return;
+				}
 
-				this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
-
-				this.ThreeDView.DataContext = this.Skeleton;
-				this.BodyGuiView.DataContext = this.Skeleton;
-				this.FaceGuiView.DataContext = this.Skeleton;
-				this.MatrixView.DataContext = this.Skeleton;
+				if (this.Skeleton != null)
+				{
+					this.BindSkeleton(this.Skeleton);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -1029,10 +1040,54 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.RaisePropertyChanged(nameof(this.SelectedBonesText));
 	}
 
+	private void BindSkeleton(SkeletonEntity skeleton)
+	{
+		ArgumentNullException.ThrowIfNull(skeleton);
+
+		skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+		skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
+
+		BoneViewManager.Instance.SetSkeleton(skeleton);
+
+		this.ThreeDView.DataContext = skeleton;
+		this.BodyGuiView.DataContext = skeleton;
+		this.FaceGuiView.DataContext = skeleton;
+		this.MatrixView.DataContext = skeleton;
+	}
+
 	private byte[] RenderSkeletonDetour(ReadOnlySpan<byte> args)
 	{
 		// IMPORTANT: Do not throw in the hook detour!
 		// Sync the skeleton first, then process pending pose-related work
+
+		// Retry skeleton creation if pending
+		if (this.pendingSkeletonRetryAttempts > 0 && this.Actor != null && (this.Skeleton == null || this.Skeleton.Bones.IsEmpty))
+		{
+			try
+			{
+				this.Skeleton = new SkeletonEntity(this.Actor);
+				if (this.Skeleton != null)
+				{
+					this.BindSkeleton(this.Skeleton);
+					this.pendingSkeletonRetryAttempts = 0;
+					Log.Verbose("Skeleton successfully recreated in detour.");
+				}
+			}
+			catch (ArgumentOutOfRangeException)
+			{
+				this.pendingSkeletonRetryAttempts--;
+				if (this.pendingSkeletonRetryAttempts == 0)
+				{
+					Log.Error("Failed to create skeleton for actor after maximum retry attempts.");
+				}
+			}
+			catch (Exception ex)
+			{
+				this.pendingSkeletonRetryAttempts = 0;
+				Log.Error(ex, "Failed to bind skeleton during detour retry.");
+			}
+		}
+
 		if (!PoseService.Instance.IsEnabled && GposeService.IsGpose)
 		{
 			this.Skeleton?.Actor?.Do(actor =>

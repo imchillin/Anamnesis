@@ -58,6 +58,8 @@ public class WorkQueue
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Task<bool> Enqueue(Action action)
 	{
+		ArgumentNullException.ThrowIfNull(action);
+
 		if (!this.Enabled)
 			return Task.FromResult(false);
 
