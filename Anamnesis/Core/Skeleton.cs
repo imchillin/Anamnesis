@@ -200,22 +200,40 @@ public class Skeleton : INotifyPropertyChanged
 		if (this.Bones == null || (this.Actor?.Do(a => a.ModelObject?.Skeleton == null) ?? true) || !GposeService.GetIsGPose())
 			return;
 
-		// If history is restoring, wait until it's done.
-		lock (HistoryService.Instance.LockObject)
+		// If Pose mode is enabled, disable reading on the skeleton memory.
+		var skeletonMemory = this.Actor?.DoRef(a => a.ModelObject?.Skeleton);
+		bool restoreEnableReading = true;
+
+		try
 		{
-			// Take a snapshot of the current transforms and update bone transforms.
-			var snapshot = this.TakeSnapshot();
-			var rootBones = new List<Bone>();
-			foreach (var bone in this.Bones.Values)
+			if (PoseService.Instance.IsEnabled && skeletonMemory != null)
 			{
-				if (bone.Parent == null)
-					rootBones.Add(bone);
+				MemoryBase.SetEnableReading(skeletonMemory, false);
+				restoreEnableReading = false;
 			}
 
-			foreach (var rootBone in rootBones)
+			// If history is restoring, wait until it's done.
+			lock (HistoryService.Instance.LockObject)
 			{
-				rootBone.ReadTransform(true, snapshot);
+				// Take a snapshot of the current transforms and update bone transforms.
+				var snapshot = this.TakeSnapshot();
+				var rootBones = new List<Bone>();
+				foreach (var bone in this.Bones.Values)
+				{
+					if (bone.Parent == null)
+						rootBones.Add(bone);
+				}
+
+				foreach (var rootBone in rootBones)
+				{
+					rootBone.ReadTransform(true, snapshot);
+				}
 			}
+		}
+		finally
+		{
+			if (restoreEnableReading && skeletonMemory != null)
+				MemoryBase.SetEnableReading(skeletonMemory, true);
 		}
 	}
 
@@ -244,8 +262,6 @@ public class Skeleton : INotifyPropertyChanged
 				if (a.ModelObject == null || a.ModelObject?.Skeleton == null)
 					return this.snapshot;
 
-				a.ModelObject.Skeleton.EnableReading = false;
-
 				foreach (var (name, bone) in this.Bones)
 				{
 					var transform = bone.TransformMemory;
@@ -260,7 +276,6 @@ public class Skeleton : INotifyPropertyChanged
 					};
 				}
 
-				a.ModelObject.Skeleton.EnableReading = true;
 				return this.snapshot;
 			}) ?? [];
 		}

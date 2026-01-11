@@ -196,6 +196,44 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		set => Interlocked.Exchange(ref this.isSynchronizing, value ? 1 : 0);
 	}
 
+	/// <summary>
+	/// Sets the enable reading state for the specified memory object and its descendants.
+	/// </summary>
+	/// <param name="root">The root memory object.</param>
+	/// <param name="enabled">True to enable reading; otherwise, false.</param>
+	public static void SetEnableReading(MemoryBase root, bool enabled)
+	{
+		var stack = s_stackPool.Get();
+		try
+		{
+			stack.Push(root);
+			while (stack.Count > 0)
+			{
+				MemoryBase current = stack.Pop();
+				current.EnableReading = enabled;
+
+				List<MemoryBase>? children;
+				lock (current.Children)
+				{
+					children = current.Children.Count > 0
+						? new List<MemoryBase>(current.Children)
+						: null;
+				}
+
+				if (children != null)
+				{
+					foreach (var child in children)
+						stack.Push(child);
+				}
+			}
+		}
+		finally
+		{
+			stack.Clear();
+			s_stackPool.Return(stack);
+		}
+	}
+
 	/// <summary>Raises the property changed event.</summary>
 	/// <param name="propertyName">The name of the property.</param>
 	/// <remarks>
