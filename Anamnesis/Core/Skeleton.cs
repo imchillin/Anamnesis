@@ -289,8 +289,6 @@ public class Skeleton : INotifyPropertyChanged
 				if (a.ModelObject == null || a.ModelObject?.Skeleton == null)
 					return this.snapshot;
 
-				a.ModelObject.Skeleton.EnableReading = false;
-
 				foreach (var (name, bone) in this.Bones)
 				{
 					var transform = bone.TransformMemory;
@@ -305,7 +303,6 @@ public class Skeleton : INotifyPropertyChanged
 					};
 				}
 
-				a.ModelObject.Skeleton.EnableReading = true;
 				return this.snapshot;
 			}) ?? [];
 		}

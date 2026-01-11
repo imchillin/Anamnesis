@@ -154,7 +154,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 			try
 			{
-				this.Memory.Do(a => a.Synchronize(exclGroups: TargetService.ExcludeSkeletonGroup));
+				this.Memory.Synchronize(exclGroups: TargetService.ExcludeSkeletonGroup);
 			}
 			catch (Exception ex)
 			{
