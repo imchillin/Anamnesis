@@ -237,7 +237,6 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 					var obj = new T();
 					obj.SetAddress(ptr);
 					ObjectHandleCache.Cache.TryAdd(cacheKey, new ObjectHandleCache.CacheEntry(obj));
-					Log.Information($"Created new memory object of type {typeof(T).Name} at address {ptr} and added to cache.");
 				}
 				catch (Exception ex)
 				{
@@ -340,7 +339,6 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 				{
 					if (ObjectHandleCache.Cache.TryRemove(cacheKey, out var removedEntry))
 					{
-						Log.Information($"Disposing cached object of type {typeof(T).Name} at address {this.ptr} as its reference count reached zero.");
 						if (!removedEntry.Object.IsDisposed)
 							removedEntry.Object.Dispose();
 					}

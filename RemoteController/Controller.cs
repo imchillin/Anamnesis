@@ -109,6 +109,7 @@ public class Controller
 	[RequiresDynamicCode("HookRegistry requires dynamic code")]
 	public static void RemoteControllerEntry()
 	{
+		Cleanup(); // Ensure that no previous state lingers
 		var workerThread = new Thread(Main)
 		{
 			IsBackground = true,

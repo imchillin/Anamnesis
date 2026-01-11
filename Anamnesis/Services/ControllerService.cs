@@ -668,6 +668,10 @@ public class ControllerService : ServiceBase<ControllerService>
 
 				await Task.Delay(CONN_CHECK_DELAY_MS, ct);
 			}
+			catch (TaskCanceledException)
+			{
+				break;
+			}
 			catch (Exception ex)
 			{
 				Log.Error(ex, "Error in connection handshake.");

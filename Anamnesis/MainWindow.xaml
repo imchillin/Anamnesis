@@ -11,7 +11,7 @@
 	xmlns:XivToolsWpfWindows="clr-namespace:XivToolsWpf.Windows;assembly=XivToolsWpf"
 	xmlns:tabs="clr-namespace:Anamnesis.Tabs"
 	xmlns:ana="clr-namespace:Anamnesis"
-	Closing="Window_Closing"
+	Closing="OnClosing"
 	Icon="/Assets/Anamnesis.ico"
 	Loaded="Window_Loaded"
 	ResizeMode="CanMinimize"

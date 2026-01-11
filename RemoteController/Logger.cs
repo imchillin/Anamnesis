@@ -15,10 +15,7 @@ public static class Logger
 		"Anamnesis",
 		"Logs");
 
-	private static readonly string s_logFilePath = Path.Combine(
-		s_logDirectory,
-		$"{DateTime.Now:yyyy-MM-dd-HH-mm-ss}_rem_ctrl.txt");
-
+	private static string? s_logFilePath;
 	private static bool s_initialized = false;
 
 	/// <summary>
@@ -35,6 +32,11 @@ public static class Logger
 
 		if (!Directory.Exists(s_logDirectory))
 			Directory.CreateDirectory(s_logDirectory);
+
+		// Generate a new log file path on each initialization
+		s_logFilePath = Path.Combine(
+			s_logDirectory,
+			$"{DateTime.Now:yyyy-MM-dd-HH-mm-ss}_rem_ctrl.txt");
 
 		Log.Logger = new LoggerConfiguration()
 			.MinimumLevel.Debug()
@@ -59,5 +61,6 @@ public static class Logger
 
 		Log.CloseAndFlush();
 		s_initialized = false;
+		s_logFilePath = null;
 	}
 }

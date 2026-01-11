@@ -173,6 +173,8 @@ public sealed class HookRegistry
 	{
 		foreach (var hookId in this.activeHooks.Keys.ToArray())
 			this.UnregisterHook(hookId);
+
+		this.nextHookID = 1;
 	}
 
 	/// <summary>
