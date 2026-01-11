@@ -6,6 +6,7 @@ namespace Anamnesis;
 using Anamnesis.Core;
 using Anamnesis.Memory;
 using Anamnesis.Services;
+using Microsoft.Extensions.ObjectPool;
 using PropertyChanged;
 using Serilog;
 using System;
@@ -204,8 +205,6 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	where T : GameObjectMemory, new()
 {
-	private static readonly Lock s_cacheLock = new();
-	private static readonly ConcurrentDictionary<(IntPtr, Type), CacheEntry> s_cache = [];
 	private readonly ObjectTable table;
 	private IntPtr ptr;
 	private bool disposed = false;
@@ -229,15 +228,16 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 			throw new InvalidOperationException("Cannot create a handle for an object not part of the object table.");
 
 		var cacheKey = (ptr, typeof(T));
-		lock (s_cacheLock)
+		lock (ObjectHandleCache.Lock)
 		{
-			if (!s_cache.TryGetValue(cacheKey, out var entry))
+			if (!ObjectHandleCache.Cache.TryGetValue(cacheKey, out var entry))
 			{
 				try
 				{
 					var obj = new T();
 					obj.SetAddress(ptr);
-					s_cache.TryAdd(cacheKey, new CacheEntry(obj));
+					ObjectHandleCache.Cache.TryAdd(cacheKey, new ObjectHandleCache.CacheEntry(obj));
+					Log.Information($"Created new memory object of type {typeof(T).Name} at address {ptr} and added to cache.");
 				}
 				catch (Exception ex)
 				{
@@ -281,7 +281,42 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	/// <remarks>
 	/// This is intended only for UI data bindings and should not be used outside of that context.
 	/// </remarks>
-	public T? Unsafe => s_cache.TryGetValue((this.ptr, typeof(T)), out var entry) ? entry.Object : null;
+	public T? Unsafe => ObjectHandleCache.Cache.TryGetValue((this.ptr, typeof(T)), out var entry) ? (T)entry.Object : null;
+
+	/// <summary>
+	/// Synchronizes all cached objects with the same base address.
+	/// </summary>
+	/// <remarks>
+	/// Use this method instead of <see cref="MemoryBase.Synchronize"/> to avoid
+	/// desynchronizations with handles of derived types pointing to the same address.
+	/// </remarks>
+	public void Synchronize()
+	{
+		var targets = ObjectHandleCache.ListPool.Get();
+		try
+		{
+			lock (ObjectHandleCache.Lock)
+			{
+				foreach (var (key, entry) in ObjectHandleCache.Cache)
+				{
+					if (key.Item1 == this.Address)
+						targets.Add(entry.Object);
+				}
+			}
+
+			int count = targets.Count;
+			for (int i = 0; i < count; i++)
+			{
+				var obj = targets[i];
+				if (!obj.IsDisposed)
+					obj.Synchronize();
+			}
+		}
+		finally
+		{
+			ObjectHandleCache.ListPool.Return(targets);
+		}
+	}
 
 	/// <summary>
 	/// Disposes resources used internally by the object handle.
@@ -296,15 +331,16 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 		this.ptr = IntPtr.Zero;
 		this.table.TableChanged -= this.OnTableChanged;
 
-		lock (s_cacheLock)
+		lock (ObjectHandleCache.Lock)
 		{
-			if (s_cache.TryGetValue(cacheKey, out var entry))
+			if (ObjectHandleCache.Cache.TryGetValue(cacheKey, out var entry))
 			{
 				int newCount = Interlocked.Decrement(ref entry.RefCount);
 				if (newCount <= 0)
 				{
-					if (s_cache.TryRemove(cacheKey, out var removedEntry))
+					if (ObjectHandleCache.Cache.TryRemove(cacheKey, out var removedEntry))
 					{
+						Log.Information($"Disposing cached object of type {typeof(T).Name} at address {this.ptr} as its reference count reached zero.");
 						if (!removedEntry.Object.IsDisposed)
 							removedEntry.Object.Dispose();
 					}
@@ -329,8 +365,8 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 		if (!this.IsValid)
 			return;
 
-		if (s_cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			action(entry.Object);
+		if (ObjectHandleCache.Cache.TryGetValue((this.ptr, typeof(T)), out var entry))
+			action((T)entry.Object);
 	}
 
 	/// <summary>
@@ -349,8 +385,8 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 		if (!this.IsValid)
 			return null;
 
-		if (s_cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			return func(entry.Object);
+		if (ObjectHandleCache.Cache.TryGetValue((this.ptr, typeof(T)), out var entry))
+			return func((T)entry.Object);
 
 		return null;
 	}
@@ -371,8 +407,8 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 		if (!this.IsValid)
 			return null;
 
-		if (s_cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			return func(entry.Object);
+		if (ObjectHandleCache.Cache.TryGetValue((this.ptr, typeof(T)), out var entry))
+			return func((T)entry.Object);
 
 		return null;
 	}
@@ -388,8 +424,8 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 		if (!this.IsValid)
 			return;
 
-		if (s_cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			await action(entry.Object);
+		if (ObjectHandleCache.Cache.TryGetValue((this.ptr, typeof(T)), out var entry))
+			await action((T)entry.Object);
 	}
 
 	/// <summary>
@@ -408,8 +444,8 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 		if (!this.IsValid)
 			return null;
 
-		if (s_cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			return await func(entry.Object);
+		if (ObjectHandleCache.Cache.TryGetValue((this.ptr, typeof(T)), out var entry))
+			return await func((T)entry.Object);
 
 		return null;
 	}
@@ -430,8 +466,8 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 		if (!this.IsValid)
 			return null;
 
-		if (s_cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			return await func(entry.Object);
+		if (ObjectHandleCache.Cache.TryGetValue((this.ptr, typeof(T)), out var entry))
+			return await func((T)entry.Object);
 
 		return null;
 	}
@@ -443,7 +479,7 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	{
 		if (!this.IsValid)
 		{
-			if (s_cache.TryRemove((this.ptr, typeof(T)), out var entry))
+			if (ObjectHandleCache.Cache.TryRemove((this.ptr, typeof(T)), out var entry))
 			{
 				if (!entry.Object.IsDisposed)
 					entry.Object.Dispose();
@@ -451,19 +487,6 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 
 			Invalidated?.Invoke(this);
 		}
-	}
-
-	private sealed record class CacheEntry
-	{
-		public int RefCount;
-
-		public CacheEntry(T obj)
-		{
-			this.Object = obj;
-			this.RefCount = 1;
-		}
-
-		public T Object { get; init; }
 	}
 }
 
@@ -596,5 +619,29 @@ public class ActorService : ServiceBase<ActorService>
 				break;
 			}
 		}
+	}
+}
+
+/// <summary>
+/// An internal cache for object handles as static fields are
+/// not shared across different types in <see cref="ObjectHandle{T}"/>.
+/// </summary>
+internal static class ObjectHandleCache
+{
+	public static readonly Lock Lock = new();
+	public static readonly ConcurrentDictionary<(IntPtr, Type), CacheEntry> Cache = new();
+	public static readonly ObjectPool<List<GameObjectMemory>> ListPool = ObjectPool.Create<List<GameObjectMemory>>();
+
+	public sealed record class CacheEntry
+	{
+		public int RefCount;
+
+		public CacheEntry(GameObjectMemory obj)
+		{
+			this.Object = obj;
+			this.RefCount = 1;
+		}
+
+		public GameObjectMemory Object { get; init; }
 	}
 }

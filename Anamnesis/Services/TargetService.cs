@@ -560,7 +560,7 @@ public class TargetService : ServiceBase<TargetService>
 				if (pinnedActor != null)
 					pinnedActor.Tick();
 				else
-					handle.Do(a => a.Synchronize());
+					handle.Synchronize();
 			}
 			catch
 			{
