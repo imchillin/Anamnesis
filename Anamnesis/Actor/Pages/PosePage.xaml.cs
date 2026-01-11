@@ -1110,21 +1110,23 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		try
 		{
 			WorkQueue.Value.ProcessPending();
+
+			// Read transforms after processing to ensure we have the latest data
+			if (GposeService.IsGpose)
+			{
+				if (PoseService.Instance.IsEnabled)
+				{
+					this.Skeleton?.WriteSkeleton();
+				}
+				else
+				{
+					this.Skeleton?.ReadTransforms();
+				}
+			}
 		}
 		catch (Exception ex)
 		{
-			Log.Warning(ex, "Failed to process task.");
-		}
-
-		// Read transforms after processing to ensure we have the latest data
-		if (!PoseService.Instance.IsEnabled && GposeService.IsGpose)
-		{
-			this.Skeleton?.ReadTransforms();
-		}
-
-		if (PoseService.Instance.IsEnabled)
-		{
-			this.Skeleton?.WriteSkeleton();
+			Log.Warning(ex, "Encountered error during skeleton finalization.");
 		}
 
 		return [];
