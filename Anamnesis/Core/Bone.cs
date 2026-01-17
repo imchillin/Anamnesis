@@ -440,20 +440,23 @@ public class Bone : ITransform
 
 					for (int i = 0; i < transformMemories.Count; ++i)
 					{
+						if (currentBone.IsTransformLocked)
+							continue;
+
 						var tm = transformMemories[i];
-						if (currentBone.CanTranslate && !tm.Position.IsApproximately(modelTransform.Position, EQUALITY_TOLERANCE))
+						if (!tm.Position.IsApproximately(modelTransform.Position, EQUALITY_TOLERANCE))
 						{
 							tm.Position = modelTransform.Position;
 							changed = true;
 						}
 
-						if (currentBone.CanScale && !tm.Scale.IsApproximately(modelTransform.Scale, EQUALITY_TOLERANCE))
+						if (!tm.Scale.IsApproximately(modelTransform.Scale, EQUALITY_TOLERANCE))
 						{
 							tm.Scale = modelTransform.Scale;
 							changed = true;
 						}
 
-						if (currentBone.CanRotate && !tm.Rotation.IsApproximately(modelTransform.Rotation, EQUALITY_TOLERANCE))
+						if (!tm.Rotation.IsApproximately(modelTransform.Rotation, EQUALITY_TOLERANCE))
 						{
 							tm.Rotation = modelTransform.Rotation;
 							changed = true;
