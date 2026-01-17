@@ -362,12 +362,11 @@ public partial class MainWindow : ChromedWindow
 		}
 	}
 
-	private async void Window_Closing(object sender, CancelEventArgs e)
+	private async void OnClosing(object sender, CancelEventArgs e)
 	{
 		if (PoseService.Instance.IsInitialized && PoseService.Instance.IsEnabled && !this.IsClosing)
 		{
 			bool? result = await GenericDialog.ShowAsync(LocalizationService.GetString("Pose_WarningQuit"), LocalizationService.GetString("Common_Confirm"), MessageBoxButton.OKCancel);
-
 			if (result != true)
 			{
 				e.Cancel = true;
@@ -375,14 +374,32 @@ public partial class MainWindow : ChromedWindow
 			}
 		}
 
+		if (this.IsClosing)
+			return;
+
 		this.IsClosing = true;
 		this.mini?.Close();
+
+		e.Cancel = true; // Cancel to give enough time for services to shutdown properly
+		this.Hide();
 
 		SettingsService.SettingsChanged -= this.OnSettingsChanged;
 		ViewService.ShowingDrawer -= this.OnShowDrawer;
 
-		SettingsService.Current.WindowPosition = new Point(this.Left, this.Top);
-		SettingsService.Save();
+		try
+		{
+			SettingsService.Current.WindowPosition = new Point(this.Left, this.Top);
+			SettingsService.Save();
+
+			await ServiceManager.ShutdownServices();
+
+			Log.Information("Shutdown complete. Exiting.");
+			Log.CloseAndFlush();
+		}
+		finally
+		{
+			this.Close();
+		}
 	}
 
 	private void OpenHyperlink(object sender, ExecutedRoutedEventArgs e)

@@ -3,6 +3,7 @@
 
 namespace Anamnesis;
 
+using Anamnesis.Actor.Pages;
 using Anamnesis.Core;
 using Anamnesis.Files;
 using Anamnesis.Services;
@@ -95,7 +96,7 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 				index++;
 			}
 
-			if (GposeService.Instance.IsGpose)
+			void PerformCameraAndPoseAutoSave()
 			{
 				var targetActorHandle = TargetService.Instance.PlayerTargetHandle;
 				if (targetActorHandle != null)
@@ -146,6 +147,11 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 					file.Serialize(stream);
 					index++;
 				}
+			}
+
+			if (GposeService.Instance.IsGpose)
+			{
+				PosePage.WorkQueue.Value.EnqueueAndWaitOrDo(PerformCameraAndPoseAutoSave);
 			}
 		}
 		finally

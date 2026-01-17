@@ -12,6 +12,7 @@ using Serilog.Events;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ using System.Threading.Tasks;
 public class LogService : ServiceBase<LogService>
 {
 	private const string LOG_FILE_PATH = "/Logs/";
+	private const int NUM_LOGS_TO_KEEP = 16;
 
 	private static readonly LoggingLevelSwitch s_logLevel = new()
 	{
@@ -82,13 +84,15 @@ public class LogService : ServiceBase<LogService>
 		if (!Directory.Exists(dir))
 			Directory.CreateDirectory(dir);
 
-		string[] logs = Directory.GetFiles(dir);
-		for (int i = logs.Length - 1; i >= 0; i--)
+		var orderedLogs = Directory.GetFiles(dir)
+			.Select(f => new FileInfo(f))
+			.OrderBy(f => f.CreationTimeUtc)
+			.ToArray();
+
+		for (int i = 0; i < orderedLogs.Length - NUM_LOGS_TO_KEEP; i++)
 		{
-			if (i <= logs.Length - 15)
-			{
-				File.Delete(logs[i]);
-			}
+			orderedLogs[i].Attributes = FileAttributes.Normal;
+			File.Delete(orderedLogs[i].FullName);
 		}
 
 		s_currentLogPath = dir + DateTime.Now.ToString(@"yyyy-MM-dd-HH-mm-ss") + ".txt";

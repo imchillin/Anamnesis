@@ -5,6 +5,7 @@ namespace Anamnesis.Tabs;
 
 using Anamnesis.Actor.Utilities;
 using Anamnesis.Files;
+using Anamnesis.GUI.Dialogs;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Utils;
@@ -15,6 +16,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using XivToolsWpf;
 
 /// <summary>
 /// Interaction logic for DeveloperTab.xaml.
@@ -51,6 +53,54 @@ public partial class DeveloperTab : UserControl
 			{
 				NpcAppearanceSearch.Search(actorHandle);
 			}
+		});
+	}
+
+	private void OnHookInvoke(object sender, RoutedEventArgs e)
+	{
+		var handle = TargetService.PlayerTargetHandle;
+		if (handle == null || !handle.IsValid)
+		{
+			Log.Warning("Actor is invalid");
+			return;
+		}
+
+		var actorHandle = ActorService.Instance.ObjectTable.Get<ActorMemory>(handle.Address);
+		if (actorHandle == null || !actorHandle.IsValid)
+		{
+			Log.Warning("Could not get actor memory");
+			return;
+		}
+
+		actorHandle.Do(async a =>
+		{
+			bool result = a.IsWanderer();
+			await Dispatch.MainThread();
+			await GenericDialog.ShowAsync($"IsWanderer: {result}", "Hook Invocation", MessageBoxButton.OK);
+		});
+	}
+
+	private void OnHookInvokeGpose(object sender, RoutedEventArgs e)
+	{
+		var handle = TargetService.PlayerTargetHandle;
+		if (handle == null || !handle.IsValid)
+		{
+			Log.Warning("Actor is invalid");
+			return;
+		}
+
+		var actorHandle = ActorService.Instance.ObjectTable.Get<ActorMemory>(handle.Address);
+		if (actorHandle == null || !actorHandle.IsValid)
+		{
+			Log.Warning("Could not get actor memory");
+			return;
+		}
+
+		actorHandle.Do(async a =>
+		{
+			bool result = GposeService.IsInGpose();
+			await Dispatch.MainThread();
+			await GenericDialog.ShowAsync($"IsInGpose: {result}", "Hook Invocation", MessageBoxButton.OK);
 		});
 	}
 

@@ -130,8 +130,8 @@
                             <TextBlock>
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}{0} ({1})">
-                                        <Binding Path="DisplayName" />
-                                        <Binding Path="ObjectKind" />
+                                        <Binding Path="Unsafe.DisplayName" />
+										<Binding Path="Unsafe.ObjectKind" />
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>

@@ -17,14 +17,21 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class GameService : ServiceBase<GameService>
 {
-	private const int TASK_WAIT_TIME = 16; // ms
+	private const int TASK_WAIT_TIME_MS = 1000;
 
 	private int isSignedIn = 0;
+	private bool hasInjected = false;
+	private string? injectedDllPath = null;
 
 	/// <summary>
 	/// Gets a value indicating whether the game process is in a ready state.
 	/// </summary>
 	public static bool Ready => (Instance?.IsInitialized ?? false) && Instance.IsSignedIn;
+
+	/// <summary>
+	/// Gets a value indicating whether the remote controller DLL has been injected.
+	/// </summary>
+	public static bool Injected => Instance?.injectedDllPath != null;
 
 	/// <summary>
 	/// Gets a value indicating whether the user is signed into a character.
@@ -36,7 +43,7 @@ public class GameService : ServiceBase<GameService>
 	}
 
 	/// <inheritdoc/>
-	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GameDataService.Instance];
+	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GameDataService.Instance, MemoryService.Instance];
 
 	/// <summary>
 	/// Checks if the user is signed into a character by probing the game process' memory.
@@ -84,8 +91,29 @@ public class GameService : ServiceBase<GameService>
 			{
 				this.IsSignedIn = GetIsSignedIn();
 
+				// Perform the remote controller injection once upon sign-in
+				// NOTE: We do it here instead of on open process detection to avoid collisions
+				// with Dalamud's own injection logic.
+				if (this.IsSignedIn && !this.hasInjected && MemoryService.Process != null)
+				{
+					try
+					{
+						// NOTE: In between application sessions, if the process is still
+						// running, it will reuse the loaded DLL as it will reuse the
+						// module address. So running, the injector again is not an issue.
+						var injector = new Injector(MemoryService.Process);
+						injector.Inject();
+						this.injectedDllPath = injector.RemoteCtrlDllPath;
+						this.hasInjected = true;
+					}
+					catch (Exception)
+					{
+						// Do nothing, the process might have exited before we could inject.
+					}
+				}
+
 				// Property is updated synchronously; No need to resume from the original sync context
-				await Task.Delay(TASK_WAIT_TIME, cancellationToken).ConfigureAwait(false);
+				await Task.Delay(TASK_WAIT_TIME_MS, cancellationToken).ConfigureAwait(false);
 			}
 			catch (TaskCanceledException)
 			{
@@ -93,6 +121,14 @@ public class GameService : ServiceBase<GameService>
 				break;
 			}
 		}
+	}
+
+	/// <inheritdoc/>
+	public override async Task Shutdown()
+	{
+		this.hasInjected = false;
+		this.injectedDllPath = null;
+		await base.Shutdown();
 	}
 
 	/// <inheritdoc/>

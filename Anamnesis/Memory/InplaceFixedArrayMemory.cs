@@ -5,8 +5,11 @@ namespace Anamnesis.Memory;
 
 using PropertyChanged;
 using System;
+using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// Represents an inplace fixed-length array in memory.
@@ -33,12 +36,9 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 	/// <summary> Gets the array's length.</summary>
 	public abstract int Length { get; }
 
-	/// <summary>Gets the size of each element in the array.</summary>
-	/// <note>
-	/// This property is expected to be constant for the lifetime of the object.
-	/// </note>
+	/// <inheritdoc/>
 	[DoNotNotify]
-	public abstract int ElementSize { get; }
+	public virtual int ElementSize => throw new NotImplementedException();
 
 	/// <summary>Gets or sets the element at the specified index.</summary>
 	/// <param name="index">The index of the element.</param>
@@ -93,71 +93,136 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 	/// This method does not claim the array memory object's read lock.
 	/// If not called by <see cref="MemoryBase"/>, make sure to claim the read lock.
 	/// </note>
-	public virtual void ReadArrayMemory()
+	public virtual void ReadArrayMemory(List<MemoryBase> locked)
 	{
-		// Update only if the array count or address have changed
-		if (this.lastLength == this.Length && this.lastAddress == this.ArrayAddress)
-			return;
+		// If invalid, dispose stale objects
+		if (this.ArrayAddress == IntPtr.Zero || this.ArrayAddress.ToInt64() < 0 || this.Length <= 0)
+		{
+			if (this.items.Count > 0)
+			{
+				lock (this.items)
+				{
+					this.items.Clear();
+					this.Children.Clear();
+				}
+			}
 
+			return;
+		}
+
+		bool structureChanged = this.lastLength != this.Length || this.lastAddress != this.ArrayAddress;
 		this.lastLength = this.Length;
 		this.lastAddress = this.ArrayAddress;
 
-		// Recreate array if either address or length mismatch the last state
 		lock (this.items)
 		{
 			try
 			{
-				// Remove all existing items as they're most likely invalid
-				foreach (TValue item in this.items)
+				if (s_isMemoryObject)
 				{
-					if (item is MemoryBase memory)
+					// Re-initialize the array if the structure changed
+					if (structureChanged)
 					{
-						ReleaseLocksOn(memory);
-						memory.Dispose();
-						this.Children.Remove(memory);
-					}
-				}
-
-				this.items.Clear();
-
-				// Don't attempt to read if the address is invalid or the length is invalid
-				if (this.ArrayAddress == IntPtr.Zero || this.Length <= 0)
-					return;
-
-				// Pre-allocate the list capacity to avoid dynamic resizing
-				this.items.Capacity = this.Length;
-
-				// Read array elements
-				IntPtr address = this.ArrayAddress;
-				for (int i = 0; i < this.Length; i++)
-				{
-					if (s_isMemoryObject)
-					{
-						TValue instance = Activator.CreateInstance<TValue>();
-						if (instance is not MemoryBase memory)
-							throw new Exception($"Failed to create instance of type: {typeof(TValue)}");
-
-						memory.Parent = this;
-						memory.ParentBind = new ArrayBindInfo(this, i);
-						memory.Address = address;
-						ClaimLocksOn(memory);
-						this.Children.Add(memory);
-						this.items.Add(instance);
-					}
-					else
-					{
-						object? instance = MemoryService.Read(address, typeof(TValue));
-						if (instance is TValue instanceValue)
+						foreach (var item in this.items)
 						{
-							this.items.Add(instanceValue);
+							if (item is MemoryBase memory)
+								memory.Dispose();
+						}
+
+						this.items.Clear();
+						this.Children.Clear();
+						this.items.Capacity = this.Length;
+					}
+
+					IntPtr currentAddress = this.ArrayAddress;
+					for (int i = 0; i < this.Length; ++i)
+					{
+						TValue instance;
+
+						if (structureChanged)
+						{
+							instance = Activator.CreateInstance<TValue>();
+							if (instance is not MemoryBase memory)
+								throw new Exception($"Failed to create instance of type: {typeof(TValue)}");
+
+							memory.Parent = this;
+							memory.ParentBind = new ArrayBindInfo(this, i);
+							memory.Address = currentAddress;
+							ClaimLocks(memory);
+							SetIsSynchronizing(memory, true);
+							this.items.Add(instance);
+							this.Children.Add(memory);
+							locked.Add(memory);
 						}
 						else
 						{
-							Log.Warning($"Failed to read array element at address: {address}");
+							instance = this.items[i];
 						}
+
+						currentAddress += this.ElementSize;
+					}
+				}
+				else // Handle primitive types
+				{
+					if (structureChanged)
+					{
+						this.items.Clear();
+						this.Children.Clear();
+						this.items.Capacity = this.Length;
 					}
 
-					address += this.ElementSize;
+					int totalByteSize = this.Length * this.ElementSize;
+
+					byte[] buffer = ArrayPool<byte>.Shared.Rent(totalByteSize);
+					try
+					{
+						if (MemoryService.Read(this.ArrayAddress, buffer, totalByteSize))
+						{
+							Type type = typeof(TValue);
+							Type readType = type;
+
+							if (type.IsEnum)
+								readType = type.GetEnumUnderlyingType();
+							else if (type == typeof(bool))
+								readType = typeof(MemoryService.OneByteBool);
+
+							unsafe
+							{
+								fixed (byte* bufferPtr = buffer)
+								{
+									for (int i = 0; i < this.Length; ++i)
+									{
+										IntPtr elementPtr = (IntPtr)(bufferPtr + (i * this.ElementSize));
+										object? val = Marshal.PtrToStructure(elementPtr, readType);
+
+										if (val != null)
+										{
+											TValue item;
+											if (type.IsEnum)
+												item = (TValue)Enum.ToObject(type, val);
+											else if (val is MemoryService.OneByteBool obb)
+												item = (TValue)(object)obb.Value;
+											else
+												item = (TValue)val;
+
+											if (structureChanged)
+												this.items.Add(item);
+											else
+												this.items[i] = item;
+										}
+									}
+								}
+							}
+						}
+						else
+						{
+							Log.Warning($"Failed to bulk read array at address: 0x{this.ArrayAddress:X}");
+						}
+					}
+					finally
+					{
+						ArrayPool<byte>.Shared.Return(buffer);
+					}
 				}
 			}
 			catch (Exception ex)
@@ -190,7 +255,12 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 		public override Type Type => typeof(TValue);
 
 		/// <inheritdoc/>
+		public override string? SyncGroup => throw new NotSupportedException();
+
+		/// <inheritdoc/>
 		public override BindFlags Flags => BindFlags.None;
+
+		private InplaceFixedArrayMemory<TValue> TypedMemory => (InplaceFixedArrayMemory<TValue>)this.Memory;
 
 		/// <inheritdoc/>
 		/// <exception cref="NotSupportedException">
@@ -198,7 +268,7 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 		/// </exception>
 		public override IntPtr GetAddress()
 		{
-			throw new NotSupportedException();
+			return this.TypedMemory.ArrayAddress + (this.Index * this.TypedMemory.ElementSize);
 		}
 	}
 }

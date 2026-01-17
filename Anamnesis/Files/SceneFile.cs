@@ -3,6 +3,8 @@
 
 namespace Anamnesis.Files;
 
+using Anamnesis.Actor.Pages;
+using Anamnesis.Actor.Posing;
 using Anamnesis.Core;
 using Anamnesis.Core.Extensions;
 using Anamnesis.GUI.Dialogs;
@@ -132,10 +134,10 @@ public class SceneFile : JsonFileBase
 
 		foreach ((string name, ObjectHandle<ActorMemory>? actor) in actors)
 		{
-			if (actor == null)
+			if (actor == null || !actor.IsValid)
 				continue;
 
-			var skeleton = new Skeleton(actor);
+			var skeleton = new SkeletonEntity(actor);
 			ActorEntry entry = this.ActorEntries[name];
 
 			if (actor != rootActor && mode.HasFlagUnsafe(Mode.RelativePosition))
@@ -158,8 +160,7 @@ public class SceneFile : JsonFileBase
 
 			if (mode.HasFlagUnsafe(Mode.Pose))
 			{
-				// TODO: This should follow the same approach as the pose page imports
-				entry.Pose!.Apply(actor, skeleton, null, PoseFile.Mode.Rotation, true);
+				await PosePage.ImportPose(actor, skeleton, PosePage.PoseImportOptions.Character, PoseMode.All & ~PoseMode.Scale);
 			}
 		}
 

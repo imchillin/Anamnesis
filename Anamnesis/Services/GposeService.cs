@@ -4,9 +4,8 @@
 namespace Anamnesis.Services;
 
 using Anamnesis.Core;
-using Anamnesis.Memory;
 using PropertyChanged;
-using System;
+using RemoteController.Interop.Delegates;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +16,9 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class GposeService : ServiceBase<GposeService>
 {
-	private const int TASK_DELAY = 32; // ms (~30 fps)
+	private const int TASK_DELAY_MS = 1000;
+
+	private static HookHandle? s_isInGposeHook = null;
 
 	/// <summary>
 	/// The delegate object for the <see cref="GposeService.GposeStateChanged"/> event.
@@ -45,24 +46,33 @@ public class GposeService : ServiceBase<GposeService>
 	/// Checks if the user is in GPose photo mode by probing the game process' memory.
 	/// </summary>
 	/// <returns>True if the user is in GPose, false otherwise.</returns>
-	public static bool GetIsGPose()
+	public static bool IsInGpose()
 	{
-		if (AddressService.GposeCheck == IntPtr.Zero)
+		if (s_isInGposeHook == null || !s_isInGposeHook.IsValid)
 			return false;
 
-		// Character select screen counts as gpose.
-		if (!GameService.Instance.IsSignedIn)
-			return true;
+		bool? result = null;
+		try
+		{
+			result = ControllerService.Instance.InvokeHook<bool>(s_isInGposeHook);
+			if (result == null)
+			{
+				Log.Warning("Gpose check hook did not return a result.");
+			}
+		}
+		catch
+		{
+			Log.Verbose($"Failed to invoke 'IsGpose' hook.");
+		}
 
-		byte check1 = MemoryService.Read<byte>(AddressService.GposeCheck);
-		byte check2 = MemoryService.Read<byte>(AddressService.GposeCheck2);
-
-		return check1 == 1 && check2 == 4;
+		return result ?? false;
 	}
 
 	/// <inheritdoc/>
 	protected override async Task OnStart()
 	{
+		s_isInGposeHook ??= ControllerService.Instance.RegisterWrapper<GameMain.IsInGPose>();
+
 		this.CancellationTokenSource = new CancellationTokenSource();
 		this.BackgroundTask = Task.Run(() => this.CheckThread(this.CancellationToken));
 		await base.OnStart();
@@ -74,15 +84,14 @@ public class GposeService : ServiceBase<GposeService>
 		{
 			try
 			{
-				bool newGpose = GetIsGPose();
-
+				bool newGpose = IsInGpose();
 				if (newGpose != this.IsGpose)
 				{
 					this.IsGpose = newGpose;
 					GposeStateChanged?.Invoke(newGpose);
 				}
 
-				await Task.Delay(TASK_DELAY, cancellationToken);
+				await Task.Delay(TASK_DELAY_MS, cancellationToken);
 			}
 			catch (TaskCanceledException)
 			{

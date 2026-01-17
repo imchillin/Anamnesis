@@ -35,6 +35,18 @@
 						Style="{StaticResource TransparentButton}"
 						Padding="6,3"/>
 
+				<Button Content="Invoke hook wrapper"
+						Click="OnHookInvoke"
+						Height="32"
+						Style="{StaticResource TransparentButton}"
+						Padding="6,3"/>
+
+				<Button Content="Invoke hook wrapper (Gpose)"
+						Click="OnHookInvokeGpose"
+						Height="32"
+						Style="{StaticResource TransparentButton}"
+						Padding="6,3"/>
+
 			</StackPanel>
 		</GroupBox>
 
