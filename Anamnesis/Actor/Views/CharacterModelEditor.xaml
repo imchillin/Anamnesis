@@ -39,7 +39,7 @@
 			<ToggleButton x:Name="ModeToggle" Grid.Column="0" Style="{DynamicResource MaterialDesignActionToggleButton}"
 						  Height="22" Width="22"  Click="OnModeToggleClicked">
 				<ToggleButton.Content>
-					<fa:IconBlock Icon="TintSlash" FontSize="12" x:Name="ModeIcon"/>
+					<xtw:IconBlock Icon="TintSlash" FontSize="12" x:Name="ModeIcon"/>
 				</ToggleButton.Content>
 				
 				<materialdesign:ToggleButtonAssist.OnContent>

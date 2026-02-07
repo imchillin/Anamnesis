@@ -92,8 +92,8 @@
 				</ToggleButton.ToolTip>
 
 				<StackPanel Orientation="Horizontal">
-					<XivToolsWpf:IconBlock Icon="AngleLeft" Margin="0, 0, 6, 0"/>
-					<XivToolsWpf:IconBlock Icon="Filter"/>
+					<fa:IconBlock Icon="AngleLeft" Margin="0, 0, 6, 0"/>
+					<fa:IconBlock Icon="Filter"/>
 				</StackPanel>
 			</ToggleButton>
 
@@ -136,7 +136,7 @@
 					<XivToolsWpf:TextBlock Key="EquipmentSelector_SortAlpha" />
 				</ComboBoxItem.ToolTip>
 
-				<XivToolsWpf:IconBlock Icon="SortAlphaDown" FontSize="13"/>
+				<fa:IconBlock Icon="SortAlphaDown" FontSize="13"/>
 			</ComboBoxItem>
 
 			<ComboBoxItem>
@@ -144,7 +144,7 @@
 					<XivToolsWpf:TextBlock Key="EquipmentSelector_SortRow" />
 				</ComboBoxItem.ToolTip>
 
-				<XivToolsWpf:IconBlock Icon="CalendarAlt" FontSize="13"/>
+				<fa:IconBlock Icon="CalendarAlt" FontSize="13"/>
 			</ComboBoxItem>
 
 			<ComboBoxItem>
@@ -152,7 +152,7 @@
 					<XivToolsWpf:TextBlock Key="EquipmentSelector_SortLevel" />
 				</ComboBoxItem.ToolTip>
 
-				<XivToolsWpf:IconBlock Icon="SortAmountDown" FontSize="13"/>
+				<fa:IconBlock Icon="SortAmountDown" FontSize="13"/>
 			</ComboBoxItem>
 
 		</ComboBox>
@@ -224,7 +224,7 @@
 								   TextTrimming="CharacterEllipsis"
 								   VerticalAlignment="Center"/>
 
-						<!--<fa:IconBlock Icon="pen" FontSize="8" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}"/>-->
+						<!--<fa:IconBlock Icon="Pen" FontSize="8" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}"/>-->
 						<Grid Grid.Row="1" Grid.Column="1">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto"/>
@@ -308,8 +308,8 @@
 								<Grid>
 									<fa:IconBlock Icon="Star" FontSize="13" Opacity="0.25"
 												  Visibility="{Binding IsFavorite, IsAsync=True, Converter={StaticResource !B2V}, FallbackValue=Visible}"/>
-									<XivToolsWpf:IconBlock Icon="Star" FontSize="13"
-														   Visibility="{Binding IsFavorite, IsAsync=True, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
+									<fa:IconBlock Icon="Star" FontSize="13"
+												  Visibility="{Binding IsFavorite, IsAsync=True, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
 								</Grid>
 							</ToggleButton>
 

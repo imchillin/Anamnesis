@@ -167,9 +167,9 @@
 				</Button.ToolTip>
 
 				<fa:IconBlock FontSize="12"
-								  Foreground="{DynamicResource MaterialDesignBody}"
-								  Icon="Undo"
-								  Opacity="0.5" />
+							  Foreground="{DynamicResource MaterialDesignBody}"
+							  Icon="Undo"
+							  Opacity="0.5" />
 			</Button>
 		</StackPanel>
 	</Grid>
