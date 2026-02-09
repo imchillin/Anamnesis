@@ -3,9 +3,11 @@
 
 namespace Anamnesis.Core;
 
+using Anamnesis.Actor.Pages;
 using Anamnesis.Memory;
 using Anamnesis.Posing;
 using Anamnesis.Services;
+using Microsoft.Extensions.ObjectPool;
 using PropertyChanged;
 using Serilog;
 using System;
@@ -17,7 +19,8 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
+
+// TODO: Add fallback to the old method of adding bones if the new method fails.
 
 /// <summary>
 /// Represents a skeleton of hierarchically-parented bones of an actor that can be posed.
@@ -47,6 +50,11 @@ public class Skeleton : INotifyPropertyChanged
 	/// Maximum number of attempts to retry accessing bone array memory.
 	/// </summary>
 	private const uint MAX_READ_RETRY_ATTEMPTS = 15;
+
+	/// <summary>
+	/// A shared pool of bone stack structures to reduce memory alloc.
+	/// </summary>
+	private static readonly ObjectPool<Stack<Bone>> s_boneStackPool = ObjectPool.Create<Stack<Bone>>();
 
 	/// <summary>
 	/// A snapshot of the transforms of all bones in the skeleton.
@@ -197,43 +205,28 @@ public class Skeleton : INotifyPropertyChanged
 	/// <summary>Reads the transforms of all bones in the skeleton.</summary>
 	public void ReadTransforms()
 	{
-		if (this.Bones == null || (this.Actor?.Do(a => a.ModelObject?.Skeleton == null) ?? true) || !GposeService.GetIsGPose())
+		if (this.Bones == null || (this.Actor?.Do(a => a.ModelObject?.Skeleton == null) ?? true) || !GposeService.IsInGpose())
 			return;
 
-		// If Pose mode is enabled, disable reading on the skeleton memory.
-		var skeletonMemory = this.Actor?.DoRef(a => a.ModelObject?.Skeleton);
-		bool restoreEnableReading = true;
-
-		try
+		// If history is restoring, wait until it's done.
+		lock (HistoryService.Instance.LockObject)
 		{
-			if (PoseService.Instance.IsEnabled && skeletonMemory != null)
+			// Take a snapshot of the current transforms and update bone transforms.
+			var snapshot = this.TakeSnapshot();
+			var rootBones = new List<Bone>();
+			foreach (var bone in this.Bones.Values)
 			{
-				MemoryBase.SetEnableReading(skeletonMemory, false);
-				restoreEnableReading = false;
+				if (bone.Parent == null)
+					rootBones.Add(bone);
 			}
 
-			// If history is restoring, wait until it's done.
-			lock (HistoryService.Instance.LockObject)
+			foreach (var rootBone in rootBones)
 			{
-				// Take a snapshot of the current transforms and update bone transforms.
-				var snapshot = this.TakeSnapshot();
-				var rootBones = new List<Bone>();
-				foreach (var bone in this.Bones.Values)
-				{
-					if (bone.Parent == null)
-						rootBones.Add(bone);
-				}
-
-				foreach (var rootBone in rootBones)
+				if (IsBoneOrDescendantDirty(rootBone))
 				{
 					rootBone.ReadTransform(true, snapshot);
 				}
 			}
-		}
-		finally
-		{
-			if (restoreEnableReading && skeletonMemory != null)
-				MemoryBase.SetEnableReading(skeletonMemory, true);
 		}
 	}
 
@@ -245,6 +238,40 @@ public class Skeleton : INotifyPropertyChanged
 	/// <returns>The converted bone name.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static string ConvertBoneName(string? prefix, string name) => prefix != null ? prefix + name : name;
+
+	/// <summary>
+	/// Checks if the given bone or any of its descendants are dirty
+	/// (i.e., have been modified) but not yet written back to game memory.
+	/// </summary>
+	/// <param name="root">The root bone to check.</param>
+	/// <returns>
+	/// True if the bone or any of its descendants are dirty; otherwise, false.
+	/// </returns>
+	protected static bool IsBoneOrDescendantDirty(Bone root)
+	{
+		var stack = s_boneStackPool.Get();
+		try
+		{
+			stack.Push(root);
+
+			while (stack.Count > 0)
+			{
+				var current = stack.Pop();
+				if (current.IsDirty)
+					return true;
+
+				foreach (var child in current.Children)
+					stack.Push(child);
+			}
+
+			return false;
+		}
+		finally
+		{
+			stack.Clear();
+			s_boneStackPool.Return(stack);
+		}
+	}
 
 	/// <summary>Takes a snapshot of the current transforms of all bones.</summary>
 	/// <remarks>
@@ -283,7 +310,10 @@ public class Skeleton : INotifyPropertyChanged
 
 	/// <summary>Sets the actor memory for the skeleton and initializes all bones.</summary>
 	/// <param name="actor">The actor memory to set.</param>
-	protected virtual void SetActor(ObjectHandle<ActorMemory> actor)
+	/// <param name="onlyAddBones">
+	/// If true, only adds bones without setting up links or reading transforms.
+	/// </param>
+	protected virtual void SetActor(ObjectHandle<ActorMemory> actor, bool onlyAddBones = false)
 	{
 		this.Actor = actor;
 
@@ -294,8 +324,6 @@ public class Skeleton : INotifyPropertyChanged
 			if (!GposeService.Instance.IsGpose || a.ModelObject?.Skeleton == null)
 				return;
 
-			a.PauseSynchronization = true;
-
 			// Get all bones
 			this.AddBones(a.ModelObject.Skeleton);
 
@@ -304,8 +332,6 @@ public class Skeleton : INotifyPropertyChanged
 
 			if (a.OffHand?.Model?.Skeleton != null)
 				this.AddBones(a.OffHand.Model.Skeleton, "oh_");
-
-			a.PauseSynchronization = false;
 
 			// Create Bone links from the link database
 			foreach ((string name, Bone bone) in this.Bones)
@@ -337,7 +363,6 @@ public class Skeleton : INotifyPropertyChanged
 			}
 		});
 
-		// Read the initial transforms of all bones
 		var snapshot = this.TakeSnapshot();
 		var rootBones = new List<Bone>();
 		foreach (var bone in this.Bones.Values)
@@ -366,105 +391,50 @@ public class Skeleton : INotifyPropertyChanged
 	/// <param name="namePrefix">An optional prefix to add to the bone names.</param>
 	protected virtual void AddBones(SkeletonMemory skeleton, string? namePrefix = null)
 	{
-		var partialTasks = new List<Task>();
-
 		for (int partialSkeletonIndex = 0; partialSkeletonIndex < skeleton.Length; partialSkeletonIndex++)
 		{
 			int index = partialSkeletonIndex;
-			partialTasks.Add(Task.Run(() =>
+			PartialSkeletonMemory partialSkeleton = skeleton[index];
+			HkaPoseMemory? bestHkaPose = partialSkeleton.Pose1;
+
+			if (bestHkaPose == null ||
+				bestHkaPose.Skeleton?.Bones == null ||
+				bestHkaPose.Skeleton?.ParentIndices == null ||
+				bestHkaPose.Transforms == null)
 			{
-				PartialSkeletonMemory partialSkeleton = skeleton[index];
-				HkaPoseMemory? bestHkaPose = null;
-				int retryCount = 0;
+				Log.Verbose("Unable to find best pose for partial skeleton.");
+				continue;
+			}
 
-				while (retryCount < MAX_READ_RETRY_ATTEMPTS)
+			int count = bestHkaPose.Transforms.Length;
+
+			// Load all bones first
+			for (int boneIndex = 0; boneIndex < count; boneIndex++)
+			{
+				string originalName = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
+				string name = ConvertBoneName(namePrefix, originalName);
+				TransformMemory? transform = bestHkaPose.Transforms[boneIndex];
+
+				if (!this.Bones.TryGetValue(name, out var currentBone))
 				{
-					try
+					currentBone = this.CreateBone(this, [transform], name, index);
+					if (currentBone == null)
+						throw new Exception($"Failed to create bone: {name}");
+
+					this.Bones[name] = currentBone;
+				}
+				else
+				{
+					lock (currentBone.TransformMemories)
 					{
-						bestHkaPose = partialSkeleton.Pose1;
-
-						if (bestHkaPose == null ||
-							bestHkaPose.Skeleton?.Bones == null ||
-							bestHkaPose.Skeleton?.ParentIndices == null ||
-							bestHkaPose.Transforms == null)
-							throw new Exception("Failed to find best Havok pose for partial skeleton");
-
-						break;
-					}
-					catch (Exception ex)
-					{
-						Log.Verbose(ex, $"{ex.Message}. Retrying... ({retryCount + 1}/{MAX_READ_RETRY_ATTEMPTS})");
-
-						retryCount++;
-						if (retryCount >= MAX_READ_RETRY_ATTEMPTS)
-						{
-							Log.Warning("Max retry attempts reached. Unable to find best pose for partial skeleton.");
-							return; // Skip this partial skeleton
-						}
-
-						Task.Delay(16).Wait();
-						partialSkeleton.Synchronize();
+						currentBone.TransformMemories.Add(transform);
 					}
 				}
 
-				if (bestHkaPose == null || bestHkaPose.Skeleton?.Bones == null || bestHkaPose.Skeleton?.ParentIndices == null || bestHkaPose.Transforms == null)
-				{
-					Log.Verbose("Failed to find best HkaSkeleton for partial skeleton");
-					return;
-				}
-
-				int count = bestHkaPose.Transforms.Length;
-
-				// Load all bones first
-				for (int boneIndex = 0; boneIndex < count; boneIndex++)
-				{
-					retryCount = 0;
-					while (retryCount < MAX_READ_RETRY_ATTEMPTS)
-					{
-						try
-						{
-							string originalName = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
-							string name = ConvertBoneName(namePrefix, originalName);
-							TransformMemory? transform = bestHkaPose.Transforms[boneIndex];
-
-							if (!this.Bones.TryGetValue(name, out var currentBone))
-							{
-								currentBone = this.CreateBone(this, [transform], name, index);
-								if (currentBone == null)
-									throw new Exception($"Failed to create bone: {name}");
-
-								this.Bones[name] = currentBone;
-							}
-							else
-							{
-								lock (currentBone.TransformMemories)
-								{
-									currentBone.TransformMemories.Add(transform);
-								}
-							}
-
-							if (originalName == "n_root")
-								currentBone.IsTransformLocked = true;
-
-							break;
-						}
-						catch (ArgumentOutOfRangeException ex)
-						{
-							Log.Warning(ex, $"Failed to locate bone at index {boneIndex}. Retrying... ({retryCount + 1}/{MAX_READ_RETRY_ATTEMPTS})");
-
-							retryCount++;
-							if (retryCount >= MAX_READ_RETRY_ATTEMPTS)
-								throw;
-
-							Task.Delay(16).Wait();
-							bestHkaPose.Skeleton.Synchronize();
-						}
-					}
-				}
-			}));
+				if (originalName == "n_root")
+					currentBone.IsTransformLocked = true;
+			}
 		}
-
-		Task.WaitAll(partialTasks.ToArray());
 
 		// Set parents now that all bones are loaded
 		for (int partialSkeletonIndex = 0; partialSkeletonIndex < skeleton.Length; partialSkeletonIndex++)

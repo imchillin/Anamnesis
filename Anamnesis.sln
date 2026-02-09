@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.31911.260
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anamnesis", "Anamnesis\Anamnesis.csproj", "{04C21AF7-BD19-4180-A5E0-291E187C0936}"
 EndProject
@@ -19,6 +19,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{44B17F46-EF29-4BA1-9371-4103310DD2A8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scripts", "Scripts\Scripts.csproj", "{C5DCA9DB-7B2B-4E92-B884-B8994D23CDB6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteController", "RemoteController\RemoteController.csproj", "{A31DDCE0-5B13-4A56-A591-9613236D5717}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedMemoryIPC", "Lib\SharedMemoryIPC\SharedMemoryIPC\SharedMemoryIPC.csproj", "{A9AA53F8-B75A-C21B-DB28-754DDED824CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteController.SourceGenerators", "RemoteController.SourceGenerators\RemoteController.SourceGenerators.csproj", "{D19FADC1-94CA-4FFF-813F-5F65485FE548}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +66,30 @@ Global
 		{C5DCA9DB-7B2B-4E92-B884-B8994D23CDB6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C5DCA9DB-7B2B-4E92-B884-B8994D23CDB6}.Release|x64.ActiveCfg = Release|Any CPU
 		{C5DCA9DB-7B2B-4E92-B884-B8994D23CDB6}.Release|x64.Build.0 = Release|Any CPU
+		{A31DDCE0-5B13-4A56-A591-9613236D5717}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A31DDCE0-5B13-4A56-A591-9613236D5717}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A31DDCE0-5B13-4A56-A591-9613236D5717}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A31DDCE0-5B13-4A56-A591-9613236D5717}.Debug|x64.Build.0 = Debug|Any CPU
+		{A31DDCE0-5B13-4A56-A591-9613236D5717}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A31DDCE0-5B13-4A56-A591-9613236D5717}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A31DDCE0-5B13-4A56-A591-9613236D5717}.Release|x64.ActiveCfg = Release|Any CPU
+		{A31DDCE0-5B13-4A56-A591-9613236D5717}.Release|x64.Build.0 = Release|Any CPU
+		{A9AA53F8-B75A-C21B-DB28-754DDED824CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9AA53F8-B75A-C21B-DB28-754DDED824CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9AA53F8-B75A-C21B-DB28-754DDED824CB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A9AA53F8-B75A-C21B-DB28-754DDED824CB}.Debug|x64.Build.0 = Debug|Any CPU
+		{A9AA53F8-B75A-C21B-DB28-754DDED824CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9AA53F8-B75A-C21B-DB28-754DDED824CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9AA53F8-B75A-C21B-DB28-754DDED824CB}.Release|x64.ActiveCfg = Release|Any CPU
+		{A9AA53F8-B75A-C21B-DB28-754DDED824CB}.Release|x64.Build.0 = Release|Any CPU
+		{D19FADC1-94CA-4FFF-813F-5F65485FE548}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D19FADC1-94CA-4FFF-813F-5F65485FE548}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D19FADC1-94CA-4FFF-813F-5F65485FE548}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D19FADC1-94CA-4FFF-813F-5F65485FE548}.Debug|x64.Build.0 = Debug|Any CPU
+		{D19FADC1-94CA-4FFF-813F-5F65485FE548}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D19FADC1-94CA-4FFF-813F-5F65485FE548}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D19FADC1-94CA-4FFF-813F-5F65485FE548}.Release|x64.ActiveCfg = Release|Any CPU
+		{D19FADC1-94CA-4FFF-813F-5F65485FE548}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,6 +97,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{BE4F9D9B-109F-485B-B02B-21C8938A7640} = {EF215381-005D-437C-95F0-30D6BDAD6F78}
 		{C5DCA9DB-7B2B-4E92-B884-B8994D23CDB6} = {44B17F46-EF29-4BA1-9371-4103310DD2A8}
+		{A9AA53F8-B75A-C21B-DB28-754DDED824CB} = {EF215381-005D-437C-95F0-30D6BDAD6F78}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {80787A01-DA91-424D-8871-9EB93B79BD31}

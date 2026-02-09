@@ -16,21 +16,28 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 
+[Flags]
+public enum PoseMode
+{
+	None = 0,
+	Rotation = 1,
+	Scale = 2,
+	Position = 4,
+	WorldRotation = 8,
+	WorldScale = 16,
+
+	All = Rotation | Scale | Position | WorldRotation | WorldScale,
+}
+
+public class PoseApplyOptions
+{
+	public PoseMode Mode { get; set; } = PoseMode.All;
+	public bool DoFacialExpressionHack { get; set; } = true;
+	public bool RetryApply { get; set; } = true;
+}
+
 public class PoseFile : JsonFileBase
 {
-	[Flags]
-	public enum Mode
-	{
-		None = 0,
-		Rotation = 1,
-		Scale = 2,
-		Position = 4,
-		WorldRotation = 8,
-		WorldScale = 16,
-
-		All = Rotation | Scale | Position | WorldRotation | WorldScale,
-	}
-
 	public enum BoneProcessingModes
 	{
 		Ignore,
@@ -79,9 +86,9 @@ public class PoseFile : JsonFileBase
 		actor.Do(a => this.WriteToFile(a, skeleton, bones));
 	}
 
-	public void Apply(ObjectHandle<ActorMemory> actor, Skeleton skeleton, HashSet<string>? bones, Mode mode, bool doFacialExpressionHack)
+	public void Apply(ObjectHandle<ActorMemory> actor, Skeleton skeleton, HashSet<string>? bones, PoseApplyOptions options)
 	{
-		actor.Do(a => this.Apply(a, skeleton, bones, mode, doFacialExpressionHack));
+		actor.Do(a => this.Apply(a, skeleton, bones, options));
 	}
 
 	public bool IsPreDTPoseFile()
@@ -133,7 +140,7 @@ public class PoseFile : JsonFileBase
 		}
 	}
 
-	private void Apply(ActorMemory actor, Skeleton skeleton, HashSet<string>? bones, Mode mode, bool doFacialExpressionHack)
+	private void Apply(ActorMemory actor, Skeleton skeleton, HashSet<string>? bones, PoseApplyOptions options)
 	{
 		ArgumentNullException.ThrowIfNull(actor);
 
@@ -154,10 +161,10 @@ public class PoseFile : JsonFileBase
 
 		if (bones == null)
 		{
-			if (mode.HasFlagUnsafe(Mode.WorldScale) && this.Scale.HasValue)
+			if (options.Mode.HasFlagUnsafe(PoseMode.WorldScale) && this.Scale.HasValue)
 				actor.ModelObject.Transform.Scale = this.Scale.Value;
 
-			if (mode.HasFlagUnsafe(Mode.WorldRotation) && this.Rotation.HasValue)
+			if (options.Mode.HasFlagUnsafe(PoseMode.WorldRotation) && this.Rotation.HasValue)
 				actor.ModelObject.Transform.Rotation = this.Rotation.Value;
 		}
 
@@ -194,7 +201,7 @@ public class PoseFile : JsonFileBase
 		Core.Bone? headBone = skeleton.GetBone("j_kao");
 		Quaternion? originalHeadRotation = null;
 		Vector3? originalHeadPosition = null;
-		if (doFacialExpressionHack && bones != null && bones.Contains("j_kao"))
+		if (options.DoFacialExpressionHack && bones != null && bones.Contains("j_kao"))
 		{
 			headBone = skeleton.GetBone("j_kao") ?? throw new Exception("Unable to find head bone (j_kao).");
 			originalHeadRotation = headBone?.Rotation;
@@ -227,7 +234,7 @@ public class PoseFile : JsonFileBase
 			unposedBoneTransforms.Remove(bone);
 			posedBonePos.TryAdd(bone, bone.Position);
 
-			if (savedBone.Position != null && !mode.HasFlagUnsafe(Mode.Position))
+			if (savedBone.Position != null && !options.Mode.HasFlagUnsafe(PoseMode.Position))
 			{
 				bonePosRestore.Add(bone);
 			}
@@ -246,22 +253,26 @@ public class PoseFile : JsonFileBase
 				Log.Error($"Bone {bone.Name} has no transform memory");
 			}
 
-			if (!bone.TransformMemory!.Binds.TryGetValue("Position", out PropertyBindInfo? bindInfo))
+			if (!bone.TransformMemory!.Binds.TryGetValue("Transform", out PropertyBindInfo? bindInfo))
 			{
-				Log.Error($"Failed to find position bind for bone: {bone.Name}");
+				Log.Error($"Failed to find transform bind for bone: {bone.Name}");
 				continue;
 			}
 
-			PropertyChange change = new(bindInfo, bone.TransformMemory.Position, bone.TransformMemory.Position, PropertyChange.Origins.User);
+			PropertyChange change = new(bindInfo, bone.TransformMemory.Transform, bone.TransformMemory.Transform, PropertyChange.Origins.User);
 			change.ConfigureBindPath();
 			actor.History.Record(change);
 		}
 
-		// Apply all transforms a few times to ensure parent-inherited values are calculated correctly, and to ensure
-		// we dont end up with some values read during a ffxiv frame update.
-		for (int i = 0; i < 3; i++)
+		var applyTransforms = () =>
 		{
-			foreach ((string name, Bone? savedBone) in this.Bones)
+			var sortedBones = this.Bones!
+				.Where(kv => kv.Value != null)
+				.OrderBy(kv => kv.Value!.BoneDepth)
+				.ThenBy(kv => kv.Key, StringComparer.Ordinal)
+				.ToList();
+
+			foreach ((string name, Bone? savedBone) in sortedBones)
 			{
 				if (savedBone == null)
 					continue;
@@ -285,26 +296,44 @@ public class PoseFile : JsonFileBase
 
 				foreach (TransformMemory transformMemory in bone.TransformMemories)
 				{
-					if (savedBone.Position != null && mode.HasFlagUnsafe(Mode.Position) && bone.CanTranslate)
+					if (savedBone.Position != null && options.Mode.HasFlagUnsafe(PoseMode.Position) && bone.CanTranslate)
 					{
 						transformMemory.Position = (Vector3)savedBone.Position;
 					}
 
-					if (savedBone.Rotation != null && mode.HasFlagUnsafe(Mode.Rotation) && bone.CanRotate)
+					if (savedBone.Rotation != null && options.Mode.HasFlagUnsafe(PoseMode.Rotation) && bone.CanRotate)
 					{
 						transformMemory.Rotation = (Quaternion)savedBone.Rotation;
 					}
 
-					if (savedBone.Scale != null && mode.HasFlagUnsafe(Mode.Scale) && bone.CanScale)
+					if (savedBone.Scale != null && options.Mode.HasFlagUnsafe(PoseMode.Scale) && bone.CanScale)
 					{
 						transformMemory.Scale = (Vector3)savedBone.Scale;
 					}
 				}
 
-				bone.ReadTransform();
+				bone.ReadTransform(true);
 			}
+		};
 
-			Task.Delay(16).Wait();
+		if (options.RetryApply)
+		{
+			// Legacy approach:
+			// Apply all transforms a few times to ensure parent-inherited
+			// values are calculated correctly, and to ensure we dont end
+			// up with some values read during a ffxiv frame update.
+			for (int i = 0; i < 3; i++)
+			{
+				applyTransforms();
+				Task.Delay(16).Wait();
+			}
+		}
+		else
+		{
+			// Modern approach:
+			// With the introduction of hooks, we can now control when the
+			// transforms are applied, so a single application is sufficient.
+			applyTransforms();
 		}
 
 		// Restore the head bone rotation if we were only loading an expression
@@ -316,7 +345,7 @@ public class PoseFile : JsonFileBase
 		}
 
 		// If we are not loading the position of bones, restore the positions of all bones that were not explicitly written to.
-		if (!mode.HasFlagUnsafe(Mode.Position))
+		if (!options.Mode.HasFlagUnsafe(PoseMode.Position))
 		{
 			var sortedBones = Core.Bone.SortBonesByHierarchy(posedBonePos.Keys);
 
@@ -362,8 +391,11 @@ public class PoseFile : JsonFileBase
 				this.Rotation = bone.TransformMemory.Rotation;
 				this.Scale = bone.TransformMemory.Scale;
 			}
+
+			this.BoneDepth = Core.Bone.GetBoneDepth(bone);
 		}
 
+		public int BoneDepth { get; }
 		public Vector3? Position { get; set; }
 		public Quaternion? Rotation { get; set; }
 		public Vector3? Scale { get; set; }

@@ -18,12 +18,6 @@ public class HkaSkeletonMemory : MemoryBase
 	/// <summary>Gets or sets the array of bones in the skeleton.</summary>
 	[Bind(0x028, BindFlags.DontCacheOffsets)] public BoneArrayMemory? Bones { get; set; }
 
-	/// <summary>Gets or sets the reference pose for the skeleton.</summary>
-	/// <remarks>
-	/// Reference pose represents the character's default skeleton position.
-	/// </remarks>
-	[Bind(0x038, BindFlags.DontCacheOffsets)] public TransformArrayMemory? ReferencePose { get; set; }
-
 	/// <summary>Represents an array of parent indices for the bones in the skeleton.</summary>
 	public class ParentingArrayMemory : HkaArrayMemory<short>
 	{

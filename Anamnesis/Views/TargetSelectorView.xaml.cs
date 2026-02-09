@@ -3,6 +3,8 @@
 
 namespace Anamnesis.Views;
 
+using Anamnesis.Actor.Pages;
+using Anamnesis.Actor.Posing;
 using Anamnesis.Brio;
 using Anamnesis.Core;
 using Anamnesis.Files;
@@ -236,8 +238,8 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 								var upgradedActorHandle = ActorService.Instance.ObjectTable.Get<ActorMemory>(newActorHandle.Address);
 								if (upgradedActorHandle != null)
 								{
-									var skeleton = new Skeleton(upgradedActorHandle);
-									poseFile.Apply(upgradedActorHandle, skeleton, null, PoseFile.Mode.Rotation, true);
+									var skeleton = new SkeletonEntity(upgradedActorHandle);
+									await PosePage.ImportPose(upgradedActorHandle, skeleton, PosePage.PoseImportOptions.Character, PoseMode.All & ~PoseMode.Scale);
 								}
 
 								await Task.CompletedTask;

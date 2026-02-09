@@ -8,6 +8,7 @@ using Anamnesis.Core.Extensions;
 using Anamnesis.Services;
 using Anamnesis.Utils;
 using PropertyChanged;
+using RemoteController.Interop.Delegates;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,6 +27,9 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		new AnamnesisActorRefresher(),
 	];
 
+	private static readonly Lock s_hookLock = new();
+	private static HookHandle? s_isWandererHook = null;
+
 	private readonly System.Timers.Timer refreshDebounceTimer;
 	private readonly FuncQueue backupQueue;
 
@@ -33,6 +37,11 @@ public class ActorMemory : GameObjectMemory, IDisposable
 
 	public ActorMemory()
 	{
+		lock (s_hookLock)
+		{
+			s_isWandererHook ??= ControllerService.Instance.RegisterWrapper<Character.IsWanderer>();
+		}
+
 		this.backupQueue = new(this.BackupAsync, 250);
 
 		this.PropertyChanged += this.HandlePropertyChanged;
@@ -226,7 +235,8 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		GC.SuppressFinalize(this);
 	}
 
-	public override void Synchronize()
+	/// <inheritdoc/>
+	public override void Synchronize(IReadOnlySet<string>? inclGroups = null, IReadOnlySet<string>? exclGroups = null)
 	{
 		this.History.Tick();
 
@@ -234,7 +244,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		if (this.IsRefreshing)
 			return;
 
-		base.Synchronize();
+		base.Synchronize(inclGroups, exclGroups);
 	}
 
 	/// <summary>
@@ -291,6 +301,19 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	public void RaiseRefreshChanged()
 	{
 		this.OnPropertyChanged(nameof(this.CanRefresh));
+	}
+
+	public bool IsWanderer()
+	{
+		try
+		{
+			return ControllerService.Instance.InvokeHook<bool>(s_isWandererHook!, args: this.Address) ?? false;
+		}
+		catch
+		{
+			Log.Verbose($"Failed to invoke 'IsWanderer' hook for actor at address 0x{this.Address:X}");
+			return false;
+		}
 	}
 
 	protected virtual void OnRefreshed()

@@ -12,6 +12,8 @@ using Anamnesis.GUI.Dialogs;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
+using RemoteController.Interop;
+using RemoteController.Interop.Delegates;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -19,6 +21,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,6 +39,10 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 {
 	public const double DRAG_THRESHOLD = 20;
 
+	public static readonly Lazy<WorkQueue> WorkQueue = new(() => new WorkQueue());
+
+	private const int MAX_SKELETON_CREATION_ATTEMPTS = 3;
+
 	private static readonly Type[] s_poseFileTypes =
 	[
 		typeof(PoseFile),
@@ -49,6 +56,9 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		FileService.CMToolPoseSaveDir,
 	];
 
+	private static readonly Lock s_hookLock = new();
+	private static HookHandle? s_renderSkeletonHook = null;
+
 	private static DirectoryInfo? s_lastLoadDir;
 	private static DirectoryInfo? s_lastSaveDir;
 	private readonly System.Timers.Timer refreshDebounceTimer;
@@ -56,8 +66,6 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	private bool isLeftMouseButtonDownOnWindow;
 	private bool isDragging;
 	private Point origMouseDownPoint;
-
-	private Task? skeletonUpdateThread;
 
 	private bool importPoseRotation = true;
 	private bool importPosePosition = true;
@@ -67,11 +75,25 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	private string? selectedBoneNameCache;
 	private string? selectedBoneTextCache;
 
+	private int pendingSkeletonRetryAttempts = 0;
+
 	public PosePage()
 	{
 		this.InitializeComponent();
 
 		this.ContentArea.DataContext = this;
+
+		lock (s_hookLock)
+		{
+			s_renderSkeletonHook ??= ControllerService.Instance.RegisterInterceptor<Framework.RenderGraphics>(
+				HookBehavior.After,
+				this.RenderSkeletonDetour);
+
+			if (s_renderSkeletonHook != null && s_renderSkeletonHook.IsValid)
+			{
+				WorkQueue.Value.Enabled = true;
+			}
+		}
 
 		// Initialize the debounce timer
 		this.refreshDebounceTimer = new(200) { AutoReset = false };
@@ -80,7 +102,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	public event PropertyChangedEventHandler? PropertyChanged;
 
-	private enum PoseImportOptions
+	public enum PoseImportOptions
 	{
 		Character,      // (Default option) Imports full pose without positions to avoid deformations due to race bone position differences.
 		FullTransform,  // Imports full pose with all transforms.
@@ -166,6 +188,217 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	}
 
 	private static ILogger Log => Serilog.Log.ForContext<PosePage>();
+
+	public static Task ImportPose(ObjectHandle<ActorMemory> actorHandle, SkeletonEntity skeleton, PoseImportOptions importOption, PoseMode mode)
+	{
+		return actorHandle.DoAsync(async actor =>
+		{
+			bool originalAutoCommitEnabled = actor.History.AutoCommitEnabled;
+
+			try
+			{
+				// Open and load pose file
+				OpenResult result = await FileService.Open(s_lastLoadDir, s_poseDirShortcuts, s_poseFileTypes);
+				if (result.File == null)
+					return;
+
+				s_lastLoadDir = result.Directory;
+
+				bool isLegacyFile = false;
+				if (result.File is CmToolPoseFile legacyFile)
+				{
+					isLegacyFile = true;
+					result.File = legacyFile.Upgrade();
+				}
+
+				if (result.File is not PoseFile poseFile)
+					return;
+
+				Dictionary<Bone, Vector3> facePositions = [];
+				bool mismatchedFaceBones = false;
+
+				// Disable auto-commit at the beginning
+				// Commit any changes if they are present to avoid falsely grouping actions
+				actor.History.AutoCommitEnabled = false;
+				actor.History.Commit();
+
+				// Display a warning if there is a face bones mismatch.
+				// We should not load expressions if the face bones are mismatched.
+				// We skip this step for non-humanoid actors
+				if (actor.Customize!.Age != ActorCustomizeMemory.Ages.None
+					&& importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly)
+				{
+					mismatchedFaceBones = isLegacyFile || poseFile.IsPreDTPoseFile() != skeleton.HasPreDTFace;
+					if (mismatchedFaceBones)
+					{
+						string dialogMsgKey = isLegacyFile || poseFile.IsPreDTPoseFile()
+							? "Pose_WarningExpresionOldOnNew"
+							: "Pose_WarningExpresionNewOnOld";
+						await GenericDialog.ShowLocalizedAsync(dialogMsgKey, "Common_Attention", MessageBoxButton.OK);
+					}
+				}
+
+				// Exit early if bones are mismatched and we're only importing expressions
+				if (mismatchedFaceBones && importOption == PoseImportOptions.ExpressionOnly)
+					return;
+
+				var importPoseInternal = (bool retryApply) =>
+				{
+					PoseService.Instance.SetEnabled(true);
+					PoseService.Instance.FreezeScale |= mode.HasFlagUnsafe(PoseMode.Scale);
+					PoseService.Instance.FreezeRotation |= mode.HasFlagUnsafe(PoseMode.Rotation);
+					PoseService.Instance.FreezePositions |= mode.HasFlagUnsafe(PoseMode.Position);
+
+					if (importOption == PoseImportOptions.SelectedBones)
+					{
+						var options = new PoseApplyOptions
+						{
+							Mode = mode,
+							DoFacialExpressionHack = false,
+							RetryApply = retryApply,
+						};
+
+						// Don't unselected bones after import. Let the user decide what to do with the selection.
+						var selectedBones = skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
+						poseFile.Apply(actorHandle, skeleton, selectedBones, options);
+						return;
+					}
+
+					if (importOption == PoseImportOptions.WeaponsOnly)
+					{
+						var options = new PoseApplyOptions
+						{
+							Mode = mode,
+							DoFacialExpressionHack = false,
+							RetryApply = retryApply,
+						};
+
+						skeleton.SelectWeapons();
+						var selectedBoneNames = skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
+						poseFile.Apply(actorHandle, skeleton, selectedBoneNames, options);
+						skeleton.ClearSelection();
+						return;
+					}
+
+					// Backup face bone positions before importing the body pose.
+					// "Freeze Position" toggle resets them, so restore after import. Relevant only when pose service is enabled.
+					skeleton.SelectHead();
+					facePositions = skeleton.SelectedBones.ToDictionary(bone => bone as Bone, bone => bone.Position);
+					skeleton.ClearSelection();
+
+					// Step 1: Import body part of the pose
+					if (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.BodyOnly)
+					{
+						skeleton.SelectBody();
+						var selectedBoneNames = skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
+						skeleton.ClearSelection();
+
+						// Don't import body with positions during default pose import.
+						// Otherwise, the body will be deformed if the pose file was created for another race.
+						bool doLegacyImport = importOption == PoseImportOptions.Character && mode.HasFlagUnsafe(PoseMode.Position);
+						if (doLegacyImport)
+						{
+							mode &= ~PoseMode.Position;
+						}
+
+						var options = new PoseApplyOptions
+						{
+							Mode = mode,
+							DoFacialExpressionHack = false,
+							RetryApply = retryApply,
+						};
+
+						// Don't apply the facial expression hack for the body import step.
+						// Otherwise, the head won't pose as intended and will return to its original position.
+						poseFile.Apply(actorHandle, skeleton, selectedBoneNames, options);
+
+						// Re-enable positions if they were disabled.
+						if (doLegacyImport)
+						{
+							mode |= PoseMode.Position;
+						}
+					}
+
+					// Step 2: Import the facial expression
+					if (!mismatchedFaceBones && (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly))
+					{
+						skeleton.SelectHead();
+						var selectedBones = skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
+						skeleton.ClearSelection();
+
+						// Pre-DT faces need to be imported without positions.
+						bool doLegacyImport = actor.Customize!.Age == ActorCustomizeMemory.Ages.None
+											|| (poseFile.IsPreDTPoseFile() && skeleton.HasPreDTFace && mode.HasFlagUnsafe(PoseMode.Position));
+						if (doLegacyImport)
+						{
+							mode &= ~PoseMode.Position;
+						}
+
+						var options = new PoseApplyOptions
+						{
+							Mode = mode,
+							DoFacialExpressionHack = true,
+							RetryApply = retryApply,
+						};
+
+						// Apply facial expression hack for the expression import
+						poseFile.Apply(actorHandle, skeleton, selectedBones, options);
+
+						// Re-enable positions if they were disabled.
+						if (doLegacyImport)
+						{
+							mode |= PoseMode.Position;
+						}
+					}
+
+					// Step 3: Restore face bone positions if face bones were mismatched
+					// This is necessary as .Apply will not be called for the face bones
+					if (mismatchedFaceBones)
+					{
+						RestoreBonePositions(facePositions);
+					}
+				};
+
+				if (WorkQueue.Value.Enabled)
+				{
+					await WorkQueue.Value.Enqueue(() => importPoseInternal(false));
+				}
+				else
+				{
+					// Fallback: Perform the import action synchronously if the work queue is not available
+					importPoseInternal(true);
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to load pose file");
+			}
+			finally
+			{
+				// Update the skeleton after applying the pose
+				skeleton.ReadTransforms();
+
+				// Re-enable auto-commit and commit changes
+				actor.History.Commit();
+				actor.History.AutoCommitEnabled = originalAutoCommitEnabled;
+			}
+		});
+	}
+
+	private static void RestoreBonePositions(Dictionary<Bone, Vector3> bonePositions)
+	{
+		if (bonePositions.Count == 0)
+			return;
+
+		// Sort the selected bones based on their hierarchy
+		var sortedBones = Bone.SortBonesByHierarchy(bonePositions.Keys.ToList());
+
+		foreach (var bone in sortedBones)
+		{
+			bone.Position = bonePositions[bone];
+			bone.WriteTransform(false);
+		}
+	}
 
 	/* Basic Idea:
 	 * get mirrored quat of targetBone
@@ -263,7 +496,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		FlipBoneInternal(targetBone, shouldFlip);
 
 		// Restore positions after flipping
-		this.RestoreBonePositions(bonePositions);
+		RestoreBonePositions(bonePositions);
 	}
 
 	private void OnLoaded(object sender, RoutedEventArgs e)
@@ -311,7 +544,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			if (!PoseService.IsEnabled)
 				this.OnClearClicked(null, null);
 
-			Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, BoneViewManager.Instance.Refresh);
+			Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, BoneViewManager.Instance.Refresh);
 		}
 	}
 
@@ -363,47 +596,51 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private async Task Refresh()
 	{
-		await Dispatch.MainThread();
-
-		this.ThreeDView.DataContext = null;
-		this.BodyGuiView.DataContext = null;
-		this.FaceGuiView.DataContext = null;
-		this.MatrixView.DataContext = null;
-
-		if (this.Actor == null || this.Actor.Do(a => a.ModelObject == null) != false)
+		_ = WorkQueue.Value.Enqueue(async () =>
 		{
-			this.Skeleton?.Clear();
-			this.Skeleton = null;
-			return;
-		}
+			await Dispatch.MainThread();
 
-		try
-		{
-			if (this.Skeleton != null)
+			this.ThreeDView.DataContext = null;
+			this.BodyGuiView.DataContext = null;
+			this.FaceGuiView.DataContext = null;
+			this.MatrixView.DataContext = null;
+
+			if (this.Actor == null || this.Actor.Do(a => a.ModelObject == null) != false)
 			{
-				this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+				this.Skeleton?.Clear();
+				this.Skeleton = null;
+				return;
 			}
 
-			this.Skeleton = new SkeletonEntity(this.Actor);
-			BoneViewManager.Instance.SetSkeleton(this.Skeleton);
-
-			this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
-
-			this.ThreeDView.DataContext = this.Skeleton;
-			this.BodyGuiView.DataContext = this.Skeleton;
-			this.FaceGuiView.DataContext = this.Skeleton;
-			this.MatrixView.DataContext = this.Skeleton;
-
-			// Start the skeleton read/write tasks
-			if (this.skeletonUpdateThread == null || this.skeletonUpdateThread.IsCompleted || this.skeletonUpdateThread.IsFaulted)
+			try
 			{
-				this.skeletonUpdateThread = Task.Run(this.SkeletonUpdateThread);
+				if (this.Skeleton != null)
+				{
+					this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+				}
+
+				try
+				{
+					this.Skeleton = new SkeletonEntity(this.Actor);
+				}
+				catch (ArgumentOutOfRangeException)
+				{
+					this.pendingSkeletonRetryAttempts = MAX_SKELETON_CREATION_ATTEMPTS;
+					this.Skeleton = null;
+					Log.Warning("Skeleton creation failed, will retry in detour.");
+					return;
+				}
+
+				if (this.Skeleton != null)
+				{
+					this.BindSkeleton(this.Skeleton);
+				}
 			}
-		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, "Failed to bind skeleton to view");
-		}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to bind skeleton to view");
+			}
+		});
 	}
 
 	private void OnSkeletonPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -420,9 +657,12 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private async void OnImportClicked(object sender, RoutedEventArgs e)
 	{
+		if (this.Actor == null || this.Skeleton == null)
+			return;
+
 		bool isShiftPressed = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
-		PoseFile.Mode mode = isShiftPressed ? PoseFile.Mode.All : (PoseFile.Mode.All & ~PoseFile.Mode.Scale);
-		await this.ImportPose(PoseImportOptions.Character, mode);
+		PoseMode mode = isShiftPressed ? PoseMode.All : (PoseMode.All & ~PoseMode.Scale);
+		await ImportPose(this.Actor, this.Skeleton, PoseImportOptions.Character, mode);
 		this.Skeleton?.ClearSelection();
 	}
 
@@ -449,165 +689,6 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	private async void OnImportWeaponsClicked(object sender, RoutedEventArgs e)
 	{
 		await this.HandleSecondaryOptionImport(PoseImportOptions.WeaponsOnly);
-	}
-
-	private async Task ImportPose(PoseImportOptions importOption, PoseFile.Mode mode)
-	{
-		if (this.Actor == null || this.Skeleton == null)
-			return;
-
-		await this.Actor.DoAsync(async actor =>
-		{
-			bool originalAutoCommitEnabled = actor.History.AutoCommitEnabled;
-
-			try
-			{
-				// Open and load pose file
-				OpenResult result = await FileService.Open(s_lastLoadDir, s_poseDirShortcuts, s_poseFileTypes);
-				if (result.File == null)
-					return;
-
-				s_lastLoadDir = result.Directory;
-
-				bool isLegacyFile = false;
-				if (result.File is CmToolPoseFile legacyFile)
-				{
-					isLegacyFile = true;
-					result.File = legacyFile.Upgrade();
-				}
-
-				if (result.File is not PoseFile poseFile)
-					return;
-
-				Dictionary<Bone, Vector3> facePositions = [];
-				bool mismatchedFaceBones = false;
-
-				// Disable auto-commit at the beginning
-				// Commit any changes if they are present to avoid falsely grouping actions
-				actor.History.AutoCommitEnabled = false;
-				actor.History.Commit();
-
-				// Display a warning if there is a face bones mismatch.
-				// We should not load expressions if the face bones are mismatched.
-				// We skip this step for non-humanoid actors
-				if (actor.Customize!.Age != ActorCustomizeMemory.Ages.None
-					&& importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly)
-				{
-					mismatchedFaceBones = isLegacyFile || poseFile.IsPreDTPoseFile() != this.Skeleton.HasPreDTFace;
-					if (mismatchedFaceBones)
-					{
-						string dialogMsgKey = isLegacyFile || poseFile.IsPreDTPoseFile()
-							? "Pose_WarningExpresionOldOnNew"
-							: "Pose_WarningExpresionNewOnOld";
-						await GenericDialog.ShowLocalizedAsync(dialogMsgKey, "Common_Attention", MessageBoxButton.OK);
-					}
-				}
-
-				// Exit early if bones are mismatched and we're only importing expressions
-				if (mismatchedFaceBones && importOption == PoseImportOptions.ExpressionOnly)
-					return;
-
-				// Positions are not frozen yet, that will happen at the appropriate moment
-				PoseService.Instance.SetEnabled(true);
-				PoseService.Instance.FreezeScale |= mode.HasFlagUnsafe(PoseFile.Mode.Scale);
-				PoseService.Instance.FreezeRotation |= mode.HasFlagUnsafe(PoseFile.Mode.Rotation);
-				PoseService.Instance.FreezePositions |= mode.HasFlagUnsafe(PoseFile.Mode.Position);
-
-				if (importOption == PoseImportOptions.SelectedBones)
-				{
-					// Don't unselected bones after import. Let the user decide what to do with the selection.
-					var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
-					poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, false);
-					return;
-				}
-
-				if (importOption == PoseImportOptions.WeaponsOnly)
-				{
-					this.Skeleton.SelectWeapons();
-					var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
-					poseFile.Apply(this.Actor, this.Skeleton, selectedBoneNames, mode, false);
-					this.Skeleton.ClearSelection();
-					return;
-				}
-
-				// Backup face bone positions before importing the body pose.
-				// "Freeze Position" toggle resets them, so restore after import. Relevant only when pose service is enabled.
-				this.Skeleton.SelectHead();
-				facePositions = this.Skeleton.SelectedBones.ToDictionary(bone => bone as Bone, bone => bone.Position);
-				this.Skeleton.ClearSelection();
-
-				// Step 1: Import body part of the pose
-				if (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.BodyOnly)
-				{
-					this.Skeleton.SelectBody();
-					var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
-					this.Skeleton.ClearSelection();
-
-					// Don't import body with positions during default pose import.
-					// Otherwise, the body will be deformed if the pose file was created for another race.
-					bool doLegacyImport = importOption == PoseImportOptions.Character && mode.HasFlagUnsafe(PoseFile.Mode.Position);
-					if (doLegacyImport)
-					{
-						mode &= ~PoseFile.Mode.Position;
-					}
-
-					// Don't apply the facial expression hack for the body import step.
-					// Otherwise, the head won't pose as intended and will return to its original position.
-					poseFile.Apply(this.Actor, this.Skeleton, selectedBoneNames, mode, false);
-
-					// Re-enable positions if they were disabled.
-					if (doLegacyImport)
-					{
-						mode |= PoseFile.Mode.Position;
-					}
-				}
-
-				// Step 2: Import the facial expression
-				if (!mismatchedFaceBones && (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly))
-				{
-					this.Skeleton.SelectHead();
-					var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
-					this.Skeleton.ClearSelection();
-
-					// Pre-DT faces need to be imported without positions.
-					bool doLegacyImport = actor.Customize!.Age == ActorCustomizeMemory.Ages.None
-										|| (poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace && mode.HasFlagUnsafe(PoseFile.Mode.Position));
-					if (doLegacyImport)
-					{
-						mode &= ~PoseFile.Mode.Position;
-					}
-
-					// Apply facial expression hack for the expression import
-					poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, true);
-
-					// Re-enable positions if they were disabled.
-					if (doLegacyImport)
-					{
-						mode |= PoseFile.Mode.Position;
-					}
-				}
-
-				// Step 3: Restore face bone positions if face bones were mismatched
-				// This is necessary as .Apply will not be called for the face bones
-				if (mismatchedFaceBones)
-				{
-					this.RestoreBonePositions(facePositions);
-				}
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, "Failed to load pose file");
-			}
-			finally
-			{
-				// Update the skeleton after applying the pose
-				this.Skeleton.ReadTransforms();
-
-				// Re-enable auto-commit and commit changes
-				actor.History.Commit();
-				actor.History.AutoCommitEnabled = originalAutoCommitEnabled;
-			}
-		});
 	}
 
 	private async void OnExportClicked(object sender, RoutedEventArgs e)
@@ -672,10 +753,10 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.Skeleton.Select(bones, SkeletonEntity.SelectMode.Add);
 	}
 
-	private void OnFlipClicked(object sender, RoutedEventArgs e)
+	private void FlipSkeleton()
 	{
 		if (this.Actor == null)
-			throw new ArgumentNullException(nameof(sender));
+			throw new ArgumentNullException("Actor object is not available.");
 
 		this.Actor.Do(actor =>
 		{
@@ -747,6 +828,11 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 				actor.History.AutoCommitEnabled = originalAutoCommitEnabled;
 			}
 		});
+	}
+
+	private void OnFlipClicked(object sender, RoutedEventArgs e)
+	{
+		WorkQueue.Value.EnqueueOrDo(this.FlipSkeleton);
 	}
 
 	private void OnParentClicked(object sender, RoutedEventArgs e)
@@ -899,66 +985,30 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.Skeleton.ReadTransforms();
 	}
 
-	private async Task SkeletonUpdateThread()
-	{
-		while (this.Skeleton != null)
-		{
-			if (this.Skeleton == null)
-				return;
-
-			// Only update transforms while the pose service is disabled
-			if (!PoseService.Instance.IsEnabled)
-			{
-				this.Skeleton.ReadTransforms();
-			}
-			else
-			{
-				this.Skeleton.WriteSkeleton();
-			}
-
-			await Task.Delay(16); // Up to 60 times a second
-		}
-	}
-
 	private async Task HandleSecondaryOptionImport(PoseImportOptions importOption)
 	{
-		if (this.Skeleton == null)
+		if (this.Actor == null || this.Skeleton == null)
 			return;
 
 		// Don't do anything if no import mode is selected.
 		var importMode = this.GetSecondaryImportOptionMode();
-		if (importMode == PoseFile.Mode.None)
+		if (importMode == PoseMode.None)
 			return;
 
-		await this.ImportPose(importOption, importMode);
+		await ImportPose(this.Actor, this.Skeleton, importOption, importMode);
 	}
 
-	private PoseFile.Mode GetSecondaryImportOptionMode()
+	private PoseMode GetSecondaryImportOptionMode()
 	{
-		PoseFile.Mode mode = PoseFile.Mode.None;
+		PoseMode mode = PoseMode.None;
 		if (this.ImportPoseRotation)
-			mode |= PoseFile.Mode.Rotation;
+			mode |= PoseMode.Rotation;
 		if (this.ImportPosePosition)
-			mode |= PoseFile.Mode.Position;
+			mode |= PoseMode.Position;
 		if (this.ImportPoseScale)
-			mode |= PoseFile.Mode.Scale;
+			mode |= PoseMode.Scale;
 
 		return mode;
-	}
-
-	private void RestoreBonePositions(Dictionary<Bone, Vector3> bonePositions)
-	{
-		if (this.Skeleton == null || bonePositions.Count == 0)
-			return;
-
-		// Sort the selected bones based on their hierarchy
-		var sortedBones = Bone.SortBonesByHierarchy(bonePositions.Keys.ToList());
-
-		foreach (var bone in sortedBones)
-		{
-			bone.Position = bonePositions[bone];
-			bone.WriteTransform(false);
-		}
 	}
 
 	private void RaisePropertyChanged(string propertyName)
@@ -988,5 +1038,97 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.RaisePropertyChanged(nameof(this.SelectedBonesTooltip));
 		this.RaisePropertyChanged(nameof(this.SelectedBoneName));
 		this.RaisePropertyChanged(nameof(this.SelectedBonesText));
+	}
+
+	private void BindSkeleton(SkeletonEntity skeleton)
+	{
+		ArgumentNullException.ThrowIfNull(skeleton);
+
+		skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+		skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
+
+		BoneViewManager.Instance.SetSkeleton(skeleton);
+
+		this.ThreeDView.DataContext = skeleton;
+		this.BodyGuiView.DataContext = skeleton;
+		this.FaceGuiView.DataContext = skeleton;
+		this.MatrixView.DataContext = skeleton;
+	}
+
+	private byte[] RenderSkeletonDetour(ReadOnlySpan<byte> args)
+	{
+		// IMPORTANT: Do not throw in the hook detour!
+		// Sync the skeleton first, then process pending pose-related work
+
+		// Retry skeleton creation if pending
+		if (this.pendingSkeletonRetryAttempts > 0 && this.Actor != null && (this.Skeleton == null || this.Skeleton.Bones.IsEmpty))
+		{
+			try
+			{
+				this.Skeleton = new SkeletonEntity(this.Actor);
+				if (this.Skeleton != null)
+				{
+					this.BindSkeleton(this.Skeleton);
+					this.pendingSkeletonRetryAttempts = 0;
+					Log.Verbose("Skeleton successfully recreated in detour.");
+				}
+			}
+			catch (ArgumentOutOfRangeException)
+			{
+				this.pendingSkeletonRetryAttempts--;
+				if (this.pendingSkeletonRetryAttempts == 0)
+				{
+					Log.Error("Failed to create skeleton for actor after maximum retry attempts.");
+				}
+			}
+			catch (Exception ex)
+			{
+				this.pendingSkeletonRetryAttempts = 0;
+				Log.Error(ex, "Failed to bind skeleton during detour retry.");
+			}
+		}
+
+		if (!PoseService.Instance.IsEnabled && GposeService.IsGpose)
+		{
+			this.Skeleton?.Actor?.Do(actor =>
+			{
+				var skeleton = actor.ModelObject?.Skeleton;
+				if (skeleton == null || skeleton.Address == IntPtr.Zero)
+					return;
+
+				try
+				{
+					skeleton.Synchronize();
+				}
+				catch (Exception ex)
+				{
+					Log.Verbose(ex, "Failed to sync skeleton during skeleton finalization.");
+				}
+			});
+		}
+
+		try
+		{
+			WorkQueue.Value.ProcessPending();
+
+			// Read transforms after processing to ensure we have the latest data
+			if (GposeService.IsGpose)
+			{
+				if (PoseService.Instance.IsEnabled)
+				{
+					this.Skeleton?.WriteSkeleton();
+				}
+				else
+				{
+					this.Skeleton?.ReadTransforms();
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			Log.Warning(ex, "Encountered error during skeleton finalization.");
+		}
+
+		return [];
 	}
 }

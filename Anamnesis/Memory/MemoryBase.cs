@@ -55,8 +55,11 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <summary>List of child memory objects.</summary>
 	protected readonly List<MemoryBase> Children = new();
 
-	private static readonly ObjectPool<Queue<MemoryBase>> s_queuePool = ObjectPool.Create<Queue<MemoryBase>>();
-	private static readonly ObjectPool<Stack<MemoryBase>> s_stackPool = ObjectPool.Create<Stack<MemoryBase>>();
+	private const int LOCK_TIMEOUT_MS = 5000;
+
+	private static readonly ObjectPool<List<MemoryBase>> s_listPool = ObjectPool.Create<List<MemoryBase>>();
+	private static readonly ObjectPool<Stack<MemoryBase>> s_objStackPool = ObjectPool.Create<Stack<MemoryBase>>();
+	private static readonly ObjectPool<Stack<(MemoryBase, bool)>> s_stackPool = ObjectPool.Create<Stack<(MemoryBase, bool)>>();
 
 	/// <summary>Lock object for thread synchronization.</summary>
 	private readonly Lock lockObject = new();
@@ -84,6 +87,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// </remarks>
 	private ConcurrentQueue<BindInfo> delayedBinds = new();
 
+	private nint address = IntPtr.Zero;
 	private int enableReading = 1;
 	private int enableWriting = 1;
 	private int pauseSynchronization = 0;
@@ -132,7 +136,11 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	public event PropertyChangedEventHandler? PropertyChanged;
 
 	/// <summary>Gets or sets the object's memory address.</summary>
-	public IntPtr Address { get; set; } = IntPtr.Zero;
+	public IntPtr Address
+	{
+		get => Interlocked.CompareExchange(ref this.address, 0, 0);
+		set => Interlocked.Exchange(ref this.address, value);
+	}
 
 	/// <summary>Gets a value indicating whether the object has been disposed.</summary>
 	public bool IsDisposed => this.disposed;
@@ -196,44 +204,6 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		set => Interlocked.Exchange(ref this.isSynchronizing, value ? 1 : 0);
 	}
 
-	/// <summary>
-	/// Sets the enable reading state for the specified memory object and its descendants.
-	/// </summary>
-	/// <param name="root">The root memory object.</param>
-	/// <param name="enabled">True to enable reading; otherwise, false.</param>
-	public static void SetEnableReading(MemoryBase root, bool enabled)
-	{
-		var stack = s_stackPool.Get();
-		try
-		{
-			stack.Push(root);
-			while (stack.Count > 0)
-			{
-				MemoryBase current = stack.Pop();
-				current.EnableReading = enabled;
-
-				List<MemoryBase>? children;
-				lock (current.Children)
-				{
-					children = current.Children.Count > 0
-						? new List<MemoryBase>(current.Children)
-						: null;
-				}
-
-				if (children != null)
-				{
-					foreach (var child in children)
-						stack.Push(child);
-				}
-			}
-		}
-		finally
-		{
-			stack.Clear();
-			s_stackPool.Return(stack);
-		}
-	}
-
 	/// <summary>Raises the property changed event.</summary>
 	/// <param name="propertyName">The name of the property.</param>
 	/// <remarks>
@@ -290,10 +260,18 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <summary>
 	/// Synchronizes the memory object with the current memory state.
 	/// </summary>
+	/// <param name="inclGroups">
+	/// The synchronization groups to include in the synchronization.
+	/// If null, all groups are included.
+	/// </param>
+	/// <param name="exclGroups">
+	/// The synchronization groups to exclude from the synchronization.
+	/// If null, no groups are excluded.
+	/// </param>
 	/// <remarks>
 	/// If a synchronization is already in progress, the request is cancelled.
 	/// </remarks>
-	public virtual void Synchronize()
+	public virtual void Synchronize(IReadOnlySet<string>? inclGroups = null, IReadOnlySet<string>? exclGroups = null)
 	{
 		if (this.Address == IntPtr.Zero)
 			return;
@@ -306,22 +284,28 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		if (Interlocked.CompareExchange(ref this.pauseSynchronization, 0, 0) == 1)
 			return;
 
-		this.ClaimLocks();
+		if (inclGroups != null && exclGroups != null && inclGroups.Overlaps(exclGroups))
+			throw new ArgumentException("Inclusion and exclusion groups cannot overlap.");
+
+		var locked = s_listPool.Get();
+		this.ClaimLocks(locked, inclGroups, exclGroups);
 		try
 		{
-			this.SynchronizeInternal();
+			this.SynchronizeInternal(locked);
+
+			// Write delayed binds to memory after synchronization.
+			// This ensures that writes are not blocked by ongoing reads.
+			WriteDelayedBindsInternal(locked);
 		}
 		catch (Exception ex)
 		{
-			throw new Exception($"Failed to refresh {this.GetType().Name} from memory address: {this.Address}", ex);
+			throw new Exception($"Failed to refresh {this.GetType().Name} from memory address: 0x{this.Address:X}", ex);
 		}
 		finally
 		{
-			// Write delayed binds to memory after synchronization.
-			// This ensures that writes are not blocked by ongoing reads.
-			this.WriteDelayedBindsInternal();
-
-			this.ReleaseLocks();
+			ReleaseLocks(locked);
+			locked.Clear();
+			s_listPool.Return(locked);
 		}
 	}
 
@@ -332,10 +316,11 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// </remarks>
 	public virtual void WriteDelayedBinds()
 	{
-		this.ClaimLocks();
+		var locked = s_listPool.Get();
+		this.ClaimLocks(locked, null, null);
 		try
 		{
-			this.WriteDelayedBindsInternal();
+			WriteDelayedBindsInternal(locked);
 		}
 		catch (Exception ex)
 		{
@@ -343,11 +328,9 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		}
 		finally
 		{
-			// Sync object immediately after writing to memory to
-			// ensure that the latest state is propagated to the application.
-			this.SynchronizeInternal();
-
-			this.ReleaseLocks();
+			ReleaseLocks(locked);
+			locked.Clear();
+			s_listPool.Return(locked);
 		}
 	}
 
@@ -365,26 +348,193 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		return bind.GetAddress();
 	}
 
-	/// <summary>Claims locks on the specified memory object.</summary>
-	/// <param name="memory">The memory object.</param>
-	/// <remarks>
-	/// The lock claim covers the memory object and all its descendants.
-	/// </remarks>
+	/// <summary>
+	/// Claims locks on the specified memory object.
+	/// </summary>
+	/// <param name="target">
+	/// The target object to attempt to lock.
+	/// </param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected static void ClaimLocksOn(MemoryBase memory)
+	protected static void ClaimLocks(MemoryBase target)
 	{
-		memory.ClaimLocks();
+		if (!target.lockObject.TryEnter(LOCK_TIMEOUT_MS))
+			throw new Exception("Failed to claim lock on memory object. Possible deadlock?");
 	}
 
-	/// <summary>Releases locks on the specified memory object.</summary>
-	/// <param name="memory">The memory object.</param>
-	/// <remarks>
-	/// The lock release covers the memory object and all its descendants.
-	/// </remarks>
+	/// <summary>
+	/// Releases locks for the current object and its descendants.
+	/// </summary>
+	/// <param name="locked">
+	/// The list of locked memory objects to release.
+	/// </param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected static void ReleaseLocksOn(MemoryBase memory)
+	protected static void ReleaseLocks(List<MemoryBase> locked)
 	{
-		memory.ReleaseLocks();
+		for (int i = locked.Count - 1; i >= 0; --i)
+			locked[i].lockObject.Exit();
+	}
+
+	/// <summary>
+	/// Sets the synchronization state for the target object.
+	/// </summary>
+	/// <param name="target">
+	/// The memory object to set the synchronization state for.
+	/// </param>
+	/// <param name="value">The synchronization state.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	protected static void SetIsSynchronizing(MemoryBase target, bool value)
+	{
+		Interlocked.Exchange(ref target.isSynchronizing, value ? 1 : 0);
+	}
+
+	/// <summary>
+	/// Sets the synchronization state for the target objects.
+	/// </summary>
+	/// <param name="targets">
+	/// The target memory objects to set the synchronization state for.
+	/// </param>
+	/// <param name="value">The synchronization state.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	protected static void SetIsSynchronizing(List<MemoryBase> targets, bool value)
+	{
+		int val = value ? 1 : 0;
+		for (int i = 0; i < targets.Count; ++i)
+			SetIsSynchronizing(targets[i], value);
+	}
+
+	/// <summary>
+	/// Resolve the addresses of the given memory object
+	/// based on its ancestor lineage.
+	/// </summary>
+	/// <param name="obj">
+	/// The target memory object to resolve the addresses for.
+	/// </param>
+	protected static void ResolveAddress(MemoryBase obj)
+	{
+		var stack = s_objStackPool.Get();
+		try
+		{
+			// Construct the lineage stack
+			MemoryBase? current = obj;
+			while (current != null)
+			{
+				stack.Push(current);
+				current = current.Parent;
+			}
+
+			if (stack.Count > 0)
+			{
+				var root = stack.Peek();
+				if (root.Parent == null && (root.Address == IntPtr.Zero || root.Address.ToInt64() < 0))
+				{
+					throw new InvalidOperationException(
+						$"Root memory object ({root.GetType().Name}) address is not set or is invalid (0x{root.Address:X}).");
+				}
+			}
+
+			MemoryBase? parent = null;
+			while (stack.Count > 0)
+			{
+				var node = stack.Pop();
+
+				if (parent != null && node.ParentBind != null)
+				{
+					IntPtr actualAddress = node.ParentBind.GetAddress();
+
+					if (actualAddress == IntPtr.Zero || actualAddress.ToInt64() < 0)
+					{
+						throw new InvalidOperationException(
+							$"Failed to resolve address for {node.GetType().Name} - {node.ParentBind.Name}: 0x{actualAddress:X}.");
+					}
+
+					if (node.Address != actualAddress)
+					{
+						node.Address = actualAddress;
+						node.delayedBinds = new ConcurrentQueue<BindInfo>();
+
+						// Invalidate the last known value of all binds on this node
+						foreach (var bind in node.Binds.Values)
+						{
+							bind.LastValue = null;
+							bind.LastFailureAddress = IntPtr.Zero;
+						}
+					}
+				}
+
+				parent = node;
+			}
+		}
+		finally
+		{
+			stack.Clear();
+			s_objStackPool.Return(stack);
+		}
+	}
+
+	/// <summary>
+	/// Traverses the hierarchy and claims locks on all included objects.
+	/// </summary>
+	/// <param name="locked">
+	/// The output list of locked memory objects.
+	/// </param>
+	/// <param name="inclGroups">
+	/// The synchronization groups to include in the traversal.
+	/// If not null, only groups in this set are included.
+	/// </param>
+	/// <param name="exclGroups">
+	/// The synchronization groups to exclude from the traversal.
+	/// If not null, groups in this set are excluded.
+	/// </param>
+	protected void ClaimLocks(List<MemoryBase> locked, IReadOnlySet<string>? inclGroups, IReadOnlySet<string>? exclGroups)
+	{
+		var stack = s_stackPool.Get();
+		try
+		{
+			stack.Push((this, inclGroups == null));
+
+			while (stack.Count > 0)
+			{
+				var (current, isParentIncluded) = stack.Pop();
+				PropertyBindInfo? pb = current.parentBind as PropertyBindInfo;
+
+				if (exclGroups != null && pb?.SyncGroup != null && exclGroups.Contains(pb.SyncGroup))
+					continue;
+
+				bool isCurrentIncluded = isParentIncluded
+					|| (inclGroups != null && pb?.SyncGroup != null && inclGroups.Contains(pb.SyncGroup));
+
+				if (isCurrentIncluded)
+				{
+					ClaimLocks(current);
+					locked.Add(current);
+				}
+
+				if (!isParentIncluded || current == this)
+				{
+					try
+					{
+						ResolveAddress(current);
+					}
+					catch (InvalidOperationException)
+					{
+						// Failed to resolve address, release all locks and abort gracefully
+						ReleaseLocks(locked);
+						locked.Clear();
+						return;
+					}
+				}
+
+				foreach (var child in current.Children)
+				{
+					stack.Push((child, isCurrentIncluded));
+				}
+			}
+		}
+		finally
+		{
+			stack.Clear();
+			s_stackPool.Return(stack);
+		}
 	}
 
 	/// <summary>Disposes the object and its descendants.</summary>
@@ -397,21 +547,46 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		{
 			if (managedResources)
 			{
-				/* Dispose managed resources here */
-				this.parent?.Children.Remove(this);
-
-				this.Address = IntPtr.Zero;
-				this.parent = null;
-				this.parentBind = null;
-
-				for (int i = this.Children.Count - 1; i >= 0; i--)
+				var locked = s_listPool.Get();
+				this.ClaimLocks(locked, null, null);
+				try
 				{
-					this.Children[i].Dispose();
-				}
+					// If there is a parent, claim its lock before removing self
+					if (this.parent != null)
+					{
+						bool parentLockTaken = this.parent.lockObject.TryEnter(LOCK_TIMEOUT_MS);
+						try
+						{
+							this.parent.Children.Remove(this);
+						}
+						finally
+						{
+							if (parentLockTaken)
+								this.parent.lockObject.Exit();
+						}
+					}
 
-				this.Children.Clear();
-				this.delayedBinds.Clear();
-				this.SuppressPropNotifications.Dispose();
+					for (int i = locked.Count - 1; i >= 0; i--)
+					{
+						var current = locked[i];
+						current.Address = IntPtr.Zero;
+						current.parent = null;
+						current.parentBind = null;
+						current.delayedBinds.Clear();
+
+						if (current != this)
+							current.disposed = true;
+					}
+
+					this.Children.Clear();
+					this.SuppressPropNotifications.Dispose();
+				}
+				finally
+				{
+					ReleaseLocks(locked);
+					locked.Clear();
+					s_listPool.Return(locked);
+				}
 			}
 
 			/* Dispose unmanaged resources here if any */
@@ -529,17 +704,20 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		}
 
 		object? oldValue = bind.LastValue;
-		this.ClaimLocks();
+		var locked = s_listPool.Get();
+		this.ClaimLocks(locked, null, null);
 		try
 		{
 			// Make sure that all delayed binds are written before this bind to preserve order
-			this.WriteDelayedBindsInternal();
+			WriteDelayedBindsInternal(locked);
 
 			this.WriteToMemory(bind);
 		}
 		finally
 		{
-			this.ReleaseLocks();
+			ReleaseLocks(locked);
+			locked.Clear();
+			s_listPool.Return(locked);
 		}
 
 		bind.LastValue = currentValue;
@@ -555,94 +733,14 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		this.PropagatePropertyChanged(bind.Name, change);
 	}
 
-	/// <summary>
-	/// Claims locks for the current object and its descendants.
-	/// </summary>
-	protected void ClaimLocks()
-	{
-		var queue = s_queuePool.Get();
-		try
-		{
-			queue.Enqueue(this);
-			while (queue.Count > 0)
-			{
-				MemoryBase current = queue.Dequeue();
-				if (!current.lockObject.TryEnter(5000))
-					throw new Exception("Failed to claim lock on memory object. Possible deadlock?");
-
-				foreach (MemoryBase child in current.Children)
-				{
-					queue.Enqueue(child);
-				}
-			}
-		}
-		finally
-		{
-			queue.Clear();
-			s_queuePool.Return(queue);
-		}
-	}
-
-	/// <summary>
-	/// Releases locks for the current object and its descendants.
-	/// </summary>
-	protected void ReleaseLocks()
-	{
-		var stack = s_stackPool.Get();
-		try
-		{
-			stack.Push(this);
-			while (stack.Count > 0)
-			{
-				MemoryBase current = stack.Pop();
-				current.lockObject.Exit();
-
-				foreach (MemoryBase child in current.Children)
-				{
-					stack.Push(child);
-				}
-			}
-		}
-		finally
-		{
-			stack.Clear();
-			s_stackPool.Return(stack);
-		}
-	}
-
-	/// <summary>
-	/// Sets the synchronization state for the current object and its descendants.
-	/// </summary>
-	/// <param name="value">The synchronization state.</param>
-	protected void SetIsSynchronizing(bool value)
-	{
-		var stack = s_stackPool.Get();
-
-		try
-		{
-			stack.Push(this);
-			while (stack.Count > 0)
-			{
-				MemoryBase current = stack.Pop();
-				Interlocked.Exchange(ref current.isSynchronizing, value ? 1 : 0);
-
-				foreach (MemoryBase child in current.Children)
-				{
-					stack.Push(child);
-				}
-			}
-		}
-		finally
-		{
-			stack.Clear();
-			s_stackPool.Return(stack);
-		}
-	}
-
 	/// <summary>Reads a bound property value from memory.</summary>
 	/// <param name="bind">The property bind information.</param>
-	protected virtual void ReadFromMemory(PropertyBindInfo bind)
+	/// <param name="locked">The list of currently locked memory objects.</param>
+	protected virtual void ReadFromMemory(PropertyBindInfo bind, List<MemoryBase> locked)
 	{
+		if (this.disposed)
+			return;
+
 		if (!this.CanRead(bind))
 			return;
 
@@ -658,21 +756,18 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		try
 		{
 			IntPtr bindAddress = bind.GetAddress();
-
 			if (bindAddress == bind.LastFailureAddress)
 				return;
 
-			if (typeof(MemoryBase).IsAssignableFrom(bind.Type))
+			if (bind.IsMemoryBase)
 			{
 				MemoryBase? memory = bind.Property.GetValue(this) as MemoryBase;
-
 				bool isNew = false;
 
 				if (memory == null && bindAddress != IntPtr.Zero)
 				{
 					isNew = true;
 					memory = Activator.CreateInstance(bind.Type) as MemoryBase;
-
 					if (memory == null)
 					{
 						throw new Exception($"Failed to create instance of child memory type: {bind.Type}");
@@ -705,9 +800,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 					{
 						this.SetValueWithoutNotification(bind, null);
 						bind.LastValue = null;
-						memory.ReleaseLocks();
 						memory.Dispose();
-						this.Children.Remove(memory);
 					}
 					else
 					{
@@ -719,7 +812,9 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 						{
 							memory.parent = this;
 							memory.parentBind = bind;
-							memory.ClaimLocks();
+							ClaimLocks(memory);
+							SetIsSynchronizing(memory, true);
+							locked.Add(memory);
 							this.Children.Add(memory);
 						}
 					}
@@ -794,158 +889,115 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	}
 
 	/// <summary>
-	/// Internal method to synchronize the memory object.
+	/// Internal method to write delayed binds to memory.
 	/// </summary>
+	/// <param name="targets">
+	/// The list of target memory objects to write delayed binds for.
+	/// </param>
 	/// <remarks>
 	/// An internal method is used to allow for recursion on locked objects.
 	/// </remarks>
-	private void SynchronizeInternal()
+	private static void WriteDelayedBindsInternal(List<MemoryBase> targets)
+	{
+		for (int i = 0; i < targets.Count; ++i)
+		{
+			var current = targets[i];
+			if (current.delayedBinds.IsEmpty)
+				continue;
+
+			var remainingBinds = ArrayPool<BindInfo>.Shared.Rent(current.delayedBinds.Count);
+			int remainingCount = 0;
+
+			try
+			{
+				while (current.delayedBinds.TryDequeue(out BindInfo? bind))
+				{
+					if (bind is not PropertyBindInfo propertyBind)
+						continue;
+
+					// If we still can't write this bind, just skip it.
+					if (!current.CanWrite(propertyBind))
+					{
+						remainingBinds[remainingCount++] = propertyBind;
+						continue;
+					}
+
+					// Store the old value before it is overwritten by the new value in WriteToMemory
+					object? oldValue = propertyBind.LastValue;
+
+					current.WriteToMemory(propertyBind);
+
+					// Propagate property changed event to the rest of the application after writing to memory
+					var origin = PropertyChange.Origins.User;
+					if (!propertyBind.Flags.HasFlagUnsafe(BindFlags.DontRecordHistory) && HistoryService.InstanceOrNull?.IsRestoring == true)
+					{
+						origin = PropertyChange.Origins.History;
+					}
+
+					var change = new PropertyChange(propertyBind, oldValue, propertyBind.LastValue, origin);
+					current.PropagatePropertyChanged(propertyBind.Name, change);
+				}
+			}
+			finally
+			{
+				for (int j = 0; j < remainingCount; ++j)
+				{
+					current.delayedBinds.Enqueue(remainingBinds[j]);
+				}
+
+				ArrayPool<BindInfo>.Shared.Return(remainingBinds, clearArray: true);
+
+				if (!current.delayedBinds.IsEmpty)
+					Log.Warning($"Failed to write all delayed binds, remaining: {current.delayedBinds.Count}");
+			}
+		}
+	}
+
+	/// <summary>
+	/// Internal method to synchronize the memory object.
+	/// </summary>
+	/// <param name="locked">
+	/// The list of currently locked memory objects.
+	/// </param>
+	/// <remarks>
+	/// An internal method is used to allow for recursion on locked objects.
+	/// </remarks>
+	private void SynchronizeInternal(List<MemoryBase> locked)
 	{
 		if (this.Address == IntPtr.Zero)
 			return;
 
 		try
 		{
-			this.SetIsSynchronizing(true);
+			SetIsSynchronizing(locked, true);
 
-			var stack = s_stackPool.Get();
-
-			try
+			for (int i = 0; i < locked.Count; ++i)
 			{
-				stack.Push(this);
+				var current = locked[i];
 
-				while (stack.Count > 0)
+				// Process standard binds
+				foreach (PropertyBindInfo bind in current.Binds.Values)
 				{
-					MemoryBase current = stack.Pop();
-
-					if (current is IArrayMemory arrayMemory)
+					try
 					{
-						arrayMemory.ReadArrayMemory();
+						current.ReadFromMemory(bind, locked);
 					}
-					else
+					catch (Exception ex)
 					{
-						// Go through all binds that belong to this memory object.
-						foreach (PropertyBindInfo bind in current.Binds.Values)
-						{
-							// Skip if we can't read this bind right now.
-							if (!current.CanRead(bind))
-								continue;
-
-							try
-							{
-								current.ReadFromMemory(bind);
-							}
-							catch (Exception ex)
-							{
-								throw new Exception($"Failed to read {current.GetType()} - {bind.Name}", ex);
-							}
-						}
-					}
-
-					// Go through all child memory objects.
-					foreach (MemoryBase child in current.Children)
-					{
-						// If the child has no parent bind, then it is not a bind, and should not be refreshed.
-						if (child.parentBind == null)
-							continue;
-
-						// If the child is a bind, and the parent bind is not readable, then skip it.
-						if (!current.CanRead(child.parentBind))
-							continue;
-
-						// If the child is a bind but only applies in gpose and we are not in gpose, then skip it.
-						if (child.parentBind.Flags.HasFlagUnsafe(BindFlags.OnlyInGPose) && GposeService.InstanceOrNull?.IsGpose != true)
-							continue;
-
-						stack.Push(child);
+						throw new Exception($"Failed to read {current.GetType()} - {bind.Name}", ex);
 					}
 				}
-			}
-			finally
-			{
-				stack.Clear();
-				s_stackPool.Return(stack);
-			}
-		}
-		finally
-		{
-			this.SetIsSynchronizing(false);
-		}
-	}
 
-	/// <summary>
-	/// Internal method to write delayed binds to memory.
-	/// </summary>
-	/// <remarks>
-	/// An internal method is used to allow for recursion on locked objects.
-	/// </remarks>
-	private void WriteDelayedBindsInternal()
-	{
-		var stack = s_stackPool.Get();
-		try
-		{
-			stack.Push(this);
-
-			while (stack.Count > 0)
-			{
-				MemoryBase current = stack.Pop();
-
-				var remainingBinds = ArrayPool<BindInfo>.Shared.Rent(current.delayedBinds.Count);
-				int remainingCount = 0;
-
-				try
+				// If array, process its indexed elements.
+				if (current is IArrayMemory arrayMemory)
 				{
-					while (current.delayedBinds.TryDequeue(out BindInfo? bind))
-					{
-						if (bind is not PropertyBindInfo propertyBind)
-							continue;
-
-						// If we still can't write this bind, just skip it.
-						if (!current.CanWrite(propertyBind))
-						{
-							remainingBinds[remainingCount++] = propertyBind;
-							continue;
-						}
-
-						// Store the old value before it is overwritten by the new value in WriteToMemory
-						object? oldValue = propertyBind.LastValue;
-
-						current.WriteToMemory(propertyBind);
-
-						// Propagate property changed event to the rest of the application after writing to memory
-						var origin = PropertyChange.Origins.User;
-						if (!propertyBind.Flags.HasFlagUnsafe(BindFlags.DontRecordHistory) && HistoryService.InstanceOrNull?.IsRestoring == true)
-						{
-							origin = PropertyChange.Origins.History;
-						}
-
-						var change = new PropertyChange(propertyBind, oldValue, propertyBind.LastValue, origin);
-						current.PropagatePropertyChanged(propertyBind.Name, change);
-					}
-				}
-				finally
-				{
-					for (int i = 0; i < remainingCount; i++)
-					{
-						current.delayedBinds.Enqueue(remainingBinds[i]);
-					}
-
-					ArrayPool<BindInfo>.Shared.Return(remainingBinds, clearArray: true);
-
-					if (!current.delayedBinds.IsEmpty)
-						Log.Warning($"Failed to write all delayed binds, remaining: {current.delayedBinds.Count}");
-				}
-
-				foreach (var child in current.Children)
-				{
-					stack.Push(child);
+					arrayMemory.ReadArrayMemory(locked);
 				}
 			}
 		}
 		finally
 		{
-			stack.Clear();
-			s_stackPool.Return(stack);
+			SetIsSynchronizing(locked, false);
 		}
 	}
 
@@ -955,7 +1007,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <param name="bind">The property bind information.</param>
 	/// <param name="value">The value to set.</param>
 	/// <remarks>
-	/// This is used in <see cref="ReadFromMemory(PropertyBindInfo)"/> to ensure that memory changes
+	/// This is used in <see cref="ReadFromMemory(PropertyBindInfo, List{MemoryBase})"/> to ensure that memory changes
 	/// that originate from the game do not get processed via the OnSelfPropertyChanged, which is
 	/// intended to be called only for user-initiated changes (incl. history).
 	/// </remarks>

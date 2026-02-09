@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory;
 
 using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// Represents an array with a length and data stored as a pointer elsewhere in memory.
@@ -21,16 +22,4 @@ public abstract class ArrayMemory<TValue, TCount> : FixedArrayMemory<TValue>
 
 	/// <inheritdoc/>
 	public override int Length => Convert.ToInt32(this.ArrayLength);
-
-	/// <inheritdoc/>
-	public override void ReadArrayMemory()
-	{
-		if (this.Binds.TryGetValue(nameof(this.ArrayLength), out PropertyBindInfo? arrayLength)
-			&& this.CanRead(arrayLength))
-		{
-			this.ReadFromMemory(arrayLength);
-		}
-
-		base.ReadArrayMemory();
-	}
 }

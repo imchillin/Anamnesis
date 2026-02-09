@@ -35,8 +35,6 @@ public class AddressService : ServiceBase<AddressService>
 	public static IntPtr WorldPositionFreeze { get; set; }
 	public static IntPtr WorldRotationFreeze { get; set; }
 	public static IntPtr GPoseCameraTargetPositionFreeze { get; set; }
-	public static IntPtr GposeCheck { get; private set; }               // GPoseCheckOffset
-	public static IntPtr GposeCheck2 { get; private set; }              // GPoseCheck2Offset
 	public static IntPtr Territory { get; private set; }
 	public static IntPtr OverworldPlayerTarget => MemoryService.Read<IntPtr>(IntPtr.Add(TargetSystem, OVERWORLD_PLAYER_TARGET_OFFSET));
 	public static IntPtr GPosePlayerTarget => MemoryService.Read<IntPtr>(IntPtr.Add(TargetSystem, GPOSE_PLAYER_TARGET_OFFSET));
@@ -114,8 +112,6 @@ public class AddressService : ServiceBase<AddressService>
 		WorldPositionFreeze = IntPtr.Zero;
 		WorldRotationFreeze = IntPtr.Zero;
 		GPoseCameraTargetPositionFreeze = IntPtr.Zero;
-		GposeCheck = IntPtr.Zero;
-		GposeCheck2 = IntPtr.Zero;
 		Territory = IntPtr.Zero;
 		TimeAsm = IntPtr.Zero;
 		Framework = IntPtr.Zero;
@@ -167,17 +163,10 @@ public class AddressService : ServiceBase<AddressService>
 			// Get the ServerWeather struct from the WeatherManager Instance.
 			GetAddressFromSignature("WeatherManager", "48 8D 0D ?? ?? ?? ?? 44 0F B7 45", 3, (p) => { ServerWeather = p + 0x48; }),
 			GetAddressFromSignature("GPoseFilters", "48 85 D2 4C 8B 05 ?? ?? ?? ??", 0, (p) => { GPoseFilters = p; }),
-			GetAddressFromSignature("GposeCheck", "0F 84 ?? ?? ?? ?? 8B 15 ?? ?? ?? ?? 48 89 6C 24 ??", 0, (p) => { GposeCheck = p; }),
-			GetAddressFromSignature("GposeCheck2", "8D 48 FF 48 8D 05 ?? ?? ?? ?? 8B 04 88 83 F8 04 49 8B CA", 3, (p) => { GposeCheck2 = p; }),
 			GetAddressFromSignature("TargetSystem", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 3B C6 0F 95 C0", 3, (p) => { TargetSystem = p; }),
 			GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { s_cameraManager = p; }),
 			GetAddressFromTextSignature("TimeAsm", "48 89 87 ?? ?? ?? ?? 48 69 C0", (p) => TimeAsm = p),
-			GetAddressFromTextSignature("Framework", "48 C7 05 ?? ?? ?? ?? 00 00 00 00 E8 ?? ?? ?? ?? 48 8D ?? ?? ?? 00 00 E8 ?? ?? ?? ?? 48 8D", (p) =>
-				{
-					int frameworkOffset = MemoryService.Read<int>(p + 3);
-					IntPtr frameworkPtr = MemoryService.ReadPtr(p + 11 + frameworkOffset);
-					Framework = frameworkPtr;
-				}),
+			GetAddressFromSignature("Framework", "48 8B 1D ?? ?? ?? ?? 8B 7C 24", 3, (p) => Framework = MemoryService.ReadPtr(p)),
 			GetAddressFromTextSignature("SkeletonFreezePhysics (1/2/3)", "0F 11 00 41 0F 10 4C 24 ?? 0F 11 48 10 41 0F 10 44 24 ?? 0F 11 40 20 48 8B 46 28", (p) =>
 				{
 					SkeletonFreezePhysics2 = p;

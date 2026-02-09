@@ -23,6 +23,8 @@ using XivToolsWpf;
 [AddINotifyPropertyChangedInterface]
 public class TargetService : ServiceBase<TargetService>
 {
+	public static readonly HashSet<string> ExcludeSkeletonGroup = new() { "Skeleton" };
+
 	private const int TASK_DELAY = 32; // ms (~30 fps)
 
 	/// <summary>
@@ -434,7 +436,7 @@ public class TargetService : ServiceBase<TargetService>
 		{
 			try
 			{
-				bool isGpose = GposeService.GetIsGPose();
+				bool isGpose = GposeService.IsInGpose();
 
 				var actorHandles = ActorService.Instance.ObjectTable.GetAll();
 
@@ -447,7 +449,7 @@ public class TargetService : ServiceBase<TargetService>
 							return false;
 
 						// Ensure the actor data is up to date
-						a.Synchronize();
+						a.Synchronize(exclGroups: ExcludeSkeletonGroup);
 
 						if (a.IsHidden)
 							return false;
@@ -560,7 +562,7 @@ public class TargetService : ServiceBase<TargetService>
 				if (pinnedActor != null)
 					pinnedActor.Tick();
 				else
-					handle.Synchronize();
+					handle.Synchronize(exclGroups: ExcludeSkeletonGroup);
 			}
 			catch
 			{

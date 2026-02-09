@@ -113,4 +113,13 @@ public class BindAttribute : Attribute
 	/// If this is not <c>null</c>, then <see cref="Offsets"/> will be ignored.
 	/// </remarks>
 	public string? OffsetPropertyName { get; }
+
+	/// <summary>
+	/// Gets the name of the synchronization group associated with this bind.
+	/// </summary>
+	/// <remarks>
+	/// The idea is to use synchronization groups to filter which binds to
+	/// synchronize based on context.
+	/// </remarks>
+	public string? SyncGroup { get; set; }
 }

@@ -2,3 +2,6 @@
 	path = Lib/XivToolsWpf
 	url = https://github.com/Aether-Tools/AetherToolsWpf
 	branch = Anamnesis
+[submodule "Lib/SharedMemoryIPC"]
+	path = Lib/SharedMemoryIPC
+	url = https://github.com/ergoxiv/SharedMemoryIPC.git

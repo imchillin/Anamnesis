@@ -154,7 +154,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 			try
 			{
-				this.Memory.Synchronize();
+				this.Memory.Synchronize(exclGroups: TargetService.ExcludeSkeletonGroup);
 			}
 			catch (Exception ex)
 			{
@@ -254,7 +254,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 			this.Memory?.Do(a => a.PropertyChanged -= this.OnViewModelPropertyChanged);
 
 			ObjectHandle<GameObjectMemory>? newHandle = null;
-			bool isGPose = GposeService.GetIsGPose();
+			bool isGPose = GposeService.IsInGpose();
 
 			var actorHandles = ActorService.Instance.ObjectTable.GetAll();
 
@@ -450,7 +450,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	private void OnRetargetedActor()
 	{
 		// If we need to apply the appearance thanks to a GPose boundary changes?
-		if (SettingsService.Current.ReapplyAppearance || GposeService.GetIsGPose())
+		if (SettingsService.Current.ReapplyAppearance || GposeService.IsInGpose())
 		{
 			this.RestoreCharacterBackup(BackupModes.Gpose);
 

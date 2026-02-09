@@ -25,7 +25,27 @@
     <PublishTrimmed>false</PublishTrimmed>
     <CETCompat>false</CETCompat>
     <NeutralLanguage>en</NeutralLanguage>
+    <TrimmerRootAssembly>Serilog; RemoteController</TrimmerRootAssembly>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
   </PropertyGroup>
+  <ItemGroup>
+    <RemoteControllerSources
+        Include="..\RemoteController\**\*.cs"
+        Exclude="..\RemoteController\obj\**;..\RemoteController\bin\**" />
+  </ItemGroup>
+  <Target Name="PublishRemoteController"
+        BeforeTargets="BeforeBuild;PrepareForPublish"
+        Inputs="$(SolutionDir)RemoteController\RemoteController.csproj;@(RemoteControllerSources)"
+        Outputs="$(SolutionDir)obj\RemotePublish\RemoteController.dll">
+
+    <PropertyGroup>
+      <RemotePublishDir>$(SolutionDir)obj\RemotePublish\</RemotePublishDir>
+    </PropertyGroup>
+
+    <Message Importance="high" Text="Changes detected in RemoteController. Publishing..." />
+    <MakeDir Directories="$(RemotePublishDir)" />
+    <Exec Command="dotnet publish &quot;$(SolutionDir)RemoteController\RemoteController.csproj&quot; -c $(Configuration) -r win-x64 -o &quot;$(RemotePublishDir)/&quot; --self-contained true" WorkingDirectory="$(SolutionDir)" />
+  </Target>
   <ItemGroup>
     <PackageReference Include="Fody" Version="6.9.1">
       <PrivateAssets>all</PrivateAssets>
@@ -53,7 +73,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-	<PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
+    <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\*.*" />
@@ -116,6 +136,27 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lib\XivToolsWpf\XivToolsWpf.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lib\SharedMemoryIPC\SharedMemoryIPC\SharedMemoryIPC.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RemoteController\RemoteController.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="obj\x64\Debug\Remote\RemoteController.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(SolutionDir)obj\RemotePublish\RemoteController.dll">
+      <LogicalName>Anamnesis.Memory.RemoteController.dll</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(SolutionDir)obj\RemotePublish\FASMX64.dll">
+      <LogicalName>Anamnesis.Memory.FASMX64.dll</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <TrimmerRootAssembly Include="Serilog" />
+    <TrimmerRootAssembly Include="RemoteController" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Resources.Designer.cs">

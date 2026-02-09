@@ -60,11 +60,11 @@
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="http://materialdesigninxaml.net/" FontSize="12">Material Design In XAML</Hyperlink>
 					<LineBreak />
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/Fody/Fody" FontSize="12">Fody</Hyperlink>
-					<LineBreak />
+					<TextBlock>&amp;</TextBlock>
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/Fody/PropertyChanged" FontSize="12">Fody.PropertyChanged</Hyperlink>
 					<LineBreak />
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://fontawesome.com/" FontSize="12">FontAwesome</Hyperlink>
-					<LineBreak />
+					<TextBlock>&amp;</TextBlock>
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/awesome-inc/FontAwesome.Sharp" FontSize="12">FontAwesome Sharp</Hyperlink>
 					<LineBreak />
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/DotNetAnalyzers/StyleCopAnalyzers" FontSize="12">StyleCop Analyzers</Hyperlink>
@@ -72,6 +72,10 @@
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/Kryptos-FR/markdig.wpf" FontSize="12">Markdig.WPF</Hyperlink>
 					<LineBreak />
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://brailleinstitute.org/freefont" FontSize="12" >Atkinson Hyperlegible Font</Hyperlink>
+					<LineBreak />
+					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/Reloaded-Project/Reloaded.Hooks" FontSize="12" >Reloaded.Hooks</Hyperlink>
+					<LineBreak />
+					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/icedland/iced" FontSize="12" >Iced</Hyperlink>
 			</TextBlock>
 
 			

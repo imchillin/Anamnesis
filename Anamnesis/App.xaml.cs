@@ -29,7 +29,6 @@ public partial class App : Application
 		this.Dispatcher.UnhandledException += this.DispatcherOnUnhandledException;
 		Application.Current.DispatcherUnhandledException += this.CurrentOnDispatcherUnhandledException;
 		TaskScheduler.UnobservedTaskException += this.TaskSchedulerOnUnobservedTaskException;
-		this.Exit += this.OnExit;
 
 		base.OnStartup(e);
 
@@ -80,11 +79,6 @@ public partial class App : Application
 		{
 			throw new Exception($"Multiple {name} processes found. Please close all other instances.");
 		}
-	}
-
-	private void OnExit(object sender, ExitEventArgs e)
-	{
-		Task.Run(ServiceManager.ShutdownServices);
 	}
 
 	private void TaskSchedulerOnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)

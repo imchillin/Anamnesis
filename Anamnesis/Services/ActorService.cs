@@ -237,7 +237,6 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 					var obj = new T();
 					obj.SetAddress(ptr);
 					ObjectHandleCache.Cache.TryAdd(cacheKey, new ObjectHandleCache.CacheEntry(obj));
-					Log.Information($"Created new memory object of type {typeof(T).Name} at address {ptr} and added to cache.");
 				}
 				catch (Exception ex)
 				{
@@ -290,7 +289,7 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	/// Use this method instead of <see cref="MemoryBase.Synchronize"/> to avoid
 	/// desynchronizations with handles of derived types pointing to the same address.
 	/// </remarks>
-	public void Synchronize()
+	public void Synchronize(IReadOnlySet<string>? inclGroups = null, IReadOnlySet<string>? exclGroups = null)
 	{
 		var targets = ObjectHandleCache.ListPool.Get();
 		try
@@ -309,7 +308,7 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 			{
 				var obj = targets[i];
 				if (!obj.IsDisposed)
-					obj.Synchronize();
+					obj.Synchronize(inclGroups, exclGroups);
 			}
 		}
 		finally
@@ -340,7 +339,6 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 				{
 					if (ObjectHandleCache.Cache.TryRemove(cacheKey, out var removedEntry))
 					{
-						Log.Information($"Disposing cached object of type {typeof(T).Name} at address {this.ptr} as its reference count reached zero.");
 						if (!removedEntry.Object.IsDisposed)
 							removedEntry.Object.Dispose();
 					}
