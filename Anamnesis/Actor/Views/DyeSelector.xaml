@@ -51,8 +51,8 @@
 					<ToggleButton Grid.Column="2" Grid.RowSpan="2" Style="{StaticResource InvisibleToggleButton}" IsChecked="{Binding IsFavorite}" Margin="6,0,0,0" Padding="0" VerticalAlignment="Center">
 						<Grid>
 							<fa:IconBlock Icon="Star" FontSize="13" Opacity="0.25"
-												   Visibility="{Binding IsFavorite, Converter={StaticResource !B2V}}"/>
-							<xivToolsWpf:IconBlock Icon="Star" FontSize="13"
+										  Visibility="{Binding IsFavorite, Converter={StaticResource !B2V}}"/>
+							<fa:IconBlock Icon="Star" FontSize="13"
 										  Visibility="{Binding IsFavorite, Converter={StaticResource B2V}}"/>
 						</Grid>
 					</ToggleButton>

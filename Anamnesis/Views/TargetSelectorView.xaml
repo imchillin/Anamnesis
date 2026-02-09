@@ -5,11 +5,10 @@
 	xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 	xmlns:drawers="clr-namespace:Anamnesis.Styles.Drawers"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 	xmlns:local="clr-namespace:Anamnesis.Views"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-	xmlns:xivToolsWpfSelectors="clr-namespace:XivToolsWpf.Selectors;assembly=XivToolsWpf"
+	xmlns:XivToolsWpfSelectors="clr-namespace:XivToolsWpf.Selectors;assembly=XivToolsWpf"
 	d:DesignHeight="450"
 	d:DesignWidth="800"
 	mc:Ignorable="d">
@@ -69,7 +68,7 @@
 					Style="{DynamicResource TransparentButton}">
 
                     <StackPanel Orientation="Horizontal">
-                        <fa:IconBlock FontSize="12" Icon="Bullseye" Margin="0, 0, 6, 0"/>
+						<XivToolsWpf:IconBlock FontSize="12" Icon="Bullseye" Margin="0, 0, 6, 0"/>
                         <TextBlock Text="{Binding TargetService.PlayerTargetHandle.Unsafe.Name, Mode=OneWay}" />
                     </StackPanel>
                 </Button>
@@ -83,16 +82,16 @@
 					Style="{DynamicResource TransparentButton}">
 
                     <StackPanel Orientation="Horizontal">
-                        <fa:IconBlock FontSize="12" Icon="Plus" Margin="6, 0, 6, 0"/>
+						<XivToolsWpf:IconBlock FontSize="12" Icon="Plus" Margin="6, 0, 6, 0"/>
                         <XivToolsWpf:TextBlock Key="Target_SpawnActor" Margin="0, 0, 6, 0"/>
                     </StackPanel>
                 </Button>
             </Grid>
         </Grid>
 
-        <xivToolsWpfSelectors:Selector Grid.Row="3">
+        <XivToolsWpfSelectors:Selector Grid.Row="3">
 
-            <xivToolsWpfSelectors:Selector.ItemTemplate>
+            <XivToolsWpfSelectors:Selector.ItemTemplate>
                 <DataTemplate>
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -101,9 +100,9 @@
                             <ColumnDefinition Width="48" />
                         </Grid.ColumnDefinitions>
 
-                        <fa:IconBlock Grid.Column="0" Icon="{Binding Unsafe.Icon}" />
+						<XivToolsWpf:IconBlock Grid.Column="0" Icon="{Binding Unsafe.Icon}"/>
 
-                        <StackPanel Orientation="Horizontal" Grid.Column="1">
+						<StackPanel Orientation="Horizontal" Grid.Column="1">
                             <TextBlock
 								Margin="6,0,0,0"
 								FontWeight="DemiBold"
@@ -139,8 +138,8 @@
 
                     </Grid>
                 </DataTemplate>
-            </xivToolsWpfSelectors:Selector.ItemTemplate>
-        </xivToolsWpfSelectors:Selector>
+            </XivToolsWpfSelectors:Selector.ItemTemplate>
+        </XivToolsWpfSelectors:Selector>
 
         <Grid Grid.Row="4" Margin="10,6,2,6" HorizontalAlignment="Right">
             <Grid.ColumnDefinitions>
