@@ -76,7 +76,7 @@ public partial class GeneralSettingsPage : System.Windows.Controls.UserControl, 
 	public Dictionary<string, SettingCategory> SettingCategories { get; }
 	public IEnumerable<FontOption> Fonts { get; }
 
-	[DependsOn(nameof(this.Fonts))]
+	[DependsOn(nameof(Fonts))]
 	public FontOption SelectedFont
 	{
 		get => this.Fonts.FirstOrDefault(font => font.Font == SettingsService.Current.Font) ?? this.Fonts.First();
@@ -85,7 +85,7 @@ public partial class GeneralSettingsPage : System.Windows.Controls.UserControl, 
 
 	public IEnumerable<LanguageOption> Languages { get; }
 
-	[DependsOn(nameof(this.Languages))]
+	[DependsOn(nameof(Languages))]
 	public LanguageOption SelectedLanguage
 	{
 		get => this.Languages.FirstOrDefault(language => language.Key.Equals(SettingsService.Current.Language, StringComparison.CurrentCultureIgnoreCase)) ?? this.Languages.First();
