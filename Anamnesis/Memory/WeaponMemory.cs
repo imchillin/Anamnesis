@@ -8,6 +8,7 @@ using Anamnesis.Core.Extensions;
 using Anamnesis.GameData;
 using PropertyChanged;
 using System;
+using System.Buffers.Binary;
 using System.Numerics;
 using static Anamnesis.Actor.Utilities.DyeUtility;
 

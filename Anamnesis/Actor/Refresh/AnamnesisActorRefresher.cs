@@ -3,11 +3,15 @@
 
 namespace Anamnesis.Actor.Refresh;
 
+using Anamnesis.Actor.Pages;
+using Anamnesis.Actor.Posing;
+using Anamnesis.Files;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using RemoteController.Interop.Delegates;
 using Serilog;
 using System;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
 public enum RedrawStage
@@ -38,6 +42,91 @@ public class AnamnesisActorRefresher : IActorRefresher
 		if (handle == null)
 			return;
 
+		var actorHandle = ActorService.Instance.ObjectTable.Get<ActorMemory>(handle.Address);
+		if (actorHandle == null)
+			return;
+
+		// Capture current state before redraw
+		var currentSnapshot = this.CaptureSnapshot(actorHandle);
+
+		// Compute what changed since last snapshot
+		var changeset = this.ComputeChangeset(actor, currentSnapshot);
+		Log.Information($"Computed changeset: {changeset}");
+
+		if (!changeset.HasChanges)
+		{
+			Log.Information("No appearance changes detected, skipping redraw");
+			this.UpdateSnapshot(actor, currentSnapshot);
+			return;
+		}
+
+		// Try optimized redraw for non-structural changes
+		if (await this.TryOptimizedRedrawAsync(actor, changeset))
+		{
+			this.UpdateSnapshot(actor, currentSnapshot);
+			return;
+		}
+
+		// Fall back to full redraw
+		Log.Information($"Performing full redraw (Structural: {changeset.HasStructuralChanges}, IsHuman: {actor.IsHuman})");
+		await this.PerformFullRedrawAsync(actor, handle);
+
+		// Update snapshot after redraw
+		this.UpdateSnapshot(actor, currentSnapshot);
+	}
+
+	private CharacterFile CaptureSnapshot(ObjectHandle<ActorMemory> actor)
+	{
+		var snapshot = new CharacterFile();
+		snapshot.WriteToFile(actor, CharacterFile.SaveModes.All);
+		Log.Verbose($"Captured appearance snapshot for actor at 0x{actor.Address:X}");
+		return snapshot;
+	}
+
+	private CharacterFile.CharChangeSet ComputeChangeset(ActorMemory actor, CharacterFile currentSnapshot)
+	{
+		if (actor.LastAppearanceSnapshot == null)
+			return CharacterFile.CharChangeSet.FullRedraw;
+
+		return actor.LastAppearanceSnapshot.CompareTo(currentSnapshot, CharacterFile.SaveModes.All);
+	}
+
+	private void UpdateSnapshot(ActorMemory actor, CharacterFile snapshot)
+	{
+		actor.LastAppearanceSnapshot = snapshot;
+		Log.Verbose($"Updated appearance snapshot for actor at 0x{actor.Address:X}");
+	}
+
+	private async Task<bool> TryOptimizedRedrawAsync(ActorMemory actor, CharacterFile.CharChangeSet changeset)
+	{
+		if (!changeset.CanUseOptimizedRedraw || !actor.IsHuman)
+			return false;
+
+		try
+		{
+			// TODO: Brio uses LoadWeapon and SetGlasses (DrawDataContainer) for updating facewear and weapons.
+
+			var drawData = actor.BuildDrawData();
+			bool skipEquipment = !changeset.HasEquipmentChanges;
+
+			if (actor.UpdateDrawData(in drawData, skipEquipment))
+			{
+				Log.Information($"Applied optimized redraw (skipped equipment: {skipEquipment})");
+				return true;
+			}
+
+			Log.Information("Optimized UpdateDrawData failed, falling back to full redraw");
+		}
+		catch (Exception ex)
+		{
+			Log.Warning(ex, $"Optimized redraw failed for actor at 0x{actor.Address:X}");
+		}
+
+		return false;
+	}
+
+	private async Task PerformFullRedrawAsync(ActorMemory actor, ObjectHandle<GameObjectMemory> handle)
+	{
 		var isInGpose = GposeService.IsInGpose() ?? GposeService.Instance.IsGpose;
 		if (SettingsService.Current.EnableNpcHack && !isInGpose && actor.ObjectKind == ObjectTypes.Player)
 		{

@@ -78,6 +78,9 @@ public class Controller
 		[DriverCommand.GetIsInGpose] = DriverCommandHandler.ConditionalGetter(
 			() => GposeDriver.IsInitialized,
 			() => GposeDriver.Instance.IsInGpose),
+
+		// Actor driver commands
+		[DriverCommand.UpdateActorDrawData] = HandleUpdateActorDrawData,
 	};
 
 #pragma warning disable CA2211
@@ -1010,6 +1013,31 @@ public class Controller
 			Log.Error(ex, "Error handling event unsubscribe message.");
 			SendResponse(messageId, PayloadType.NAck);
 		}
+	}
+
+	private static byte[] HandleUpdateActorDrawData(ReadOnlySpan<byte> args)
+	{
+		// Payload layout: [nint drawObjectAddress (8)] [byte skipEquipment (1)] [byte[] drawData (remaining)].
+		const int headerSize = sizeof(long) + 1; // nint + skipEquipment byte
+
+		if (!ActorDriver.IsInitialized || args.Length <= headerSize)
+			return [0];
+
+		nint drawObjectAddr = MemoryMarshal.Read<nint>(args);
+		bool skipEquipment = args[sizeof(long)] != 0;
+		byte[] drawData = args[headerSize..].ToArray();
+
+		if (FrameworkDriver.IsInitialized)
+		{
+			return FrameworkDriver.EnqueueAndWait(() =>
+			{
+				bool success = ActorDriver.Instance.UpdateDrawData(drawObjectAddr, drawData, skipEquipment);
+				return [(byte)(success ? 1 : 0)];
+			});
+		}
+
+		bool result = ActorDriver.Instance.UpdateDrawData(drawObjectAddr, drawData, skipEquipment);
+		return [(byte)(result ? 1 : 0)];
 	}
 
 	private static void HandleGoodbyeMessage(uint msgId)

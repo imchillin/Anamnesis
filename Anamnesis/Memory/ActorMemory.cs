@@ -5,20 +5,24 @@ namespace Anamnesis.Memory;
 
 using Anamnesis.Actor.Refresh;
 using Anamnesis.Core.Extensions;
+using Anamnesis.Files;
 using Anamnesis.Services;
 using Anamnesis.Utils;
 using PropertyChanged;
 using RemoteController.Interop.Delegates;
+using RemoteController.Interop.Types;
+using RemoteController.IPC;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 public class ActorMemory : GameObjectMemory, IDisposable
 {
-	private const int REFRESH_DEBOUNCE_TIMEOUT = 200;
+	private const double REFRESH_DEBOUNCE_TIMEOUT_MS = 0.2;
 
 	private static readonly List<IActorRefresher> s_actorRefreshers =
 	[
@@ -48,7 +52,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		this.PropertyChanged += this.HandlePropertyChanged;
 
 		// Initialize the debounce timer
-		this.refreshDebounceTimer = new(REFRESH_DEBOUNCE_TIMEOUT) { AutoReset = false };
+		this.refreshDebounceTimer = new(REFRESH_DEBOUNCE_TIMEOUT_MS) { AutoReset = false };
 		this.refreshDebounceTimer.Elapsed += async (s, e) => { await this.Refresh(); };
 	}
 
@@ -204,6 +208,8 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	[DependsOn(nameof(CharacterMode))]
 	public bool IsAnimationOverridden => this.CharacterMode == CharacterModes.AnimLock;
 
+	public CharacterFile? LastAppearanceSnapshot { get; set; }
+
 	/// <summary>Determines if the actor can be refreshed.</summary>
 	/// <param name="actor">The actor to check.</param>
 	/// <returns>True if the actor can be refreshed, otherwise false.</returns>
@@ -352,6 +358,24 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		this.OnPropertyChanged(nameof(this.RefreshBlockReason));
 	}
 
+	public CharacterDrawData BuildDrawData()
+	{
+		CharacterDrawData drawData = default;
+
+		unsafe
+		{
+			// Customize: bytes 0x00-0x1F
+			Span<byte> customizeSpan = new(drawData.Customize, CharacterDrawData.CUSTOMIZE_SIZE);
+			this.Customize?.WriteTo(customizeSpan);
+
+			// Equipment: bytes 0x20-0x6F
+			Span<byte> equipmentSpan = new((byte*)drawData.Equipment, CharacterDrawData.EQUIPMENT_SLOTS * 8);
+			this.Equipment?.WriteTo(equipmentSpan);
+		}
+
+		return drawData;
+	}
+
 	public bool IsWanderer()
 	{
 		try
@@ -361,6 +385,52 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		catch
 		{
 			Log.Verbose($"Failed to invoke 'IsWanderer' hook for actor at address 0x{this.Address:X}");
+			return false;
+		}
+	}
+
+	/// <summary>
+	/// Remotely invokes <see cref="Human.UpdateDrawData"/> on the actor's model object to update its draw data.
+	/// </summary>
+	/// <param name="drawData">
+	/// The draw data buffer (see <see cref="CharacterDrawData"/>).
+	/// </param>
+	/// <param name="skipEquipment">
+	/// Whether to skip equipment model updates.
+	/// </param>
+	/// <returns>
+	/// True if the game performed the draw update; false otherwise.
+	/// </returns>
+	public bool UpdateDrawData(in CharacterDrawData drawData, bool skipEquipment)
+	{
+		if (!this.IsHuman || this.ModelObject == null)
+			return false;
+
+		nint drawObjectAddress = this.ModelObject.Address;
+		if (drawObjectAddress == IntPtr.Zero)
+			return false;
+
+		try
+		{
+			unsafe
+			{
+				// Payload layout: [nint drawObjectAddress (8)] [byte skipEquipment (1)] [CharacterDrawData (128)]
+				int payloadSize = sizeof(nint) + 1 + CharacterDrawData.SIZE;
+				Span<byte> payload = stackalloc byte[payloadSize];
+
+				MemoryMarshal.Write(payload, in drawObjectAddress);
+				payload[sizeof(nint)] = skipEquipment ? (byte)1 : (byte)0;
+				drawData.AsSpan().CopyTo(payload[(sizeof(nint) + 1)..]);
+
+				byte[] response = ControllerService.Instance.SendDriverCommandRaw(
+					DriverCommand.UpdateActorDrawData, payload);
+
+				return response.Length > 0 && response[0] != 0;
+			}
+		}
+		catch (Exception ex)
+		{
+			Log.Warning(ex, $"Failed to invoke UpdateDrawData for actor at 0x{this.Address:X}");
 			return false;
 		}
 	}

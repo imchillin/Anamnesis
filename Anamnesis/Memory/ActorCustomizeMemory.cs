@@ -184,4 +184,37 @@ public class ActorCustomizeMemory : MemoryBase
 		get => (byte)(this.Eyes - (this.SmallIris ? 128 : 0));
 		set => this.Eyes = (byte)(value + (this.SmallIris ? 128 : 0));
 	}
+
+	public void WriteTo(Span<byte> destination)
+	{
+		if (destination.Length < 32)
+			throw new ArgumentException("Destination must be at least 32 bytes.", nameof(destination));
+
+		destination[0x00] = (byte)this.Race;
+		destination[0x01] = (byte)this.Gender;
+		destination[0x02] = (byte)this.Age;
+		destination[0x03] = this.Height;
+		destination[0x04] = (byte)this.Tribe;
+		destination[0x05] = this.Head;
+		destination[0x06] = this.Hair;
+		destination[0x07] = this.HighlightType;
+		destination[0x08] = this.Skintone;
+		destination[0x09] = this.REyeColor;
+		destination[0x0A] = this.HairTone;
+		destination[0x0B] = this.Highlights;
+		destination[0x0C] = (byte)this.FacialFeatures;
+		destination[0x0D] = this.FacialFeatureColor;
+		destination[0x0E] = this.Eyebrows;
+		destination[0x0F] = this.LEyeColor;
+		destination[0x10] = this.Eyes;
+		destination[0x11] = this.Nose;
+		destination[0x12] = this.Jaw;
+		destination[0x13] = this.Mouth;
+		destination[0x14] = this.LipsToneFurPattern;
+		destination[0x15] = this.EarMuscleTailSize;
+		destination[0x16] = this.TailEarsType;
+		destination[0x17] = this.Bust;
+		destination[0x18] = this.FacePaint;
+		destination[0x19] = this.FacePaintColor;
+	}
 }

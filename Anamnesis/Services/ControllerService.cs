@@ -820,6 +820,29 @@ public class ControllerService : ServiceBase<ControllerService>
 	}
 
 	/// <summary>
+	/// Sends a raw driver command with serialized arguments.
+	/// </summary>
+	/// <param name="command">The driver command.</param>
+	/// <param name="serializedArgs">Arguments that have already been serialized to a byte array.</param>
+	/// <returns>Raw response bytes, or empty array on failure.</returns>
+	public byte[] SendDriverCommandRaw(DriverCommand command, ReadOnlySpan<byte> serializedArgs)
+	{
+		if (this.outgoingEndpoint == null || !this.isConnected)
+			return [];
+
+		int payloadSize = sizeof(int) + serializedArgs.Length;
+
+		Span<byte> payload = payloadSize <= 256
+			? stackalloc byte[payloadSize]
+			: new byte[payloadSize];
+
+		MarshalUtils.Write(payload, (int)command);
+		serializedArgs.CopyTo(payload[sizeof(int)..]);
+
+		return this.SendDriverCommandInternal(payload);
+	}
+
+	/// <summary>
 	/// Subscribes to an event from the remote controller.
 	/// </summary>
 	/// <remarks>

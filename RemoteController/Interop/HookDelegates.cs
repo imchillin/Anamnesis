@@ -7,6 +7,13 @@ using RemoteController.Interop.Types;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
+public static class BoneKineDriver
+{
+	[FunctionBind("48 8B C4 55 57 48 83 EC 58")]
+	[UnmanagedFunctionPointer(CallingConvention.StdCall)]
+	public delegate void ApplyKineDriverTransforms(IntPtr kineDriverPtr, IntPtr hkaPosePtr);
+}
+
 public static class Camera
 {
 	[FunctionBind("E8 ?? ?? ?? ?? 0F 28 C7 0F 28 CE")]
@@ -91,9 +98,9 @@ public static class HkaPose
 	public delegate void SyncModelSpace(nint posePtr);
 }
 
-public static class BoneKineDriver
+public static class Human
 {
-	[FunctionBind("48 8B C4 55 57 48 83 EC 58")]
-	[UnmanagedFunctionPointer(CallingConvention.StdCall)]
-	public delegate void ApplyKineDriverTransforms(IntPtr kineDriverPtr, IntPtr hkaPosePtr);
+	[FunctionBind("E8 ?? ?? ?? ?? 83 BF ?? ?? ?? ?? ?? 75 34")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public unsafe delegate bool UpdateDrawData(nint hPtr, byte* data, bool skipEquipment);
 }
