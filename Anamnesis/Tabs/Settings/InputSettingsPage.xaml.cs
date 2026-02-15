@@ -90,42 +90,42 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 	public IEnumerable<GizmoDragModeOption> GizmoDragModes { get; }
 	public IEnumerable<SliderType> SliderTypes { get; }
 
-	[DependsOn(nameof(this.GizmoDragModes))]
+	[DependsOn(nameof(GizmoDragModes))]
 	public GizmoDragModeOption SelectedGizmoDragMode
 	{
 		get => this.GizmoDragModes.FirstOrDefault(mode => mode.Mode == SettingsService.Current.GizmoDragMode) ?? this.GizmoDragModes.First();
 		set => SettingsService.Current.GizmoDragMode = value.Mode;
 	}
 
-	[DependsOn(nameof(this.SliderTypes))]
+	[DependsOn(nameof(SliderTypes))]
 	public SliderType SelectedTimeAndWeatherSliderType
 	{
 		get => this.SliderTypes.FirstOrDefault(type => type.Type == SettingsService.Current.TimeAndWeatherSliderType) ?? this.SliderTypes.First();
 		set => SettingsService.Current.TimeAndWeatherSliderType = value.Type;
 	}
 
-	[DependsOn(nameof(this.SliderTypes))]
+	[DependsOn(nameof(SliderTypes))]
 	public SliderType SelectedCameraSliderType
 	{
 		get => this.SliderTypes.FirstOrDefault(type => type.Type == SettingsService.Current.CameraSliderType) ?? this.SliderTypes.First();
 		set => SettingsService.Current.CameraSliderType = value.Type;
 	}
 
-	[DependsOn(nameof(this.SliderTypes))]
+	[DependsOn(nameof(SliderTypes))]
 	public SliderType SelectedBoneRotationSliderType
 	{
 		get => this.SliderTypes.FirstOrDefault(type => type.Type == SettingsService.Current.BoneRotationSliderType) ?? this.SliderTypes.First();
 		set => SettingsService.Current.BoneRotationSliderType = value.Type;
 	}
 
-	[DependsOn(nameof(this.SliderTypes))]
+	[DependsOn(nameof(SliderTypes))]
 	public SliderType SelectedBonePositionSliderType
 	{
 		get => this.SliderTypes.FirstOrDefault(type => type.Type == SettingsService.Current.BonePositionSliderType) ?? this.SliderTypes.First();
 		set => SettingsService.Current.BonePositionSliderType = value.Type;
 	}
 
-	[DependsOn(nameof(this.SliderTypes))]
+	[DependsOn(nameof(SliderTypes))]
 	public SliderType SelectedBoneScaleSliderType
 	{
 		get => this.SliderTypes.FirstOrDefault(type => type.Type == SettingsService.Current.BoneScaleSliderType) ?? this.SliderTypes.First();

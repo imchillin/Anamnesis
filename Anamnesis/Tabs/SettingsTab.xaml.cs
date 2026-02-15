@@ -62,7 +62,7 @@ public partial class SettingsTab : System.Windows.Controls.UserControl
 	public static SettingsService SettingsService => SettingsService.Instance;
 	public ObservableCollection<SettingsPage> Pages { get; private set; }
 
-	[DependsOn(nameof(this.Pages))]
+	[DependsOn(nameof(Pages))]
 	public SettingsPage SelectedPage { get; set; }
 
 	public string SearchQuery

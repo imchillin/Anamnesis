@@ -46,7 +46,7 @@
 						<Grid>
 							<fa:IconBlock Icon="Star" FontSize="13" Opacity="0.25"
 										  Visibility="{Binding IsFavorite, Converter={StaticResource !B2V}}"/>
-							<fa:IconBlock Icon="Star" FontSize="13"
+							<fa:IconBlock Icon="Star" FontSize="13" IconFont="Solid"
 										  Visibility="{Binding IsFavorite, Converter={StaticResource B2V}}"/>
 						</Grid>
 					</ToggleButton>
