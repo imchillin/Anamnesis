@@ -334,7 +334,7 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 		}
 		catch (Exception ex)
 		{
-			Log.Warning(ex, $"Failed to synchronize object handle at address: {this.Address}");
+			Log.Warning(ex, $"Failed to synchronize object handle at address: 0x{this.Address:X}");
 		}
 		finally
 		{

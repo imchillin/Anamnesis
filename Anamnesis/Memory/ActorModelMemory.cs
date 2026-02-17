@@ -52,6 +52,26 @@ public class ActorModelMemory : DrawObjectMemory
 	public ExtendedAppearanceMemory? ExtendedAppearance
 		=> this.IsHuman ? this.CustomizeParameterCBuffer?.TryGetSourcePtr() : null;
 
+	protected override bool CanRead(BindInfo bind)
+	{
+		if (bind.Name == nameof(this.CustomizeParameterCBuffer))
+		{
+			// No extended appearance for anything that isn't a player!
+			if (!this.IsHuman)
+			{
+				if (this.CustomizeParameterCBuffer != null)
+				{
+					this.CustomizeParameterCBuffer?.Dispose();
+					this.CustomizeParameterCBuffer = null;
+				}
+
+				return false;
+			}
+		}
+
+		return base.CanRead(bind);
+	}
+
 	protected override void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
 		if (e.PropertyName == nameof(this.Height) && this.Height <= 0)
