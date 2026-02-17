@@ -59,6 +59,9 @@ public class GposeService : ServiceBase<GposeService>
 	/// <returns>True if the user is in GPose, false otherwise.</returns>
 	public static bool? IsInGpose()
 	{
+		if (ControllerService.InstanceOrNull?.IsConnected != true)
+			return null;
+
 		bool? result = null;
 		try
 		{

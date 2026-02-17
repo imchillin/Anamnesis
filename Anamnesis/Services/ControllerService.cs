@@ -401,6 +401,11 @@ public class ControllerService : ServiceBase<ControllerService>
 	public FrameworkService Framework => this.framework
 		?? throw new InvalidOperationException("Framework is not initialized");
 
+	/// <summary>
+	/// Gets a value indicating whether the controller service is currently connected to the remote controller.
+	/// </summary>
+	public bool IsConnected => this.isConnected;
+
 	/// <inheritdoc/>
 	protected override IEnumerable<IService> Dependencies => [GameService.Instance];
 
