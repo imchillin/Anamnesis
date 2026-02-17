@@ -16,13 +16,16 @@ public class RefreshBlockedReasonToKeyConverter : IValueConverter
 {
 	public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 	{
+		if (value is not RefreshBlockedReason reason)
+			return "Character_WarningNoRefresher";
+
 		return value switch
 		{
 			RefreshBlockedReason.WorldFrozen => "Character_WarningGposeWorldPosFrozen",
 			RefreshBlockedReason.PoseEnabled => "Character_WarningPoseEnabled",
 			RefreshBlockedReason.OverworldInGpose => "Character_WarningOverworldInGpose",
 			RefreshBlockedReason.IntegrationDisabled => "Character_WarningNoRefresher",
-			_ => string.Empty,
+			_ => "Character_WarningGenericUnavailable", // Always show a message to avoid empty warning boxes.
 		};
 	}
 

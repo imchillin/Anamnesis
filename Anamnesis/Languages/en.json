@@ -305,6 +305,7 @@
   "Character_WarningNoRefresher": "No refresh method is available. Enable Penumbra or Brio integration in Settings > Connections.",
   "Character_WarningOverworldInGpose": "Overworld actors cannot be refreshed while in Group Pose. Use a GPose actor instead.",
   "Character_WarningPoseEnabled": "Appearance and Equipment cannot be changed while posing mode is enabled.",
+  "Character_WarningGenericUnavailable": "You can't change this actor's appearance or equipment right now.",
 
   "Character_Action_AnimationData": "Actor Data",
   "Character_Action_AnimationStatus": "Animation Status",
