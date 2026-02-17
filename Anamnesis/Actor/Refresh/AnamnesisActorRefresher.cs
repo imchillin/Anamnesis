@@ -72,12 +72,12 @@ public class RedrawService
 		if (!obj.IsValid)
 			return;
 
-		string name = obj.DoRef(a => a.DisplayName) ?? "Unknown";
+		string id = obj.DoRef(a => a.IdNoAddress) ?? "Unknown";
 
 		int objectIndex = ActorService.Instance.ObjectTable.GetIndexOf(obj.Address);
 		if (objectIndex == -1)
 		{
-			Log.Error($"Could not find the object index for the actor \"{name}\"[Index: {objectIndex}, Address: 0x{obj.Address:X}].");
+			Log.Error($"Could not find the object index for the actor ID \"{id}\"[Index: {objectIndex}, Address: 0x{obj.Address:X}].");
 			return;
 		}
 
@@ -98,7 +98,7 @@ public class RedrawService
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, $"Failed to redraw object \"{name}\"[Index: {objectIndex}, Address: 0x{obj.Address:X}].");
+			Log.Error(ex, $"Failed to redraw object ID \"{id}\"[Index: {objectIndex}, Address: 0x{obj.Address:X}].");
 		}
 	}
 }

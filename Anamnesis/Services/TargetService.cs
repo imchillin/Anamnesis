@@ -472,7 +472,7 @@ public class TargetService : ServiceBase<TargetService>
 					}
 					catch (Exception ex)
 					{
-						Log.Warning(ex, $"Failed to synchronize actor {a.Name} at address {a.Address:X}");
+						Log.Warning(ex, $"Failed to synchronize actor ID \"{a.IdNoAddress}\" at address {a.Address:X}");
 						return false;
 					}
 
