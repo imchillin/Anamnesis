@@ -35,6 +35,7 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	private readonly byte[] objTableBuffer;
 	private readonly ReaderWriterLockSlim tableLock = new();
 	private HashSet<IntPtr> objSet = [];
+	private int isRefreshing = 0;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ObjectTable"/> class.
@@ -65,38 +66,48 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	/// </exception>
 	public void Refresh()
 	{
-		if (!MemoryService.Read(AddressService.ObjectTable, this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes)))
-			throw new Exception("Failed to read object table from memory.");
+		if (Interlocked.CompareExchange(ref this.isRefreshing, 1, 0) != 0)
+			return; // Prevent re-entrant calls
 
-		Span<IntPtr> newSpan = MemoryMarshal.Cast<byte, IntPtr>(this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes));
-		bool hasChanged = false;
-
-		this.tableLock.EnterUpgradeableReadLock();
 		try
 		{
-			hasChanged = !this.objTable.AsSpan().SequenceEqual(newSpan);
+			if (!MemoryService.Read(AddressService.ObjectTable, this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes)))
+				throw new Exception("Failed to read object table from memory.");
 
-			if (!hasChanged)
-				return; // No changes detected, exit early.
+			Span<IntPtr> newSpan = MemoryMarshal.Cast<byte, IntPtr>(this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes));
+			bool hasChanged = false;
 
-			this.tableLock.EnterWriteLock();
+			this.tableLock.EnterUpgradeableReadLock();
 			try
 			{
-				newSpan.CopyTo(this.objTable);
-				this.objSet = this.objTable.ToHashSet();
+				hasChanged = !this.objTable.AsSpan().SequenceEqual(newSpan);
+
+				if (!hasChanged)
+					return; // No changes detected, exit early.
+
+				this.tableLock.EnterWriteLock();
+				try
+				{
+					newSpan.CopyTo(this.objTable);
+					this.objSet = this.objTable.ToHashSet();
+				}
+				finally
+				{
+					this.tableLock.ExitWriteLock();
+				}
 			}
 			finally
 			{
-				this.tableLock.ExitWriteLock();
+				this.tableLock.ExitUpgradeableReadLock();
 			}
+
+			TableChanged?.Invoke();
+			Log.Verbose("Object table updated.");
 		}
 		finally
 		{
-			this.tableLock.ExitUpgradeableReadLock();
+			Interlocked.Exchange(ref this.isRefreshing, 0);
 		}
-
-		TableChanged?.Invoke();
-		Log.Verbose("Object table updated.");
 	}
 
 	/// <summary>
