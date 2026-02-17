@@ -689,7 +689,14 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 				if (this.Skeleton != null)
 				{
-					this.BindSkeleton(this.Skeleton);
+					if (Application.Current.Dispatcher.CheckAccess())
+					{
+						this.BindSkeleton(this.Skeleton);
+					}
+					else
+					{
+						Application.Current.Dispatcher.Invoke(() => this.BindSkeleton(this.Skeleton));
+					}
 				}
 			}
 			catch (Exception ex)
@@ -1124,7 +1131,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 				this.Skeleton = new SkeletonEntity(this.Actor);
 				if (this.Skeleton != null)
 				{
-					this.BindSkeleton(this.Skeleton);
+					Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => this.BindSkeleton(this.Skeleton)));
 					this.pendingSkeletonRetryAttempts = 0;
 					Log.Verbose("Skeleton successfully recreated in detour.");
 				}
