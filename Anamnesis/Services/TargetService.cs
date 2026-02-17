@@ -289,6 +289,39 @@ public class TargetService : ServiceBase<TargetService>
 		GposeService.InitialStateResolved -= this.OnGposeInitialStateResolved;
 		PoseService.EnabledChanged -= this.PoseService_EnabledChanged;
 		PoseService.FreezeWorldStateEnabledChanged -= this.PoseService_EnabledChanged;
+
+		// Dispose and clear all pinned actors to prevent stale handles on process restart
+		if (App.Current != null)
+		{
+			App.Current.Dispatcher.Invoke(() =>
+			{
+				this.CurrentlyPinned = null;
+
+				foreach (var actor in this.PinnedActors)
+				{
+					actor.Dispose();
+				}
+
+				this.PinnedActors.Clear();
+				this.PinnedActorCount = 0;
+			});
+		}
+		else
+		{
+			this.CurrentlyPinned = null;
+
+			foreach (var actor in this.PinnedActors)
+			{
+				actor.Dispose();
+			}
+
+			this.PinnedActors.Clear();
+			this.PinnedActorCount = 0;
+		}
+
+		this.PlayerTargetHandle?.Dispose();
+		this.PlayerTargetHandle = null;
+
 		return base.Shutdown();
 	}
 
@@ -433,16 +466,13 @@ public class TargetService : ServiceBase<TargetService>
 		PoseService.EnabledChanged += this.PoseService_EnabledChanged;
 		PoseService.FreezeWorldStateEnabledChanged += this.PoseService_EnabledChanged;
 
-		if (GameService.GetIsSignedIn())
+		if (GameService.GetIsSignedIn() && GposeService.InstanceOrNull?.HasInitialState == true)
 		{
-			if (GposeService.Instance.HasInitialState)
-			{
-				await PinDefaultActor();
-			}
-			else
-			{
-				GposeService.InitialStateResolved += this.OnGposeInitialStateResolved;
-			}
+			await PinDefaultActor();
+		}
+		else
+		{
+			GposeService.InitialStateResolved += this.OnGposeInitialStateResolved;
 		}
 
 		this.CancellationTokenSource = new CancellationTokenSource();

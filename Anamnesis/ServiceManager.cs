@@ -150,6 +150,8 @@ public class ServiceManager
 				Log.Error(ex, "Failed to shutdown service.");
 			}
 		}
+
+		IsStarted = false;
 	}
 
 	private static void CheckWindowsVersion()

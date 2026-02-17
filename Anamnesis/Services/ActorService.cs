@@ -20,6 +20,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 /// <summary>
 /// A representation of the game's object table in memory.
@@ -66,6 +67,8 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	/// </exception>
 	public void Refresh()
 	{
+		ObjectDisposedException.ThrowIf(this.tableLock == null, nameof(ObjectTable));
+
 		if (Interlocked.CompareExchange(ref this.isRefreshing, 1, 0) != 0)
 			return; // Prevent re-entrant calls
 
@@ -534,12 +537,19 @@ public class ActorService : ServiceBase<ActorService>
 	private const int OVERWORLD_PLAYER_INDEX = 0;
 	private const int GPOSE_PLAYER_INDEX = 201;
 
-	private readonly ObjectTable objectTable = new();
+	private ObjectTable? objectTable = new();
 
 	/// <summary>
 	/// Gets the instance of the actor object table.
 	/// </summary>
-	public ObjectTable ObjectTable => this.objectTable;
+	public ObjectTable ObjectTable
+	{
+		get
+		{
+			ObjectDisposedException.ThrowIf(this.objectTable == null, nameof(this.ObjectTable));
+			return this.objectTable;
+		}
+	}
 
 	/// <inheritdoc/>
 	protected override IEnumerable<IService> Dependencies => [AddressService.Instance];
@@ -580,6 +590,9 @@ public class ActorService : ServiceBase<ActorService>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsGPoseActor(IntPtr actorAddress)
 	{
+		if (this.objectTable == null)
+			return false;
+
 		int objectIndex = this.objectTable.GetIndexOf(actorAddress);
 		if (objectIndex == -1)
 			return false;
@@ -599,6 +612,9 @@ public class ActorService : ServiceBase<ActorService>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsLocalOverworldPlayer(IntPtr actorAddress)
 	{
+		if (this.objectTable == null)
+			return false;
+
 		int objectIndex = this.objectTable.GetIndexOf(actorAddress);
 		if (objectIndex == -1)
 			return false;
@@ -612,6 +628,9 @@ public class ActorService : ServiceBase<ActorService>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsLocalGPosePlayer(IntPtr actorAddress)
 	{
+		if (this.objectTable == null)
+			return false;
+
 		int objectIndex = this.objectTable.GetIndexOf(actorAddress);
 		if (objectIndex == -1)
 			return false;
@@ -626,8 +645,43 @@ public class ActorService : ServiceBase<ActorService>
 	public bool IsLocalPlayer(IntPtr actorAddress) => this.IsLocalOverworldPlayer(actorAddress) || this.IsLocalGPosePlayer(actorAddress);
 
 	/// <inheritdoc/>
+	public override async Task Shutdown()
+	{
+		// Trigger a token cancellation first before disposing of the actor table.
+		await base.Shutdown();
+
+		if (App.Current != null)
+		{
+			App.Current.Dispatcher.Invoke(() =>
+			{
+				this.objectTable?.Dispose();
+				this.objectTable = null;
+			});
+		}
+		else
+		{
+			this.objectTable?.Dispose();
+			this.objectTable = null;
+		}
+
+		// Clear all cached handles to prevent stale references
+		lock (ObjectHandleCache.Lock)
+		{
+			foreach (var entry in ObjectHandleCache.Cache.Values)
+			{
+				if (!entry.Object.IsDisposed)
+					entry.Object.Dispose();
+			}
+
+			ObjectHandleCache.Cache.Clear();
+		}
+	}
+
+	/// <inheritdoc/>
 	protected override async Task OnStart()
 	{
+		this.objectTable ??= new ObjectTable();
+
 		this.CancellationTokenSource = new CancellationTokenSource();
 		this.BackgroundTask = Task.Run(() => this.Tick(this.CancellationToken));
 		await base.OnStart();
@@ -643,7 +697,7 @@ public class ActorService : ServiceBase<ActorService>
 			try
 			{
 				if (GameService.Ready)
-					this.objectTable.Refresh();
+					this.objectTable?.Refresh();
 
 				await Task.Delay(TICK_DELAY, cancellationToken);
 			}

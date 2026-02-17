@@ -3,14 +3,9 @@
 
 namespace Anamnesis.Actor.Refresh;
 
-using Anamnesis.Actor.Pages;
-using Anamnesis.Actor.Posing;
 using Anamnesis.Brio;
-using Anamnesis.Core;
-using Anamnesis.Files;
 using Anamnesis.Memory;
 using Anamnesis.Services;
-using Serilog;
 using System.Threading.Tasks;
 using XivToolsWpf;
 

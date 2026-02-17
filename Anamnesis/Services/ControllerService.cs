@@ -431,6 +431,10 @@ public class ControllerService : ServiceBase<ControllerService>
 		this.eventPipeline?.Dispose();
 		this.eventPipeline = null;
 
+		// NOTE: We invalidate hooks but do not dispose of them here.
+		// They can be used for re-initialization on follow-up controller service startups.
+		this.InvalidateAllHooks();
+
 		foreach (var kvp in this.pendingHookRequests)
 			kvp.Value.Dispose();
 
@@ -439,9 +443,6 @@ public class ControllerService : ServiceBase<ControllerService>
 
 		foreach (var kvp in this.pendingUnregistrations)
 			kvp.Value.Dispose();
-
-		foreach (var kvp in this.allHooks)
-			kvp.Value.Handle.Dispose();
 
 		foreach (var kvp in this.pendingEventSubscriptions)
 			kvp.Value.Dispose();
@@ -458,7 +459,6 @@ public class ControllerService : ServiceBase<ControllerService>
 		this.pendingHookRequests.Clear();
 		this.pendingRegistrations.Clear();
 		this.pendingUnregistrations.Clear();
-		this.allHooks.Clear();
 		this.pendingEventSubscriptions.Clear();
 		this.pendingEventUnsubscriptions.Clear();
 		this.pendingDriverCommands.Clear();
@@ -938,6 +938,10 @@ public class ControllerService : ServiceBase<ControllerService>
 
 		this.eventPipeline = new WorkPipeline(1); // Just one worker to keep event order sequential
 		this.workPipeline = new WorkPipeline(Math.Max(Environment.ProcessorCount / 2, 1));
+
+		// If hooks exist (e.g. on game restart), requeue them for registration
+		if (!this.allHooks.IsEmpty)
+			this.RequeueAllInvalidatedHooks();
 
 		_ = Task.Factory.StartNew(
 			() => this.ConnectionMonitorLoop(this.CancellationToken),
