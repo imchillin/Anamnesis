@@ -283,8 +283,11 @@ public class TargetService : ServiceBase<TargetService>
 	}
 
 	/// <inheritdoc/>
-	public override Task Shutdown()
+	public override async Task Shutdown()
 	{
+		// Trigger a token cancellation first before disposing pinned actors to avoid conflicts with the background task
+		await base.Shutdown();
+
 		GposeService.GposeStateChanged -= this.GposeService_GposeStateChanged;
 		GposeService.InitialStateResolved -= this.OnGposeInitialStateResolved;
 		PoseService.EnabledChanged -= this.PoseService_EnabledChanged;
@@ -321,8 +324,6 @@ public class TargetService : ServiceBase<TargetService>
 
 		this.PlayerTargetHandle?.Dispose();
 		this.PlayerTargetHandle = null;
-
-		return base.Shutdown();
 	}
 
 	/// <summary>Clears the actor selection.</summary>
