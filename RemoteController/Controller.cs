@@ -580,10 +580,6 @@ public class Controller
 		s_shutdownCts.Dispose();
 		s_shutdownCts = new CancellationTokenSource();
 
-		HookRegistry.Instance.UnregisterAll();
-		s_driverManager?.Dispose();
-		s_driverManager = null;
-
 		if (!SpinWait.SpinUntil(() => Volatile.Read(ref s_activeWriters) == 0, ACTIVE_WRITERS_DRAIN_TIMEOUT_MS))
 		{
 			Log.Warning($"Active writers did not drain within {ACTIVE_WRITERS_DRAIN_TIMEOUT_MS}ms (remaining: {s_activeWriters}). Proceeding with disposal.");
@@ -592,6 +588,10 @@ public class Controller
 		{
 			Log.Debug("All active writers drained successfully.");
 		}
+
+		HookRegistry.Instance.UnregisterAll();
+		s_driverManager?.Dispose();
+		s_driverManager = null;
 
 		s_outgoingEndpoint?.Dispose();
 		s_outgoingEndpoint = null;
