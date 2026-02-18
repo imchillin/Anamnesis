@@ -67,6 +67,28 @@ public class RedrawService
 	public delegate void RedrawEvent(ObjectHandle<GameObjectMemory> obj, RedrawStage stage);
 	public event RedrawEvent? OnRedraw;
 
+	public static async Task WaitForDrawing(int objectIndex)
+	{
+		if (ControllerService.Instance == null || ControllerService.Instance.Framework?.Active != true)
+			return;
+
+		IntPtr currentPtr = ActorService.Instance.ObjectTable.GetAddress(objectIndex);
+		using var obj = new ObjectHandle<GameObjectMemory>(currentPtr, ActorService.Instance.ObjectTable);
+
+		const int maxAttempts = 100;
+		const int delayMs = 16;
+		int attempts = 0;
+
+		while (attempts < maxAttempts)
+		{
+			if (obj.Do(o => o.ModelObject?.IsVisible == true) == true)
+				return;
+
+			await Task.Delay(delayMs);
+			attempts++;
+		}
+	}
+
 	public async Task Redraw(ObjectHandle<GameObjectMemory> obj)
 	{
 		if (!obj.IsValid)
@@ -93,6 +115,8 @@ public class RedrawService
 				batch.AddCall<long>(s_disableDrawHook!, args: objPtr);
 				batch.AddCall<byte>(s_enableDrawHook!, args: objPtr);
 			}
+
+			await WaitForDrawing(objectIndex);
 
 			this.OnRedraw?.Invoke(obj, RedrawStage.After);
 		}
