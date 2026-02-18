@@ -63,9 +63,6 @@ public class BoneViewManager : IDisposable
 	/// <param name="skeleton">The skeleton entity to set.</param>
 	public void SetSkeleton(SkeletonEntity? skeleton)
 	{
-		if (this.skeleton == skeleton)
-			return;
-
 		if (this.skeleton != null)
 			this.skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
 
@@ -73,6 +70,8 @@ public class BoneViewManager : IDisposable
 
 		if (this.skeleton != null)
 			this.skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
+
+		this.OnSkeletonPropertyChanged(this.skeleton, new PropertyChangedEventArgs(nameof(SkeletonEntity.Bones)));
 	}
 
 	/// <summary>

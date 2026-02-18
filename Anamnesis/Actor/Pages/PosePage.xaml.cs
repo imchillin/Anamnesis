@@ -61,7 +61,6 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private static DirectoryInfo? s_lastLoadDir;
 	private static DirectoryInfo? s_lastSaveDir;
-	private readonly System.Timers.Timer refreshDebounceTimer;
 
 	private bool isLeftMouseButtonDownOnWindow;
 	private bool isDragging;
@@ -94,10 +93,6 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 				WorkQueue.Value.Enabled = true;
 			}
 		}
-
-		// Initialize the debounce timer
-		this.refreshDebounceTimer = new(200) { AutoReset = false };
-		this.refreshDebounceTimer.Elapsed += async (s, e) => { await this.Refresh(); };
 	}
 
 	public event PropertyChangedEventHandler? PropertyChanged;
@@ -635,14 +630,12 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		await this.Refresh();
 	}
 
-	private void OnActorRefreshed(object? sender, EventArgs? e)
+	private async void OnActorRefreshed(object? sender, EventArgs? e)
 	{
-		// Restart the debounce timer if it's already running, otherwise start it.
-		this.refreshDebounceTimer.Stop();
-		this.refreshDebounceTimer.Start();
+		await this.Refresh();
 	}
 
-	private void OnModelObjectChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+	private void OnModelObjectChanged(object? sender, PropertyChangedEventArgs e)
 	{
 		if (e.PropertyName == nameof(ActorModelMemory.Skeleton))
 		{
