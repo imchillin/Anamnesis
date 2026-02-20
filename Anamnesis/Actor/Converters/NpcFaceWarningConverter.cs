@@ -17,11 +17,11 @@ public class NpcFaceWarningConverter : IMultiValueConverter
 		if (values.Length != 4)
 			throw new ArgumentException("The values array must have exactly four elements.", nameof(values));
 
-		if (values[0] is ActorTypes type && values[1] is byte head && values[2] is ActorCustomizeMemory.Races race && values[3] is ActorCustomizeMemory.Genders gender)
+		if (values[0] is ObjectTypes type && values[1] is byte head && values[2] is ActorCustomizeMemory.Races race && values[3] is ActorCustomizeMemory.Genders gender)
 		{
 			bool isHroth = race == ActorCustomizeMemory.Races.Hrothgar;
 
-			if (type == ActorTypes.BattleNpc || type == ActorTypes.EventNpc)
+			if (type == ObjectTypes.BattleNpc || type == ObjectTypes.EventNpc)
 				return Visibility.Collapsed;
 
 			// Hide NPC face warning if the NPC hack is enabled.

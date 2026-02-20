@@ -11,7 +11,7 @@ public class DummyActor : ActorMemory
 	public DummyActor(int id)
 	{
 		this.Address = (IntPtr)id;
-		this.ObjectKind = ActorTypes.Player;
+		this.ObjectKind = ObjectTypes.Player;
 		this.Nickname = "Dummy Actor " + id;
 	}
 

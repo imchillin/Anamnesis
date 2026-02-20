@@ -6,7 +6,7 @@ using Anamnesis.Styles;
 using System;
 using System.Collections.Generic;
 
-public enum ActorTypes : byte
+public enum ObjectTypes : byte
 {
 	None = 0x00,
 	Player = 0x01,
@@ -27,25 +27,22 @@ public enum ActorTypes : byte
 	CardStand = 0x10,
 }
 
-public class ActorType(string name, ActorTypes value)
+public class ObjectType(string name, ObjectTypes value)
 {
-	public static IEnumerable<ActorType> AllActorTypes
+	private static readonly List<ObjectType> s_allActorTypes;
+
+	static ObjectType()
 	{
-		get
+		s_allActorTypes = new List<ObjectType>();
+		foreach (ObjectTypes value in Enum.GetValues<ObjectTypes>())
 		{
-			List<ActorType> actorTypes = [];
-
-			foreach (ActorTypes value in Enum.GetValues<ActorTypes>())
-			{
-				var name = Enum.GetName(value);
-				actorTypes.Add(new ActorType(name!, value));
-			}
-
-			return actorTypes;
+			var name = Enum.GetName(value);
+			s_allActorTypes.Add(new ObjectType(name!, value));
 		}
 	}
 
+	public static IEnumerable<ObjectType> AllActorTypes => s_allActorTypes;
 	public string Name { get; private set; } = name;
-	public ActorTypes Value { get; private set; } = value;
+	public ObjectTypes Value { get; private set; } = value;
 	public bool IsSupportedType { get; private set; } = value.IsSupportedType();
 }

@@ -165,7 +165,7 @@ public partial class CustomizeEditor : UserControl
 		if (dataPath.HasValue && CustomizeOptionsCache.ValidFaceIds.TryGetValue(dataPath.Value, out var validFaces))
 		{
 			// Apply offset logic for specific tribes
-			if (this.Actor != null && this.Actor.ObjectKind != ActorTypes.Player)
+			if (this.Actor != null && this.Actor.ObjectKind != ObjectTypes.Player)
 			{
 				this.ValidFaceOptions = validFaces.ToList();
 			}

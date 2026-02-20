@@ -42,7 +42,7 @@ public class CharacterFile : JsonFileBase
 
 	public string? Nickname { get; set; } = null;
 	public uint ModelType { get; set; } = 0;
-	public ActorTypes ObjectKind { get; set; } = ActorTypes.None;
+	public ObjectTypes ObjectKind { get; set; } = ObjectTypes.None;
 
 	// appearance
 	public ActorCustomizeMemory.Races? Race { get; set; }

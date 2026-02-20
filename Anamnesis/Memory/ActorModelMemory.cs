@@ -12,7 +12,20 @@ public class ActorModelMemory : DrawObjectMemory
 	/// <summary>
 	/// Gets or sets the main-hand weapon memory object.
 	/// </summary>
-	[Bind(0x030, BindFlags.Pointer)] public new ExtendedWeaponMemory? ChildObject { get; set; }
+	[Bind(0x030, BindFlags.Pointer)] public new ExtendedWeaponMemory? ChildObject
+	{
+		get => base.ChildObject as ExtendedWeaponMemory;
+		set
+		{
+			if (base.ChildObject == value)
+				return;
+
+			base.ChildObject = value;
+			this.OnPropertyChanged(nameof(base.ChildObject));
+			this.OnPropertyChanged(nameof(this.ChildObject));
+		}
+	}
+
 	[Bind(0x0A0, BindFlags.Pointer | BindFlags.OnlyInGPose | BindFlags.DontCacheOffsets, SyncGroup = "Skeleton")] public SkeletonMemory? Skeleton { get; set; }
 	[Bind(0x150, BindFlags.Pointer)] public BustMemory? Bust { get; set; }
 	[Bind(0x290)] public Color Tint { get; set; }

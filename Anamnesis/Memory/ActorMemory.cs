@@ -76,11 +76,25 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		HeadgearEarsHidden = 1 << 5,
 	}
 
-	[Bind(0x0100, BindFlags.Pointer)] public new ActorModelMemory? ModelObject { get; set; }
+	[Bind(0x0100, BindFlags.Pointer)]
+	public new ActorModelMemory? ModelObject
+	{
+		get => base.ModelObject as ActorModelMemory;
+		set
+		{
+			if (base.ModelObject == value)
+				return;
+
+			base.ModelObject = value;
+			this.OnPropertyChanged(nameof(base.ModelObject));
+			this.OnPropertyChanged(nameof(this.ModelObject));
+		}
+	}
+
 	[Bind(0x01CA)] public byte ClassJob { get; set; } // Source: CharacterData; Calculated using GameObject size + ClassJob offset
 	[Bind(0x0680, BindFlags.Pointer)] public ActorMemory? Mount { get; set; } // Targets object within MountContainer
 	[Bind(0x0688)] public ushort MountId { get; set; }
-	[Bind(0x06E8, BindFlags.Pointer)] public ActorMemory? Companion { get; set; } // Targets object within CompanionContainer
+	[Bind(0x06E8, BindFlags.Pointer)] public CompanionMemory? Companion { get; set; } // Targets object within CompanionContainer
 	[Bind(0x0708)] public WeaponMemory? MainHand { get; set; }
 	[Bind(0x0778)] public WeaponMemory? OffHand { get; set; }
 	[Bind(0x08C8)] public ActorEquipmentMemory? Equipment { get; set; }
@@ -88,7 +102,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	[Bind(0x0936, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
 	[Bind(0x0937, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
 	[Bind(0x0938)] public GlassesMemory? Glasses { get; set; }
-	[Bind(0x0970, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; } // Targets object within OrnamentContainer
+	[Bind(0x0970, BindFlags.Pointer)] public OrnamentMemory? Ornament { get; set; } // Targets object within OrnamentContainer
 	[Bind(0x0978)] public ushort OrnamentId { get; set; }
 	[Bind(0x0A30)] public AnimationMemory? Animation { get; set; }
 	[Bind(0x1A58)] public byte Voice { get; set; }
@@ -97,7 +111,6 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	[Bind(0x22E8)] public float Transparency { get; set; }
 	[Bind(0x2364)] public byte CharacterModeRaw { get; set; }
 	[Bind(0x2365)] public byte CharacterModeInput { get; set; }
-	[Bind(0x2384)] public byte AttachmentPoint { get; set; } // Part of Ornament
 
 	public PinnedActor? Pinned { get; set; }
 

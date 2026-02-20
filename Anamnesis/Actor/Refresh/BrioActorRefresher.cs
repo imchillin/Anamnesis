@@ -33,19 +33,19 @@ public class BrioActorRefresher : IActorRefresher
 	{
 		await Dispatch.MainThread();
 
-		bool doNpcHack = SettingsService.Current.EnableNpcHack && actor.ObjectKind == ActorTypes.Player;
+		bool doNpcHack = SettingsService.Current.EnableNpcHack && actor.ObjectKind == ObjectTypes.Player;
 
 		try
 		{
 			if (doNpcHack)
-				actor.ObjectKind = ActorTypes.EventNpc;
+				actor.ObjectKind = ObjectTypes.EventNpc;
 
 			await Brio.Redraw(actor.ObjectIndex);
 		}
 		finally
 		{
 			if (doNpcHack)
-				actor.ObjectKind = ActorTypes.Player;
+				actor.ObjectKind = ObjectTypes.Player;
 		}
 	}
 }
