@@ -63,6 +63,7 @@ public class ServiceManager
 			await Add<ActorService>();
 			await Add<GameDataService>();
 			await Add<GameService>();
+			await Add<ControllerService>();
 			await Add<FileService>();
 			await Add<TimeService>();
 			await Add<GposeService>();

@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory;
 
 using System;
+using System.Collections.Generic;
 
 public class DummyActor : ActorMemory
 {
@@ -16,7 +17,7 @@ public class DummyActor : ActorMemory
 
 	public override bool IsGPoseActor => false;
 
-	public override void Synchronize()
+	public override void Synchronize(IReadOnlySet<string>? inclGroups = null, IReadOnlySet<string>? exclGroups = null)
 	{
 		// Do nothing
 	}

@@ -5,6 +5,7 @@ namespace Anamnesis.Core;
 
 using Anamnesis.Memory;
 using Anamnesis.Services;
+using Microsoft.Extensions.ObjectPool;
 using PropertyChanged;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +23,16 @@ public class Bone : ITransform
 {
 	public const float EQUALITY_TOLERANCE = 0.00001f;
 	protected readonly ReaderWriterLockSlim TransformLock = new();
+	private static readonly ObjectPool<Stack<(Bone Bone, bool WriteLinked, Transform? PrecalcParent)>> s_boneWriteStackPool
+		= ObjectPool.Create<Stack<(Bone Bone, bool WriteLinked, Transform? PrecalcParent)>>();
+	private static readonly ObjectPool<Stack<Bone>> s_boneReadStackPool = ObjectPool.Create<Stack<Bone>>();
 	private static readonly HashSet<string> s_attachmentBoneNames = new() { "n_buki_r", "n_buki_l", "j_buki_sebo_r", "j_buki_sebo_l" };
 	private static bool s_scaleLinked = true;
 	private bool hasInitialReading = false;
+	private bool isDirty = false;
+	private Vector3 position;
+	private Quaternion rotation;
+	private Vector3 scale;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Bone"/> class.
@@ -84,7 +92,18 @@ public class Bone : ITransform
 	/// <remarks>
 	/// If you want to get character-relative position, use the position in <see cref="TransformMemory"/> property instead.
 	/// </remarks>
-	public Vector3 Position { get; set; }
+	public Vector3 Position
+	{
+		get => this.position;
+		set
+		{
+			if (!this.position.IsApproximately(value, EQUALITY_TOLERANCE))
+			{
+				this.position = value;
+				this.isDirty = true;
+			}
+		}
+	}
 
 	/// <inheritdoc/>
 	public bool CanRotate => PoseService.Instance.FreezeRotation && !this.IsTransformLocked;
@@ -96,7 +115,18 @@ public class Bone : ITransform
 	/// <remarks>
 	/// If you want to get character-relative rotation, use the rotation in <see cref="TransformMemory"/> property instead.
 	/// </remarks>
-	public Quaternion Rotation { get; set; }
+	public Quaternion Rotation
+	{
+		get => this.rotation;
+		set
+		{
+			if (!this.rotation.IsApproximately(value, EQUALITY_TOLERANCE))
+			{
+				this.rotation = value;
+				this.isDirty = true;
+			}
+		}
+	}
 
 	/// <summary>Gets the root rotation of the bone.</summary>
 	public Quaternion RootRotation => this.Parent == null
@@ -107,7 +137,18 @@ public class Bone : ITransform
 	public bool CanScale => PoseService.Instance.FreezeScale && !this.IsTransformLocked;
 
 	/// <summary>Gets or sets the scale of the bone.</summary>
-	public Vector3 Scale { get; set; }
+	public Vector3 Scale
+	{
+		get => this.scale;
+		set
+		{
+			if (!this.scale.IsApproximately(value, EQUALITY_TOLERANCE))
+			{
+				this.scale = value;
+				this.isDirty = true;
+			}
+		}
+	}
 
 	/// <summary>Gets a value indicating whether this bone is an attachment bone.</summary>
 	/// <remarks>
@@ -137,6 +178,16 @@ public class Bone : ITransform
 				SettingsService.Current.PosingBoneLinks.Set(link.Name, value);
 			}
 		}
+	}
+
+	/// <summary>
+	/// Gets a value indicating whether the object's transform
+	/// has been modified since the last synchronization.
+	/// </summary>
+	public bool IsDirty
+	{
+		get => this.isDirty;
+		private set => this.isDirty = value;
 	}
 
 	/// <summary>Sorts the specified bones by their depth in the skeleton hierarchy.</summary>
@@ -233,73 +284,81 @@ public class Bone : ITransform
 		if (this.TransformMemories.Count == 0)
 			return;
 
-		Stack<Bone> bonesToProcess = new();
-		bonesToProcess.Push(this);
-
-		while (bonesToProcess.Count > 0)
+		var bonesToProcess = s_boneReadStackPool.Get();
+		try
 		{
-			Bone currentBone = bonesToProcess.Pop();
+			bonesToProcess.Push(this);
 
-			// Use snapshot if available, otherwise use values from memory
-			// Note: Values are expected to be in model space
-			Transform localTransform;
-			if (snapshot != null && snapshot.TryGetValue(currentBone.Name, out var transform))
+			while (bonesToProcess.Count > 0)
 			{
-				localTransform = transform;
-			}
-			else
-			{
-				var transformMemory = currentBone.TransformMemories[0];
-				localTransform = new Transform
-				{
-					Position = transformMemory.Position,
-					Rotation = transformMemory.Rotation,
-					Scale = transformMemory.Scale,
-				};
-			}
+				Bone currentBone = bonesToProcess.Pop();
 
-			// Convert the character-relative transform into a parent-relative transform
-			if (currentBone.Parent != null)
-			{
-				Transform parentTransform;
-				if (snapshot != null && snapshot.TryGetValue(currentBone.Parent.Name, out var parentSnapshot))
+				// Use snapshot if available, otherwise use values from memory
+				// Note: Values are expected to be in model space
+				Transform localTransform;
+				if (snapshot != null && snapshot.TryGetValue(currentBone.Name, out var transform))
 				{
-					parentTransform = parentSnapshot;
+					localTransform = transform;
 				}
 				else
 				{
-					var parentTransformMemory = currentBone.Parent.TransformMemories[0];
-					parentTransform = new Transform
+					var transformMemory = currentBone.TransformMemories[0];
+					localTransform = new Transform
 					{
-						Position = parentTransformMemory.Position,
-						Rotation = parentTransformMemory.Rotation,
-						Scale = parentTransformMemory.Scale,
+						Position = transformMemory.Position,
+						Rotation = transformMemory.Rotation,
+						Scale = transformMemory.Scale,
 					};
 				}
 
-				localTransform = ModelToLocalSpace(localTransform, parentTransform);
-			}
-
-			currentBone.TransformLock.EnterReadLock();
-			try
-			{
-				currentBone.Position = localTransform.Position;
-				currentBone.Rotation = localTransform.Rotation;
-				currentBone.Scale = localTransform.Scale;
-				currentBone.hasInitialReading = true;
-			}
-			finally
-			{
-				currentBone.TransformLock.ExitReadLock();
-			}
-
-			if (readChildren)
-			{
-				foreach (var child in currentBone.Children)
+				// Convert the character-relative transform into a parent-relative transform
+				if (currentBone.Parent != null)
 				{
-					bonesToProcess.Push(child);
+					Transform parentTransform;
+					if (snapshot != null && snapshot.TryGetValue(currentBone.Parent.Name, out var parentSnapshot))
+					{
+						parentTransform = parentSnapshot;
+					}
+					else
+					{
+						var parentTransformMemory = currentBone.Parent.TransformMemories[0];
+						parentTransform = new Transform
+						{
+							Position = parentTransformMemory.Position,
+							Rotation = parentTransformMemory.Rotation,
+							Scale = parentTransformMemory.Scale,
+						};
+					}
+
+					localTransform = ModelToLocalSpace(localTransform, parentTransform);
+				}
+
+				currentBone.TransformLock.EnterReadLock();
+				try
+				{
+					currentBone.Position = localTransform.Position;
+					currentBone.Rotation = localTransform.Rotation;
+					currentBone.Scale = localTransform.Scale;
+					currentBone.hasInitialReading = true;
+				}
+				finally
+				{
+					currentBone.TransformLock.ExitReadLock();
+				}
+
+				if (readChildren)
+				{
+					foreach (var child in currentBone.Children)
+					{
+						bonesToProcess.Push(child);
+					}
 				}
 			}
+		}
+		finally
+		{
+			bonesToProcess.Clear();
+			s_boneReadStackPool.Return(bonesToProcess);
 		}
 	}
 
@@ -308,107 +367,148 @@ public class Bone : ITransform
 	/// <param name="writeLinked">Whether to write the transforms of linked bones.</param>
 	public virtual void WriteTransform(bool writeChildren = true, bool writeLinked = true)
 	{
-		Stack<(Bone Bone, bool WriteLinked, Transform? PrecalcParent)> bonesToProcess = new();
-		bonesToProcess.Push((this, writeLinked, null));
-
-		while (bonesToProcess.Count > 0)
+		var bonesToProcess = s_boneWriteStackPool.Get();
+		try
 		{
-			var (currentBone, currentWriteLinked, precalcParent) = bonesToProcess.Pop();
-			var transformMemories = currentBone.TransformMemories;
+			bool initialTriggerLinks = writeLinked && this.isDirty;
+			bonesToProcess.Push((this, initialTriggerLinks, null));
 
-			if (transformMemories.Count == 0)
-				throw new System.InvalidOperationException($"Bone \"{currentBone.Name}\" does not have any transform memories.");
-
-			// Carry out initial transform if it hasn't been done yet
-			if (!currentBone.hasInitialReading)
+			while (bonesToProcess.Count > 0)
 			{
-				currentBone.ReadTransform();
-			}
+				var (currentBone, currentTriggerLinks, precalcParent) = bonesToProcess.Pop();
 
-			Transform modelTransform = new()
-			{
-				Position = currentBone.Position,
-				Rotation = currentBone.Rotation,
-				Scale = currentBone.Scale,
-			};
+				var transformMemories = currentBone.TransformMemories;
+				if (transformMemories.Count == 0)
+					continue;
 
-			if (currentBone.Parent != null)
-			{
-				// Workaround: Instead of retrieving the parent transform from game memory, use the local transform and convert it
-				// manually. This prevents bone drifting as the skeleton is unstable due to ocassional mid-frame updates.
-				Transform parentTransform = precalcParent ?? ComputeModelSpaceTransform(currentBone.Parent);
-				modelTransform = LocalToModelSpace(modelTransform, parentTransform);
-			}
-
-			currentBone.TransformLock.EnterWriteLock();
-			try
-			{
-				foreach (TransformMemory transformMemory in transformMemories)
+				// Carry out initial transform if it hasn't been done yet
+				if (!currentBone.hasInitialReading)
 				{
-					transformMemory.EnableReading = false;
+					currentBone.ReadTransform();
 				}
 
-				bool changed = false;
+				// Calculate deltas for linked Bones
+				Quaternion rotDelta = Quaternion.Identity;
+				Vector3 scaleDelta = Vector3.One;
+				Vector3 posDelta = Vector3.Zero;
 
-				foreach (TransformMemory transformMemory in transformMemories)
+				bool doLinkUpdate = currentTriggerLinks && currentBone.EnableLinkedBones;
+				if (doLinkUpdate)
 				{
-					if (currentBone.CanTranslate && !transformMemory.Position.IsApproximately(modelTransform.Position, EQUALITY_TOLERANCE))
+					var memory = currentBone.TransformMemory!;
+					Transform memModel = new()
 					{
-						transformMemory.Position = modelTransform.Position;
-						changed = true;
-					}
+						Position = memory.Position,
+						Rotation = memory.Rotation,
+						Scale = memory.Scale,
+					};
 
-					if (currentBone.CanScale && !transformMemory.Scale.IsApproximately(modelTransform.Scale, EQUALITY_TOLERANCE))
-					{
-						transformMemory.Scale = modelTransform.Scale;
-						changed = true;
-					}
+					Transform memLocal = currentBone.Parent != null
+						? ModelToLocalSpace(memModel, precalcParent ?? ComputeModelSpaceTransform(currentBone.Parent))
+						: memModel;
 
-					if (currentBone.CanRotate && !transformMemory.Rotation.IsApproximately(modelTransform.Rotation, EQUALITY_TOLERANCE))
-					{
-						transformMemory.Rotation = modelTransform.Rotation;
-						changed = true;
-					}
+					rotDelta = currentBone.Rotation * Quaternion.Inverse(memLocal.Rotation);
+					scaleDelta = new Vector3(
+						memLocal.Scale.X != 0 ? currentBone.Scale.X / memLocal.Scale.X : 1,
+						memLocal.Scale.Y != 0 ? currentBone.Scale.Y / memLocal.Scale.Y : 1,
+						memLocal.Scale.Z != 0 ? currentBone.Scale.Z / memLocal.Scale.Z : 1);
+					posDelta = currentBone.Position - memLocal.Position;
 				}
 
-				if (changed)
+				Transform modelTransform = new()
 				{
-					if (currentWriteLinked && currentBone.EnableLinkedBones)
+					Position = currentBone.Position,
+					Rotation = currentBone.Rotation,
+					Scale = currentBone.Scale,
+				};
+
+				if (currentBone.Parent != null)
+				{
+					Transform parentTransform = precalcParent ?? ComputeModelSpaceTransform(currentBone.Parent);
+					modelTransform = LocalToModelSpace(modelTransform, parentTransform);
+				}
+
+				currentBone.TransformLock.EnterWriteLock();
+				try
+				{
+					for (int i = 0; i < transformMemories.Count; ++i)
 					{
-						foreach (var link in currentBone.LinkedBones)
+						transformMemories[i].EnableReading = false;
+					}
+
+					bool changed = false;
+
+					for (int i = 0; i < transformMemories.Count; ++i)
+					{
+						if (currentBone.IsTransformLocked)
+							continue;
+
+						var tm = transformMemories[i];
+						if (!tm.Position.IsApproximately(modelTransform.Position, EQUALITY_TOLERANCE))
 						{
-							// TODO: Figure out how to sync linked bone positions
-							link.Rotation = currentBone.Rotation;
-							link.Scale = currentBone.Scale;
-							bonesToProcess.Push((link, false, null));
+							tm.Position = modelTransform.Position;
+							changed = true;
+						}
+
+						if (!tm.Scale.IsApproximately(modelTransform.Scale, EQUALITY_TOLERANCE))
+						{
+							tm.Scale = modelTransform.Scale;
+							changed = true;
+						}
+
+						if (!tm.Rotation.IsApproximately(modelTransform.Rotation, EQUALITY_TOLERANCE))
+						{
+							tm.Rotation = modelTransform.Rotation;
+							changed = true;
 						}
 					}
 
-					if (writeChildren)
+					if (changed || currentBone.isDirty)
 					{
-						foreach (var child in currentBone.Children)
+						currentBone.isDirty = false;
+						if (doLinkUpdate)
 						{
-							if (PoseService.Instance.EnableParenting)
+							foreach (var link in currentBone.LinkedBones)
 							{
-								bonesToProcess.Push((child, currentWriteLinked, modelTransform));
+								link.Rotation = Quaternion.Normalize(rotDelta * link.Rotation);
+								link.Scale *= scaleDelta;
+								link.Position += posDelta;
+								bonesToProcess.Push((link, false, null));
 							}
-							else
+						}
+
+						if (writeChildren)
+						{
+							bool parentingEnabled = PoseService.Instance.EnableParenting;
+							foreach (var child in currentBone.Children)
 							{
-								child.ReadTransform(true);
+								if (parentingEnabled)
+								{
+									bonesToProcess.Push((child, false, modelTransform));
+								}
+								else
+								{
+									child.ReadTransform(true);
+								}
 							}
 						}
 					}
-				}
 
-				foreach (TransformMemory transformMemory in transformMemories)
+					for (int i = 0; i < transformMemories.Count; ++i)
+					{
+						transformMemories[i].EnableReading = true;
+					}
+				}
+				finally
 				{
-					transformMemory.EnableReading = true;
+					currentBone.TransformLock.ExitWriteLock();
 				}
 			}
-			finally
-			{
-				currentBone.TransformLock.ExitWriteLock();
-			}
+		}
+		finally
+		{
+			bonesToProcess.Clear();
+			s_boneWriteStackPool.Return(bonesToProcess);
 		}
 	}
 

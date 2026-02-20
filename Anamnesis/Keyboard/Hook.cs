@@ -16,15 +16,10 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Input;
+using static Anamnesis.Memory.NativeFunctions;
 
 public partial class Hook
 {
-	private const int WH_KEYBOARD_LL = 13;
-	private const int WM_KEY_DOWN = 0x0100;
-	private const int WM_KEY_UP = 0x0101;
-	private const int WM_SYS_KEY_DOWN = 0x0104;
-	private const int WM_SYS_KEY_UP = 0x0105;
-
 	private static IntPtr s_hookId = IntPtr.Zero;
 
 	private readonly HashSet<int> downKeys = new();
@@ -34,7 +29,6 @@ public partial class Hook
 	private bool isStarted;
 
 	public delegate bool KeyboardInput(Key key, KeyboardKeyStates state, ModifierKeys modifiers);
-	private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
 	public event KeyboardInput? OnKeyboardInput;
 
@@ -44,7 +38,7 @@ public partial class Hook
 			return;
 
 		this.hook = this.HookCallback;
-		s_hookId = SetHook(this.hook);
+		s_hookId = SetWindowsHookEx((int)WinHookType.WH_KEYBOARD_LL, this.hook, IntPtr.Zero, 0);
 		this.isStarted = true;
 	}
 
@@ -56,30 +50,6 @@ public partial class Hook
 			this.isStarted = false;
 		}
 	}
-
-	private static IntPtr SetHook(LowLevelKeyboardProc proc)
-	{
-		var userLibrary = LoadLibrary("User32");
-		return SetWindowsHookEx(WH_KEYBOARD_LL, proc, userLibrary, 0);
-	}
-
-	[LibraryImport("user32.dll", SetLastError = true, EntryPoint = "SetWindowsHookExW")]
-	private static partial IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
-
-	[LibraryImport("user32.dll", SetLastError = true)]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool UnhookWindowsHookEx(IntPtr hhk);
-
-	[LibraryImport("user32.dll", SetLastError = true)]
-	private static partial IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
-
-	/// <summary>
-	/// Loads the library.
-	/// </summary>
-	/// <param name="lpFileName">Name of the library.</param>
-	/// <returns>A handle to the library.</returns>
-	[LibraryImport("kernel32.dll", EntryPoint = "LoadLibraryW", StringMarshalling = StringMarshalling.Utf16)]
-	private static partial IntPtr LoadLibrary(string lpFileName);
 
 	private bool HandleKeyPress(Key key, KeyboardKeyStates state)
 	{
@@ -123,7 +93,7 @@ public partial class Hook
 		Key key = KeyInterop.KeyFromVirtualKey(vkCode);
 
 		// If the keyboard event is a KeyDown event (i.e. key pressed)
-		if (wParam == (IntPtr)WM_KEY_DOWN || wParam == (IntPtr)WM_SYS_KEY_DOWN)
+		if (wParam == (IntPtr)KeyboardInputMsg.WM_KEYDOWN || wParam == (IntPtr)KeyboardInputMsg.WM_SYSKEYDOWN)
 		{
 			// In this case, we only care about modifier keys
 			if (modifierKey != ModifierKeys.None)
@@ -147,7 +117,7 @@ public partial class Hook
 		}
 
 		// If the keyboard event is a KeyUp event (i.e. key released)
-		if (wParam == (IntPtr)WM_KEY_UP || wParam == (IntPtr)WM_SYS_KEY_UP)
+		if (wParam == (IntPtr)KeyboardInputMsg.WM_KEYUP || wParam == (IntPtr)KeyboardInputMsg.WM_SYSKEYUP)
 		{
 			used = this.HandleKeyPress(key, KeyboardKeyStates.Released);
 
