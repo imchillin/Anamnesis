@@ -235,6 +235,7 @@
   "Character_Equipment_ClearDyeNOnWeapons": "Clear dye {0} on weapons.",
   "Character_Equipment_ClearDyeNOnClothes": "Clear dye {0} on clothing.",
   "Character_Equipment_ClearDyeNOnAccessories": "Clear dye {0} on accessories.",
+  "Character_Equipment_SwapDyeChannels": "Swap dye channels",
 
   "Character_Actor_Header": "Actor",
   "Character_Actor_Model": "Model",

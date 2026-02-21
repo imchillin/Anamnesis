@@ -380,6 +380,25 @@ public partial class CharacterPage : UserControl
 		}
 	}
 
+	private void OnSwapDyeChannels(object sender, RoutedEventArgs e)
+	{
+		this.Actor?.Do(a =>
+		{
+			a.MainHand?.SwapDyeChannels();
+			a.OffHand?.SwapDyeChannels();
+			a.Equipment?.Head?.SwapDyeChannels();
+			a.Equipment?.Chest?.SwapDyeChannels();
+			a.Equipment?.Arms?.SwapDyeChannels();
+			a.Equipment?.Legs?.SwapDyeChannels();
+			a.Equipment?.Feet?.SwapDyeChannels();
+			a.Equipment?.Ear?.SwapDyeChannels();
+			a.Equipment?.Neck?.SwapDyeChannels();
+			a.Equipment?.Wrist?.SwapDyeChannels();
+			a.Equipment?.RFinger?.SwapDyeChannels();
+			a.Equipment?.LFinger?.SwapDyeChannels();
+		});
+	}
+
 	// Show dye selection drawer, and then apply the resulting dye as specified.
 	// If the actor is null or we are unable to dye anything, return.
 	// Otherwise, check each intended dye target and remove them if they cannot be dyed.
