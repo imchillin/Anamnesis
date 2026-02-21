@@ -4,6 +4,7 @@
 namespace Anamnesis;
 
 using Anamnesis.Core;
+using Anamnesis.Memory;
 using Anamnesis.Services;
 using RemoteController;
 using RemoteController.Interop;
@@ -354,6 +355,7 @@ public class ControllerService : ServiceBase<ControllerService>
 	private const uint BUF_BLK_COUNT = 128;
 	private const ulong BUF_BLK_SIZE = 8192;
 
+	private const int THREAD_JOIN_TIMEOUT_MS = 500;
 	private const int IPC_REGISTER_TIMEOUT_MS = 1000;
 	private const int STACKALLOC_THRESHOLD = 256;
 	private const int CONN_CHECK_DELAY_MS = 1000;
@@ -393,6 +395,7 @@ public class ControllerService : ServiceBase<ControllerService>
 	private Endpoint? outgoingEndpoint = null;
 	private Endpoint? incomingEndpoint = null;
 	private bool isConnected = false;
+	private Thread? ipcMsgListener = null;
 
 	/// <summary>
 	/// Gets the framework service used for executing
@@ -425,6 +428,14 @@ public class ControllerService : ServiceBase<ControllerService>
 		// IMPORTANT: Shut down the background task first to stop the incoming message processing loop
 		// This should happen before we start disposing the object the loop depends on.
 		await base.Shutdown();
+
+		if (this.ipcMsgListener != null)
+		{
+			if (!this.ipcMsgListener.Join(THREAD_JOIN_TIMEOUT_MS))
+				Log.Warning("Controller service message listener thread did not exit within the timeout period.");
+
+			this.ipcMsgListener = null;
+		}
 
 		this.workPipeline?.Dispose();
 		this.workPipeline = null;
@@ -949,11 +960,13 @@ public class ControllerService : ServiceBase<ControllerService>
 			TaskCreationOptions.LongRunning,
 			TaskScheduler.Default);
 
-		this.BackgroundTask = Task.Factory.StartNew(
-			() => this.ProcessIncomingMessages(this.CancellationToken),
-			this.CancellationToken,
-			TaskCreationOptions.LongRunning,
-			TaskScheduler.Default);
+		this.ipcMsgListener = new Thread(() => this.ProcessIncomingMessages(this.CancellationToken))
+		{
+			IsBackground = true,
+			Priority = ThreadPriority.Highest,
+			Name = "Anamnesis.CtrlIpcMsgListener",
+		};
+		this.ipcMsgListener.Start();
 
 		await base.OnStart();
 	}
@@ -1394,60 +1407,72 @@ public class ControllerService : ServiceBase<ControllerService>
 		}
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveOptimization)]
 	private void ProcessIncomingMessages(CancellationToken cancellationToken)
 	{
-		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
+		uint taskIndex = 0;
+		IntPtr avrtHandle = NativeFunctions.AvSetMmThreadCharacteristics("Games", ref taskIndex);
+
+		try
 		{
-			if (this.incomingEndpoint == null)
-				return;
-
-			try
+			while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
 			{
-				while (this.incomingEndpoint.Read(out MessageHeader header, out ReadOnlySpan<byte> payload, IPC_TIMEOUT_MS))
+				if (this.incomingEndpoint == null)
+					return;
+
+				try
 				{
-					switch (header.Type)
+					while (this.incomingEndpoint.Read(out MessageHeader header, out ReadOnlySpan<byte> payload, IPC_TIMEOUT_MS))
 					{
-						case PayloadType.Ack:
-							this.HandleAck(header.Id, payload);
-							break;
+						switch (header.Type)
+						{
+							case PayloadType.Ack:
+								this.HandleAck(header.Id, payload);
+								break;
 
-						case PayloadType.NAck:
-							this.HandleNAck(header.Id);
-							break;
+							case PayloadType.NAck:
+								this.HandleNAck(header.Id);
+								break;
 
-						case PayloadType.Event:
-							this.EnqueueEvent(header.Id, payload);
-							break;
+							case PayloadType.Event:
+								this.EnqueueEvent(header.Id, payload);
+								break;
 
-						case PayloadType.Request when payload.Length > 0:
-							this.EnqueueHookRequest(header.Id, payload);
-							break;
+							case PayloadType.Request when payload.Length > 0:
+								this.EnqueueHookRequest(header.Id, payload);
+								break;
 
-						case PayloadType.Blob:
-							this.HandleHookReturn(header.Id, payload);
-							break;
+							case PayloadType.Blob:
+								this.HandleHookReturn(header.Id, payload);
+								break;
 
-						default:
-							Log.Warning($"Unexpected message type from controller: {header.Type}");
-							break;
+							default:
+								Log.Warning($"Unexpected message type from controller: {header.Type}");
+								break;
+						}
 					}
 				}
+				catch (NullReferenceException ex)
+				{
+					Log.Warning(ex, "IPC endpoint closed unexpectedly (shared memory was disposed). Stopping message processing.");
+					this.CancellationTokenSource?.Cancel();
+				}
+				catch (ObjectDisposedException ex)
+				{
+					Log.Warning(ex, "IPC endpoint disposed. Stopping message processing.");
+					this.CancellationTokenSource?.Cancel();
+				}
+				catch (TaskCanceledException)
+				{
+					// Task was canceled, exit the loop
+					break;
+				}
 			}
-			catch (NullReferenceException ex)
-			{
-				Log.Warning(ex, "IPC endpoint closed unexpectedly (shared memory was disposed). Stopping message processing.");
-				this.CancellationTokenSource?.Cancel();
-			}
-			catch (ObjectDisposedException ex)
-			{
-				Log.Warning(ex, "IPC endpoint disposed. Stopping message processing.");
-				this.CancellationTokenSource?.Cancel();
-			}
-			catch (TaskCanceledException)
-			{
-				// Task was canceled, exit the loop
-				break;
-			}
+		}
+		finally
+		{
+			if (avrtHandle != IntPtr.Zero)
+				NativeFunctions.AvRevertMmThreadCharacteristics(avrtHandle);
 		}
 	}
 

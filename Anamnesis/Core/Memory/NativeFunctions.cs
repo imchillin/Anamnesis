@@ -31,6 +31,7 @@ internal static partial class NativeFunctions
 	public const int ERROR_NOT_ALL_ASSIGNED = 0x514;
 	public const string ENV_COMPAT_LAYER_VARNAME = "__COMPAT_LAYER";
 	public const string ENV_COMPAT_RUN_AS_ENVOKER = "RunAsInvoker";
+	public const int TIMERR_NOERROR = 0;
 
 	public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
@@ -1659,6 +1660,68 @@ internal static partial class NativeFunctions
 		IntPtr ppsidGroup,
 		IntPtr ppDacl,
 		IntPtr ppSacl);
+
+	/// <summary>
+	/// Associates the calling thread with the specified task.
+	/// </summary>
+	/// <param name="taskName">
+	/// The name of the task to be performed. This name must match the name of one of the subkeys of the following
+	/// key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks
+	/// </param>
+	/// <param name="taskIndex">
+	/// The unique task identifier. The first time this function is called, this value must be 0 on input.
+	/// The index value is returned on output and can be used as input in subsequent calls.
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, it returns a handle to the task.
+	///
+	/// If the function fails, it returns 0. To retrieve extended error information, call GetLastError.
+	/// </returns>
+	[LibraryImport("avrt.dll", SetLastError = true, EntryPoint = "AvSetMmThreadCharacteristicsW", StringMarshalling = StringMarshalling.Utf16)]
+	public static partial IntPtr AvSetMmThreadCharacteristics(string taskName, ref uint taskIndex);
+
+	/// <summary>
+	/// Indicates that a thread is no longer performing work associated with the specified task.
+	/// </summary>
+	/// <param name="avrtHandle">
+	/// A handle to the task.
+	/// This handle is returned by the AvSetMmThreadCharacteristics or AvSetMmMaxThreadCharacteristics function.
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, the return value is nonzero.
+	///
+	/// If the function fails, the return value is zero.To get extended error information, call GetLastError.
+	/// </returns>
+	[LibraryImport("avrt.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static partial bool AvRevertMmThreadCharacteristics(IntPtr avrtHandle);
+
+	/// <summary>
+	/// The timeBeginPeriod function requests a minimum resolution for periodic timers.
+	/// </summary>
+	/// <param name="uMilliseconds">
+	/// Minimum timer resolution, in milliseconds, for the application or device driver.
+	/// A lower value specifies a higher (more accurate) resolution.
+	/// </param>
+	/// <returns>
+	/// Returns TIMERR_NOERROR if successful or TIMERR_NOCANDO if the resolution
+	/// specified in uPeriod is out of range.
+	/// </returns>
+	[LibraryImport("winmm.dll", EntryPoint = "timeBeginPeriod")]
+	public static partial uint TimeBeginPeriod(uint uMilliseconds);
+
+	/// <summary>
+	/// The timeEndPeriod function clears a previously set minimum timer resolution.
+	/// </summary>
+	/// <param name="uMilliseconds">
+	/// Minimum timer resolution specified in the previous call to the timeBeginPeriod function.
+	/// </param>
+	/// <returns>
+	/// Returns TIMERR_NOERROR if successful or TIMERR_NOCANDO if
+	/// the resolution specified in uPeriod is out of range.
+	/// </returns>
+	[LibraryImport("winmm.dll", EntryPoint = "timeEndPeriod")]
+	public static partial uint TimeEndPeriod(uint uMilliseconds);
 
 	/// <summary>
 	/// Frees the specified local memory object and invalidates its handle.

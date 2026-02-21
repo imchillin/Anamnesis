@@ -400,9 +400,19 @@ public class Controller
 			s_driverManager.Initialize();
 
 			// Main loop
-			while (s_running)
+			uint taskIndex = 0;
+			IntPtr avrtHandle = NativeFunctions.AvSetMmThreadCharacteristics("Games", ref taskIndex);
+			try
 			{
-				ProcessIncomingMessages();
+				while (s_running)
+				{
+					ProcessIncomingMessages();
+				}
+			}
+			finally
+			{
+				if (avrtHandle != IntPtr.Zero)
+					NativeFunctions.AvRevertMmThreadCharacteristics(avrtHandle);
 			}
 		}
 		catch (Exception ex)

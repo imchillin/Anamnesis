@@ -3,6 +3,7 @@
 
 namespace Anamnesis;
 
+using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Windows;
 using Serilog;
@@ -29,6 +30,16 @@ public partial class App : Application
 		this.Dispatcher.UnhandledException += this.DispatcherOnUnhandledException;
 		Application.Current.DispatcherUnhandledException += this.CurrentOnDispatcherUnhandledException;
 		TaskScheduler.UnobservedTaskException += this.TaskSchedulerOnUnobservedTaskException;
+
+		uint timeBeginResult = NativeFunctions.TimeBeginPeriod(1);
+		if (timeBeginResult != NativeFunctions.TIMERR_NOERROR)
+		{
+#if DEBUG
+			System.Diagnostics.Debug.WriteLine($"TimeBeginPeriod failed with result: 0x{timeBeginResult:X}");
+#else
+			System.Console.WriteLine($"TimeBeginPeriod failed with result: 0x{timeBeginResult:X}");
+#endif
+		}
 
 		base.OnStartup(e);
 
@@ -57,6 +68,16 @@ public partial class App : Application
 			}
 			finally
 			{
+				uint timeEndResult = NativeFunctions.TimeEndPeriod(1);
+				if (timeEndResult != NativeFunctions.TIMERR_NOERROR)
+				{
+#if DEBUG
+					System.Diagnostics.Debug.WriteLine($"TimeBeginPeriod failed with result: 0x{timeEndResult:X}");
+#else
+					System.Console.WriteLine($"TimeBeginPeriod failed with result: 0x{timeEndResult:X}");
+#endif
+				}
+
 				frame.Continue = false;
 			}
 		});
