@@ -60,7 +60,7 @@ public class History : INotifyPropertyChanged
 	/// <summary>
 	/// Gets a value indicating whether the history log has any entries.
 	/// </summary>
-	[DependsOn(nameof(this.Entries))]
+	[DependsOn(nameof(Entries))]
 	public bool HasEntries => this.Entries.Count > 0;
 
 	/// <summary>Gets the collection of active history entries.</summary>
@@ -85,7 +85,7 @@ public class History : INotifyPropertyChanged
 	public bool CanUndo => this.CurrentIndex >= 0;
 
 	/// <summary>Gets a value indicating whether redo is possible.</summary>
-	[DependsOn(nameof(CurrentIndex), nameof(this.Entries))]
+	[DependsOn(nameof(CurrentIndex), nameof(Entries))]
 	public bool CanRedo => this.CurrentIndex < this.Entries.Count - 1;
 
 	/// <summary>

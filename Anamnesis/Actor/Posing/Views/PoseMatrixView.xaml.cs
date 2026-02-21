@@ -31,19 +31,19 @@ public partial class PoseMatrixView : UserControl
 
 	public SkeletonEntity? Skeleton { get; private set; }
 
-	[DependsOn(nameof(this.Skeleton))]
+	[DependsOn(nameof(Skeleton))]
 	public IEnumerable<BoneEntity> HairBones => this.hairBonesCache ??= this.GetBonesByCategory(BoneCategory.Hair);
 
-	[DependsOn(nameof(this.Skeleton))]
+	[DependsOn(nameof(Skeleton))]
 	public IEnumerable<BoneEntity> MetBones => this.metBonesCache ??= this.GetBonesByCategory(BoneCategory.Met);
 
-	[DependsOn(nameof(this.Skeleton))]
+	[DependsOn(nameof(Skeleton))]
 	public IEnumerable<BoneEntity> TopBones => this.topBonesCache ??= this.GetBonesByCategory(BoneCategory.Top);
 
-	[DependsOn(nameof(this.Skeleton))]
+	[DependsOn(nameof(Skeleton))]
 	public IEnumerable<BoneEntity> MainHandBones => this.mainHandBonesCache ??= this.GetBonesByCategory(BoneCategory.MainHand);
 
-	[DependsOn(nameof(this.Skeleton))]
+	[DependsOn(nameof(Skeleton))]
 	public IEnumerable<BoneEntity> OffHandBones => this.offHandBonesCache ??= this.GetBonesByCategory(BoneCategory.OffHand);
 
 	public void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
