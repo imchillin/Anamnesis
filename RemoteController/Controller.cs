@@ -771,7 +771,7 @@ public class Controller
 
 			if (mode == DispatchMode.FrameworkTick && FrameworkDriver.IsInitialized)
 			{
-				result = FrameworkDriver.EnqueueAndWait(ExecuteLogic);
+				result = FrameworkDriver.RunOnTick(ExecuteLogic);
 			}
 			else
 			{
@@ -1029,7 +1029,7 @@ public class Controller
 
 		if (FrameworkDriver.IsInitialized)
 		{
-			return FrameworkDriver.EnqueueAndWait(() =>
+			return FrameworkDriver.RunOnTick(() =>
 			{
 				bool success = ActorDriver.Instance.UpdateDrawData(drawObjectAddr, drawData, skipEquipment);
 				return [(byte)(success ? 1 : 0)];

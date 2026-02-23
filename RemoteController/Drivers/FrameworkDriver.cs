@@ -3,14 +3,14 @@
 
 namespace RemoteController.Drivers;
 
-using Reloaded.Hooks;
-using Reloaded.Hooks.Definitions;
 using RemoteController;
 using RemoteController.Interop;
 using RemoteController.Interop.Delegates;
 using Serilog;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// A wrapper of framework object from the target process
@@ -24,16 +24,28 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 
 	private static readonly ConcurrentQueue<WorkItem> s_marshaledWork = new();
 	private static readonly ConcurrentBag<WorkItem> s_workItemPool = new();
+	private static readonly TimeSpan s_frameBudget = TimeSpan.FromMilliseconds(1);
+
+	private readonly ConcurrentQueue<ConditionalTask> incomingCondTasks = new();
+	private readonly List<ConditionalTask> activeCondTasks = new();
 
 	private readonly FunctionHook<Framework.Tick> tickHook;
 	private readonly Framework.Tick detourTick;
+
 	private volatile int isSyncEnabled = 0;
 	private int requestVersion = 0;
+	private ulong tickCount = 0;
 
 	/// <summary>
 	/// Event triggered on every frame update of the main game loop.
-	/// CAUTION: This runs on the game thread. Keep subscribers lightweight.
 	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// CAUTION: This runs on the game thread. Keep subscribers lightweight.
+	/// </para>
+	/// In most cases, use <see cref="RunOnTick(Func{byte[]}, int)"/> or its subvariants
+	/// to schedule work on the framework thread instead of subscribing to this event directly.
+	/// </remarks>
 	public event Action? GameTick;
 
 	/// <summary>
@@ -72,6 +84,7 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 
 	/// <summary>
 	/// Enqueues a work item to be executed on the framework thread
+	/// and waits for its completion.
 	/// </summary>
 	/// <param name="func">
 	/// The function to execute on the framework thread.
@@ -79,11 +92,13 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 	/// <param name="timeoutMs">
 	/// The timeout in milliseconds to wait for the work item to complete.
 	/// </param>
-	/// <returns></returns>
+	/// <returns>
+	/// The result of the function as a byte array.
+	/// </returns>
 	/// <exception cref="TimeoutException">
 	/// Thrown if the work item does not complete within the specified timeout.
 	/// </exception>
-	public static byte[] EnqueueAndWait(Func<byte[]> func, int timeoutMs = FRAMEWORK_DEFAULT_TIMEOUT_MS)
+	public static byte[] RunOnTick(Func<byte[]> func, int timeoutMs = FRAMEWORK_DEFAULT_TIMEOUT_MS)
 	{
 		if (!s_workItemPool.TryTake(out WorkItem? item))
 		{
@@ -104,13 +119,82 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 				return item.Result ?? [];
 			}
 
-			throw new TimeoutException("Framework thread did not process wrapper invoke request within timeout.");
+			throw new TimeoutException("Framework thread timed out processing request.");
 		}
 		finally
 		{
 			item.Reset();
 			s_workItemPool.Add(item);
 		}
+	}
+
+	/// <summary>
+	/// Schedules an action to be executed on the framework thread asynchronously.
+	/// </summary>
+	/// <param name="action">
+	/// The action to execute on the framework thread.
+	/// </param>
+	/// <returns>
+	/// A task that completes when the action has been executed.
+	/// </returns>
+	public Task RunOnTickAsync(Action action) => this.RunOnTickUntilAsync(null, 0, -1, action);
+
+	/// <summary>
+	/// Schedules an action to be executed on the framework thread asynchronously
+	/// after a specified delay.
+	/// </summary>
+	/// <param name="delay">
+	/// The delay before executing the action.
+	/// </param>
+	/// <param name="action">
+	/// The action to execute on the framework thread.
+	/// </param>
+	/// <returns>
+	/// A task that completes when the action has been executed.
+	/// </returns>
+	public async Task RunOnTickAsync(TimeSpan delay, Action action)
+	{
+		await Task.Delay(delay);
+		await this.RunOnTickAsync(action);
+	}
+
+	public void RunAfterTicks(uint ticks, Action action) => this.RunOnTickUntil(null, ticks, -1, action);
+
+	public void RunOnTickUntil(Func<bool>? condition, uint deferTicks = 0, int timeoutTicks = -1, Action? action = null)
+	{
+		ulong currentTick = Interlocked.Read(ref this.tickCount);
+		this.incomingCondTasks.Enqueue(new ConditionalTask(
+			condition,
+			action ?? (() => { }),
+			currentTick + deferTicks,
+			currentTick,
+			timeoutTicks));
+	}
+
+	public Task RunOnTickUntilAsync(Func<bool>? condition, uint deferTicks = 0, int timeoutTicks = -1, Action? action = null)
+	{
+		var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+		ulong currentTick = Interlocked.Read(ref this.tickCount);
+
+		this.incomingCondTasks.Enqueue(new ConditionalTask(
+			condition,
+			() => {
+				try
+				{
+					action?.Invoke();
+					tcs.TrySetResult();
+				}
+				catch (Exception ex)
+				{
+					tcs.TrySetException(ex);
+				}
+			},
+			currentTick + deferTicks,
+			currentTick,
+			timeoutTicks,
+			tcs));
+
+		return tcs.Task;
 	}
 
 	/// <inheritdoc/>
@@ -123,19 +207,27 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 		s_workItemPool.Clear();
 	}
 
-	private byte DetourTick(nint fPtr)
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static void ProcessMarshaledWork(long startTimestamp)
 	{
 		while (s_marshaledWork.TryDequeue(out var work))
 		{
-			try
-			{
-				work.Execute();
-			}
-			finally
-			{
-				work.Completion.Set();
-			}
+			try { work.Execute(); }
+			finally { work.Completion.Set(); }
+
+			if (Stopwatch.GetElapsedTime(startTimestamp) >= s_frameBudget)
+				break;
 		}
+	}
+
+	private byte DetourTick(nint fPtr)
+	{
+		long startTimestamp = Stopwatch.GetTimestamp();
+		ulong currentTick = Interlocked.Increment(ref this.tickCount);
+
+		this.DrainIncomingTasks();
+		ProcessMarshaledWork(startTimestamp);
+		this.ProcessConditionalTasks(startTimestamp, currentTick);
 
 		try
 		{
@@ -146,33 +238,81 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 			Log.Error(ex, "Encountered error during framework game tick event invocation.");
 		}
 
-		// FAST EXIT: If there's no pending work, run the original function directly
-		if (this.isSyncEnabled == 0)
-			return this.tickHook!.OriginalFunction(fPtr);
-
-		int versionBefore = Volatile.Read(ref this.requestVersion);
-		bool continueProcessing = false;
-
-		try
+		if (this.isSyncEnabled == 1)
 		{
-			continueProcessing = Controller.SendFrameworkRequest();
-		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, "Encountered error during framework sync.");
-			Interlocked.Exchange(ref this.isSyncEnabled, 0);
-		}
-
-		if (!continueProcessing)
-		{
-			int versionAfter = Volatile.Read(ref this.requestVersion);
-			if (versionBefore == versionAfter)
-			{
-				Interlocked.CompareExchange(ref this.isSyncEnabled, 0, 1);
-			}
+			this.ProcessRemoteSync();
 		}
 
 		return this.tickHook!.OriginalFunction(fPtr);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private void DrainIncomingTasks()
+	{
+		while (this.incomingCondTasks.TryDequeue(out var newTask))
+		{
+			this.activeCondTasks.Add(newTask);
+		}
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private void ProcessConditionalTasks(long startTimestamp, ulong currentTick)
+	{
+		for (int i = 0; i < this.activeCondTasks.Count;)
+		{
+			if (Stopwatch.GetElapsedTime(startTimestamp) >= s_frameBudget)
+				break;
+
+			var task = this.activeCondTasks[i];
+			bool shouldRemove = false;
+
+			if (currentTick >= task.TargetTick)
+			{
+				try
+				{
+					if (task.Condition == null || task.Condition())
+					{
+						task.Action();
+						shouldRemove = true;
+					}
+					else if (task.TimeoutFrames >= 0 && (currentTick - task.EnqueueTick) >= (ulong)task.TimeoutFrames)
+					{
+						task.Tcs?.TrySetCanceled();
+						shouldRemove = true;
+					}
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, "Error in conditional task.");
+					task.Tcs?.TrySetException(ex);
+					shouldRemove = true;
+				}
+			}
+
+			if (shouldRemove)
+				this.activeCondTasks.RemoveAt(i);
+			else
+				i++;
+		}
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private void ProcessRemoteSync()
+	{
+		int versionBefore = Volatile.Read(ref this.requestVersion);
+		try
+		{
+			if (!Controller.SendFrameworkRequest())
+			{
+				if (versionBefore == Volatile.Read(ref this.requestVersion))
+					Interlocked.CompareExchange(ref this.isSyncEnabled, 0, 1);
+			}
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Framework remote sync error.");
+			Interlocked.Exchange(ref this.isSyncEnabled, 0);
+		}
 	}
 
 	/// <summary>
@@ -220,4 +360,6 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 			this.Completion.Dispose();
 		}
 	}
+
+	private record struct ConditionalTask(Func<bool>? Condition, Action Action, ulong TargetTick, ulong EnqueueTick, int TimeoutFrames, TaskCompletionSource? Tcs = null);
 }
