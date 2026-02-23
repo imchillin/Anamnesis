@@ -5,6 +5,7 @@ namespace RemoteController;
 
 using RemoteController.Drivers;
 using RemoteController.Interop;
+using RemoteController.Interop.Types;
 using RemoteController.IPC;
 using RemoteController.Memory;
 using Serilog;
@@ -706,16 +707,24 @@ public class Controller
 		try
 		{
 			var regPayload = MemoryMarshal.Read<HookRegistrationData>(data);
-			string delegateKey = regPayload.GetKey();
-			uint hookId = HookRegistry.Instance.RegisterHook(regPayload);
-			if (hookId != 0)
+
+			byte[] result = FrameworkDriver.RunOnTick(() =>
 			{
-				byte[] payload = BitConverter.GetBytes(hookId);
-				var header = new MessageHeader(requestId, PayloadType.Ack, (ulong)payload.Length);
-				s_outgoingEndpoint?.Write(header, payload, IPC_TIMEOUT_MS);
+			uint hookId = HookRegistry.Instance.RegisterHook(regPayload);
+				if (hookId == 0)
+					return []; // Failure
+
+				return BitConverter.GetBytes(hookId);
+			});
+
+			if (result.Length > 0)
+			{
+				var header = new MessageHeader(requestId, PayloadType.Ack, (ulong)result.Length);
+				s_outgoingEndpoint?.Write(header, result, IPC_TIMEOUT_MS);
 			}
 			else
 			{
+				Log.Error($"Failed to register hook for request {requestId} on framework thread.");
 				SendResponse(requestId, PayloadType.NAck);
 			}
 		}
@@ -728,8 +737,22 @@ public class Controller
 	[RequiresDynamicCode("HookRegistry requires dynamic code")]
 	private static void HandleHookUnregister(uint hookId)
 	{
+		try
+		{
+			byte[] result = FrameworkDriver.RunOnTick(() =>
+			{
 		bool success = HookRegistry.Instance.UnregisterHook(hookId);
-		SendResponse(hookId, success ? PayloadType.Ack : PayloadType.NAck);
+				return [(byte)(success ? 1 : 0)];
+			});
+
+			bool wasSuccessful = result.Length > 0 && result[0] == 1;
+			SendResponse(hookId, wasSuccessful ? PayloadType.Ack : PayloadType.NAck);
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, $"Failed to unregister hook {hookId} on framework thread.");
+			SendResponse(hookId, PayloadType.NAck);
+		}
 	}
 
 	private static void SendResponse(uint msgId, PayloadType responseType)

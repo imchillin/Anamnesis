@@ -33,6 +33,14 @@ public abstract class DriverBase<T> : IDisposable
 	public static bool IsInitialized => s_instance != null;
 
 	/// <summary>
+	/// Gets a value indicating whether the driver was disposed or not.
+	/// </summary>
+	/// <remarks>
+	/// The property also returns true if the driver was never initialized.
+	/// </remarks>
+	public bool IsDisposed => this.DisposedValue;
+
+	/// <summary>
 	/// Registers this instance as the singleton.
 	/// </summary>
 	protected void RegisterInstance()
