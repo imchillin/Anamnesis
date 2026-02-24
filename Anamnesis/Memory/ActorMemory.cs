@@ -18,7 +18,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-// TODO: Figure out how to take the initial snapshot to avoid the initial full redraw
 public class ActorMemory : GameObjectMemory, IDisposable
 {
 	private const double REFRESH_DEBOUNCE_TIMEOUT_MS = 16;
@@ -243,6 +242,14 @@ public class ActorMemory : GameObjectMemory, IDisposable
 			return;
 
 		base.Synchronize(inclGroups, exclGroups);
+
+		// Take the initial snapshot after the first synchronization
+		if (this.LastAppearanceSnapshot == null)
+		{
+			var snapshot = new CharacterFile();
+			snapshot.WriteToFile(this, CharacterFile.SaveModes.All);
+			this.LastAppearanceSnapshot = snapshot;
+		}
 	}
 
 	/// <summary>
