@@ -64,8 +64,8 @@ public unsafe sealed class WorkItem<TState> : IWorkItem
 	public void Execute()
 	{
 #if DEBUG
-    if (this.logicPtr == null)
-        throw new InvalidOperationException("Work item logic pointer is null. Was Cleanup() called?");
+		if (this.logicPtr == null)
+			throw new InvalidOperationException("Work item logic pointer is null. Was Cleanup() called?");
 #endif
 
 		this.logicPtr(this.state);

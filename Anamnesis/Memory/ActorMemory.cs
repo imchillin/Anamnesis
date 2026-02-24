@@ -88,14 +88,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	[Bind(0x0680, BindFlags.Pointer)] public ActorMemory? Mount { get; set; } // Targets object within MountContainer
 	[Bind(0x0688)] public ushort MountId { get; set; }
 	[Bind(0x06E8, BindFlags.Pointer)] public CompanionMemory? Companion { get; set; } // Targets object within CompanionContainer
-	// [Bind(Actor.DRAW_DATA_OFFSET)] public DrawDataMemory DrawData { get; set; } = new();
-	[Bind(0x0708)] public WeaponMemory? MainHand { get; set; }
-	[Bind(0x0778)] public WeaponMemory? OffHand { get; set; }
-	[Bind(0x08C8)] public ActorEquipmentMemory? Equipment { get; set; }
-	[Bind(0x0918)] public ActorCustomizeMemory? Customize { get; set; }
-	[Bind(0x0936, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
-	[Bind(0x0937, BindFlags.ActorRefresh)] public DrawDataMemory.CharacterFlagDefs CharacterFlags { get; set; }
-	[Bind(0x0938)] public GlassesMemory? Glasses { get; set; }
+	[Bind(Actor.DRAW_DATA_OFFSET)] public DrawDataMemory DrawData { get; set; } = new();
 	[Bind(0x0970, BindFlags.Pointer)] public OrnamentMemory? Ornament { get; set; } // Targets object within OrnamentContainer
 	[Bind(0x0978)] public ushort OrnamentId { get; set; }
 	[Bind(0x0A30)] public AnimationMemory? Animation { get; set; }
@@ -150,40 +143,6 @@ public class ActorMemory : GameObjectMemory, IDisposable
 
 	[DependsOn(nameof(Companion))]
 	public bool HasCompanion => this.Companion != null;
-
-	[DependsOn(nameof(CharacterFlags))]
-	public bool VisorToggled
-	{
-		get => this.CharacterFlags.HasFlagUnsafe(DrawDataMemory.CharacterFlagDefs.VisorToggled);
-		set
-		{
-			if (value)
-			{
-				this.CharacterFlags |= DrawDataMemory.CharacterFlagDefs.VisorToggled;
-			}
-			else
-			{
-				this.CharacterFlags &= ~DrawDataMemory.CharacterFlagDefs.VisorToggled;
-			}
-		}
-	}
-
-	[DependsOn(nameof(CharacterFlags))]
-	public bool HeadgearEarsHidden
-	{
-		get => this.CharacterFlags.HasFlagUnsafe(DrawDataMemory.CharacterFlagDefs.HeadgearEarsHidden);
-		set
-		{
-			if (value)
-			{
-				this.CharacterFlags |= DrawDataMemory.CharacterFlagDefs.HeadgearEarsHidden;
-			}
-			else
-			{
-				this.CharacterFlags &= ~DrawDataMemory.CharacterFlagDefs.HeadgearEarsHidden;
-			}
-		}
-	}
 
 	[DependsOn(nameof(IsMotionDisabled))]
 	public bool IsMotionEnabled
@@ -370,11 +329,11 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		{
 			// Customize: bytes 0x00-0x1F
 			Span<byte> customizeSpan = new(drawData.Customize, HumanDrawData.CUSTOMIZE_SIZE);
-			this.Customize?.WriteTo(customizeSpan);
+			this.DrawData.Customize?.WriteTo(customizeSpan);
 
 			// Equipment: bytes 0x20-0x6F
 			Span<byte> equipmentSpan = new((byte*)drawData.Equipment, HumanDrawData.EQUIPMENT_SLOTS * 8);
-			this.Equipment?.WriteTo(equipmentSpan);
+			this.DrawData.Equipment?.WriteTo(equipmentSpan);
 		}
 
 		return drawData;

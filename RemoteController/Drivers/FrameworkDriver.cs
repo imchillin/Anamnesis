@@ -178,7 +178,8 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 
 		this.incomingCondTasks.Enqueue(new ConditionalTask(
 			condition,
-			() => {
+			() =>
+			{
 				try
 				{
 					action?.Invoke();

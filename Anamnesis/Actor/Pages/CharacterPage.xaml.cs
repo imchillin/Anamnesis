@@ -56,7 +56,7 @@ public partial class CharacterPage : UserControl
 
 	public ObjectHandle<ActorMemory>? Actor { get; private set; }
 	public ListCollectionView VoiceEntries { get; private set; }
-	public bool CanDyeEquipment => this.Actor?.Do(a => a.Equipment != null) == true;
+	public bool CanDyeEquipment => this.Actor?.Do(a => a.DrawData.Equipment != null) == true;
 
 	public bool CanDyeWeapons
 	{
@@ -67,8 +67,8 @@ public partial class CharacterPage : UserControl
 
 			// One of the weapons must not be null and have a non-zero set to be dyable.
 			return this.Actor.Do(a =>
-				(a.MainHand != null && a.MainHand.Set != 0) ||
-				(a.OffHand != null && a.OffHand.Set != 0)) == true;
+				(a.DrawData.MainHand != null && a.DrawData.MainHand.Set != 0) ||
+				(a.DrawData.OffHand != null && a.DrawData.OffHand.Set != 0)) == true;
 		}
 	}
 
@@ -124,24 +124,25 @@ public partial class CharacterPage : UserControl
 		{
 			bool isHuman = a.IsHuman;
 
-			a.MainHand?.Clear(isHuman);
-			a.OffHand?.Clear(isHuman);
+			var drawData = a.DrawData;
+			drawData.MainHand?.Clear(isHuman);
+			drawData.OffHand?.Clear(isHuman);
 
-			if (a.Equipment != null)
+			if (drawData.Equipment != null)
 			{
-				a.Equipment.Arms?.Clear(isHuman);
-				a.Equipment.Chest?.Clear(isHuman);
-				a.Equipment.Ear?.Clear(isHuman);
-				a.Equipment.Feet?.Clear(isHuman);
-				a.Equipment.Head?.Clear(isHuman);
-				a.Equipment.Legs?.Clear(isHuman);
-				a.Equipment.LFinger?.Clear(isHuman);
-				a.Equipment.Neck?.Clear(isHuman);
-				a.Equipment.RFinger?.Clear(isHuman);
-				a.Equipment.Wrist?.Clear(isHuman);
+				drawData.Equipment.Arms?.Clear(isHuman);
+				drawData.Equipment.Chest?.Clear(isHuman);
+				drawData.Equipment.Ear?.Clear(isHuman);
+				drawData.Equipment.Feet?.Clear(isHuman);
+				drawData.Equipment.Head?.Clear(isHuman);
+				drawData.Equipment.Legs?.Clear(isHuman);
+				drawData.Equipment.LFinger?.Clear(isHuman);
+				drawData.Equipment.Neck?.Clear(isHuman);
+				drawData.Equipment.RFinger?.Clear(isHuman);
+				drawData.Equipment.Wrist?.Clear(isHuman);
 			}
 
-			a.Glasses?.Clear();
+			drawData.Glasses?.Clear();
 
 			if (a.ModelObject != null)
 			{
@@ -168,24 +169,25 @@ public partial class CharacterPage : UserControl
 				return;
 			}
 
-			a.MainHand?.Clear(isHuman);
-			a.OffHand?.Clear(isHuman);
+			var drawData = a.DrawData;
+			drawData.MainHand?.Clear(isHuman);
+			drawData.OffHand?.Clear(isHuman);
 
-			if (a.Equipment != null)
+			if (drawData.Equipment != null)
 			{
-				a.Equipment.Ear?.Clear(isHuman);
-				a.Equipment.Head?.Clear(isHuman);
-				a.Equipment.LFinger?.Clear(isHuman);
-				a.Equipment.Neck?.Clear(isHuman);
-				a.Equipment.RFinger?.Clear(isHuman);
-				a.Equipment.Wrist?.Clear(isHuman);
-				a.Equipment.Arms?.Equip(ItemUtility.NpcBodyItem);
-				a.Equipment.Chest?.Equip(ItemUtility.NpcBodyItem);
-				a.Equipment.Legs?.Equip(ItemUtility.NpcBodyItem);
-				a.Equipment.Feet?.Equip(ItemUtility.NpcBodyItem);
+				drawData.Equipment.Ear?.Clear(isHuman);
+				drawData.Equipment.Head?.Clear(isHuman);
+				drawData.Equipment.LFinger?.Clear(isHuman);
+				drawData.Equipment.Neck?.Clear(isHuman);
+				drawData.Equipment.RFinger?.Clear(isHuman);
+				drawData.Equipment.Wrist?.Clear(isHuman);
+				drawData.Equipment.Arms?.Equip(ItemUtility.NpcBodyItem);
+				drawData.Equipment.Chest?.Equip(ItemUtility.NpcBodyItem);
+				drawData.Equipment.Legs?.Equip(ItemUtility.NpcBodyItem);
+				drawData.Equipment.Feet?.Equip(ItemUtility.NpcBodyItem);
 			}
 
-			a.Glasses?.Clear();
+			drawData.Glasses?.Clear();
 		});
 	}
 
@@ -203,24 +205,25 @@ public partial class CharacterPage : UserControl
 				return;
 			}
 
-			a.MainHand?.Clear(isHuman);
-			a.OffHand?.Clear(isHuman);
+			var drawData = a.DrawData;
+			drawData.MainHand?.Clear(isHuman);
+			drawData.OffHand?.Clear(isHuman);
 
-			if (a.Equipment != null)
+			if (drawData.Equipment != null)
 			{
-				a.Equipment.Ear?.Equip(ItemUtility.EmperorsAccessoryItem);
-				a.Equipment.Neck?.Equip(ItemUtility.EmperorsAccessoryItem);
-				a.Equipment.Wrist?.Equip(ItemUtility.EmperorsAccessoryItem);
-				a.Equipment.LFinger?.Equip(ItemUtility.EmperorsAccessoryItem);
-				a.Equipment.RFinger?.Equip(ItemUtility.EmperorsAccessoryItem);
-				a.Equipment.Head?.Equip(ItemUtility.EmperorsBodyItem);
-				a.Equipment.Chest?.Equip(ItemUtility.EmperorsBodyItem);
-				a.Equipment.Arms?.Equip(ItemUtility.EmperorsBodyItem);
-				a.Equipment.Legs?.Equip(ItemUtility.EmperorsBodyItem);
-				a.Equipment.Feet?.Equip(ItemUtility.EmperorsBodyItem);
+				drawData.Equipment.Ear?.Equip(ItemUtility.EmperorsAccessoryItem);
+				drawData.Equipment.Neck?.Equip(ItemUtility.EmperorsAccessoryItem);
+				drawData.Equipment.Wrist?.Equip(ItemUtility.EmperorsAccessoryItem);
+				drawData.Equipment.LFinger?.Equip(ItemUtility.EmperorsAccessoryItem);
+				drawData.Equipment.RFinger?.Equip(ItemUtility.EmperorsAccessoryItem);
+				drawData.Equipment.Head?.Equip(ItemUtility.EmperorsBodyItem);
+				drawData.Equipment.Chest?.Equip(ItemUtility.EmperorsBodyItem);
+				drawData.Equipment.Arms?.Equip(ItemUtility.EmperorsBodyItem);
+				drawData.Equipment.Legs?.Equip(ItemUtility.EmperorsBodyItem);
+				drawData.Equipment.Feet?.Equip(ItemUtility.EmperorsBodyItem);
 			}
 
-			a.Glasses?.Clear();
+			drawData.Glasses?.Clear();
 		});
 	}
 
@@ -231,38 +234,39 @@ public partial class CharacterPage : UserControl
 
 		this.Actor.Do(a =>
 		{
-			if (a.Customize?.Race == null)
+			var drawData = a.DrawData;
+			if (drawData.Customize?.Race == null)
 				return;
 
-			var race = GameDataService.Races.GetRow((uint)a.Customize.Race);
+			var race = GameDataService.Races.GetRow((uint)drawData.Customize.Race);
 
-			if (a.Equipment != null)
+			if (drawData.Equipment != null)
 			{
-				if (a.Customize.Gender == ActorCustomizeMemory.Genders.Masculine)
+				if (drawData.Customize.Gender == ActorCustomizeMemory.Genders.Masculine)
 				{
-					a.Equipment.Chest?.Equip(race.RSEMBody.Value);
-					a.Equipment.Arms?.Equip(race.RSEMHands.Value);
-					a.Equipment.Legs?.Equip(race.RSEMLegs.Value);
-					a.Equipment.Feet?.Equip(race.RSEMFeet.Value);
+					drawData.Equipment.Chest?.Equip(race.RSEMBody.Value);
+					drawData.Equipment.Arms?.Equip(race.RSEMHands.Value);
+					drawData.Equipment.Legs?.Equip(race.RSEMLegs.Value);
+					drawData.Equipment.Feet?.Equip(race.RSEMFeet.Value);
 				}
 				else
 				{
-					a.Equipment.Chest?.Equip(race.RSEFBody.Value);
-					a.Equipment.Arms?.Equip(race.RSEFHands.Value);
-					a.Equipment.Legs?.Equip(race.RSEFLegs.Value);
-					a.Equipment.Feet?.Equip(race.RSEFFeet.Value);
+					drawData.Equipment.Chest?.Equip(race.RSEFBody.Value);
+					drawData.Equipment.Arms?.Equip(race.RSEFHands.Value);
+					drawData.Equipment.Legs?.Equip(race.RSEFLegs.Value);
+					drawData.Equipment.Feet?.Equip(race.RSEFFeet.Value);
 				}
 
 				bool isHuman = a.IsHuman;
-				a.Equipment.Ear?.Clear(isHuman);
-				a.Equipment.Head?.Clear(isHuman);
-				a.Equipment.LFinger?.Clear(isHuman);
-				a.Equipment.Neck?.Clear(isHuman);
-				a.Equipment.RFinger?.Clear(isHuman);
-				a.Equipment.Wrist?.Clear(isHuman);
+				drawData.Equipment.Ear?.Clear(isHuman);
+				drawData.Equipment.Head?.Clear(isHuman);
+				drawData.Equipment.LFinger?.Clear(isHuman);
+				drawData.Equipment.Neck?.Clear(isHuman);
+				drawData.Equipment.RFinger?.Clear(isHuman);
+				drawData.Equipment.Wrist?.Clear(isHuman);
 			}
 
-			a.Glasses?.Clear();
+			drawData.Glasses?.Clear();
 		});
 	}
 
@@ -415,28 +419,30 @@ public partial class CharacterPage : UserControl
 
 		this.Actor.Do(a =>
 		{
-			if (this.CanDyeWeapons && dyeTarget.HasFlagUnsafe(DyeTarget.Weapons))
-				a.MainHand?.ApplyDye(dye, dyeSlot);
+			var drawData = a.DrawData;
 
 			if (this.CanDyeWeapons && dyeTarget.HasFlagUnsafe(DyeTarget.Weapons))
-				a.OffHand?.ApplyDye(dye, dyeSlot);
+				drawData.MainHand?.ApplyDye(dye, dyeSlot);
+
+			if (this.CanDyeWeapons && dyeTarget.HasFlagUnsafe(DyeTarget.Weapons))
+				drawData.OffHand?.ApplyDye(dye, dyeSlot);
 
 			if (this.CanDyeEquipment && dyeTarget.HasFlagUnsafe(DyeTarget.Clothing))
 			{
-				a.Equipment?.Head?.ApplyDye(dye, dyeSlot);
-				a.Equipment?.Chest?.ApplyDye(dye, dyeSlot);
-				a.Equipment?.Arms?.ApplyDye(dye, dyeSlot);
-				a.Equipment?.Legs?.ApplyDye(dye, dyeSlot);
-				a.Equipment?.Feet?.ApplyDye(dye, dyeSlot);
+				drawData.Equipment?.Head?.ApplyDye(dye, dyeSlot);
+				drawData.Equipment?.Chest?.ApplyDye(dye, dyeSlot);
+				drawData.Equipment?.Arms?.ApplyDye(dye, dyeSlot);
+				drawData.Equipment?.Legs?.ApplyDye(dye, dyeSlot);
+				drawData.Equipment?.Feet?.ApplyDye(dye, dyeSlot);
 			}
 
 			if (this.CanDyeEquipment && dyeTarget.HasFlagUnsafe(DyeTarget.Accessories))
 			{
-				a.Equipment?.Ear?.ApplyDye(dye, dyeSlot);
-				a.Equipment?.Neck?.ApplyDye(dye, dyeSlot);
-				a.Equipment?.Wrist?.ApplyDye(dye, dyeSlot);
-				a.Equipment?.RFinger?.ApplyDye(dye, dyeSlot);
-				a.Equipment?.LFinger?.ApplyDye(dye, dyeSlot);
+				drawData.Equipment?.Ear?.ApplyDye(dye, dyeSlot);
+				drawData.Equipment?.Neck?.ApplyDye(dye, dyeSlot);
+				drawData.Equipment?.Wrist?.ApplyDye(dye, dyeSlot);
+				drawData.Equipment?.RFinger?.ApplyDye(dye, dyeSlot);
+				drawData.Equipment?.LFinger?.ApplyDye(dye, dyeSlot);
 			}
 		});
 	}

@@ -153,13 +153,13 @@ public class AnamnesisActorRefresher : IActorRefresher
 
 			if (flags.HasFlag(RedrawFlags.Weapons))
 			{
-				writer.Write(actor.MainHand?.ToModelId() ?? default);
-				writer.Write(actor.OffHand?.ToModelId() ?? default);
+				writer.Write(actor.DrawData.MainHand?.ToModelId() ?? default);
+				writer.Write(actor.DrawData.OffHand?.ToModelId() ?? default);
 			}
 
 			if (flags.HasFlag(RedrawFlags.Facewear))
 			{
-				writer.Write<ushort>(actor.Glasses?.GlassesId ?? 0);
+				writer.Write<ushort>(actor.DrawData.Glasses?.GlassesId ?? 0);
 			}
 
 			if (flags.HasFlag(RedrawFlags.Appearance))

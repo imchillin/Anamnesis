@@ -150,10 +150,10 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 
 	private void WriteToFile(ActorMemory actor)
 	{
-		if (actor.Customize == null)
+		if (actor.DrawData.Customize == null)
 			return;
 
-		ActorCustomizeMemory customize = actor.Customize;
+		ActorCustomizeMemory customize = actor.DrawData.Customize;
 
 		CharaMakeType? makeType = null;
 		if (GameDataService.CharacterMakeTypes != null)

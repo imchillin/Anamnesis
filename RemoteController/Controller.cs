@@ -23,7 +23,7 @@ public class Controller
 {
 	private const string BUF_SHMEM_OUTGOING = "Local\\ANAM_SHMEM_CTRL_TO_MAIN";
 	private const string BUF_SHMEM_INCOMING = "Local\\ANAM_SHMEM_MAIN_TO_CTRL";
-	
+
 	private const int PROCESS_MONITOR_JOIN_TIMEOUT_MS = 500;
 	private const int ACTIVE_WRITERS_DRAIN_TIMEOUT_MS = 500;
 	private const int IPC_TIMEOUT_MS = 100;
@@ -96,7 +96,7 @@ public class Controller
 	private static bool s_dllImportResolverSet = false;
 	private static IntPtr s_mainProcessHandle = IntPtr.Zero;
 	private static Thread? s_processMonitorThread = null;
-	private static CancellationTokenSource s_shutdownCts= new();
+	private static CancellationTokenSource s_shutdownCts = new();
 	private static int s_activeWriters = 0;
 
 	[RequiresDynamicCode("Requires dynamic code")]
@@ -529,7 +529,7 @@ public class Controller
 
 			// [0] The Process
 			// [1] The Cancellation Token
-			WaitHandle[] handles = { processWaitHandle, s_shutdownCts.Token.WaitHandle };
+			WaitHandle[] handles = [processWaitHandle, s_shutdownCts.Token.WaitHandle];
 			Log.Debug($"Monitoring Handle: {s_mainProcessHandle}. Blocking thread until signal...");
 
 			bool requestedShutdown = false;
@@ -654,7 +654,7 @@ public class Controller
 						break;
 
 					case PayloadType.Bye:
-						HandleGoodbyeMessage(header.Id);
+						HandleGoodbyeMessage();
 						break;
 
 					case PayloadType.Register:
@@ -768,7 +768,7 @@ public class Controller
 	{
 		if (s_outgoingEndpoint == null)
 			return;
-		
+
 		var header = new MessageHeader(msgId, responseType, (ulong)payload.Length);
 		s_outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS);
 	}
@@ -1076,7 +1076,7 @@ public class Controller
 		return [(byte)(success ? 1 : 0)];
 	}
 
-	private static void HandleGoodbyeMessage(uint msgId)
+	private static void HandleGoodbyeMessage()
 	{
 		Log.Information("Received goodbye message from host. Shutting down controller...");
 		s_running = false;

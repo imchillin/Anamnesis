@@ -133,7 +133,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 		this.isPosingEnabled = false;
 		this.arePhysicsFrozen = false;
 		this.isWorldVisualStateFrozen = false;
-		
+
 		this.hookPhysics.Dispose();
 		this.hookLookAt.Dispose();
 		this.hookCalculateBone.Dispose();
@@ -169,7 +169,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 		if (this.isPosingEnabled && posePtr != nint.Zero)
 		{
 			HkaPoseStruct* pose = (HkaPoseStruct*)posePtr;
-			
+
 			if (!pose->ModelPose.IsValid || !pose->BoneFlags.IsValid)
 				return this.hookCalculateBone.OriginalFunction(posePtr, boneIdx);
 
@@ -217,7 +217,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	{
 		if (this.isWorldVisualStateFrozen && goPtr != nint.Zero)
 			return 0;
-		
+
 		return this.hookUpdateVisualPosition.OriginalFunction(goPtr);
 	}
 
@@ -225,7 +225,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	{
 		if (this.isWorldVisualStateFrozen && goPtr != nint.Zero)
 			return 0;
-		
+
 		return this.hookUpdateVisualRotation.OriginalFunction(goPtr);
 	}
 
@@ -233,7 +233,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	{
 		if (this.isWorldVisualStateFrozen && goPtr != nint.Zero)
 			return;
-		
+
 		this.hookUpdateVisualScale.OriginalFunction(goPtr, a2);
 	}
 

@@ -3,7 +3,6 @@
 
 namespace Anamnesis.Core;
 
-using Anamnesis.Actor.Pages;
 using Anamnesis.Memory;
 using Anamnesis.Posing;
 using Anamnesis.Services;
@@ -85,39 +84,39 @@ public class Skeleton : INotifyPropertyChanged
 	public Quaternion RootRotation => this.Actor?.DoRef(a => a.ModelObject)?.Transform?.Rotation ?? Quaternion.Identity;
 
 	/// <summary> Gets a value indicating whether the actor has a tail.</summary>
-	public bool HasTail => (this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Miqote
-		|| a.Customize?.Race == ActorCustomizeMemory.Races.AuRa
-		|| a.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar) == true) || this.IsIVCS;
+	public bool HasTail => (this.Actor?.Do(a => a.DrawData.Customize?.Race == ActorCustomizeMemory.Races.Miqote
+		|| a.DrawData.Customize?.Race == ActorCustomizeMemory.Races.AuRa
+		|| a.DrawData.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar) == true) || this.IsIVCS;
 
 	/// <summary>Gets a value indicating whether the actor has a standard face.</summary>
 	public bool IsStandardFace => this.Actor == null || (!this.IsMiqote && !this.IsHrothgar && !this.IsViera);
 
 	/// <summary>Gets a value indicating whether the actor is a Miqote.</summary>
-	public bool IsMiqote => this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Miqote) == true;
+	public bool IsMiqote => this.Actor?.Do(a => a.DrawData.Customize?.Race == ActorCustomizeMemory.Races.Miqote) == true;
 
 	/// <summary>Gets a value indicating whether the actor is a Viera.</summary>
-	public bool IsViera => this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Viera) == true;
+	public bool IsViera => this.Actor?.Do(a => a.DrawData.Customize?.Race == ActorCustomizeMemory.Races.Viera) == true;
 
 	/// <summary>Gets a value indicating whether the actor is an Elezen.</summary>
-	public bool IsElezen => this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Elezen) == true;
+	public bool IsElezen => this.Actor?.Do(a => a.DrawData.Customize?.Race == ActorCustomizeMemory.Races.Elezen) == true;
 
 	/// <summary>Gets a value indicating whether the actor is a Hrothgar.</summary>
-	public bool IsHrothgar => this.Actor?.Do(a => a.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar) == true;
+	public bool IsHrothgar => this.Actor?.Do(a => a.DrawData.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar) == true;
 
 	/// <summary>Gets a value indicating whether the actor has a tail or ears.</summary>
 	public bool HasTailOrEars => this.IsViera || this.HasTail;
 
 	/// <summary>Gets a value indicating whether the actor is a Viera and has ears type 01.</summary>
-	public bool IsEars01 => this.IsViera && this.Actor?.Do(a => a.Customize?.TailEarsType <= 1) == true;
+	public bool IsEars01 => this.IsViera && this.Actor?.Do(a => a.DrawData.Customize?.TailEarsType <= 1) == true;
 
 	/// <summary>Gets a value indicating whether the actor is a Viera and has ears type 02.</summary>
-	public bool IsEars02 => this.IsViera && this.Actor?.Do(a => a.Customize?.TailEarsType == 2) == true;
+	public bool IsEars02 => this.IsViera && this.Actor?.Do(a => a.DrawData.Customize?.TailEarsType == 2) == true;
 
 	/// <summary>Gets a value indicating whether the actor is a Viera and has ears type 03.</summary>
-	public bool IsEars03 => this.IsViera && this.Actor?.Do(a => a.Customize?.TailEarsType == 3) == true;
+	public bool IsEars03 => this.IsViera && this.Actor?.Do(a => a.DrawData.Customize?.TailEarsType == 3) == true;
 
 	/// <summary>Gets a value indicating whether the actor is a Viera and has ears type 04.</summary>
-	public bool IsEars04 => this.IsViera && this.Actor?.Do(a => a.Customize?.TailEarsType == 4) == true;
+	public bool IsEars04 => this.IsViera && this.Actor?.Do(a => a.DrawData.Customize?.TailEarsType == 4) == true;
 
 	/// <summary>Gets a value indicating whether the skeleton has IVCS bones.</summary>
 	public bool IsIVCS { get; private set; }
@@ -130,7 +129,7 @@ public class Skeleton : INotifyPropertyChanged
 			if (!this.IsViera)
 				return false;
 
-			ActorCustomizeMemory? customize = this.Actor?.DoRef(a => a.Customize);
+			ActorCustomizeMemory? customize = this.Actor?.DoRef(a => a.DrawData.Customize);
 
 			if (customize == null)
 				return false;
@@ -325,21 +324,21 @@ public class Skeleton : INotifyPropertyChanged
 			// Get all bones
 			this.AddBones(a.ModelObject.Skeleton);
 
-			if (a.MainHand?.Model?.Skeleton != null)
-				this.AddBones(a.MainHand.Model.Skeleton, "mh_");
+			if (a.DrawData.MainHand?.Model?.Skeleton != null)
+				this.AddBones(a.DrawData.MainHand.Model.Skeleton, "mh_");
 
-			if (a.OffHand?.Model?.Skeleton != null)
-				this.AddBones(a.OffHand.Model.Skeleton, "oh_");
+			if (a.DrawData.OffHand?.Model?.Skeleton != null)
+				this.AddBones(a.DrawData.OffHand.Model.Skeleton, "oh_");
 
 			// Create Bone links from the link database
 			foreach ((string name, Bone bone) in this.Bones)
 			{
 				foreach (LinkedBones.LinkSet links in LinkedBones.Links)
 				{
-					if (links.Tribe != null && a.Customize?.Tribe != links.Tribe)
+					if (links.Tribe != null && a.DrawData.Customize?.Tribe != links.Tribe)
 						continue;
 
-					if (links.Gender != null && a.Customize?.Gender != links.Gender)
+					if (links.Gender != null && a.DrawData.Customize?.Gender != links.Gender)
 						continue;
 
 					if (!links.Contains(name))
@@ -415,9 +414,8 @@ public class Skeleton : INotifyPropertyChanged
 
 				if (!this.Bones.TryGetValue(name, out var currentBone))
 				{
-					currentBone = this.CreateBone(this, [transform], name, index);
-					if (currentBone == null)
-						throw new Exception($"Failed to create bone: {name}");
+					currentBone = this.CreateBone(this, [transform], name, index)
+						?? throw new Exception($"Failed to create bone: {name}");
 
 					this.Bones[name] = currentBone;
 				}

@@ -155,70 +155,71 @@ public class CharacterFile : JsonFileBase
 		this.ModelType = (uint)actor.ModelType;
 		this.ObjectKind = actor.ObjectKind;
 
-		if (actor.Customize == null)
-			return;
+		var drawData = actor.DrawData;
+		if (drawData.Customize == null || drawData.Equipment == null)
+			return; // Malformed actor object. Don't attempt to write.
 
 		this.SaveMode = mode;
 
 		if (this.IncludeSection(SaveModes.EquipmentWeapons, mode))
 		{
-			if (actor.MainHand != null)
-				this.MainHand = new WeaponSave(actor.MainHand);
+			if (drawData.MainHand != null)
+				this.MainHand = new WeaponSave(drawData.MainHand);
 			////this.MainHand.Color = actor.GetValue(Offsets.Main.MainHandColor);
 			////this.MainHand.Scale = actor.GetValue(Offsets.Main.MainHandScale);
 
-			if (actor.OffHand != null)
-				this.OffHand = new WeaponSave(actor.OffHand);
+			if (drawData.OffHand != null)
+				this.OffHand = new WeaponSave(drawData.OffHand);
 			////this.OffHand.Color = actor.GetValue(Offsets.Main.OffhandColor);
 			////this.OffHand.Scale = actor.GetValue(Offsets.Main.OffhandScale);
 		}
 
 		if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 		{
-			if (actor.Equipment?.Head != null)
-				this.HeadGear = new ItemSave(actor.Equipment.Head);
+			if (drawData.Equipment?.Head != null)
+				this.HeadGear = new ItemSave(drawData.Equipment.Head);
 
-			if (actor.Equipment?.Chest != null)
-				this.Body = new ItemSave(actor.Equipment.Chest);
+			if (drawData.Equipment?.Chest != null)
+				this.Body = new ItemSave(drawData.Equipment.Chest);
 
-			if (actor.Equipment?.Arms != null)
-				this.Hands = new ItemSave(actor.Equipment.Arms);
+			if (drawData.Equipment?.Arms != null)
+				this.Hands = new ItemSave(drawData.Equipment.Arms);
 
-			if (actor.Equipment?.Legs != null)
-				this.Legs = new ItemSave(actor.Equipment.Legs);
+			if (drawData.Equipment?.Legs != null)
+				this.Legs = new ItemSave(drawData.Equipment.Legs);
 
-			if (actor.Equipment?.Feet != null)
-				this.Feet = new ItemSave(actor.Equipment.Feet);
+			if (drawData.Equipment?.Feet != null)
+				this.Feet = new ItemSave(drawData.Equipment.Feet);
 
 			// glasses - technically on the left side
-			if (actor.Glasses != null)
-				this.Glasses = new GlassesSave(actor.Glasses);
+			if (drawData.Glasses != null)
+				this.Glasses = new GlassesSave(drawData.Glasses);
 		}
 
 		if (this.IncludeSection(SaveModes.EquipmentAccessories, mode))
 		{
-			if (actor.Equipment?.Ear != null)
-				this.Ears = new ItemSave(actor.Equipment.Ear);
+			if (drawData.Equipment?.Ear != null)
+				this.Ears = new ItemSave(drawData.Equipment.Ear);
 
-			if (actor.Equipment?.Neck != null)
-				this.Neck = new ItemSave(actor.Equipment.Neck);
+			if (drawData.Equipment?.Neck != null)
+				this.Neck = new ItemSave(drawData.Equipment.Neck);
 
-			if (actor.Equipment?.Wrist != null)
-				this.Wrists = new ItemSave(actor.Equipment.Wrist);
+			if (drawData.Equipment?.Wrist != null)
+				this.Wrists = new ItemSave(drawData.Equipment.Wrist);
 
-			if (actor.Equipment?.LFinger != null)
-				this.LeftRing = new ItemSave(actor.Equipment.LFinger);
+			if (drawData.Equipment?.LFinger != null)
+				this.LeftRing = new ItemSave(drawData.Equipment.LFinger);
 
-			if (actor.Equipment?.RFinger != null)
-				this.RightRing = new ItemSave(actor.Equipment.RFinger);
+			if (drawData.Equipment?.RFinger != null)
+				this.RightRing = new ItemSave(drawData.Equipment.RFinger);
 		}
 
 		if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 		{
-			this.Hair = actor.Customize?.Hair;
-			this.EnableHighlights = actor.Customize?.EnableHighlights;
-			this.HairTone = actor.Customize?.HairTone;
-			this.Highlights = actor.Customize?.Highlights;
+			this.Hair = drawData.Customize?.Hair;
+			this.EnableHighlights = drawData.Customize?.EnableHighlights;
+			this.HairTone = drawData.Customize?.HairTone;
+			this.Highlights = drawData.Customize?.Highlights;
 			this.HairColor = actor.ModelObject?.ExtendedAppearance?.HairColor;
 			this.HairGloss = actor.ModelObject?.ExtendedAppearance?.HairGloss;
 			this.HairHighlight = actor.ModelObject?.ExtendedAppearance?.HairHighlight;
@@ -226,27 +227,27 @@ public class CharacterFile : JsonFileBase
 
 		if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode))
 		{
-			this.Race = actor.Customize?.Race;
-			this.Gender = actor.Customize?.Gender;
-			this.Tribe = actor.Customize?.Tribe;
-			this.Age = actor.Customize?.Age;
+			this.Race = drawData.Customize?.Race;
+			this.Gender = drawData.Customize?.Gender;
+			this.Tribe = drawData.Customize?.Tribe;
+			this.Age = drawData.Customize?.Age;
 		}
 
 		if (this.IncludeSection(SaveModes.AppearanceFace, mode))
 		{
-			this.Head = actor.Customize?.Head;
-			this.REyeColor = actor.Customize?.REyeColor;
-			this.LimbalEyes = actor.Customize?.FacialFeatureColor;
-			this.FacialFeatures = actor.Customize?.FacialFeatures;
-			this.Eyebrows = actor.Customize?.Eyebrows;
-			this.LEyeColor = actor.Customize?.LEyeColor;
-			this.Eyes = actor.Customize?.Eyes;
-			this.Nose = actor.Customize?.Nose;
-			this.Jaw = actor.Customize?.Jaw;
-			this.Mouth = actor.Customize?.Mouth;
-			this.LipsToneFurPattern = actor.Customize?.LipsToneFurPattern;
-			this.FacePaint = actor.Customize?.FacePaint;
-			this.FacePaintColor = actor.Customize?.FacePaintColor;
+			this.Head = drawData.Customize?.Head;
+			this.REyeColor = drawData.Customize?.REyeColor;
+			this.LimbalEyes = drawData.Customize?.FacialFeatureColor;
+			this.FacialFeatures = drawData.Customize?.FacialFeatures;
+			this.Eyebrows = drawData.Customize?.Eyebrows;
+			this.LEyeColor = drawData.Customize?.LEyeColor;
+			this.Eyes = drawData.Customize?.Eyes;
+			this.Nose = drawData.Customize?.Nose;
+			this.Jaw = drawData.Customize?.Jaw;
+			this.Mouth = drawData.Customize?.Mouth;
+			this.LipsToneFurPattern = drawData.Customize?.LipsToneFurPattern;
+			this.FacePaint = drawData.Customize?.FacePaint;
+			this.FacePaintColor = drawData.Customize?.FacePaintColor;
 			this.LeftEyeColor = actor.ModelObject?.ExtendedAppearance?.LeftEyeColor;
 			this.RightEyeColor = actor.ModelObject?.ExtendedAppearance?.RightEyeColor;
 			this.LimbalRingColor = actor.ModelObject?.ExtendedAppearance?.LimbalRingColor;
@@ -255,11 +256,11 @@ public class CharacterFile : JsonFileBase
 
 		if (this.IncludeSection(SaveModes.AppearanceBody, mode))
 		{
-			this.Height = actor.Customize?.Height;
-			this.Skintone = actor.Customize?.Skintone;
-			this.EarMuscleTailSize = actor.Customize?.EarMuscleTailSize;
-			this.TailEarsType = actor.Customize?.TailEarsType;
-			this.Bust = actor.Customize?.Bust;
+			this.Height = drawData.Customize?.Height;
+			this.Skintone = drawData.Customize?.Skintone;
+			this.EarMuscleTailSize = drawData.Customize?.EarMuscleTailSize;
+			this.TailEarsType = drawData.Customize?.TailEarsType;
+			this.Bust = drawData.Customize?.Bust;
 
 			this.HeightMultiplier = actor.ModelObject?.Height;
 			this.SkinColor = actor.ModelObject?.ExtendedAppearance?.SkinColor;
@@ -284,7 +285,8 @@ public class CharacterFile : JsonFileBase
 		if (this.Race != null && !Enum.IsDefined((ActorCustomizeMemory.Races)this.Race))
 			throw new Exception($"Invalid race: {this.Race} in appearance file");
 
-		if (actor.Customize == null)
+		var drawData = actor.DrawData;
+		if (drawData.Customize == null)
 			return;
 
 		this.Glasses ??= new GlassesSave();
@@ -296,10 +298,10 @@ public class CharacterFile : JsonFileBase
 
 		Log.Information("Reading appearance from file");
 		var existingModelType = actor.ModelType;
-		var existingRace = actor.Customize.Race;
-		var existingGender = actor.Customize.Gender;
-		var existingTribe = actor.Customize.Tribe;
-		var existingHead = actor.Customize.Head;
+		var existingRace = drawData.Customize.Race;
+		var existingGender = drawData.Customize.Gender;
+		var existingTribe = drawData.Customize.Tribe;
+		var existingHead = drawData.Customize.Head;
 
 		bool needsRedraw = false;
 		bool isStructuralChange = false;
@@ -325,34 +327,34 @@ public class CharacterFile : JsonFileBase
 
 			if (this.IncludeSection(SaveModes.EquipmentWeapons, mode))
 			{
-				this.MainHand?.Write(actor.MainHand, true);
-				this.OffHand?.Write(actor.OffHand, false);
+				this.MainHand?.Write(drawData.MainHand, true);
+				this.OffHand?.Write(drawData.OffHand, false);
 				needsRedraw = true;
 			}
 
 			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 			{
-				WriteEquipment(this.HeadGear, actor.Equipment?.Head);
-				WriteEquipment(this.Body, actor.Equipment?.Chest);
-				WriteEquipment(this.Hands, actor.Equipment?.Arms);
-				WriteEquipment(this.Legs, actor.Equipment?.Legs);
-				WriteEquipment(this.Feet, actor.Equipment?.Feet);
+				WriteEquipment(this.HeadGear, drawData.Equipment?.Head);
+				WriteEquipment(this.Body, drawData.Equipment?.Chest);
+				WriteEquipment(this.Hands, drawData.Equipment?.Arms);
+				WriteEquipment(this.Legs, drawData.Equipment?.Legs);
+				WriteEquipment(this.Feet, drawData.Equipment?.Feet);
 
 				if (this.Glasses != null)
-					this.Glasses.Write(actor.Glasses);
-				else if (actor.Glasses != null)
-					actor.Glasses.GlassesId = 0;
+					this.Glasses.Write(drawData.Glasses);
+				else if (drawData.Glasses != null)
+					drawData.Glasses.GlassesId = 0;
 
 				needsRedraw = true;
 			}
 
 			if (this.IncludeSection(SaveModes.EquipmentAccessories, mode))
 			{
-				WriteEquipment(this.Ears, actor.Equipment?.Ear);
-				WriteEquipment(this.Neck, actor.Equipment?.Neck);
-				WriteEquipment(this.Wrists, actor.Equipment?.Wrist);
-				WriteEquipment(this.LeftRing, actor.Equipment?.LFinger);
-				WriteEquipment(this.RightRing, actor.Equipment?.RFinger);
+				WriteEquipment(this.Ears, drawData.Equipment?.Ear);
+				WriteEquipment(this.Neck, drawData.Equipment?.Neck);
+				WriteEquipment(this.Wrists, drawData.Equipment?.Wrist);
+				WriteEquipment(this.LeftRing, drawData.Equipment?.LFinger);
+				WriteEquipment(this.RightRing, drawData.Equipment?.RFinger);
 
 				needsRedraw = true;
 			}
@@ -362,43 +364,43 @@ public class CharacterFile : JsonFileBase
 				switch (slot)
 				{
 					case ItemSlots.MainHand:
-						this.MainHand?.Write(actor.MainHand, true);
+						this.MainHand?.Write(drawData.MainHand, true);
 						break;
 					case ItemSlots.OffHand:
-						this.OffHand?.Write(actor.OffHand, false);
+						this.OffHand?.Write(drawData.OffHand, false);
 						break;
 					case ItemSlots.Head:
-						this.HeadGear?.Write(actor.Equipment?.Head);
+						this.HeadGear?.Write(drawData.Equipment?.Head);
 						break;
 					case ItemSlots.Body:
-						this.Body?.Write(actor.Equipment?.Chest);
+						this.Body?.Write(drawData.Equipment?.Chest);
 						break;
 					case ItemSlots.Hands:
-						this.Hands?.Write(actor.Equipment?.Arms);
+						this.Hands?.Write(drawData.Equipment?.Arms);
 						break;
 					case ItemSlots.Legs:
-						this.Legs?.Write(actor.Equipment?.Legs);
+						this.Legs?.Write(drawData.Equipment?.Legs);
 						break;
 					case ItemSlots.Feet:
-						this.Feet?.Write(actor.Equipment?.Feet);
+						this.Feet?.Write(drawData.Equipment?.Feet);
 						break;
 					case ItemSlots.Ears:
-						this.Ears?.Write(actor.Equipment?.Ear);
+						this.Ears?.Write(drawData.Equipment?.Ear);
 						break;
 					case ItemSlots.Neck:
-						this.Neck?.Write(actor.Equipment?.Neck);
+						this.Neck?.Write(drawData.Equipment?.Neck);
 						break;
 					case ItemSlots.Wrists:
-						this.Wrists?.Write(actor.Equipment?.Wrist);
+						this.Wrists?.Write(drawData.Equipment?.Wrist);
 						break;
 					case ItemSlots.LeftRing:
-						this.LeftRing?.Write(actor.Equipment?.LFinger);
+						this.LeftRing?.Write(drawData.Equipment?.LFinger);
 						break;
 					case ItemSlots.RightRing:
-						this.RightRing?.Write(actor.Equipment?.RFinger);
+						this.RightRing?.Write(drawData.Equipment?.RFinger);
 						break;
 					case ItemSlots.Glasses:
-						this.Glasses?.Write(actor.Glasses);
+						this.Glasses?.Write(drawData.Glasses);
 						break;
 				}
 
@@ -408,16 +410,16 @@ public class CharacterFile : JsonFileBase
 			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 			{
 				if (this.Hair != null)
-					actor.Customize.Hair = (byte)this.Hair;
+					drawData.Customize.Hair = (byte)this.Hair;
 
 				if (this.EnableHighlights != null)
-					actor.Customize.EnableHighlights = (bool)this.EnableHighlights;
+					drawData.Customize.EnableHighlights = (bool)this.EnableHighlights;
 
 				if (this.HairTone != null)
-					actor.Customize.HairTone = (byte)this.HairTone;
+					drawData.Customize.HairTone = (byte)this.HairTone;
 
 				if (this.Highlights != null)
-					actor.Customize.Highlights = (byte)this.Highlights;
+					drawData.Customize.Highlights = (byte)this.Highlights;
 
 				needsRedraw = true;
 			}
@@ -425,16 +427,16 @@ public class CharacterFile : JsonFileBase
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
 				if (this.Race != null)
-					actor.Customize.Race = (ActorCustomizeMemory.Races)this.Race;
+					drawData.Customize.Race = (ActorCustomizeMemory.Races)this.Race;
 
 				if (this.Gender != null)
-					actor.Customize.Gender = (ActorCustomizeMemory.Genders)this.Gender;
+					drawData.Customize.Gender = (ActorCustomizeMemory.Genders)this.Gender;
 
 				if (this.Tribe != null)
-					actor.Customize.Tribe = (ActorCustomizeMemory.Tribes)this.Tribe;
+					drawData.Customize.Tribe = (ActorCustomizeMemory.Tribes)this.Tribe;
 
 				if (this.Age != null)
-					actor.Customize.Age = (ActorCustomizeMemory.Ages)this.Age;
+					drawData.Customize.Age = (ActorCustomizeMemory.Ages)this.Age;
 
 				needsRedraw = true;
 			}
@@ -442,43 +444,43 @@ public class CharacterFile : JsonFileBase
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode))
 			{
 				if (this.Head != null)
-					actor.Customize.Head = (byte)this.Head;
+					drawData.Customize.Head = (byte)this.Head;
 
 				if (this.REyeColor != null)
-					actor.Customize.REyeColor = (byte)this.REyeColor;
+					drawData.Customize.REyeColor = (byte)this.REyeColor;
 
 				if (this.FacialFeatures != null)
-					actor.Customize.FacialFeatures = (ActorCustomizeMemory.FacialFeature)this.FacialFeatures;
+					drawData.Customize.FacialFeatures = (ActorCustomizeMemory.FacialFeature)this.FacialFeatures;
 
 				if (this.LimbalEyes != null)
-					actor.Customize.FacialFeatureColor = (byte)this.LimbalEyes;
+					drawData.Customize.FacialFeatureColor = (byte)this.LimbalEyes;
 
 				if (this.Eyebrows != null)
-					actor.Customize.Eyebrows = (byte)this.Eyebrows;
+					drawData.Customize.Eyebrows = (byte)this.Eyebrows;
 
 				if (this.LEyeColor != null)
-					actor.Customize.LEyeColor = (byte)this.LEyeColor;
+					drawData.Customize.LEyeColor = (byte)this.LEyeColor;
 
 				if (this.Eyes != null)
-					actor.Customize.Eyes = (byte)this.Eyes;
+					drawData.Customize.Eyes = (byte)this.Eyes;
 
 				if (this.Nose != null)
-					actor.Customize.Nose = (byte)this.Nose;
+					drawData.Customize.Nose = (byte)this.Nose;
 
 				if (this.Jaw != null)
-					actor.Customize.Jaw = (byte)this.Jaw;
+					drawData.Customize.Jaw = (byte)this.Jaw;
 
 				if (this.Mouth != null)
-					actor.Customize.Mouth = (byte)this.Mouth;
+					drawData.Customize.Mouth = (byte)this.Mouth;
 
 				if (this.LipsToneFurPattern != null)
-					actor.Customize.LipsToneFurPattern = (byte)this.LipsToneFurPattern;
+					drawData.Customize.LipsToneFurPattern = (byte)this.LipsToneFurPattern;
 
 				if (this.FacePaint != null)
-					actor.Customize.FacePaint = (byte)this.FacePaint;
+					drawData.Customize.FacePaint = (byte)this.FacePaint;
 
 				if (this.FacePaintColor != null)
-					actor.Customize.FacePaintColor = (byte)this.FacePaintColor;
+					drawData.Customize.FacePaintColor = (byte)this.FacePaintColor;
 
 				needsRedraw = true;
 			}
@@ -486,29 +488,29 @@ public class CharacterFile : JsonFileBase
 			if (this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
 				if (this.Height != null)
-					actor.Customize.Height = (byte)this.Height;
+					drawData.Customize.Height = (byte)this.Height;
 
 				if (this.Skintone != null)
-					actor.Customize.Skintone = (byte)this.Skintone;
+					drawData.Customize.Skintone = (byte)this.Skintone;
 
 				if (this.EarMuscleTailSize != null)
-					actor.Customize.EarMuscleTailSize = (byte)this.EarMuscleTailSize;
+					drawData.Customize.EarMuscleTailSize = (byte)this.EarMuscleTailSize;
 
 				if (this.TailEarsType != null)
-					actor.Customize.TailEarsType = (byte)this.TailEarsType;
+					drawData.Customize.TailEarsType = (byte)this.TailEarsType;
 
 				if (this.Bust != null)
-					actor.Customize.Bust = (byte)this.Bust;
+					drawData.Customize.Bust = (byte)this.Bust;
 
 				needsRedraw = true;
 			}
 
 			// Determine if the actor needs to be redrawn based on structural changes
 			isStructuralChange |=
-				actor.Customize.Race != existingRace ||
-				actor.Customize.Gender != existingGender ||
-				actor.Customize.Tribe != existingTribe ||
-				actor.Customize.Head != existingHead;
+				drawData.Customize.Race != existingRace ||
+				drawData.Customize.Gender != existingGender ||
+				drawData.Customize.Tribe != existingTribe ||
+				drawData.Customize.Head != existingHead;
 
 			// Resume synchronization and read back from game memory.
 			// This is required so that the ConstantBufferMemory (extended appearance)
@@ -719,7 +721,7 @@ public class CharacterFile : JsonFileBase
 				c.EnableHighlights != t.EnableHighlights ||
 				c.HairTone != t.HairTone ||
 				c.Highlights != t.Highlights))
-					return true;
+				return true;
 
 			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.AppearanceFace) &&
 				(c.REyeColor != t.REyeColor ||
@@ -734,7 +736,7 @@ public class CharacterFile : JsonFileBase
 				c.LipsToneFurPattern != t.LipsToneFurPattern ||
 				c.FacePaint != t.FacePaint ||
 				c.FacePaintColor != t.FacePaintColor))
-					return true;
+				return true;
 
 			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.AppearanceBody) &&
 				(c.Height != t.Height ||
@@ -742,7 +744,7 @@ public class CharacterFile : JsonFileBase
 				c.EarMuscleTailSize != t.EarMuscleTailSize ||
 				c.TailEarsType != t.TailEarsType ||
 				c.Bust != t.Bust))
-					return true;
+				return true;
 
 			return false;
 		}

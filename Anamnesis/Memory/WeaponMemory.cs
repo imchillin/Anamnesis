@@ -70,9 +70,9 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 
 		if (this.Parent is ActorMemory actor)
 		{
-			if (actor.OffHand == this && actor.MainHand != null)
+			if (actor.DrawData.OffHand == this && actor.DrawData.MainHand != null)
 			{
-				IItem? mainHandItem = ItemUtility.GetItem(ItemSlots.MainHand, actor.MainHand.Set, actor.MainHand.Base, actor.MainHand.Variant, actor.IsChocobo);
+				IItem? mainHandItem = ItemUtility.GetItem(ItemSlots.MainHand, actor.DrawData.MainHand.Set, actor.DrawData.MainHand.Base, actor.DrawData.MainHand.Variant, actor.IsChocobo);
 
 				if (mainHandItem != null &&
 					(mainHandItem.EquipableClasses.HasFlagUnsafe(Classes.Pugilist) ||

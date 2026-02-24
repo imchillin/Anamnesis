@@ -370,7 +370,7 @@
 												  SubActor="{Binding Actor.Unsafe.Ornament, Converter={StaticResource ActorMemoryCastConverter}, Mode=TwoWay}"
 												  SubActorType="Ornament" />
 							<views:GlassesItemView Grid.Column="0" Margin="3,0" DataContext="{Binding Actor.Unsafe}"
-												   GlassesModel="{Binding Glasses}"
+												   GlassesModel="{Binding DrawData.Glasses}"
 												   IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
 						</StackPanel>
 					</Grid>
@@ -406,9 +406,9 @@
 				<Grid.Visibility>
 					<MultiBinding Converter="{StaticResource NpcFaceWarningConverter}">
 						<Binding Path="Actor.Unsafe.ObjectKind" />
-						<Binding Path="Actor.Unsafe.Customize.Head" />
-						<Binding Path="Actor.Unsafe.Customize.Race" />
-						<Binding Path="Actor.Unsafe.Customize.Gender" />
+						<Binding Path="Actor.Unsafe.DrawData.Customize.Head" />
+						<Binding Path="Actor.Unsafe.DrawData.Customize.Race" />
+						<Binding Path="Actor.Unsafe.DrawData.Customize.Gender" />
 					</MultiBinding>
 				</Grid.Visibility>
 
