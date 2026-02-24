@@ -3,13 +3,13 @@
 
 namespace RemoteController.Drivers;
 
-using Reloaded.Hooks.Definitions;
 using RemoteController.Interop;
 using RemoteController.Interop.Delegates;
 using RemoteController.Interop.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
+using GameObjectDelegates = Interop.Delegates.GameObject;
 using HkaPoseDelegate = Interop.Delegates.HkaPose;
 using HkaPoseStruct = Interop.Types.HkaPose;
 
@@ -30,25 +30,25 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	// - "UpdateVisualPosition" and "UpdateVisualRotation" are hooked to prevent the game from updating the visual position and rotation of objects.
 
 	private readonly GposeDriver gposeDriver;
-	private readonly FunctionHook<GameObject.SetPosition> hookSetPosition;
+	private readonly FunctionHook<GameObjectDelegates.SetPosition> hookSetPosition;
 	private readonly FunctionHook<HkaPartialSkeleton.SetBoneModelTransform> hookPhysics;
 	private readonly FunctionHook<HkaLookAtIkSolver.Solve> hookLookAt;
 	private readonly FunctionHook<HkaPoseDelegate.CalculateBoneModelSpace> hookCalculateBone;
 	private readonly FunctionHook<HkaPoseDelegate.SyncModelSpace> hookSyncModel;
 	private readonly FunctionHook<BoneKineDriver.ApplyKineDriverTransforms> hookKineDriver;
-	private readonly FunctionHook<GameObject.UpdateVisualPosition> hookUpdateVisualPosition;
-	private readonly FunctionHook<GameObject.UpdateVisualRotation> hookUpdateVisualRotation;
-	private readonly FunctionHook<GameObject.UpdateVisualScale> hookUpdateVisualScale;
+	private readonly FunctionHook<GameObjectDelegates.UpdateVisualPosition> hookUpdateVisualPosition;
+	private readonly FunctionHook<GameObjectDelegates.UpdateVisualRotation> hookUpdateVisualRotation;
+	private readonly FunctionHook<GameObjectDelegates.UpdateVisualScale> hookUpdateVisualScale;
 
-	private readonly GameObject.SetPosition setPositionDetour;
+	private readonly GameObjectDelegates.SetPosition setPositionDetour;
 	private readonly HkaPartialSkeleton.SetBoneModelTransform physicsDetour;
 	private readonly HkaLookAtIkSolver.Solve lookAtDetour;
 	private readonly HkaPoseDelegate.CalculateBoneModelSpace calculateBoneDetour;
 	private readonly HkaPoseDelegate.SyncModelSpace syncModelDetour;
 	private readonly BoneKineDriver.ApplyKineDriverTransforms kineDriverDetour;
-	private readonly GameObject.UpdateVisualPosition updateVisualPositionDetour;
-	private readonly GameObject.UpdateVisualRotation updateVisualRotationDetour;
-	private readonly GameObject.UpdateVisualScale updateVisualScaleDetour;
+	private readonly GameObjectDelegates.UpdateVisualPosition updateVisualPositionDetour;
+	private readonly GameObjectDelegates.UpdateVisualRotation updateVisualRotationDetour;
+	private readonly GameObjectDelegates.UpdateVisualScale updateVisualScaleDetour;
 
 	private volatile bool isPosingEnabled = false;
 	private volatile bool arePhysicsFrozen = false;
@@ -147,7 +147,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 
 	private unsafe nint DetourSetBoneModelTransform(nint partialPtr, ulong boneId, HkaTransform4* transform, byte bUpdateSecondaryPose, byte bPropagate)
 	{
-		if (this.arePhysicsFrozen)
+		if (this.arePhysicsFrozen && partialPtr != nint.Zero)
 			return partialPtr;
 
 		return this.hookPhysics.OriginalFunction(partialPtr, boneId, transform, bUpdateSecondaryPose, bPropagate);
@@ -166,7 +166,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 
 	private unsafe HkaTransform4* DetourCalculateBoneModelSpace(nint posePtr, int boneIdx)
 	{
-		if (this.isPosingEnabled)
+		if (this.isPosingEnabled && posePtr != nint.Zero)
 		{
 			HkaPoseStruct* pose = (HkaPoseStruct*)posePtr;
 			
@@ -191,7 +191,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 
 	private void DetourSyncModelSpace(nint posePtr)
 	{
-		if (this.isPosingEnabled)
+		if (this.isPosingEnabled && posePtr != nint.Zero)
 			return;
 
 		this.hookSyncModel.OriginalFunction(posePtr);
@@ -199,7 +199,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 
 	private void DetourApplyKineDriverTransforms(IntPtr kineDriverPtr, IntPtr hkaPosePtr)
 	{
-		if (this.isPosingEnabled)
+		if (this.isPosingEnabled && kineDriverPtr != nint.Zero && hkaPosePtr != nint.Zero)
 			return;
 
 		this.hookKineDriver.OriginalFunction(kineDriverPtr, hkaPosePtr);
@@ -207,7 +207,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 
 	private nint DetourSetPosition(nint goPtr, float x, float y, float z)
 	{
-		if (this.isWorldVisualStateFrozen)
+		if (this.isWorldVisualStateFrozen && goPtr != nint.Zero)
 			return goPtr;
 
 		return this.hookSetPosition.OriginalFunction(goPtr, x, y, z);
@@ -215,7 +215,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 
 	private byte DetourUpdateVisualPosition(nint goPtr)
 	{
-		if (this.isWorldVisualStateFrozen)
+		if (this.isWorldVisualStateFrozen && goPtr != nint.Zero)
 			return 0;
 		
 		return this.hookUpdateVisualPosition.OriginalFunction(goPtr);
@@ -223,7 +223,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 
 	private byte DetourUpdateVisualRotation(nint goPtr)
 	{
-		if (this.isWorldVisualStateFrozen)
+		if (this.isWorldVisualStateFrozen && goPtr != nint.Zero)
 			return 0;
 		
 		return this.hookUpdateVisualRotation.OriginalFunction(goPtr);
@@ -231,7 +231,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 
 	private void DetourUpdateVisualScale(nint goPtr, bool a2)
 	{
-		if (this.isWorldVisualStateFrozen)
+		if (this.isWorldVisualStateFrozen && goPtr != nint.Zero)
 			return;
 		
 		this.hookUpdateVisualScale.OriginalFunction(goPtr, a2);

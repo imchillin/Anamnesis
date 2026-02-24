@@ -5,6 +5,7 @@ namespace Anamnesis.Services;
 
 using Anamnesis.Core;
 using Anamnesis.Memory;
+using RemoteController.Drivers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -109,7 +110,7 @@ public class AddressService : ServiceBase<AddressService>
 		// Some signatures taken from FFXIVClientStructs: https://github.com/aers/FFXIVClientStructs
 		var tasks = new List<Task>
 		{
-			GetAddressFromSignature("ObjectTable", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 44 0F B6 83", 0, (p) => { ObjectTable = p; }),
+			GetAddressFromSignature("ObjectTable", ActorDriver.OBJECT_TABLE_SIGNATURE, 0, (p) => { ObjectTable = p; }),
 			GetAddressFromTextSignature("AnimationSpeedPatch", "F3 0F 11 94 ?? ?? ?? ?? ?? 80 89 ?? ?? ?? ?? 01", (p) => { AnimationSpeedPatch = p; }),
 			GetAddressFromSignature("Territory", "8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }),
 			GetAddressFromSignature("WeatherManager", "48 8D 0D ?? ?? ?? ?? 44 0F B7 45", 3, (p) => { ServerWeather = p + 0x48; }), // Get the ServerWeather struct from the WeatherManager Instance.

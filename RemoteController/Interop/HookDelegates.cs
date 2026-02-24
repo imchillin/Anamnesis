@@ -36,6 +36,17 @@ public static class Character
 	public delegate bool IsWanderer(nint charPtr);
 }
 
+public static class DrawDataContainer
+{
+	[FunctionBind("E8 ?? ?? ?? ?? EB 50 44 8B 03")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public delegate byte SetFacewear(nint containerPtr, ushort slotIndex, ushort facewearId);
+
+	[FunctionBind("E8 ?? ?? ?? ?? 4C 8B 45 7F")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public delegate void LoadWeapon(nint containerPtr, WeaponSlot weaponSlot, WeaponModelId weaponId, byte forceReload, byte triggerEvent, byte skipObjUpdate, byte keepState, int loadMode);
+}
+
 public static class Framework
 {
 	[FunctionBind("48 8D 05 ?? ?? ?? ?? 66 C7 41 ?? ?? ?? 48 89 01 48 8B F1", 0x20, SigResolveStrategy.VTableLookup)]

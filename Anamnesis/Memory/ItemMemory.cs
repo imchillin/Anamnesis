@@ -8,6 +8,8 @@ using Anamnesis.Core.Extensions;
 using Anamnesis.GameData;
 using static Anamnesis.Actor.Utilities.DyeUtility;
 
+// TODO: Read as one object instead of individual properties, this will reduce
+// the number of external process reads during object sync. See TransformMemory as example.
 public class ItemMemory : MemoryBase, IEquipmentItemMemory
 {
 	[Bind(0x000, BindFlags.ActorRefresh)] public ushort Base { get; set; }

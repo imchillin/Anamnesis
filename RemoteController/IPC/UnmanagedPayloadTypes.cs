@@ -3,6 +3,7 @@
 
 namespace RemoteController.IPC;
 
+using RemoteController.Drivers;
 using RemoteController.Interop;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -94,4 +95,23 @@ public enum FrameworkMessageType : byte
 public struct FrameworkMessageData
 {
 	public FrameworkMessageType Type;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 8)]
+public struct RedrawHeader
+{
+	public RedrawType Type;
+	public int ObjectIndex;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 4)]
+public struct PartialRedrawData
+{
+	public RedrawFlags Flags;
+	// Variable-length payload follows the flags enum, containing data depending on the flags set.
+	// Data appears in the following order:
+	// 1) (RedrawFlags.Weapons) public WeaponModelId MainHandId;
+	// 2) (RedrawFlags.Weapons) public WeaponModelId OffHandId;
+	// 3) (RedrawFlags.Facewear) public ushort FacewearId;
+	// 4) (RedrawFlags.Appearance) public byte[] DrawData;
 }

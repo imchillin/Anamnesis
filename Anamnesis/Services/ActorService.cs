@@ -7,6 +7,7 @@ using Anamnesis.Core;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
+using RemoteController.Drivers;
 using Serilog;
 using System;
 using System.Buffers;
@@ -27,7 +28,7 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class ObjectTable : INotifyPropertyChanged, IDisposable
 {
-	private const int OBJECT_TABLE_SIZE = 819;
+	private const int OBJECT_TABLE_SIZE = ActorDriver.OBJECT_TABLE_SIZE;
 
 	private static readonly int s_objectTableSizeInBytes = OBJECT_TABLE_SIZE * IntPtr.Size;
 

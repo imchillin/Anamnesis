@@ -6,7 +6,7 @@ namespace RemoteController.Interop.Types;
 using System.Runtime.InteropServices;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1, Size = SIZE)]
-public unsafe struct CharacterDrawData
+public unsafe struct HumanDrawData
 {
 	public const int SIZE = 0x80;
 	public const int CUSTOMIZE_SIZE = 32;
@@ -32,7 +32,7 @@ public unsafe struct CharacterDrawData
 
 	public readonly ReadOnlySpan<byte> AsSpan()
 	{
-		fixed (CharacterDrawData* ptr = &this)
+		fixed (HumanDrawData* ptr = &this)
 		{
 			return new ReadOnlySpan<byte>(ptr, SIZE);
 		}

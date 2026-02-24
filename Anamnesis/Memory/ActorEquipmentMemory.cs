@@ -1,10 +1,9 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-using System;
-using System.Buffers.Binary;
-
 namespace Anamnesis.Memory;
+
+using System;
 
 public class ActorEquipmentMemory : MemoryBase
 {
@@ -47,12 +46,11 @@ public class ActorEquipmentMemory : MemoryBase
 		var baseBytes = BitConverter.GetBytes(item.Base);
 		baseBytes.CopyTo(slot[0..2]);
 
-		var variantBytes = BitConverter.GetBytes((ushort)item.Variant);
-		variantBytes.CopyTo(slot[2..4]);
-
-		slot[4] = item.Dye;
-		slot[5] = item.Dye2;
-		slot[6] = 0; // padding
+		slot[2] = item.Variant;
+		slot[3] = item.Dye;
+		slot[4] = item.Dye2;
+		slot[5] = 0; // padding
+		slot[6] = 0;
 		slot[7] = 0;
 	}
 }

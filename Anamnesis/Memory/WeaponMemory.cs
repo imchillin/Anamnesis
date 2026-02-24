@@ -7,11 +7,13 @@ using Anamnesis.Actor.Utilities;
 using Anamnesis.Core.Extensions;
 using Anamnesis.GameData;
 using PropertyChanged;
+using RemoteController.Interop.Types;
 using System;
-using System.Buffers.Binary;
 using System.Numerics;
 using static Anamnesis.Actor.Utilities.DyeUtility;
 
+// TODO: Same as ItemMemory, we could read/write this as one object to reduce the number of external process reads/writes during sync.
+// TODO: Convert this to use WeaponModelId.
 public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 {
 	[Flags]
@@ -99,5 +101,17 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 
 		if (dyeSlot.HasFlagUnsafe(DyeSlot.Second))
 			this.Dye2 = (dye != null) ? dye.Id : DyeUtility.NoneDye.Id;
+	}
+
+	public WeaponModelId ToModelId()
+	{
+		return new WeaponModelId
+		{
+			Set = this.Set,
+			Base = this.Base,
+			Variant = this.Variant,
+			Dye1 = this.Dye,
+			Dye2 = this.Dye2,
+		};
 	}
 }

@@ -3,7 +3,6 @@
 namespace Anamnesis.Memory;
 
 using Anamnesis.GameData.Excel;
-using System;
 using System.ComponentModel;
 
 public class GlassesMemory : MemoryBase, INotifyPropertyChanged

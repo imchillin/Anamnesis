@@ -11,18 +11,17 @@ using Anamnesis.Utils;
 using PropertyChanged;
 using RemoteController.Interop.Delegates;
 using RemoteController.Interop.Types;
-using RemoteController.IPC;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
+// TODO: Figure out how to take the initial snapshot to avoid the initial full redraw
 public class ActorMemory : GameObjectMemory, IDisposable
 {
-	private const double REFRESH_DEBOUNCE_TIMEOUT_MS = 0.2;
+	private const double REFRESH_DEBOUNCE_TIMEOUT_MS = 16;
 
 	private static readonly List<IActorRefresher> s_actorRefreshers =
 	[
@@ -70,16 +69,6 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		Performance = 16,
 	}
 
-	[Flags]
-	public enum CharacterFlagDefs : byte
-	{
-		None = 0,
-		WeaponsVisible = 1 << 0,
-		WeaponsDrawn = 1 << 2,
-		VisorToggled = 1 << 4,
-		HeadgearEarsHidden = 1 << 5,
-	}
-
 	[Bind(0x0100, BindFlags.Pointer)]
 	public new ActorModelMemory? ModelObject
 	{
@@ -99,12 +88,13 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	[Bind(0x0680, BindFlags.Pointer)] public ActorMemory? Mount { get; set; } // Targets object within MountContainer
 	[Bind(0x0688)] public ushort MountId { get; set; }
 	[Bind(0x06E8, BindFlags.Pointer)] public CompanionMemory? Companion { get; set; } // Targets object within CompanionContainer
+	// [Bind(Actor.DRAW_DATA_OFFSET)] public DrawDataMemory DrawData { get; set; } = new();
 	[Bind(0x0708)] public WeaponMemory? MainHand { get; set; }
 	[Bind(0x0778)] public WeaponMemory? OffHand { get; set; }
 	[Bind(0x08C8)] public ActorEquipmentMemory? Equipment { get; set; }
 	[Bind(0x0918)] public ActorCustomizeMemory? Customize { get; set; }
 	[Bind(0x0936, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
-	[Bind(0x0937, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
+	[Bind(0x0937, BindFlags.ActorRefresh)] public DrawDataMemory.CharacterFlagDefs CharacterFlags { get; set; }
 	[Bind(0x0938)] public GlassesMemory? Glasses { get; set; }
 	[Bind(0x0970, BindFlags.Pointer)] public OrnamentMemory? Ornament { get; set; } // Targets object within OrnamentContainer
 	[Bind(0x0978)] public ushort OrnamentId { get; set; }
@@ -164,16 +154,16 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	[DependsOn(nameof(CharacterFlags))]
 	public bool VisorToggled
 	{
-		get => this.CharacterFlags.HasFlagUnsafe(CharacterFlagDefs.VisorToggled);
+		get => this.CharacterFlags.HasFlagUnsafe(DrawDataMemory.CharacterFlagDefs.VisorToggled);
 		set
 		{
 			if (value)
 			{
-				this.CharacterFlags |= CharacterFlagDefs.VisorToggled;
+				this.CharacterFlags |= DrawDataMemory.CharacterFlagDefs.VisorToggled;
 			}
 			else
 			{
-				this.CharacterFlags &= ~CharacterFlagDefs.VisorToggled;
+				this.CharacterFlags &= ~DrawDataMemory.CharacterFlagDefs.VisorToggled;
 			}
 		}
 	}
@@ -181,16 +171,16 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	[DependsOn(nameof(CharacterFlags))]
 	public bool HeadgearEarsHidden
 	{
-		get => this.CharacterFlags.HasFlagUnsafe(CharacterFlagDefs.HeadgearEarsHidden);
+		get => this.CharacterFlags.HasFlagUnsafe(DrawDataMemory.CharacterFlagDefs.HeadgearEarsHidden);
 		set
 		{
 			if (value)
 			{
-				this.CharacterFlags |= CharacterFlagDefs.HeadgearEarsHidden;
+				this.CharacterFlags |= DrawDataMemory.CharacterFlagDefs.HeadgearEarsHidden;
 			}
 			else
 			{
-				this.CharacterFlags &= ~CharacterFlagDefs.HeadgearEarsHidden;
+				this.CharacterFlags &= ~DrawDataMemory.CharacterFlagDefs.HeadgearEarsHidden;
 			}
 		}
 	}
@@ -208,6 +198,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	[DependsOn(nameof(CharacterMode))]
 	public bool IsAnimationOverridden => this.CharacterMode == CharacterModes.AnimLock;
 
+	[DoNotNotify]
 	public CharacterFile? LastAppearanceSnapshot { get; set; }
 
 	/// <summary>Determines if the actor can be refreshed.</summary>
@@ -358,24 +349,6 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		this.OnPropertyChanged(nameof(this.RefreshBlockReason));
 	}
 
-	public CharacterDrawData BuildDrawData()
-	{
-		CharacterDrawData drawData = default;
-
-		unsafe
-		{
-			// Customize: bytes 0x00-0x1F
-			Span<byte> customizeSpan = new(drawData.Customize, CharacterDrawData.CUSTOMIZE_SIZE);
-			this.Customize?.WriteTo(customizeSpan);
-
-			// Equipment: bytes 0x20-0x6F
-			Span<byte> equipmentSpan = new((byte*)drawData.Equipment, CharacterDrawData.EQUIPMENT_SLOTS * 8);
-			this.Equipment?.WriteTo(equipmentSpan);
-		}
-
-		return drawData;
-	}
-
 	public bool IsWanderer()
 	{
 		try
@@ -389,50 +362,22 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Remotely invokes <see cref="Human.UpdateDrawData"/> on the actor's model object to update its draw data.
-	/// </summary>
-	/// <param name="drawData">
-	/// The draw data buffer (see <see cref="CharacterDrawData"/>).
-	/// </param>
-	/// <param name="skipEquipment">
-	/// Whether to skip equipment model updates.
-	/// </param>
-	/// <returns>
-	/// True if the game performed the draw update; false otherwise.
-	/// </returns>
-	public bool UpdateDrawData(in CharacterDrawData drawData, bool skipEquipment)
+	internal HumanDrawData BuildDrawData()
 	{
-		if (!this.IsHuman || this.ModelObject == null)
-			return false;
+		HumanDrawData drawData = default;
 
-		nint drawObjectAddress = this.ModelObject.Address;
-		if (drawObjectAddress == IntPtr.Zero)
-			return false;
-
-		try
+		unsafe
 		{
-			unsafe
-			{
-				// Payload layout: [nint drawObjectAddress (8)] [byte skipEquipment (1)] [CharacterDrawData (128)]
-				int payloadSize = sizeof(nint) + 1 + CharacterDrawData.SIZE;
-				Span<byte> payload = stackalloc byte[payloadSize];
+			// Customize: bytes 0x00-0x1F
+			Span<byte> customizeSpan = new(drawData.Customize, HumanDrawData.CUSTOMIZE_SIZE);
+			this.Customize?.WriteTo(customizeSpan);
 
-				MemoryMarshal.Write(payload, in drawObjectAddress);
-				payload[sizeof(nint)] = skipEquipment ? (byte)1 : (byte)0;
-				drawData.AsSpan().CopyTo(payload[(sizeof(nint) + 1)..]);
-
-				byte[] response = ControllerService.Instance.SendDriverCommandRaw(
-					DriverCommand.UpdateActorDrawData, payload);
-
-				return response.Length > 0 && response[0] != 0;
-			}
+			// Equipment: bytes 0x20-0x6F
+			Span<byte> equipmentSpan = new((byte*)drawData.Equipment, HumanDrawData.EQUIPMENT_SLOTS * 8);
+			this.Equipment?.WriteTo(equipmentSpan);
 		}
-		catch (Exception ex)
-		{
-			Log.Warning(ex, $"Failed to invoke UpdateDrawData for actor at 0x{this.Address:X}");
-			return false;
-		}
+
+		return drawData;
 	}
 
 	protected virtual void OnRefreshed()

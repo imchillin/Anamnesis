@@ -3,9 +3,6 @@
 
 namespace RemoteController.Drivers;
 
-using RemoteController.Interop;
-using RemoteController.Interop.Delegates;
-using Serilog;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -16,8 +13,13 @@ using System.Diagnostics.CodeAnalysis;
 [RequiresDynamicCode("This class requires dynamic code due to hook reflection")]
 public sealed class ActorDriver : DriverBase<ActorDriver>
 {
-	private readonly FunctionWrapper<Human.UpdateDrawData> updateDrawDataWrapper;
-	
+	public const int OBJECT_TABLE_SIZE = 819;
+	public const string OBJECT_TABLE_SIGNATURE = "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 44 0F B6 83";
+
+	private readonly nint objTablePtr;
+
+	private RedrawModule Redraw { get; }
+
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ActorDriver"/> class.
 	/// </summary>
@@ -26,48 +28,19 @@ public sealed class ActorDriver : DriverBase<ActorDriver>
 	/// </exception>
 	public ActorDriver()
 	{
+		// NOTE: If the signature resolver is initialized, then so is the scanner, we don't need to check twice
 		if (Controller.SigResolver == null)
 			throw new InvalidOperationException("Cannot initialize actor driver: signature resolver is not available.");
 
-		var wrapper = HookRegistry.CreateWrapper<Human.UpdateDrawData>(out _)
-			?? throw new InvalidOperationException("Failed to create UpdateDrawData function wrapper.");
-		this.updateDrawDataWrapper = wrapper;
+		this.objTablePtr = Controller.Scanner?.GetStaticAddressFromSig(OBJECT_TABLE_SIGNATURE) ?? nint.Zero;
+		if (this.objTablePtr == nint.Zero)
+			throw new InvalidOperationException("Failed to resolve object table pointer.");
+
+		this.Redraw = new RedrawModule(this.objTablePtr);
 		this.RegisterInstance();
 	}
 
-	/// <summary>
-	/// Calls the game's native draw data upadte function.
-	/// </summary>
-	/// <param name="drawObjectAddress">T
-	/// The address of the human draw object.
-	/// </param>
-	/// <param name="data">
-	/// The draw data buffer (customize + equipment).
-	/// </param>
-	/// <param name="skipEquipment">
-	/// Whether to skip equipment updates.
-	/// </param>
-	/// <returns
-	/// >True if the call was successful; otherwise, false.
-	/// </returns>
-	public unsafe bool UpdateDrawData(nint drawObjectAddress, ReadOnlySpan<byte> data, bool skipEquipment)
-	{
-		if (drawObjectAddress == 0 || data.Length == 0)
-			return false;
-
-		try
-		{
-			fixed (byte* ptr = data)
-			{
-				return this.updateDrawDataWrapper.OriginalFunction(drawObjectAddress, ptr, skipEquipment);
-			}
-		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, $"Failed to invoke UpdateDrawData on draw object at 0x{drawObjectAddress:X}");
-			return false;
-		}
-	}
+	public bool RedrawActor(RedrawRequest request) => this.Redraw.RequestRedraw(request);
 
 	/// <inheritdoc/>
 	protected override void OnDispose() { }

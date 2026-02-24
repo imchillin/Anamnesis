@@ -35,7 +35,6 @@ public class Controller
 	private const string FASM_RESOURCE_FILENAME = $"{FASM_RESOURCE_NAME}.dll";
 	private const string FASM_RESOURCE_SEARCH_PATTERN = $"{FASM_RESOURCE_NAME}.*dll";
 
-	private static readonly InProcessMemoryReader s_memoryReader = new();
 	private static readonly int s_sizeOfInt = sizeof(int);
 	private static readonly Func<uint, byte, byte> s_incrementFunc = static (_, v) => (byte)((v + 1) & 0xFF);
 	private static readonly byte[] s_emptyPayload = [];
@@ -81,10 +80,11 @@ public class Controller
 			() => GposeDriver.Instance.IsInGpose),
 
 		// Actor driver commands
-		[DriverCommand.UpdateActorDrawData] = HandleUpdateActorDrawData,
+		[DriverCommand.RedrawActor] = HandleRedrawActor,
 	};
 
 #pragma warning disable CA2211
+	public static InProcessMemoryReader MemoryReader => new();
 	public static SignatureScanner? Scanner = null;
 	public static SignatureResolver? SigResolver = null;
 #pragma warning restore CA2211
@@ -375,8 +375,8 @@ public class Controller
 				Log.Error("Failed to get main module of the current process.");
 				return;
 			}
-			Scanner = new SignatureScanner(currentProcess.MainModule, s_memoryReader);
-			SigResolver = new SignatureResolver(Scanner, s_memoryReader);
+			Scanner = new SignatureScanner(currentProcess.MainModule, MemoryReader);
+			SigResolver = new SignatureResolver(Scanner, MemoryReader);
 
 			Log.Debug("Creating IPC endpoints...");
 			try
@@ -710,7 +710,7 @@ public class Controller
 
 			byte[] result = FrameworkDriver.RunOnTick(() =>
 			{
-			uint hookId = HookRegistry.Instance.RegisterHook(regPayload);
+				uint hookId = HookRegistry.Instance.RegisterHook(regPayload);
 				if (hookId == 0)
 					return []; // Failure
 
@@ -741,7 +741,7 @@ public class Controller
 		{
 			byte[] result = FrameworkDriver.RunOnTick(() =>
 			{
-		bool success = HookRegistry.Instance.UnregisterHook(hookId);
+				bool success = HookRegistry.Instance.UnregisterHook(hookId);
 				return [(byte)(success ? 1 : 0)];
 			});
 
@@ -955,13 +955,13 @@ public class Controller
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex, $"Error executing driver command: 0x{commandId:X4}");
+				Log.Error(ex, $"Error executing driver command: 0x{(int)commandId:X4}");
 				response = [];
 			}
 		}
 		else
 		{
-			Log.Warning($"Unknown driver command: 0x{commandId:X4}");
+			Log.Warning($"Unknown driver command: 0x{(int)commandId:X4}");
 			response = [];
 		}
 
@@ -1038,29 +1038,42 @@ public class Controller
 		}
 	}
 
-	private static byte[] HandleUpdateActorDrawData(ReadOnlySpan<byte> args)
+	private unsafe static byte[] HandleRedrawActor(ReadOnlySpan<byte> args)
 	{
-		// Payload layout: [nint drawObjectAddress (8)] [byte skipEquipment (1)] [byte[] drawData (remaining)].
-		const int headerSize = sizeof(long) + 1; // nint + skipEquipment byte
-
-		if (!ActorDriver.IsInitialized || args.Length <= headerSize)
+		if (!ActorDriver.IsInitialized || args.Length < sizeof(RedrawHeader))
 			return [0];
 
-		nint drawObjectAddr = MemoryMarshal.Read<nint>(args);
-		bool skipEquipment = args[sizeof(long)] != 0;
-		byte[] drawData = args[headerSize..].ToArray();
+		var header = MemoryMarshal.Read<RedrawHeader>(args);
+		var request = new RedrawRequest(header.Type, header.ObjectIndex);
 
-		if (FrameworkDriver.IsInitialized)
+		if (header.Type == RedrawType.Partial)
 		{
-			return FrameworkDriver.RunOnTick(() =>
+			int offset = Unsafe.SizeOf<RedrawHeader>();
+			RedrawFlags flags = (RedrawFlags)args[offset++];
+			request.Flags = flags;
+
+			if (flags.HasFlag(RedrawFlags.Weapons))
 			{
-				bool success = ActorDriver.Instance.UpdateDrawData(drawObjectAddr, drawData, skipEquipment);
-				return [(byte)(success ? 1 : 0)];
-			});
+				request.MainHandId = MemoryMarshal.Read<WeaponModelId>(args[offset..]);
+				offset += Unsafe.SizeOf<WeaponModelId>();
+				request.OffHandId = MemoryMarshal.Read<WeaponModelId>(args[offset..]);
+				offset += Unsafe.SizeOf<WeaponModelId>();
+			}
+
+			if (flags.HasFlag(RedrawFlags.Facewear))
+			{
+				request.FacewearId = MemoryMarshal.Read<ushort>(args[offset..]);
+				offset += sizeof(uint);
+			}
+
+			if (flags.HasFlag(RedrawFlags.Appearance))
+			{
+				request.DrawData = args[offset..].ToArray();
+			}
 		}
 
-		bool result = ActorDriver.Instance.UpdateDrawData(drawObjectAddr, drawData, skipEquipment);
-		return [(byte)(result ? 1 : 0)];
+		bool success = ActorDriver.Instance.RedrawActor(request);
+		return [(byte)(success ? 1 : 0)];
 	}
 
 	private static void HandleGoodbyeMessage(uint msgId)

@@ -9,6 +9,7 @@ using Anamnesis.GameData;
 using Anamnesis.Memory;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 using XivToolsWpf.Math3D.Extensions;
@@ -123,9 +124,9 @@ public class CharacterFile : JsonFileBase
 	/// </summary>
 	/// <param name="target">The target state to compare against.</param>
 	/// <param name="mode">Which sections to compare.</param>
-	public CharChangeSet CompareTo(CharacterFile target, SaveModes mode = SaveModes.All)
+	public CharFileDiff CompareTo(CharacterFile target, SaveModes mode = SaveModes.All)
 	{
-		return CharChangeSet.Create(current: this, target: target, mode: mode);
+		return CharFileDiff.Create(current: this, target: target, mode: mode);
 	}
 
 	private static void WriteEquipment(ItemSave? itemSave, ItemMemory? itemMemory)
@@ -524,26 +525,7 @@ public class CharacterFile : JsonFileBase
 
 			if (needsRedraw)
 			{
-				if (isStructuralChange || !actor.IsHuman)
-				{
-					Log.Information($"Performing full redraw (Structural change: {isStructuralChange}; IsHuman: {actor.IsHuman})");
-					await actor.Refresh();
-				}
-				else
-				{
-					var drawData = actor.BuildDrawData();
-					bool updated = actor.UpdateDrawData(in drawData, skipEquipment: false);
-
-					if (!updated)
-					{
-						Log.Information("Optimized UpdateDrawData failed, falling back to full redraw");
-						await actor.Refresh();
-					}
-					else
-					{
-						Log.Information("Applied changes via optimized UpdateDrawData");
-					}
-				}
+				await actor.Refresh();
 
 				// Re-synchronize after redraw to pick up the new draw object state
 				try
@@ -605,8 +587,233 @@ public class CharacterFile : JsonFileBase
 		Log.Information("Finished applying appearance from file");
 	}
 
+	/// <summary>
+	/// Represents the set of changes between two <see cref="CharacterFile"/> snapshots.
+	/// Used to determine the optimal redraw strategy.
+	/// </summary>
+	public readonly struct CharFileDiff
+	{
+		[Flags]
+		public enum ChangeType : uint
+		{
+			/// <summary>
+			/// Identical character customization.
+			/// </summary>
+			None = 0,
+
+			/// <summary>
+			/// The base customization options between the character files is different.
+			/// </summary>
+			Base = 1 << 0,
+
+			/// <summary>
+			/// The appearance customization options between the character files is different.
+			/// </summary>
+			Appearance = 1 << 1,
+
+			/// <summary>
+			/// The extended appearance options between the character files is different.
+			/// </summary>
+			Extended = 1 << 2,
+
+			/// <summary>
+			/// The equipment between the character files is different (gear and accessories, excluding weapons).
+			/// </summary>
+			Equipment = 1 << 3,
+
+			/// <summary>
+			/// The weapon customization between the character files is different.
+			/// </summary>
+			Weapon = 1 << 4,
+
+			/// <summary>
+			/// The character's facewear is different between the character files.
+			/// </summary>
+			Facewear = 1 << 5,
+
+			All = Base | Appearance | Extended | Equipment | Weapon | Facewear,
+		}
+
+		/// <summary>
+		/// A flag enum that represents all changed sections between two character files.
+		/// </summary>
+		public ChangeType Changes { get; init; }
+
+		/// <summary>
+		/// Gets whether any changes were detected between the two character files.
+		/// </summary>
+		public bool HasChanges => this.Changes != ChangeType.None;
+
+		/// <summary>
+		/// Computes the differences between two character files.
+		/// </summary>
+		/// <param name="current">The current state (from memory).</param>
+		/// <param name="target">The target state (to apply).</param>
+		/// <param name="mode">Which sections are being applied.</param>
+		public static CharFileDiff Create(
+			CharacterFile current,
+			CharacterFile target,
+			CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)
+		{
+			ArgumentNullException.ThrowIfNull(current);
+			ArgumentNullException.ThrowIfNull(target);
+
+			ChangeType flags = ChangeType.None;
+
+			if (CheckBaseChanges(current, target))
+				flags |= ChangeType.Base;
+
+			if (CheckAppearanceChanges(current, target, mode))
+				flags |= ChangeType.Appearance;
+
+			if (CheckExtendedAppearanceChanges(current, target, mode))
+				flags |= ChangeType.Extended;
+
+			if (CheckEquipmentChanges(current, target, mode))
+				flags |= ChangeType.Equipment;
+
+			if (CheckWeaponChanges(current, target, mode))
+				flags |= ChangeType.Weapon;
+
+			if (CheckFacewearChanges(current, target, mode))
+				flags |= ChangeType.Facewear;
+
+			return new CharFileDiff { Changes = flags };
+		}
+
+		public override string ToString()
+		{
+			if (!this.HasChanges)
+				return "No changes";
+
+			var parts = new List<string>();
+			if (this.Changes.HasFlagUnsafe(ChangeType.Base))
+				parts.Add("Base");
+			if (this.Changes.HasFlagUnsafe(ChangeType.Appearance))
+				parts.Add("Appearance");
+			if (this.Changes.HasFlagUnsafe(ChangeType.Extended))
+				parts.Add("Extended");
+			if (this.Changes.HasFlagUnsafe(ChangeType.Equipment))
+				parts.Add("Equipment");
+			if (this.Changes.HasFlagUnsafe(ChangeType.Weapon))
+				parts.Add("Weapon");
+			if (this.Changes.HasFlagUnsafe(ChangeType.Facewear))
+				parts.Add("Facewear");
+
+			return $"Changed: {string.Join(", ", parts)}";
+		}
+
+		private static bool CheckBaseChanges(CharacterFile c, CharacterFile t)
+		{
+			return c.ModelType != t.ModelType ||
+				   c.Race != t.Race ||
+				   c.Gender != t.Gender ||
+				   c.Tribe != t.Tribe ||
+				   c.Head != t.Head;
+		}
+
+		private static bool CheckAppearanceChanges(CharacterFile c, CharacterFile t, CharacterFile.SaveModes mode)
+		{
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.AppearanceHair) &&
+				(c.Hair != t.Hair ||
+				c.EnableHighlights != t.EnableHighlights ||
+				c.HairTone != t.HairTone ||
+				c.Highlights != t.Highlights))
+					return true;
+
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.AppearanceFace) &&
+				(c.REyeColor != t.REyeColor ||
+				c.LEyeColor != t.LEyeColor ||
+				c.FacialFeatures != t.FacialFeatures ||
+				c.LimbalEyes != t.LimbalEyes ||
+				c.Eyebrows != t.Eyebrows ||
+				c.Eyes != t.Eyes ||
+				c.Nose != t.Nose ||
+				c.Jaw != t.Jaw ||
+				c.Mouth != t.Mouth ||
+				c.LipsToneFurPattern != t.LipsToneFurPattern ||
+				c.FacePaint != t.FacePaint ||
+				c.FacePaintColor != t.FacePaintColor))
+					return true;
+
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.AppearanceBody) &&
+				(c.Height != t.Height ||
+				c.Skintone != t.Skintone ||
+				c.EarMuscleTailSize != t.EarMuscleTailSize ||
+				c.TailEarsType != t.TailEarsType ||
+				c.Bust != t.Bust))
+					return true;
+
+			return false;
+		}
+
+		private static bool CheckExtendedAppearanceChanges(CharacterFile c, CharacterFile t, CharacterFile.SaveModes mode)
+		{
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.AppearanceHair) &&
+				(c.HairColor != t.HairColor ||
+				c.HairGloss != t.HairGloss ||
+				c.HairHighlight != t.HairHighlight))
+				return true;
+
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.AppearanceFace) &&
+				(c.LeftEyeColor != t.LeftEyeColor ||
+				c.RightEyeColor != t.RightEyeColor ||
+				c.LimbalRingColor != t.LimbalRingColor ||
+				c.MouthColor != t.MouthColor))
+				return true;
+
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.AppearanceBody) &&
+				(c.SkinColor != t.SkinColor ||
+				c.SkinGloss != t.SkinGloss ||
+				c.MuscleTone != t.MuscleTone ||
+				c.HeightMultiplier != t.HeightMultiplier ||
+				c.BustScale != t.BustScale ||
+				c.Transparency != t.Transparency))
+				return true;
+
+			return false;
+		}
+
+		private static bool CheckEquipmentChanges(CharacterFile c, CharacterFile t, CharacterFile.SaveModes mode)
+		{
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.EquipmentGear) &&
+				(c.HeadGear != t.HeadGear ||
+				c.Body != t.Body ||
+				c.Hands != t.Hands ||
+				c.Legs != t.Legs ||
+				c.Feet != t.Feet))
+				return true;
+
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.EquipmentAccessories) &&
+				(c.Ears != t.Ears ||
+				c.Neck != t.Neck ||
+				c.Wrists != t.Wrists ||
+				c.LeftRing != t.LeftRing ||
+				c.RightRing != t.RightRing))
+				return true;
+
+			return false;
+		}
+
+		private static bool CheckWeaponChanges(CharacterFile c, CharacterFile t, CharacterFile.SaveModes mode)
+		{
+			if (!mode.HasFlagUnsafe(CharacterFile.SaveModes.EquipmentWeapons))
+				return false;
+
+			return c.MainHand != t.MainHand || c.OffHand != t.OffHand;
+		}
+
+		private static bool CheckFacewearChanges(CharacterFile c, CharacterFile t, CharacterFile.SaveModes mode)
+		{
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.EquipmentGear) && c.Glasses != t.Glasses)
+				return true;
+
+			return false;
+		}
+	}
+
 	[Serializable]
-	public class WeaponSave
+	public record WeaponSave
 	{
 		public WeaponSave()
 		{
@@ -663,10 +870,30 @@ public class CharacterFile : JsonFileBase
 				vm.Dye2 = ItemUtility.NoneDye.Id;
 			}
 		}
+
+		public virtual bool Equals(WeaponSave? other)
+		{
+			if (other is null)
+				return false;
+
+			if (ReferenceEquals(this, other))
+				return true;
+
+			return this.ModelSet == other.ModelSet &&
+				   this.ModelBase == other.ModelBase &&
+				   this.ModelVariant == other.ModelVariant &&
+				   this.DyeId == other.DyeId &&
+				   this.DyeId2 == other.DyeId2;
+		}
+
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(this.ModelSet, this.ModelBase, this.ModelVariant, this.DyeId, this.DyeId2);
+		}
 	}
 
 	[Serializable]
-	public class ItemSave
+	public record ItemSave
 	{
 		public ItemSave()
 		{
@@ -698,7 +925,7 @@ public class CharacterFile : JsonFileBase
 	}
 
 	[Serializable]
-	public class GlassesSave
+	public record GlassesSave
 	{
 		public GlassesSave()
 		{
@@ -729,226 +956,8 @@ public class CharacterFile : JsonFileBase
 		{
 			if (glasses == null)
 				return;
+
 			glasses.GlassesId = this.GlassesId;
-		}
-	}
-
-	/// <summary>
-	/// Represents the set of changes between two <see cref="CharacterFile"/> snapshots.
-	/// Used to determine the optimal redraw strategy.
-	/// </summary>
-	public sealed class CharChangeSet
-	{
-		private CharChangeSet()
-		{
-		}
-
-		/// <summary>Creates an empty changeset (no changes detected).</summary>
-		public static CharChangeSet None => new();
-
-		/// <summary>Creates a changeset indicating a full redraw is required.</summary>
-		public static CharChangeSet FullRedraw => new() { HasStructuralChanges = true };
-
-		/// <summary>
-		/// Gets whether structural changes occurred that require a full redraw
-		/// (race, gender, tribe, head, or model type changes).
-		/// </summary>
-		public bool HasStructuralChanges { get; private init; }
-
-		/// <summary>Gets whether equipment models changed.</summary>
-		public bool HasEquipmentChanges { get; private init; }
-
-		/// <summary>Gets whether weapon models changed.</summary>
-		public bool HasWeaponChanges { get; private init; }
-
-		/// <summary>Gets whether appearance/customize data changed.</summary>
-		public bool HasAppearanceChanges { get; private init; }
-
-		/// <summary>Gets whether extended appearance data changed.</summary>
-		public bool HasExtendedAppearanceChanges { get; private init; }
-
-		/// <summary>Gets whether any changes were detected.</summary>
-		public bool HasChanges =>
-			this.HasStructuralChanges ||
-			this.HasEquipmentChanges ||
-			this.HasWeaponChanges ||
-			this.HasAppearanceChanges ||
-			this.HasExtendedAppearanceChanges;
-
-		/// <summary>Gets whether an optimized redraw (UpdateDrawData) can be used.</summary>
-		public bool CanUseOptimizedRedraw => !this.HasStructuralChanges && !this.HasWeaponChanges;
-
-		/// <summary>
-		/// Computes the differences between two character files.
-		/// </summary>
-		/// <param name="current">The current state (from memory).</param>
-		/// <param name="target">The target state (to apply).</param>
-		/// <param name="mode">Which sections are being applied.</param>
-		public static CharChangeSet Create(
-			CharacterFile current,
-			CharacterFile target,
-			CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)
-		{
-			ArgumentNullException.ThrowIfNull(current);
-			ArgumentNullException.ThrowIfNull(target);
-
-			bool hasStructural = false;
-			bool hasAppearance = false;
-			bool hasEquipment = false;
-			bool hasWeapon = false;
-			bool hasExtended = false;
-
-			// Structural changes (always checked - these require full redraw)
-			hasStructural =
-				current.ModelType != target.ModelType ||
-				current.Race != target.Race ||
-				current.Gender != target.Gender ||
-				current.Tribe != target.Tribe ||
-				current.Head != target.Head;
-
-			// Appearance changes
-			if (mode.HasFlag(CharacterFile.SaveModes.AppearanceHair))
-			{
-				hasAppearance |=
-					current.Hair != target.Hair ||
-					current.EnableHighlights != target.EnableHighlights ||
-					current.HairTone != target.HairTone ||
-					current.Highlights != target.Highlights;
-
-				hasExtended |=
-					current.HairColor != target.HairColor ||
-					current.HairGloss != target.HairGloss ||
-					current.HairHighlight != target.HairHighlight;
-			}
-
-			if (mode.HasFlag(CharacterFile.SaveModes.AppearanceFace))
-			{
-				hasAppearance |=
-					current.REyeColor != target.REyeColor ||
-					current.LEyeColor != target.LEyeColor ||
-					current.FacialFeatures != target.FacialFeatures ||
-					current.LimbalEyes != target.LimbalEyes ||
-					current.Eyebrows != target.Eyebrows ||
-					current.Eyes != target.Eyes ||
-					current.Nose != target.Nose ||
-					current.Jaw != target.Jaw ||
-					current.Mouth != target.Mouth ||
-					current.LipsToneFurPattern != target.LipsToneFurPattern ||
-					current.FacePaint != target.FacePaint ||
-					current.FacePaintColor != target.FacePaintColor;
-
-				hasExtended |=
-					current.LeftEyeColor != target.LeftEyeColor ||
-					current.RightEyeColor != target.RightEyeColor ||
-					current.LimbalRingColor != target.LimbalRingColor ||
-					current.MouthColor != target.MouthColor;
-			}
-
-			if (mode.HasFlag(CharacterFile.SaveModes.AppearanceBody))
-			{
-				hasAppearance |=
-					current.Height != target.Height ||
-					current.Skintone != target.Skintone ||
-					current.EarMuscleTailSize != target.EarMuscleTailSize ||
-					current.TailEarsType != target.TailEarsType ||
-					current.Bust != target.Bust;
-
-				hasExtended |=
-					current.SkinColor != target.SkinColor ||
-					current.SkinGloss != target.SkinGloss ||
-					current.MuscleTone != target.MuscleTone ||
-					current.HeightMultiplier != target.HeightMultiplier ||
-					current.BustScale != target.BustScale ||
-					current.Transparency != target.Transparency;
-			}
-
-			// Equipment changes
-			if (mode.HasFlag(CharacterFile.SaveModes.EquipmentGear))
-			{
-				hasEquipment |=
-					!ItemEquals(current.HeadGear, target.HeadGear) ||
-					!ItemEquals(current.Body, target.Body) ||
-					!ItemEquals(current.Hands, target.Hands) ||
-					!ItemEquals(current.Legs, target.Legs) ||
-					!ItemEquals(current.Feet, target.Feet) ||
-					!GlassesEquals(current.Glasses, target.Glasses);
-			}
-
-			if (mode.HasFlag(CharacterFile.SaveModes.EquipmentAccessories))
-			{
-				hasEquipment |=
-					!ItemEquals(current.Ears, target.Ears) ||
-					!ItemEquals(current.Neck, target.Neck) ||
-					!ItemEquals(current.Wrists, target.Wrists) ||
-					!ItemEquals(current.LeftRing, target.LeftRing) ||
-					!ItemEquals(current.RightRing, target.RightRing);
-			}
-
-			// Weapon changes
-			if (mode.HasFlag(CharacterFile.SaveModes.EquipmentWeapons))
-			{
-				hasWeapon |=
-					!WeaponEquals(current.MainHand, target.MainHand) ||
-					!WeaponEquals(current.OffHand, target.OffHand);
-			}
-
-			return new CharChangeSet
-			{
-				HasStructuralChanges = hasStructural,
-				HasAppearanceChanges = hasAppearance,
-				HasEquipmentChanges = hasEquipment,
-				HasWeaponChanges = hasWeapon,
-				HasExtendedAppearanceChanges = hasExtended,
-			};
-		}
-
-		public override string ToString()
-		{
-			if (!this.HasChanges)
-				return "No changes";
-
-			return $"Structural={this.HasStructuralChanges}, Equipment={this.HasEquipmentChanges}, " +
-				   $"Weapons={this.HasWeaponChanges}, Appearance={this.HasAppearanceChanges}, " +
-				   $"Extended={this.HasExtendedAppearanceChanges}";
-		}
-
-		private static bool ItemEquals(CharacterFile.ItemSave? a, CharacterFile.ItemSave? b)
-		{
-			if (a == null && b == null)
-				return true;
-
-			if (a == null || b == null)
-				return false;
-
-			return a.ModelBase == b.ModelBase &&
-				   a.ModelVariant == b.ModelVariant &&
-				   a.DyeId == b.DyeId &&
-				   a.DyeId2 == b.DyeId2;
-		}
-
-		private static bool WeaponEquals(CharacterFile.WeaponSave? a, CharacterFile.WeaponSave? b)
-		{
-			if (a == null && b == null)
-				return true;
-
-			if (a == null || b == null)
-				return false;
-
-			return a.ModelSet == b.ModelSet &&
-				   a.ModelBase == b.ModelBase &&
-				   a.ModelVariant == b.ModelVariant &&
-				   a.DyeId == b.DyeId &&
-				   a.DyeId2 == b.DyeId2;
-		}
-
-		private static bool GlassesEquals(CharacterFile.GlassesSave? a, CharacterFile.GlassesSave? b)
-		{
-			if (a == null && b == null)
-				return true;
-			if (a == null || b == null)
-				return false;
-
-			return a.GlassesId == b.GlassesId;
 		}
 	}
 }

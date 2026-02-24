@@ -23,7 +23,7 @@ public enum DriverCommand : int
 	GetIsInGpose,
 
 	// Actor driver commands
-	UpdateActorDrawData,
+	RedrawActor,
 }
 
 /// <summary>
