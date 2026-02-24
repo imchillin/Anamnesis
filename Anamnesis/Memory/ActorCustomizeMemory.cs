@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory;
 
 using PropertyChanged;
+using RemoteController.Interop.Types;
 using System;
 
 public class ActorCustomizeMemory : MemoryBase
@@ -185,36 +186,33 @@ public class ActorCustomizeMemory : MemoryBase
 		set => this.Eyes = (byte)(value + (this.SmallIris ? 128 : 0));
 	}
 
-	public void WriteTo(Span<byte> destination)
+	public void WriteTo(ref HumanDrawData drawData)
 	{
-		if (destination.Length < 32)
-			throw new ArgumentException("Destination must be at least 32 bytes.", nameof(destination));
-
-		destination[0x00] = (byte)this.Race;
-		destination[0x01] = (byte)this.Gender;
-		destination[0x02] = (byte)this.Age;
-		destination[0x03] = this.Height;
-		destination[0x04] = (byte)this.Tribe;
-		destination[0x05] = this.Head;
-		destination[0x06] = this.Hair;
-		destination[0x07] = this.HighlightType;
-		destination[0x08] = this.Skintone;
-		destination[0x09] = this.REyeColor;
-		destination[0x0A] = this.HairTone;
-		destination[0x0B] = this.Highlights;
-		destination[0x0C] = (byte)this.FacialFeatures;
-		destination[0x0D] = this.FacialFeatureColor;
-		destination[0x0E] = this.Eyebrows;
-		destination[0x0F] = this.LEyeColor;
-		destination[0x10] = this.Eyes;
-		destination[0x11] = this.Nose;
-		destination[0x12] = this.Jaw;
-		destination[0x13] = this.Mouth;
-		destination[0x14] = this.LipsToneFurPattern;
-		destination[0x15] = this.EarMuscleTailSize;
-		destination[0x16] = this.TailEarsType;
-		destination[0x17] = this.Bust;
-		destination[0x18] = this.FacePaint;
-		destination[0x19] = this.FacePaintColor;
+		drawData.Customize.Race = (byte)this.Race;
+		drawData.Customize.Gender = (byte)this.Gender;
+		drawData.Customize.Age = (byte)this.Age;
+		drawData.Customize.Height = this.Height;
+		drawData.Customize.Tribe = (byte)this.Tribe;
+		drawData.Customize.Head = this.Head;
+		drawData.Customize.Hair = this.Hair;
+		drawData.Customize.HighlightType = this.HighlightType;
+		drawData.Customize.Skintone = this.Skintone;
+		drawData.Customize.REyeColor = this.REyeColor;
+		drawData.Customize.HairTone = this.HairTone;
+		drawData.Customize.Highlights = this.Highlights;
+		drawData.Customize.FacialFeatures = (byte)this.FacialFeatures;
+		drawData.Customize.FacialFeatureColor = this.FacialFeatureColor;
+		drawData.Customize.Eyebrows = this.Eyebrows;
+		drawData.Customize.LEyeColor = this.LEyeColor;
+		drawData.Customize.Eyes = this.Eyes;
+		drawData.Customize.Nose = this.Nose;
+		drawData.Customize.Jaw = this.Jaw;
+		drawData.Customize.Mouth = this.Mouth;
+		drawData.Customize.LipsToneFurPattern = this.LipsToneFurPattern;
+		drawData.Customize.EarMuscleTailSize = this.EarMuscleTailSize;
+		drawData.Customize.TailEarsType = this.TailEarsType;
+		drawData.Customize.Bust = this.Bust;
+		drawData.Customize.FacePaint = this.FacePaint;
+		drawData.Customize.FacePaintColor = this.FacePaintColor;
 	}
 }

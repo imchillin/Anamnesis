@@ -10,23 +10,135 @@ using PropertyChanged;
 using RemoteController.Interop.Types;
 using System;
 using System.Numerics;
+using System.Threading;
 using static Anamnesis.Actor.Utilities.DyeUtility;
 
-// TODO: Same as ItemMemory, we could read/write this as one object to reduce the number of external process reads/writes during sync.
-// TODO: Convert this to use WeaponModelId.
 public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 {
+	private readonly Lock weaponLock = new();
+	private WeaponModelId weaponModelId;
+
 	[Flags]
 	public enum WeaponFlagDefs : byte
 	{
 		WeaponHidden = 1 << 1,
 	}
 
-	[Bind(0x000, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public ushort Set { get; set; }
-	[Bind(0x002, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public ushort Base { get; set; }
-	[Bind(0x004, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public ushort Variant { get; set; }
-	[Bind(0x006, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public byte Dye { get; set; }
-	[Bind(0x007, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public byte Dye2 { get; set; }
+	[AlsoNotifyFor(nameof(Set), nameof(Base), nameof(Variant), nameof(Dye), nameof(Dye2))]
+	[Bind(0x000, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)]
+	public WeaponModelId WeaponModelId
+	{
+		get
+		{
+			lock (this.weaponLock)
+			{
+				return this.weaponModelId;
+			}
+		}
+		set
+		{
+			lock (this.weaponLock)
+			{
+				this.weaponModelId = value;
+			}
+		}
+	}
+
+	[AlsoNotifyFor(nameof(WeaponModelId))]
+	public ushort Set
+	{
+		get
+		{
+			lock (this.weaponLock)
+			{
+				return this.weaponModelId.Set;
+			}
+		}
+		set
+		{
+			lock (this.weaponLock)
+			{
+				this.weaponModelId.Set = value;
+			}
+		}
+	}
+
+	[AlsoNotifyFor(nameof(WeaponModelId))]
+	public ushort Base
+	{
+		get
+		{
+			lock (this.weaponLock)
+			{
+				return this.weaponModelId.Base;
+			}
+		}
+		set
+		{
+			lock (this.weaponLock)
+			{
+				this.weaponModelId.Base = value;
+			}
+		}
+	}
+
+	[AlsoNotifyFor(nameof(WeaponModelId))]
+	public ushort Variant
+	{
+		get
+		{
+			lock (this.weaponLock)
+			{
+				return this.weaponModelId.Variant;
+			}
+		}
+		set
+		{
+			lock (this.weaponLock)
+			{
+				this.weaponModelId.Variant = value;
+			}
+		}
+	}
+
+	[AlsoNotifyFor(nameof(WeaponModelId))]
+	public byte Dye
+	{
+		get
+		{
+			lock (this.weaponLock)
+			{
+				return this.weaponModelId.Dye;
+			}
+		}
+		set
+		{
+			lock (this.weaponLock)
+			{
+				this.weaponModelId.Dye = value;
+			}
+		}
+	}
+
+	[AlsoNotifyFor(nameof(WeaponModelId))]
+	public byte Dye2
+	{
+		get
+		{
+			lock (this.weaponLock)
+			{
+				return this.weaponModelId.Dye2;
+			}
+		}
+		set
+		{
+			lock (this.weaponLock)
+			{
+				this.weaponModelId.Dye2 = value;
+			}
+		}
+	}
+
 	[Bind(0x018, BindFlags.Pointer)] public WeaponModelMemory? Model { get; set; }
 	[Bind(0x040)] public bool IsSheathed { get; set; }
 	[Bind(0x060)] public WeaponFlagDefs WeaponFlags { get; set; }
@@ -101,17 +213,5 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 
 		if (dyeSlot.HasFlagUnsafe(DyeSlot.Second))
 			this.Dye2 = (dye != null) ? dye.Id : DyeUtility.NoneDye.Id;
-	}
-
-	public WeaponModelId ToModelId()
-	{
-		return new WeaponModelId
-		{
-			Set = this.Set,
-			Base = this.Base,
-			Variant = this.Variant,
-			Dye1 = this.Dye,
-			Dye2 = this.Dye2,
-		};
 	}
 }

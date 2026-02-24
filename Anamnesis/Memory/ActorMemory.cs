@@ -324,18 +324,8 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	internal HumanDrawData BuildDrawData()
 	{
 		HumanDrawData drawData = default;
-
-		unsafe
-		{
-			// Customize: bytes 0x00-0x1F
-			Span<byte> customizeSpan = new(drawData.Customize, HumanDrawData.CUSTOMIZE_SIZE);
-			this.DrawData.Customize?.WriteTo(customizeSpan);
-
-			// Equipment: bytes 0x20-0x6F
-			Span<byte> equipmentSpan = new((byte*)drawData.Equipment, HumanDrawData.EQUIPMENT_SLOTS * 8);
-			this.DrawData.Equipment?.WriteTo(equipmentSpan);
-		}
-
+		this.DrawData.Customize?.WriteTo(ref drawData);
+		this.DrawData.Equipment?.WriteTo(ref drawData);
 		return drawData;
 	}
 

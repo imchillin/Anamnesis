@@ -270,55 +270,55 @@ public partial class CharacterPage : UserControl
 		});
 	}
 
-	// Dye1 - ALL equipment
+	// Dye - ALL equipment
 	private void OnSetDye1OnAllEquipmentClicked(object sender, RoutedEventArgs e)
 	{
 		this.ShowDyeDrawerAndApplyDyeToEquipment(DyeTarget.All, DyeSlot.First);
 	}
 
-	// Dye1 - Weapons only - Will dye both weapons if able.
+	// Dye - Weapons only - Will dye both weapons if able.
 	private void OnSetDye1OnWeaponsClicked(object sender, RoutedEventArgs e)
 	{
 		this.ShowDyeDrawerAndApplyDyeToEquipment(DyeTarget.Weapons, DyeSlot.First);
 	}
 
-	// Dye1 - Clothes (left side) only.
+	// Dye - Clothes (left side) only.
 	private void OnSetDye1OnClothesClicked(object sender, RoutedEventArgs e)
 	{
 		this.ShowDyeDrawerAndApplyDyeToEquipment(DyeTarget.Clothing, DyeSlot.First);
 	}
 
-	// Dye1 - Accessories (right side) only.
+	// Dye - Accessories (right side) only.
 	private void OnSetDye1OnAccessoriesClicked(object sender, RoutedEventArgs e)
 	{
 		this.ShowDyeDrawerAndApplyDyeToEquipment(DyeTarget.Accessories, DyeSlot.First);
 	}
 
-	// Dye1 - Clear on ALL equipment
+	// Dye - Clear on ALL equipment
 	private void OnClearDye1OnAllEquipmentClicked(object sender, RoutedEventArgs e)
 	{
 		this.ApplyDyeToEquipment(DyeUtility.NoneDye, DyeTarget.All, DyeSlot.First);
 	}
 
-	// Dye1 - Clear on weapons only.
+	// Dye - Clear on weapons only.
 	private void OnClearDye1OnWeaponsClicked(object sender, RoutedEventArgs e)
 	{
 		this.ApplyDyeToEquipment(DyeUtility.NoneDye, DyeTarget.Weapons, DyeSlot.First);
 	}
 
-	// Dye1 - Clear on clothes (left side) only.
+	// Dye - Clear on clothes (left side) only.
 	private void OnClearDye1OnClothesClicked(object sender, RoutedEventArgs e)
 	{
 		this.ApplyDyeToEquipment(DyeUtility.NoneDye, DyeTarget.Clothing, DyeSlot.First);
 	}
 
-	// Dye1 - Clear on accessories (right side) only.
+	// Dye - Clear on accessories (right side) only.
 	private void OnClearDye1OnAccessoriesClicked(object sender, RoutedEventArgs e)
 	{
 		this.ApplyDyeToEquipment(DyeUtility.NoneDye, DyeTarget.Accessories, DyeSlot.First);
 	}
 
-	// Dye1 - Middle click to clear - All Equipment
+	// Dye - Middle click to clear - All Equipment
 	private void OnSetDye1OnAllEquipmentMouseUp(object sender, MouseButtonEventArgs e)
 	{
 		if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Released)
