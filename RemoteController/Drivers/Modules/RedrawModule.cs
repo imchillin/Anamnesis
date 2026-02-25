@@ -53,6 +53,9 @@ public sealed class RedrawModule
 	private readonly FunctionWrapper<Human.UpdateDrawData> updateDrawData;
 	private readonly FunctionWrapper<DrawDataContainerDelegates.SetFacewear> setFacewear;
 	private readonly FunctionWrapper<DrawDataContainerDelegates.LoadWeapon> loadWeapon;
+	private readonly FunctionWrapper<DrawDataContainerDelegates.SetVisor> setVisor;
+	private readonly FunctionWrapper<DrawDataContainerDelegates.HideHeadgear> hideHeadgear;
+	private readonly FunctionWrapper<DrawDataContainerDelegates.HideVieraEars> hideVieraEars;
 
 	private readonly nint objTablePtr;
 
@@ -68,6 +71,12 @@ public sealed class RedrawModule
 			?? throw new InvalidOperationException("Failed to create wrapper for DrawDataContainer.SetFacewear. The signature may have changed.");
 		this.loadWeapon = HookRegistry.CreateWrapper<DrawDataContainerDelegates.LoadWeapon>(out _)
 			?? throw new InvalidOperationException("Failed to create wrapper for DrawDataContainer.LoadWeapon. The signature may have changed.");
+		this.setVisor = HookRegistry.CreateWrapper<DrawDataContainerDelegates.SetVisor>(out _)
+			?? throw new InvalidOperationException("Failed to create wrapper for DrawDataContainer.SetVisor. The signature may have changed.");
+		this.hideHeadgear = HookRegistry.CreateWrapper<DrawDataContainerDelegates.HideHeadgear>(out _)
+			?? throw new InvalidOperationException("Failed to create wrapper for DrawDataContainer.HideHeadgear. The signature may have changed.");
+		this.hideVieraEars = HookRegistry.CreateWrapper<DrawDataContainerDelegates.HideVieraEars>(out _)
+			?? throw new InvalidOperationException("Failed to create wrapper for DrawDataContainer.HideVieraEars. The signature may have changed.");
 
 		this.objTablePtr = objTablePtr;
 	}
@@ -93,6 +102,57 @@ public sealed class RedrawModule
 		}
 
 		return success;
+	}
+
+	/// <summary>
+	/// Sets the visor state for the specified game object using their draw data pointer.
+	/// </summary>
+	/// <param name="drawDataPtr">The pointer to the draw data of the game object.</param>
+	/// <param name="state">The desired visor state</param>
+	/// <returns>
+	/// True if the native function was called successfully; false if the draw data pointer was invalid.
+	/// </returns>
+	public bool SetVisor(nint drawDataPtr, byte state)
+	{
+		if (drawDataPtr == nint.Zero)
+			return false;
+
+		this.setVisor.OriginalFunction(drawDataPtr, state);
+		return true;
+	}
+
+	/// <summary>
+	/// Sets the visibility state of headgear for the specified draw data structure.
+	/// </summary>
+	/// <param name="drawDataPtr">The pointer to the draw data of the game object.</param>
+	/// <param name="hide">The desired visibility value. (1 = hidden; 0 = visible)</param>
+	/// <returns>
+	/// True if the native function was called successfully; false if the draw data pointer was invalid.
+	/// </returns>
+	public bool SetHeadgearHidden(nint drawDataPtr, byte hide)
+	{
+		if (drawDataPtr == nint.Zero)
+			return false;
+
+		this.hideHeadgear.OriginalFunction(drawDataPtr, 0, hide);
+		return true;
+	}
+
+	/// <summary>
+	/// Sets the visibility of viera ears in the rendering data.
+	/// </summary>
+	/// <param name="drawDataPtr">The pointer to the draw data of the game object.</param>
+	/// <param name="hide">The desired visibility value. (1 = hidden; 0 = visible)</param>
+	/// <returns>
+	/// True if the native function was called successfully; false if the draw data pointer was invalid.
+	/// </returns>
+	public bool SetVieraEarsHidden(nint drawDataPtr, byte hide)
+	{
+		if (drawDataPtr == nint.Zero)
+			return false;
+
+		this.hideVieraEars.OriginalFunction(drawDataPtr, hide);
+		return true;
 	}
 
 	private byte[] ProcessInternal(RedrawRequest req)

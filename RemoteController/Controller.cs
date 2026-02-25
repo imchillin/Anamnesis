@@ -81,6 +81,9 @@ public class Controller
 
 		// Actor driver commands
 		[DriverCommand.RedrawActor] = HandleRedrawActor,
+		[DriverCommand.ActorSetVisor] = DriverCommandHandler.Invoke<SetVisorCommandPayload, bool>(p => ActorDriver.Instance.SetVisor(p.Ptr, p.State)),
+		[DriverCommand.ActorHideHeadgear] = DriverCommandHandler.Invoke<HideHeadgearCommandPayload, bool>(p => ActorDriver.Instance.SetHeadgearHidden(p.Ptr, p.Hide)),
+		[DriverCommand.ActorHideVieraEars] = DriverCommandHandler.Invoke<HideVieraEarsCommandPayload, bool>(p => ActorDriver.Instance.SetVieraEarsHidden(p.Ptr, p.Hide)),
 	};
 
 #pragma warning disable CA2211

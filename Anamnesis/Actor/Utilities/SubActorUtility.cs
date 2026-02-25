@@ -24,7 +24,7 @@ public class SubActorUtility
 			memory.Mount.Scale = mountScale;
 
 			Apply(mount, memory.Mount);
-			Task.Run(memory.Refresh);
+			Task.Run(() => memory.Refresh(true));
 		}
 		else
 		{

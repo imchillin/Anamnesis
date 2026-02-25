@@ -54,5 +54,6 @@ public interface IActorRefresher
 	/// with <see cref="CanRefresh(ActorMemory)"/> beforehand.
 	/// </remarks>
 	/// <param name="actor">The actor to refresh.</param>
-	public Task RefreshActor(ActorMemory actor);
+	/// <param name="forceReload">If set, a full redraw will be forced, ignoring any optimizations that would normally be applied.</param>
+	public Task RefreshActor(ActorMemory actor, bool forceReload = false);
 }

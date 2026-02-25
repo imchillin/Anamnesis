@@ -37,6 +37,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 
 	private int isRefreshing = 0;
 	private bool needsRefresh = false;
+	private bool forceReloadOnRefresh = false;
 
 	public ActorMemory()
 	{
@@ -179,8 +180,9 @@ public class ActorMemory : GameObjectMemory, IDisposable
 
 	/// <summary>Refreshes the specified actor.</summary>
 	/// <param name="actor">The actor to refresh.</param>
+	/// <param name="forceReload">If set, a full redraw will be forced, ignoring any optimizations that would normally be applied.</param>
 	/// <returns>True if the actor was refreshed, otherwise false.</returns>
-	public static async Task<bool> RefreshActor(ActorMemory actor)
+	public static async Task<bool> RefreshActor(ActorMemory actor, bool forceReload = false)
 	{
 		if (CanRefreshActor(actor))
 		{
@@ -188,8 +190,8 @@ public class ActorMemory : GameObjectMemory, IDisposable
 			{
 				if (actorRefresher.CanRefresh(actor))
 				{
-					Log.Information($"Executing {actorRefresher.GetType().Name} refresh for actor address: {actor.Address}");
-					await actorRefresher.RefreshActor(actor);
+					Log.Information($"Executing {actorRefresher.GetType().Name} refresh for actor address: 0x{actor.Address:X}");
+					await actorRefresher.RefreshActor(actor, forceReload);
 					return true;
 				}
 			}
@@ -255,12 +257,13 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	/// <summary>
 	/// Asynchronously refresh the actor to force the game to reflect appearance changes.
 	/// </summary>
-	public async Task Refresh()
+	public async Task Refresh(bool forceReload = false)
 	{
 		if (this.IsRefreshing)
 		{
 			Log.Verbose("Refresh requested while busy. Marking as pending.");
 			this.needsRefresh = true;
+			this.forceReloadOnRefresh |= forceReload;
 			return;
 		}
 
@@ -269,21 +272,24 @@ public class ActorMemory : GameObjectMemory, IDisposable
 
 		try
 		{
-			Log.Information($"Attempting actor refresh for actor address: 0x{this.Address:X}");
+			Log.Verbose($"Attempting actor refresh for actor address: 0x{this.Address:X}");
 
 			this.IsRefreshing = true;
 
 			do
 			{
 				this.needsRefresh = false;
-				if (await RefreshActor(this))
+
+				if (await RefreshActor(this, this.forceReloadOnRefresh))
 				{
-					Log.Information($"Completed actor refresh cycle for: 0x{this.Address:X}");
+					Log.Verbose($"Completed actor refresh cycle for: 0x{this.Address:X}");
 				}
 				else
 				{
-					Log.Information($"Could not refresh actor: 0x{this.Address:X}");
+					Log.Warning($"Could not refresh actor: 0x{this.Address:X}");
 				}
+
+				this.forceReloadOnRefresh = false;
 			}
 			while (this.needsRefresh);
 		}

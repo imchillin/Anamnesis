@@ -97,6 +97,27 @@ public struct FrameworkMessageData
 	public FrameworkMessageType Type;
 }
 
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct SetVisorCommandPayload
+{
+	public nint Ptr;
+	public byte State;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct HideHeadgearCommandPayload
+{
+	public nint Ptr;
+	public byte Hide;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct HideVieraEarsCommandPayload
+{
+	public nint Ptr;
+	public byte Hide;
+}
+
 [StructLayout(LayoutKind.Sequential, Pack = 8)]
 public struct RedrawHeader
 {

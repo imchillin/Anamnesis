@@ -24,6 +24,9 @@ public enum DriverCommand : int
 
 	// Actor driver commands
 	RedrawActor,
+	ActorSetVisor,
+	ActorHideHeadgear,
+	ActorHideVieraEars,
 }
 
 /// <summary>

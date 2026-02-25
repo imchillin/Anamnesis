@@ -30,7 +30,7 @@ public class PenumbraActorRefresher : IActorRefresher
 		return RefreshBlockedReason.None;
 	}
 
-	public async Task RefreshActor(ActorMemory actor)
+	public async Task RefreshActor(ActorMemory actor, bool forceReload = false)
 	{
 		await Dispatch.MainThread();
 

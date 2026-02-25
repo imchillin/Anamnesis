@@ -38,6 +38,18 @@ public static class Character
 
 public static class DrawDataContainer
 {
+	[FunctionBind("E8 ?? ?? ?? ?? 0F B6 44 2F ?? A8 20")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public delegate nint HideVieraEars(nint containerPtr, byte hide);
+
+	[FunctionBind("E8 ?? ?? ?? ?? 0F B6 55 C9")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public delegate byte HideHeadgear(nint containerPtr, uint a2, byte hide);
+
+	[FunctionBind("E8 ?? ?? ?? ?? 0F B6 55 CB")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public delegate nint SetVisor(nint containerPtr, byte state);
+
 	[FunctionBind("E8 ?? ?? ?? ?? EB 50 44 8B 03")]
 	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
 	public delegate byte SetFacewear(nint containerPtr, ushort slotIndex, ushort facewearId);

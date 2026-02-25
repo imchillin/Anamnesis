@@ -46,7 +46,7 @@ public class AnamnesisActorRefresher : IActorRefresher
 		return RefreshBlockedReason.None;
 	}
 
-	public async Task RefreshActor(ActorMemory actor)
+	public async Task RefreshActor(ActorMemory actor, bool forceReload = false)
 	{
 		int actorIndex = ActorService.Instance.ObjectTable.GetIndexOf(actor.Address);
 		if (actorIndex == -1)
@@ -61,13 +61,13 @@ public class AnamnesisActorRefresher : IActorRefresher
 		var diff = ComputeChangeset(actor, currentSnapshot);
 		Log.Verbose($"Computed character file diff for redraw: {diff}");
 
-		if (!diff.HasChanges)
+		if (!forceReload && !diff.HasChanges)
 		{
 			Log.Verbose("No appearance changes detected, skipping actor redraw.");
 			return;
 		}
 
-		bool doPartialRedraw = actor.IsHuman && !diff.Changes.HasFlagUnsafe(CharChangeType.Base);
+		bool doPartialRedraw = actor.IsHuman && !diff.Changes.HasFlagUnsafe(CharChangeType.Base) && !forceReload;
 		var redrawType = doPartialRedraw ? RedrawType.Partial : RedrawType.Full;
 
 		var (payload, length) = PackRedrawPayload(actor, actorIndex, redrawType, diff);
@@ -183,11 +183,11 @@ public class AnamnesisActorRefresher : IActorRefresher
 		if (useNpcFaceHack)
 		{
 			actor.ObjectKind = ObjectTypes.EventNpc;
-			var res = ControllerService.Instance.SendDriverCommandRaw(DriverCommand.RedrawActor, payload.AsSpan(0, payloadLength));
+			var res = ControllerService.Instance.SendDriverCommandRaw(DriverCommand.RedrawActor, payload.AsSpan(0, payloadLength), ACTOR_REFRESH_TIMEOUT_MS);
 			actor.ObjectKind = ObjectTypes.Player;
 			return res;
 		}
 
-		return ControllerService.Instance.SendDriverCommandRaw(DriverCommand.RedrawActor, payload.AsSpan(0, payloadLength));
+		return ControllerService.Instance.SendDriverCommandRaw(DriverCommand.RedrawActor, payload.AsSpan(0, payloadLength), ACTOR_REFRESH_TIMEOUT_MS);
 	}
 }

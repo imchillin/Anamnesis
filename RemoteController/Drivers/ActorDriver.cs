@@ -41,6 +41,9 @@ public sealed class ActorDriver : DriverBase<ActorDriver>
 	}
 
 	public bool RedrawActor(RedrawRequest request) => this.Redraw.RequestRedraw(request);
+	public bool SetVisor(nint drawDataPtr, byte state) => this.Redraw.SetVisor(drawDataPtr, state);
+	public bool SetHeadgearHidden(nint drawDataPtr, byte hide) => this.Redraw.SetHeadgearHidden(drawDataPtr, hide);
+	public bool SetVieraEarsHidden(nint drawDataPtr, byte hide) => this.Redraw.SetVieraEarsHidden(drawDataPtr, hide);
 
 	/// <inheritdoc/>
 	protected override void OnDispose() { }
