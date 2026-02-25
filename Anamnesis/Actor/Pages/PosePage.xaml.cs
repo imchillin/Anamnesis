@@ -411,7 +411,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		if (targetBone == null || targetBone.TransformMemory == null)
 			throw new ArgumentException("The target bone and its transform memory cannot be null");
 
-		if (targetBone.Name.StartsWith("iv_shiri") || targetBone.Name.StartsWith("iv_kougan"))
+		if (targetBone.Name.StartsWith("iv_shiri") || targetBone.Name.StartsWith("iv_kougan") || targetBone.Name.Contains("j_ex"))
 			return;
 
 		CmQuaternion newRotation = targetBone.TransformMemory.Rotation.Mirror(); // character-relative transform
