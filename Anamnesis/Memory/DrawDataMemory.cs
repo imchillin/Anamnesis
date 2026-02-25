@@ -38,7 +38,6 @@ public class DrawDataMemory : MemoryBase
 			bool? remoteResult = null;
 			try
 			{
-				this.hatHidden = value;
 				remoteResult = ControllerService.Instance?.SendDriverCommand<bool>(
 					DriverCommand.ActorHideHeadgear, args: [this.Address, value ? (byte)1 : (byte)0], timeout: DRIVER_COMMAND_TIMEOUT_MS);
 			}
@@ -47,12 +46,18 @@ public class DrawDataMemory : MemoryBase
 				Log.Warning($"Failed to send command {DriverCommand.ActorHideHeadgear}. Falling back to local state update.");
 			}
 
-			if (remoteResult == true)
-				return;
-
-			// Fallback: Trigger full redraw
-			if (this.Parent is ActorMemory actor)
-				_ = actor.Refresh(forceReload: true);
+			if (remoteResult.HasValue)
+			{
+				this.hatHidden = value;
+			}
+			else // Fallback: Do a direct memory write and trigger a forced actor redraw
+			{
+				this.hatHidden = value;
+				if (this.Parent is ActorMemory actor)
+				{
+					_ = actor.Refresh(forceReload: true);
+				}
+			}
 
 			this.OnPropertyChanged(nameof(this.HatHidden));
 		}
