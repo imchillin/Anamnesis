@@ -374,13 +374,11 @@ public class ControllerService : ServiceBase<ControllerService>
 	private readonly ConcurrentDictionary<uint, ushort> sequenceCounters = new();
 	private readonly ConcurrentDictionary<string, uint> delegateKeyToHookId = new();
 	private readonly ObjectPool<PendingRequest<byte[]>> wrapperRequestPool = new(maxSize: 128);
-
 	private readonly ConcurrentDictionary<uint, PendingRequest<byte[]>> pendingDriverCommands = new();
 
-	private readonly ConcurrentDictionary<EventId, HashSet<Action<ReadOnlySpan<byte>>>> eventHandlers = new();
+	private readonly ConcurrentDictionary<EventId, HashSet<WeakReference<Action<ReadOnlySpan<byte>>>>> eventHandlers = new();
 	private readonly ConcurrentDictionary<EventId, PendingRequest<bool>> pendingEventSubscriptions = new();
 	private readonly ConcurrentDictionary<EventId, PendingRequest<bool>> pendingEventUnsubscriptions = new();
-	private readonly ObjectPool<WorkItem<(ControllerService, EventId, byte[])>> eventWorkItemPool = new(maxSize: 64);
 	private readonly Lock eventHandlersLock = new();
 
 	private readonly ObjectPool<WorkItem<(ControllerService, uint, byte[], int)>> workItemPool = new(maxSize: 128);
@@ -436,6 +434,8 @@ public class ControllerService : ServiceBase<ControllerService>
 
 			this.ipcMsgListener = null;
 		}
+
+		this.framework?.CancelPendingWork();
 
 		this.workPipeline?.Dispose();
 		this.workPipeline = null;
@@ -936,18 +936,22 @@ public class ControllerService : ServiceBase<ControllerService>
 
 	internal void UnsubscribeEventInternal(EventId eventId, Action<ReadOnlySpan<byte>> wrappedHandler)
 	{
-		bool removed;
+		int removedCount = 0;
 		lock (this.eventHandlersLock)
 		{
 			if (!this.eventHandlers.TryGetValue(eventId, out var handlers))
 				return;
 
-			removed = handlers.Remove(wrappedHandler);
+			removedCount = handlers.RemoveWhere(wr =>
+			{
+				return wr.TryGetTarget(out var target) && target == wrappedHandler;
+			});
+
 			if (handlers.Count == 0)
 				this.eventHandlers.TryRemove(eventId, out _);
 		}
 
-		if (removed && this.isConnected)
+		if (removedCount > 0 && this.isConnected)
 		{
 			this.SendEventSubscription(eventId, PayloadType.EventUnsubscribe, IPC_TIMEOUT_MS);
 		}
@@ -1258,7 +1262,7 @@ public class ControllerService : ServiceBase<ControllerService>
 				this.eventHandlers[eventId] = handlers;
 			}
 
-			handlers.Add(wrappedHandler);
+			handlers.Add(new WeakReference<Action<ReadOnlySpan<byte>>>(wrappedHandler));
 		}
 
 		if (this.isConnected)
@@ -1268,7 +1272,7 @@ public class ControllerService : ServiceBase<ControllerService>
 				lock (this.eventHandlersLock)
 				{
 					if (this.eventHandlers.TryGetValue(eventId, out var handlers))
-						handlers.Remove(wrappedHandler);
+						handlers.RemoveWhere(wr => wr.TryGetTarget(out var target) && target == wrappedHandler);
 				}
 
 				return null;
@@ -1526,9 +1530,9 @@ public class ControllerService : ServiceBase<ControllerService>
 			return;
 		}
 
-		EventId eventId = (EventId)msgId;
-		if (Enum.IsDefined(eventId))
+		if (msgId > (uint)EventId.Invalid && msgId < (uint)EventId.Max)
 		{
+			EventId eventId = (EventId)msgId;
 			if (this.pendingEventSubscriptions.TryGetValue(eventId, out var subPending))
 			{
 				subPending.SetResult(true);
@@ -1557,9 +1561,9 @@ public class ControllerService : ServiceBase<ControllerService>
 			return;
 		}
 
-		EventId eventId = (EventId)msgId;
-		if (Enum.IsDefined(eventId))
+		if (msgId > (uint)EventId.Invalid && msgId < (uint)EventId.Max)
 		{
+			EventId eventId = (EventId)msgId;
 			if (this.pendingEventSubscriptions.TryGetValue(eventId, out var subPending))
 			{
 				subPending.SetResult(false);
@@ -1630,13 +1634,23 @@ public class ControllerService : ServiceBase<ControllerService>
 
 	private void BroadcastEventToSubscribers(EventId eventId, ReadOnlySpan<byte> payload)
 	{
-		Action<ReadOnlySpan<byte>>[] handlersSnapshot;
+		List<Action<ReadOnlySpan<byte>>> handlersSnapshot = [];
 		lock (this.eventHandlersLock)
 		{
 			if (!this.eventHandlers.TryGetValue(eventId, out var handlers) || handlers.Count == 0)
 				return; // Subscribers may have unsubscribed since enqueue; Abort
 
-			handlersSnapshot = [.. handlers];
+			var deadRefs = new List<WeakReference<Action<ReadOnlySpan<byte>>>>();
+			foreach (var wr in handlers)
+			{
+				if (wr.TryGetTarget(out var target))
+					handlersSnapshot.Add(target);
+				else
+					deadRefs.Add(wr);
+			}
+
+			foreach (var dead in deadRefs)
+				handlers.Remove(dead);
 		}
 
 		foreach (var handler in handlersSnapshot)
@@ -1698,8 +1712,6 @@ public class ControllerService : ServiceBase<ControllerService>
 
 		ushort seq = this.GetNextSequence(HookMessageId.FRAMEWORK_SYSTEM_ID);
 		uint msgId = HookMessageId.Pack(HookMessageId.FRAMEWORK_SYSTEM_ID, seq);
-		var pending = new PendingRequest<byte[]>();
-		this.pendingHookRequests[msgId] = pending;
 
 		byte[]? rented = null;
 		bool sent;
@@ -1723,7 +1735,6 @@ public class ControllerService : ServiceBase<ControllerService>
 			if (!sent)
 			{
 				Log.Warning("Failed to send framework sync request");
-				this.pendingHookRequests.TryRemove(msgId, out _);
 			}
 		}
 		finally
@@ -1778,7 +1789,7 @@ public class ControllerService : ServiceBase<ControllerService>
 /// The internal work queue used for task processing.
 /// </param>
 /// <param name="sendSyncRequest">
-/// An action to trigger a syncrhonization request with the remote
+/// An action to trigger a synchronization request with the remote
 /// controller's framework driver.
 /// </param>
 public class FrameworkService(WorkQueue queue, Action sendSyncRequest)
@@ -2052,6 +2063,23 @@ public class FrameworkService(WorkQueue queue, Action sendSyncRequest)
 		}
 
 		return false;
+	}
+
+	/// <summary>
+	/// Cancels any pending work and resets the framework service to an idle state.
+	/// </summary>
+	internal void CancelPendingWork()
+	{
+		lock (this.conditionalTasks)
+		{
+			foreach (var task in this.conditionalTasks)
+				task.Tcs?.TrySetCanceled();
+
+			this.conditionalTasks.Clear();
+		}
+
+		this.workQueue.Clear();
+		Interlocked.Exchange(ref this.header.LoopState, 0);
 	}
 
 	private bool HasWork()

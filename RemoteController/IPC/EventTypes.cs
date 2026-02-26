@@ -14,6 +14,7 @@ public enum EventId : uint
 {
 	Invalid = 0,
 	GposeStateChanged = 1,
+	Max,
 }
 
 /// <summary>
