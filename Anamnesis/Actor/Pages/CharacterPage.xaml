@@ -452,7 +452,8 @@
 			<StackPanel Grid.Row="2" Orientation="Vertical" Margin="2, 0, 0, 0">
 				<Menu Margin="0,3,3,2" Style="{StaticResource AnaMenu}">
 					<!-- NPC import menu-->
-					<MenuItem Click="OnImportNpcClicked" Header="Character_Appearance_LoadNpc" Icon="User" Style="{StaticResource ButtonMenuItemLeft}"/>
+					<MenuItem Click="OnImportNpcClicked" Header="Character_Appearance_LoadNpc" Icon="User" Style="{StaticResource ButtonMenuItemLeft}"
+							  Padding="9, 0, 0, 0" Width="111"/>
 
 					<!-- Extended NPC import menu (Dropdown) -->
 					<MenuItem Margin="-1,0,3,0" Style="{StaticResource ButtonMenuItemRight}">
@@ -462,14 +463,18 @@
 					</MenuItem>
 
 					<!-- Appearance reset button -->
-					<MenuItem HorizontalAlignment="Right" anaUtils:Behaviours.Tooltip="Character_Reset_Tooltip" Click="OnResetClicked"
-							  Header="Character_Reset" Icon="UndoAlt" Style="{StaticResource ButtonMenuItem}"
+					<MenuItem HorizontalContentAlignment="Center" anaUtils:Behaviours.Tooltip="Character_ForceRedraw_Tooltip" Click="OnForceRedraw"
+							  Padding="10, 0, 5, 0" Margin="1, 0, 4, 0" Width="32" Icon="Rotate" FontSize="13" Style="{StaticResource ButtonMenuItem}"
+							  IsEnabled="{Binding Actor.Unsafe.CanRefresh}">
+					</MenuItem>
+					<MenuItem HorizontalAlignment="Center" anaUtils:Behaviours.Tooltip="Character_Reset_Tooltip" Click="OnResetClicked"
+							  Padding="10, 0, 5, 0" Width="32" Icon="UndoAlt" Style="{StaticResource ButtonMenuItem}"
 							  IsEnabled="{Binding Actor.Unsafe.Pinned.OriginalCharacterBackup, Converter={StaticResource NotNullToBoolConverter}}"/>
 				</Menu>
 
 				<Menu Margin="0,3,3,4" Style="{StaticResource AnaMenu}">
 					<!-- Appearance import menu -->
-					<MenuItem Click="OnImportClicked" Header="Common_ImportFile" Icon="FileImport" Style="{StaticResource ButtonMenuItemLeft}"/>
+					<MenuItem Click="OnImportClicked" Header="Common_ImportFile" Icon="FileImport" Style="{StaticResource ButtonMenuItemLeft}" Width="75"/>
 
 					<!-- Extended import menu (Dropdown) -->
 					<MenuItem Margin="-1,0,1,0" Style="{StaticResource ButtonMenuItemRight}">
@@ -481,7 +486,7 @@
 					</MenuItem>
 
 					<!-- Export menu -->
-					<MenuItem Click="OnExportClicked" Header="Common_ExportFile" Icon="FileExport" Style="{StaticResource ButtonMenuItemLeft}"/>
+					<MenuItem Click="OnExportClicked" Header="Common_ExportFile" Icon="FileExport" Style="{StaticResource ButtonMenuItemLeft}" Width="75" Margin="3, 0, 0, 0"/>
 
 					<!-- Extended export menu (Dropdown) -->
 					<MenuItem Margin="-1,0,0,0" Style="{StaticResource ButtonMenuItemRight}">

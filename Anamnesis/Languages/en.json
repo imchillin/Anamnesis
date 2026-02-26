@@ -158,6 +158,7 @@
   "Character_Load_FfxivDat": "FFXIV Saved Appearance Data",
   "Character_Load_CMTool": "CMTool save",
   "Character_Reset": "Reset",
+  "Character_ForceRedraw_Tooltip": "Force redraw the pinned actor",
   "Character_Reset_Tooltip": "Reset actor to how they appeared when they were pinned",
   "Character_Reset_Confirm": "This will reset actor to how they appeared when they were pinned.\nContinue?",
 

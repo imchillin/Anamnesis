@@ -279,7 +279,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 			{
 				this.needsRefresh = false;
 
-				if (await RefreshActor(this, this.forceReloadOnRefresh))
+				if (await RefreshActor(this, this.forceReloadOnRefresh | forceReload))
 				{
 					Log.Verbose($"Completed actor refresh cycle for: 0x{this.Address:X}");
 				}
