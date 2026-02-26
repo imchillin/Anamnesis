@@ -505,6 +505,9 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				var (current, isParentIncluded) = stack.Pop();
 				PropertyBindInfo? pb = current.parentBind as PropertyBindInfo;
 
+				if (pb != null && pb.Flags.HasFlagUnsafe(BindFlags.OnlyInGPose) && GposeService.InstanceOrNull?.IsGpose != true)
+					continue;
+
 				if (exclGroups != null && pb?.SyncGroup != null && exclGroups.Contains(pb.SyncGroup))
 					continue;
 
@@ -756,7 +759,19 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			throw new Exception("Cannot read memory while we're writing to it");
 
 		if (bind.Flags.HasFlagUnsafe(BindFlags.OnlyInGPose) && GposeService.InstanceOrNull?.IsGpose != true)
+		{
+			if (bind.IsMemoryBase)
+			{
+				if (bind.Property.GetValue(this) is MemoryBase memory)
+				{
+					this.SetValueWithoutNotification(bind, null);
+					bind.LastValue = null;
+					memory.Dispose();
+				}
+			}
+
 			return;
+		}
 
 		bind.IsReading = true;
 		object? oldValue = bind.LastValue;
