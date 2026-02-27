@@ -874,7 +874,7 @@ public class CharacterFile : JsonFileBase
 					IsDummyTransition(curItem, tgtItem, ItemUtility.EmperorsNewFists))
 					return true;
 
-				if (NeedsRedrawForSlotChange(curItem, tgtItem, ItemSlots.MainHand))
+				if (NeedsRedrawForSlotChange(curItem, tgtItem, ItemSlots.OffHand))
 					return true;
 
 				if (curItem is Anamnesis.GameData.Excel.Item curExcel && tgtItem is Anamnesis.GameData.Excel.Item tgtExcel)
