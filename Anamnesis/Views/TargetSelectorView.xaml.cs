@@ -118,8 +118,6 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 			if (!handle.IsValid)
 				continue;
 
-			handle.Do(actor => actor.Synchronize());
-
 			try
 			{
 				handle.Do(actor => actor.Synchronize());
