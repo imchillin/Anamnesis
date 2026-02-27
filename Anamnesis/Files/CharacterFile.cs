@@ -110,6 +110,9 @@ public class CharacterFile : JsonFileBase
 	public float? MuscleTone { get; set; }
 	public float? HeightMultiplier { get; set; }
 
+	// unrelated, used for char diff redraw logic
+	public bool? IsWeaponDrawn { get; set; }
+
 	public void WriteToFile(ObjectHandle<ActorMemory> handle, SaveModes mode)
 	{
 		handle.Do(actor => this.WriteToFile(actor, mode));
@@ -250,6 +253,8 @@ public class CharacterFile : JsonFileBase
 			this.BustScale = actor.ModelObject?.Bust?.Scale;
 			this.Transparency = actor.Transparency;
 		}
+
+		this.IsWeaponDrawn = actor.Animation?.IsWeaponDrawn;
 	}
 
 	internal async Task Apply(ActorMemory actor, SaveModes mode, ItemSlots? slot = null)
@@ -812,6 +817,9 @@ public class CharacterFile : JsonFileBase
 		private static bool CheckWeaponsCompatibility(CharacterFile c, CharacterFile t, CharacterFile.SaveModes mode)
 		{
 			if (!mode.HasFlagUnsafe(CharacterFile.SaveModes.EquipmentWeapons))
+				return false;
+
+			if (t.IsWeaponDrawn != true)
 				return false;
 
 			// Treat all crafters and all gatherers as equivalent
