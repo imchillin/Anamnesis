@@ -453,10 +453,10 @@
 				<Menu Margin="0,3,3,2" Style="{StaticResource AnaMenu}">
 					<!-- NPC import menu-->
 					<MenuItem Click="OnImportNpcClicked" Header="Character_Appearance_LoadNpc" Icon="User" Style="{StaticResource ButtonMenuItemLeft}"
-							  Padding="9, 0, 0, 0" Width="111"/>
+							  IsEnabled="{Binding Actor.Unsafe.CanRefresh}" Padding="9, 0, 0, 0" Width="111"/>
 
 					<!-- Extended NPC import menu (Dropdown) -->
-					<MenuItem Margin="-1,0,3,0" Style="{StaticResource ButtonMenuItemRight}">
+					<MenuItem Margin="-1,0,3,0" Style="{StaticResource ButtonMenuItemRight}" IsEnabled="{Binding Actor.Unsafe.CanRefresh}">
 						<MenuItem Click="OnImportNpcAppearanceClicked" Header="Character_Appearance_Header" Style="{StaticResource AnaMenuItem}"/>
 						<MenuItem Click="OnImportNpcEquipmentClicked" Header="Character_Equipment_Header" Style="{StaticResource AnaMenuItem}"/>
 						<MenuItem Click="OnImportNpcWeaponsClicked" Header="Character_Equipment_Weapons" Style="{StaticResource AnaMenuItem}"/>
@@ -468,16 +468,23 @@
 							  IsEnabled="{Binding Actor.Unsafe.CanRefresh}">
 					</MenuItem>
 					<MenuItem HorizontalAlignment="Center" anaUtils:Behaviours.Tooltip="Character_Reset_Tooltip" Click="OnResetClicked"
-							  Padding="10, 0, 5, 0" Width="32" Icon="UndoAlt" Style="{StaticResource ButtonMenuItem}"
-							  IsEnabled="{Binding Actor.Unsafe.Pinned.OriginalCharacterBackup, Converter={StaticResource NotNullToBoolConverter}}"/>
+							  Padding="10, 0, 5, 0" Width="32" Icon="UndoAlt" Style="{StaticResource ButtonMenuItem}">
+						<MenuItem.IsEnabled>
+							<MultiBinding Converter="{StaticResource MultiBoolAnd}">
+								<Binding Path="Actor.Unsafe.Pinned.OriginalCharacterBackup" Converter="{StaticResource NotNullToBoolConverter}"/>
+								<Binding Path="Actor.Unsafe.CanRefresh" />
+							</MultiBinding>
+						</MenuItem.IsEnabled>
+					</MenuItem>
 				</Menu>
 
 				<Menu Margin="0,3,3,4" Style="{StaticResource AnaMenu}">
 					<!-- Appearance import menu -->
-					<MenuItem Click="OnImportClicked" Header="Common_ImportFile" Icon="FileImport" Style="{StaticResource ButtonMenuItemLeft}" Width="75"/>
+					<MenuItem Click="OnImportClicked" Header="Common_ImportFile" Icon="FileImport"
+							  Style="{StaticResource ButtonMenuItemLeft}" Width="75" IsEnabled="{Binding Actor.Unsafe.CanRefresh}"/>
 
 					<!-- Extended import menu (Dropdown) -->
-					<MenuItem Margin="-1,0,1,0" Style="{StaticResource ButtonMenuItemRight}">
+					<MenuItem Margin="-1,0,1,0" Style="{StaticResource ButtonMenuItemRight}" IsEnabled="{Binding Actor.Unsafe.CanRefresh}">
 						<MenuItem Click="OnImportAppearanceClicked" Header="Character_Appearance_Header" Style="{StaticResource AnaMenuItem}"/>
 						<MenuItem Click="OnImportEquipmentClicked" Header="Character_Equipment_Header" Style="{StaticResource AnaMenuItem}"/>
 						<MenuItem Click="OnImportGearClicked" Header="Character_Equipment_Gear" Style="{StaticResource AnaMenuItem}"/>
