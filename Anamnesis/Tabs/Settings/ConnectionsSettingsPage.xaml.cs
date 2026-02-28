@@ -5,6 +5,7 @@ namespace Anamnesis.Tabs.Settings;
 
 using Anamnesis.Services;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 
 /// <summary>
@@ -20,8 +21,12 @@ public partial class ConnectionsSettingsPage : UserControl, ISettingSection
 		// Initialize setting categories
 		this.SettingCategories = new()
 		{
+			{ "GameIntegration", new SettingCategory("GameIntegration", this.GameIntegrationGroupBox) },
 			{ "ExternalServices", new SettingCategory("ExternalServices", this.ExternalServicesGroupBox) },
 		};
+
+		// Set up game integration settings
+		this.SettingCategories["GameIntegration"].Settings.Add(new Setting("Settings_OverrideFpsLimiter", this.Connections_GameIntegration_OverrideFpsLimiter));
 
 		// Set up external services category settings
 		this.SettingCategories["ExternalServices"].Settings.Add(new Setting("Settings_UseExternalRefreshBrio", this.Connections_External_UseExternalRefreshBrio));

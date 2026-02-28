@@ -50,7 +50,7 @@ public static class HookFactory
 		Type? delegateType = null;
 		foreach (var (type, _) in HookDelegateRegistry.GetAll())
 		{
-			if (HookUtils.GetKey(type) == delegateKey)
+			if (MessageUtils.GetKey(type) == delegateKey)
 			{
 				delegateType = type;
 				break;

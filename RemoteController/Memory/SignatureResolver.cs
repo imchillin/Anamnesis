@@ -3,8 +3,8 @@
 
 namespace RemoteController.Memory;
 
-using RemoteController;
 using RemoteController.Interop;
+using RemoteController.IPC;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
@@ -150,7 +150,7 @@ public sealed class SignatureResolver
 
 		foreach (var type in delegateTypes)
 		{
-			string key = HookUtils.GetKey(type);
+			string key = MessageUtils.GetKey(type);
 			this.delegateTypeCache[key] = type;
 			Log.Verbose($"Cached delegate type: {key}");
 		}

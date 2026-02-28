@@ -52,7 +52,7 @@ public sealed class HookRegistry
 		ArgumentException.ThrowIfNullOrEmpty(key);
 		foreach (var (delegateType, attr) in HookDelegateRegistry.GetAll())
 		{
-			if (HookUtils.GetKey(delegateType) == key)
+			if (MessageUtils.GetKey(delegateType) == key)
 				return attr;
 		}
 		return null;
@@ -77,7 +77,7 @@ public sealed class HookRegistry
 	public static FunctionHook<T> CreateAndActivateHook<T>(T detour, HookBehavior behavior = HookBehavior.Replace)
 		where T : Delegate
 	{
-		string delegateKey = HookUtils.GetKey(typeof(T));
+		string delegateKey = MessageUtils.GetKey(typeof(T));
 		nint address = Controller.SigResolver?.Resolve(delegateKey) ?? 0;
 		if (address == 0)
 			throw new InvalidOperationException($"Failed to resolve signature for {delegateKey}.");
@@ -107,7 +107,7 @@ public sealed class HookRegistry
 	public static FunctionWrapper<T> CreateWrapper<T>(out nint wrapperAddress)
 		where T : Delegate
 	{
-		string delegateKey = HookUtils.GetKey(typeof(T));
+		string delegateKey = MessageUtils.GetKey(typeof(T));
 		nint address = Controller.SigResolver?.Resolve(delegateKey) ?? 0;
 		if (address == 0)
 			throw new InvalidOperationException($"Failed to resolve signature for {delegateKey}.");
@@ -272,7 +272,7 @@ public sealed class HookRegistry
 		{
 			uint candidate = this.nextHookID++;
 
-			if (this.nextHookID >= HookMessageId.MAX_STANDARD_HOOK_ID)
+			if (this.nextHookID >= MessageId.MAX_STANDARD_HOOK_ID)
 				this.nextHookID = 1; // Skip 0 (Reserved for invalid hooks)
 
 			if (!this.activeHooks.ContainsKey(candidate))

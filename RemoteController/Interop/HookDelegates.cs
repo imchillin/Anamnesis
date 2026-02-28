@@ -36,6 +36,13 @@ public static class Character
 	public delegate bool IsWanderer(nint charPtr);
 }
 
+public static class GameConfigEntry
+{
+	[FunctionBind("48 83 EC ?? 44 8B 51 ?? 44 8B CA 44 8B 59")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public delegate byte SetValueUInt(nint cfgPtr, uint value, nint unk = 1);
+}
+
 public static class DrawDataContainer
 {
 	[FunctionBind("E8 ?? ?? ?? ?? 0F B6 44 2F ?? A8 20")]

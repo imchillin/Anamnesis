@@ -64,39 +64,6 @@ public unsafe struct HookRegistrationData
 	}
 }
 
-public enum FrameworkMessageType : byte
-{
-	Unknown = 0,
-
-	/// <summary>
-	/// Message payload indicating to the framework driver
-	/// to propagate the detour on the next tick.
-	/// </summary>
-	EnableTickSync = 1,
-
-	/// <summary>
-	/// Message payload indicating to the main application
-	/// that the framework's thread is paused and we can
-	/// safely perform operations that require thread safety.
-	/// </summary>
-	TickSyncRequest = 2,
-
-	/// <summary>
-	/// Message payload indicating to the framework driver
-	/// to resume normal operation.
-	/// </summary>
-	TickSyncResponse = 3,
-}
-
-/// <summary>
-/// A framework message payload structure.
-/// </summary>
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
-public struct FrameworkMessageData
-{
-	public FrameworkMessageType Type;
-}
-
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct SetVisorCommandPayload
 {

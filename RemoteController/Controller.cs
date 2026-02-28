@@ -39,10 +39,10 @@ public class Controller
 	private static readonly Func<uint, byte, byte> s_incrementFunc = static (_, v) => (byte)((v + 1) & 0xFF);
 	private static readonly byte[] s_emptyPayload = [];
 	private static readonly ArrayPool<byte> s_bufferPool = ArrayPool<byte>.Shared;
-	private static readonly ConcurrentDictionary<uint, PendingRequest<byte[]>> s_pendingHooks = new();
+	private static readonly ConcurrentDictionary<uint, PendingRequest<byte[]>> s_pendingMsgRequests = new();
 	private static readonly ConcurrentDictionary<uint, ushort> s_sequenceCounters = new(); // Key: Packed hook ID, Value: Sequence counter
 	private static readonly ConcurrentDictionary<EventId, int> s_eventSubscriptionRefCount = new();
-	private static readonly ObjectPool<PendingRequest<byte[]>> s_pendingRequestPool = new(maxSize: 128);
+	private static readonly ObjectPool<PendingRequest<byte[]>> s_pendingRequestPool = new(maxSize: 256);
 
 	private static readonly WorkPipeline s_workPipeline = new(Math.Max(Environment.ProcessorCount / 2, 1));
 	private static readonly ObjectPool<WorkItem<(uint, byte[], int)>> s_workItemPool = new(maxSize: 128);
@@ -120,60 +120,14 @@ public class Controller
 	/// <remarks>
 	/// For <see cref="HookBehavior.After"/> hooks, the request payload
 	/// layout is as follows: [Int32 ArgsLength] [Args Data] [Result Data].
-	/// You can use the utility function <see cref="HookUtils.DeserializeAfterPayload"/> 
+	/// You can use the utility function <see cref="MessageUtils.DeserializeAfterPayload"/> 
 	/// to parse this layout.
 	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static byte[] SendInterceptRequest(uint hookIndex, ReadOnlySpan<byte> argsPayload)
 	{
-		if (!s_running)
-			return s_emptyPayload;
-
-		Interlocked.Increment(ref s_activeWriters);
-		try
-		{
-			var endpoint = s_outgoingEndpoint;
-			if (!s_running || endpoint == null)
-				return s_emptyPayload;
-
-			ushort seq = GetNextSequence(hookIndex);
-			uint msgId = HookMessageId.Pack(hookIndex, seq);
-
-			var pending = s_pendingRequestPool.Get();
-			if (!s_pendingHooks.TryAdd(msgId, pending))
-			{
-				s_pendingRequestPool.Return(pending);
-				return s_emptyPayload;
-			}
-
-			try
-			{
-				var header = new MessageHeader(msgId, PayloadType.Request, (ulong)argsPayload.Length);
-				if (!endpoint.Write(header, argsPayload, IPC_TIMEOUT_MS))
-				{
-					Log.Warning($"Failed to send intercept request for hook {hookIndex}");
-					return s_emptyPayload;
-				}
-
-				// Wait for response
-				if (!pending.Wait(IPC_TIMEOUT_MS))
-				{
-					Log.Warning($"Timeout waiting for intercept response for hook {hookIndex} (MsgId: {msgId}).");
-					return s_emptyPayload;
-				}
-
-				return pending.TryGetResult(out byte[]? result) ? result ?? [] : [];
-			}
-			finally
-			{
-				s_pendingHooks.TryRemove(msgId, out _);
-				pending.Reset();
-				s_pendingRequestPool.Return(pending);
-			}
-		}
-		finally
-		{
-			Interlocked.Decrement(ref s_activeWriters);
-		}
+		var result = SendRequestInternal(hookIndex, PayloadType.Request, argsPayload, IPC_TIMEOUT_MS, "intercept request");
+		return result ?? s_emptyPayload;
 	}
 
 	/// <summary>
@@ -182,79 +136,46 @@ public class Controller
 	/// <returns>
 	/// True if if the framework should continue propagating tick detours; false otherwise.
 	/// </returns>
-	[RequiresDynamicCode("MarshalUtils.Serialize requires dynamic code")]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool SendFrameworkRequest()
 	{
-		if (!s_running)
-			return false;
+		var result = SendRequestInternal(MessageId.FRAMEWORK_SYNC_COMMAND_ID, PayloadType.Request, default, IPC_FAST_FAIL_TIMEOUT_MS);
+		return result != null && result.Length > 0 && result[0] != 0;
+	}
 
-		Interlocked.Increment(ref s_activeWriters);
-		try
+	/// <summary>
+	/// Requests a configuration setting from the main application
+	/// </summary>
+	/// <typeparam name="T">The expected type of the result.</typeparam>
+	/// <param name="configId">
+	/// The configuration setting's identifier.
+	/// </param>
+	/// <param name="result">
+	/// A reference to store the retrieved configuration value.
+	/// Only modified if the request is successful and the returned value can be deserialized into the expected type.
+	/// </param>
+	/// <param name="timeoutMs">
+	/// The timeout in milliseconds to wait for the main application to respond before giving up.
+	/// </param>
+	/// <returns>
+	/// True if the request was successful and the result was retrieved and deserialized; false otherwise.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool GetConfig<T>(ConfigIdentifier configId, ref T result, int timeoutMs = IPC_TIMEOUT_MS)
+	where T : unmanaged
+	{
+		Span<byte> payload = stackalloc byte[sizeof(ConfigIdentifier)];
+		MarshalUtils.Write(payload, configId);
+
+		var retVal = SendRequestInternal(MessageId.CONFIG_COMMAND_ID, PayloadType.Config, payload, timeoutMs);
+
+		if (retVal != null && retVal.Length >= Unsafe.SizeOf<T>())
 		{
-			var endpoint = s_outgoingEndpoint;
-			if (!s_running || endpoint == null)
-				return false;
-
-			ushort seq = GetNextSequence(HookMessageId.FRAMEWORK_SYSTEM_ID);
-			uint msgId = HookMessageId.Pack(HookMessageId.FRAMEWORK_SYSTEM_ID, seq);
-
-			var pending = s_pendingRequestPool.Get();
-			if (!s_pendingHooks.TryAdd(msgId, pending))
-			{
-				s_pendingRequestPool.Return(pending);
-				return false;
-			}
-
-			byte[]? rented = null;
-			int payloadSize = Unsafe.SizeOf<FrameworkMessageData>();
-			var data = new FrameworkMessageData { Type = FrameworkMessageType.TickSyncRequest };
-			var header = new MessageHeader(msgId, PayloadType.Request, (ulong)payloadSize);
-			bool sent;
-
-			try
-			{
-				if (payloadSize <= STACKALLOC_THRESHOLD)
-				{
-					Span<byte> payload = stackalloc byte[payloadSize];
-					MarshalUtils.Write(payload, in data);
-					sent = endpoint.Write(header, payload, IPC_TIMEOUT_MS);
-				}
-				else
-				{
-					rented = ArrayPool<byte>.Shared.Rent(payloadSize);
-					Span<byte> rentedSpan = rented.AsSpan(0, payloadSize);
-					MarshalUtils.Write(rentedSpan, in data);
-					sent = endpoint.Write(header, rentedSpan, IPC_TIMEOUT_MS);
-				}
-
-				if (!sent)
-				{
-					Log.Warning("Failed to send framework tick sync request.");
-					return false;
-				}
-
-				if (!pending.Wait(IPC_FAST_FAIL_TIMEOUT_MS))
-					return false;
-
-				if (pending.TryGetResult(out byte[]? result) && result != null && result.Length > 0)
-					return result[0] != 0;
-
-				return false;
-			}
-			finally
-			{
-				if (rented != null)
-					ArrayPool<byte>.Shared.Return(rented);
-
-				s_pendingHooks.TryRemove(msgId, out _);
-				pending.Reset();
-				s_pendingRequestPool.Return(pending);
-			}
+			result = MarshalUtils.Deserialize<T>(retVal);
+			return true;
 		}
-		finally
-		{
-			Interlocked.Decrement(ref s_activeWriters);
-		}
+
+		return false;
 	}
 
 	/// <summary>
@@ -405,6 +326,8 @@ public class Controller
 
 			s_driverManager = new DriverManager();
 			s_driverManager.Initialize();
+
+			FrameworkDriver.InstanceOrNull?.SynchronizeConfig();
 
 			// Main loop
 			uint taskIndex = 0;
@@ -615,7 +538,7 @@ public class Controller
 		s_incomingEndpoint?.Dispose();
 		s_incomingEndpoint = null;
 
-		s_pendingHooks.Clear();
+		s_pendingMsgRequests.Clear();
 		s_sequenceCounters.Clear();
 		s_eventSubscriptionRefCount.Clear();
 
@@ -640,20 +563,24 @@ public class Controller
 				{
 					case PayloadType.Request:
 						{
-							uint hookId = HookMessageId.GetHookId(header.Id);
-							if (hookId == HookMessageId.FRAMEWORK_SYSTEM_ID)
-								HandleFrameworkCommand(header.Id, payload);
+							uint hookId = MessageId.GetEmbeddedId(header.Id);
+							if (hookId == MessageId.FRAMEWORK_SYNC_COMMAND_ID)
+								HandleFrameworkSyncRequest();
 							else
 								HandleWrapperInvoke(header.Id, payload);
 						}
 						break;
 
-					case PayloadType.Command:
-						HandleDriverCommand(header.Id, payload);
+					case PayloadType.Ack:
+						HandleAck(header.Id, payload);
 						break;
 
-					case PayloadType.Blob:
-						HandleHookResponse(header.Id, payload);
+					case PayloadType.NAck:
+						HandleNAck(header.Id);
+						break;
+
+					case PayloadType.Command:
+						HandleDriverCommand(header.Id, payload);
 						break;
 
 					case PayloadType.Bye:
@@ -667,7 +594,7 @@ public class Controller
 
 					case PayloadType.Unregister:
 						Log.Verbose("Received unregister hook message.");
-						HandleHookUnregister(header.Id);
+						HandleHookUnregister(header.Id, payload);
 						break;
 
 					case PayloadType.EventSubscribe:
@@ -678,6 +605,10 @@ public class Controller
 					case PayloadType.EventUnsubscribe:
 						Log.Verbose("Received event unsubscribe message.");
 						HandleEventUnsubscribe(header.Id, payload);
+						break;
+
+					case PayloadType.Config:
+						HandleConfigSetRequest(header.Id, payload);
 						break;
 
 					default:
@@ -717,18 +648,17 @@ public class Controller
 				if (hookId == 0)
 					return []; // Failure
 
-				return BitConverter.GetBytes(hookId);
+				return MarshalUtils.Serialize(hookId);
 			});
 
 			if (result.Length > 0)
 			{
-				var header = new MessageHeader(requestId, PayloadType.Ack, (ulong)result.Length);
-				s_outgoingEndpoint?.Write(header, result, IPC_TIMEOUT_MS);
+				SendResponse(requestId, result, PayloadType.Ack);
 			}
 			else
 			{
-				Log.Error($"Failed to register hook for request {requestId} on framework thread.");
 				SendResponse(requestId, PayloadType.NAck);
+				Log.Error($"Failed to register hook for request {requestId} on framework thread.");
 			}
 		}
 		catch (Exception ex)
@@ -738,8 +668,15 @@ public class Controller
 	}
 
 	[RequiresDynamicCode("HookRegistry requires dynamic code")]
-	private static void HandleHookUnregister(uint hookId)
+	private static void HandleHookUnregister(uint msgId, ReadOnlySpan<byte> payload)
 	{
+		if (payload.Length < sizeof(uint))
+		{
+			SendResponse(msgId, PayloadType.NAck);
+			return;
+		}
+
+		uint hookId = MarshalUtils.Read<uint>(payload);
 		try
 		{
 			byte[] result = FrameworkDriver.RunOnTick(() =>
@@ -749,36 +686,36 @@ public class Controller
 			});
 
 			bool wasSuccessful = result.Length > 0 && result[0] == 1;
-			SendResponse(hookId, wasSuccessful ? PayloadType.Ack : PayloadType.NAck);
+			SendResponse(msgId, result, wasSuccessful ? PayloadType.Ack : PayloadType.NAck);
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, $"Failed to unregister hook {hookId} on framework thread.");
-			SendResponse(hookId, PayloadType.NAck);
+			SendResponse(msgId, PayloadType.NAck);
+			Log.Error(ex, $"Failed to unregister hook ID {hookId} on framework thread.");
 		}
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static void SendResponse(uint msgId, PayloadType responseType)
 	{
-		if (s_outgoingEndpoint == null)
-			return;
-
-		var header = new MessageHeader(msgId, responseType);
-		s_outgoingEndpoint.Write(header, IPC_TIMEOUT_MS);
+		SendResponse(msgId, default, responseType);
 	}
 
-	private static void SendResponse(uint msgId, ReadOnlySpan<byte> payload, PayloadType responseType = PayloadType.Blob)
+	private static void SendResponse(uint msgId, ReadOnlySpan<byte> payload, PayloadType responseType = PayloadType.NAck)
 	{
 		if (s_outgoingEndpoint == null)
 			return;
 
 		var header = new MessageHeader(msgId, responseType, (ulong)payload.Length);
-		s_outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS);
+		if (!s_outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS))
+		{
+			Log.Warning($"Failed to send response for message ID: {msgId}, Type: {responseType}, Length: {payload.Length}");
+		}
 	}
 
 	private static void ProcessInvokeInternal((uint MsgId, byte[] Data, int Length) state)
 	{
-		uint hookId = HookMessageId.GetHookId(state.MsgId);
+		uint hookId = MessageId.GetEmbeddedId(state.MsgId);
 
 		try
 		{
@@ -789,7 +726,7 @@ public class Controller
 			byte[] ExecuteLogic()
 			{
 				var args = new ReadOnlySpan<byte>(state.Data, 1, state.Length - 1);
-				if (hookId != HookMessageId.BATCH_HOOK_ID)
+				if (hookId != MessageId.BATCH_HOOK_ID)
 					return HookRegistry.Instance.InvokeOriginal(hookId, args);
 				else
 					return ProcessInvokeBatch(args);
@@ -804,16 +741,80 @@ public class Controller
 				result = ExecuteLogic();
 			}
 
-			SendWrapperResult(state.MsgId, result);
+			SendResponse(state.MsgId, result, PayloadType.Ack);
 		}
 		catch (Exception ex)
 		{
+			SendResponse(state.MsgId, PayloadType.NAck);
 			Log.Error(ex, $"Error invoking hook[ID: {hookId}]");
-			SendWrapperResult(state.MsgId, []);
 		}
 		finally
 		{
 			s_bufferPool.Return(state.Data);
+		}
+	}
+
+	/// <summary>
+	/// Core orchestration logic for all outgoing IPC requests.
+	/// </summary>
+	private static byte[]? SendRequestInternal(
+		uint commandId,
+		PayloadType type,
+		ReadOnlySpan<byte> payload,
+		int waitTimeoutMs,
+		string? logLabel = null)
+	{
+		if (!s_running)
+			return null;
+
+		Interlocked.Increment(ref s_activeWriters);
+		try
+		{
+			var endpoint = s_outgoingEndpoint;
+			if (!s_running || endpoint == null)
+				return null;
+
+			ushort seq = GetNextSequence(commandId);
+			uint msgId = MessageId.Pack(commandId, seq);
+
+			var pending = s_pendingRequestPool.Get();
+			if (!s_pendingMsgRequests.TryAdd(msgId, pending))
+			{
+				s_pendingRequestPool.Return(pending);
+				return null;
+			}
+
+			try
+			{
+				var header = new MessageHeader(msgId, type, (ulong)payload.Length);
+				if (!endpoint.Write(header, payload, IPC_TIMEOUT_MS))
+				{
+					if (logLabel != null)
+						Log.Warning($"Failed to send {logLabel} (ID: {commandId})");
+
+					return null;
+				}
+
+				if (!pending.Wait(waitTimeoutMs))
+				{
+					if (logLabel != null)
+						Log.Warning($"Timeout waiting for {logLabel} (MsgId: {msgId})");
+
+					return null;
+				}
+
+				return pending.TryGetResult(out byte[]? result) ? result : null;
+			}
+			finally
+			{
+				s_pendingMsgRequests.TryRemove(msgId, out _);
+				pending.Reset();
+				s_pendingRequestPool.Return(pending);
+			}
+		}
+		finally
+		{
+			Interlocked.Decrement(ref s_activeWriters);
 		}
 	}
 
@@ -887,88 +888,65 @@ public class Controller
 		}
 	}
 
-	private static void SendWrapperResult(uint msgId, byte[] resultPayload)
+	private static void HandleFrameworkSyncRequest()
 	{
-		if (s_outgoingEndpoint == null)
+		// NOTE: Framework sync requests from the main app are fire-and-forget. Don't send responses
+		if (!FrameworkDriver.IsInitialized)
 			return;
 
-		var header = new MessageHeader(msgId, PayloadType.Blob, (ulong)resultPayload.Length);
-		if (!s_outgoingEndpoint.Write(header, resultPayload, IPC_TIMEOUT_MS))
-		{
-			Log.Warning($"Failed to send wrapper result for message ID: {msgId}");
-		}
+		FrameworkDriver.Instance.IsSyncEnabled = true;
 	}
 
-	private static void HandleHookResponse(uint msgId, ReadOnlySpan<byte> data)
+	private static void HandleDriverCommand(uint msgId, ReadOnlySpan<byte> payload)
 	{
-		if (s_pendingHooks.TryGetValue(msgId, out var pending))
-		{
-			pending.SetResult(data.ToArray());
-		}
-		else
-		{
-			Log.Warning($"Received response for unknown request with message ID: {msgId}.");
-		}
-	}
-
-	private static void HandleFrameworkCommand(uint msgId, ReadOnlySpan<byte> payload)
-	{
-		if (payload.Length < Unsafe.SizeOf<FrameworkMessageData>())
+		if (payload.Length < sizeof(DriverCommand))
 		{
 			SendResponse(msgId, PayloadType.NAck);
 			return;
 		}
 
-		var msg = MemoryMarshal.Read<FrameworkMessageData>(payload);
+		DriverCommand commandId = MarshalUtils.Read<DriverCommand>(payload);
+		ReadOnlySpan<byte> args = payload[sizeof(DriverCommand)..];
 
-		if (msg.Type == FrameworkMessageType.EnableTickSync)
+		if (!s_commandHandlers.TryGetValue(commandId, out var handler))
 		{
-			if (FrameworkDriver.IsInitialized)
-			{
-				FrameworkDriver.Instance.IsSyncEnabled = true;
-				SendResponse(msgId, PayloadType.Ack);
-				return;
-			}
-		}
-		else
-		{
-			Log.Warning($"Unhandled framework command: {msg.Type}");
-		}
-
-		SendResponse(msgId, PayloadType.NAck);
-	}
-
-	private static void HandleDriverCommand(uint msgId, ReadOnlySpan<byte> payload)
-	{
-		if (payload.Length < sizeof(int))
-		{
-			SendResponse(msgId, []);
+			SendResponse(msgId, PayloadType.NAck);
+			Log.Warning($"Unknown driver command: 0x{(int)commandId:X4}");
 			return;
 		}
 
-		DriverCommand commandId = MarshalUtils.Read<DriverCommand>(payload);
-		ReadOnlySpan<byte> args = payload[sizeof(int)..];
-
-		byte[] response;
-		if (s_commandHandlers.TryGetValue(commandId, out var handler))
+		try
 		{
-			try
-			{
-				response = handler(args);
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, $"Error executing driver command: 0x{(int)commandId:X4}");
-				response = [];
-			}
+			byte[] response = handler(args);
+			SendResponse(msgId, response, PayloadType.Ack);
 		}
-		else
+		catch (Exception ex)
 		{
-			Log.Warning($"Unknown driver command: 0x{(int)commandId:X4}");
-			response = [];
+			SendResponse(msgId, PayloadType.NAck);
+			Log.Error(ex, $"Error executing driver command: 0x{(int)commandId:X4}");
+		}
+	}
+
+	private static void HandleAck(uint msgId, ReadOnlySpan<byte> payload)
+	{
+		if (s_pendingMsgRequests.TryGetValue(msgId, out var pending))
+		{
+			pending.SetResult(payload.ToArray());
+			return;
 		}
 
-		SendResponse(msgId, response);
+		Log.Warning($"Received unexpected ACK message[ID: {msgId}, Length: {payload.Length}]");
+	}
+
+	private static void HandleNAck(uint msgId)
+	{
+		if (s_pendingMsgRequests.TryRemove(msgId, out var pending))
+		{
+			pending.SetResult([]); // Signal failure with empty payload
+			return;
+		}
+
+		Log.Warning($"Received unexpected NAck message[ID: {msgId}]");
 	}
 
 	private static void HandleEventSubscribe(uint messageId, ReadOnlySpan<byte> payload)
@@ -989,13 +967,13 @@ public class Controller
 				addValue: 1,
 				updateValueFactory: (_, current) => ++current);
 
+			SendResponse(messageId, [1], PayloadType.Ack);
 			Log.Information($"Event subscription added: {data.EventId} (refcount: {newCount})");
-			SendResponse(messageId, PayloadType.Ack);
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, "Error handling event subscribe message.");
 			SendResponse(messageId, PayloadType.NAck);
+			Log.Error(ex, "Error handling event subscribe message.");
 		}
 	}
 
@@ -1032,13 +1010,47 @@ public class Controller
 				Log.Information($"Event subscription removed: {data.EventId} (refcount: {newCount})");
 			}
 
-			SendResponse(messageId, PayloadType.Ack);
+			SendResponse(messageId, [1], PayloadType.Ack);
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, "Error handling event unsubscribe message.");
 			SendResponse(messageId, PayloadType.NAck);
+			Log.Error(ex, "Error handling event unsubscribe message.");
 		}
+	}
+
+	private static void HandleConfigSetRequest(uint msgId, ReadOnlySpan<byte> payload)
+	{
+		if (payload.Length < sizeof(ConfigIdentifier))
+		{
+			SendResponse(msgId, PayloadType.NAck);
+			return;
+		}
+
+		ConfigIdentifier configId = MarshalUtils.Read<ConfigIdentifier>(payload);
+		ReadOnlySpan<byte> data = payload[sizeof(ConfigIdentifier)..];
+
+		switch (configId)
+		{
+			case ConfigIdentifier.FpsLimiter:
+				if (FrameworkDriver.IsInitialized && data.Length > 0)
+				{
+					// NOTE: The main application's setting is a permission to override (disable the limiter).
+					// Therefore, update the game config only override is set to true.
+					bool overrideLimiter = data[0] != 0;
+					if (overrideLimiter)
+					{
+						FrameworkDriver.Instance.SetFpsLimiterEnabled(!overrideLimiter, "SET");
+					}
+
+					SendResponse(msgId, [1], PayloadType.Ack);
+					Log.Debug("Config setter was called with FPS limiter override: " + overrideLimiter);
+					return;
+				}
+				break;
+		}
+
+		SendResponse(msgId, PayloadType.NAck);
 	}
 
 	private unsafe static byte[] HandleRedrawActor(ReadOnlySpan<byte> args)
@@ -1088,6 +1100,6 @@ public class Controller
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static ushort GetNextSequence(uint hookIndex)
 	{
-		return (ushort)s_sequenceCounters.AddOrUpdate(hookIndex, 1, (_, v) => (ushort)((v + 1) & HookMessageId.MAX_SEQ_NUM));
+		return (ushort)s_sequenceCounters.AddOrUpdate(hookIndex, 1, (_, v) => (ushort)((v + 1) & MessageId.MAX_SEQ_NUM));
 	}
 }

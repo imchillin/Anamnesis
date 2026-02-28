@@ -7,6 +7,7 @@ using Anamnesis.Keyboard;
 using Anamnesis.Memory.Exceptions;
 using Anamnesis.Styles.Controls;
 using PropertyChanged;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,6 +23,7 @@ public class Settings : INotifyPropertyChanged
 	private const int MIN_AUTOSAVE_INTERVAL_MINS = 1;
 	private int autoSaveIntervalMinutes = 5;
 	private bool enableAutoSave = true;
+	private bool overrideFpsLimiter = true;
 
 	public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -151,6 +153,37 @@ public class Settings : INotifyPropertyChanged
 				return 1.0;
 
 			return this.Opacity;
+		}
+	}
+
+	public bool OverrideFpsLimiter
+	{
+		get => this.overrideFpsLimiter;
+		set
+		{
+			if (value == this.overrideFpsLimiter)
+				return;
+
+			if (ControllerService.InstanceOrNull?.IsConnected != true)
+			{
+				this.overrideFpsLimiter = value;
+				return;
+			}
+			else
+			{
+				try
+				{
+					bool result = ControllerService.Instance.SendConfigSet(RemoteController.IPC.ConfigIdentifier.FpsLimiter, value ? (byte)0 : (byte)1);
+					if (result)
+						this.overrideFpsLimiter = value;
+					else
+						Log.Error("Failed to apply FPS limiter override configuration setting.");
+				}
+				catch (ServiceNotFoundException)
+				{
+					// Service not instantiated yet, nothing to restart
+				}
+			}
 		}
 	}
 

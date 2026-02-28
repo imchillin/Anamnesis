@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              xmlns:XivToolsWPF="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
              mc:Ignorable="d"
              d:DesignHeight="450">
@@ -14,10 +15,48 @@
 		<Grid HorizontalAlignment="Left" Width="450" Margin="10, 4, 0, 0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
+			<!-- Game integration -->
+			<GroupBox x:Name="GameIntegrationGroupBox" Grid.Row="0" Margin="0, 0, 0, 10">
+				<GroupBox.Header>
+					<XivToolsWPF:Header Key="Settings_GameIntegration" Icon="CircleNodes"/>
+				</GroupBox.Header>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+
+					<Grid x:Name="Connections_GameIntegration_OverrideFpsLimiter" Grid.Row="0">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="0" Key="Settings_OverrideFpsLimiter" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.OverrideFpsLimiter}" Grid.Column="1" Grid.Row="0" Margin="6" x:Name="Settings_OverrideFpsLimiter"/>
+						<TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0, 0, 6, 0">
+							<fa:IconBlock Icon="InfoCircle" FontSize="13"/>
+
+							<TextBlock.ToolTip>
+								<XivToolsWPF:TextBlock Key="Settings_OverrideFpsLimiter_Tooltip"/>
+							</TextBlock.ToolTip>
+						</TextBlock>
+
+						<XivToolsWPF:InfoControl Grid.Row="1" Key="Settings_OverrideFpsLimiterWarning" Grid.ColumnSpan="2" Visibility="{Binding SettingsService.Settings.OverrideFpsLimiter, Converter={StaticResource !B2V}}"/>
+					</Grid>
+				</Grid>
+			</GroupBox>
+			
 			<!-- External Services -->
-			<GroupBox x:Name="ExternalServicesGroupBox" Grid.Row="0" Margin="0, 0, 0, 10">
+			<GroupBox x:Name="ExternalServicesGroupBox" Grid.Row="1" Margin="0, 0, 0, 10">
 				<GroupBox.Header>
 					<XivToolsWPF:Header Key="Settings_ExternalHeader" Icon="Link"/>
 				</GroupBox.Header>
