@@ -3,8 +3,8 @@
 
 namespace Anamnesis.Memory;
 
+using Anamnesis.Files;
 using Iced.Intel;
-using Microsoft.Win32;
 using Serilog;
 using System;
 using System.ComponentModel;
@@ -32,6 +32,9 @@ internal sealed class Injector : IDisposable
 	private const string ANAM_CTRL_RESOURCE = "Anamnesis.Memory.RemoteController.dll";
 	private const string ANAM_CTRL_RESOURCE_FILENAME = "ANAMCTRL.dll";
 	private const string ANAM_CTRL_ENTRY_POINT = "RemoteControllerEntry";
+
+	private static readonly string s_fasmDllPattern = FASM_RESOURCE_FILENAME[..^4] + "*.dll";
+	private static readonly string s_anamCtrlDllPattern = ANAM_CTRL_RESOURCE_FILENAME[..^4] + "*.dll";
 
 	private readonly Process targetProcess;
 	private readonly IntPtr loadLibraryFuncAddr;
@@ -123,6 +126,18 @@ internal sealed class Injector : IDisposable
 		try
 		{
 			string tempDir = Path.GetTempPath();
+			Log.Information($"[Injector] Attempting to clean up old extracted resources...");
+			int deletedFiles = 0;
+#if DEBUG
+			bool logFileDeletion = true;
+#else
+			bool logFileDeletion = false;
+#endif
+
+			deletedFiles += FileService.TryDeleteFiles(tempDir, s_anamCtrlDllPattern, scheduleOnFailure: true, logActions: logFileDeletion, abortOnFailure: false);
+			deletedFiles += FileService.TryDeleteFiles(tempDir, s_fasmDllPattern, scheduleOnFailure: true, logActions: logFileDeletion, abortOnFailure: false);
+			Log.Information($"[Injector] Cleanup complete. Deleted {deletedFiles} old resource file(s).");
+
 			this.remoteCtrlDllPath = ExtractResourceToDirectory(ANAM_CTRL_RESOURCE, tempDir, ANAM_CTRL_RESOURCE_FILENAME);
 			Log.Information($"[Injector] Extracted remote controller DLL to: {this.remoteCtrlDllPath}");
 
@@ -255,59 +270,6 @@ internal sealed class Injector : IDisposable
 		catch
 		{
 			return false; // Assume it's not a match on error
-		}
-	}
-
-	private static void ScheduleForDeletion(string filePath)
-	{
-		const string RegValueName = "PendingFileRenameOperations";
-
-		if (!File.Exists(filePath))
-			return;
-
-		try
-		{
-			string regKeyPath = string.Join("\\", "SYSTEM", "CurrentControlSet", "Control", "Session Manager");
-			string longPath = Path.GetFullPath(filePath);
-			string ntPath = longPath.StartsWith(@"\??\") ? longPath : @"\??\" + longPath;
-
-			using var key = Registry.LocalMachine.OpenSubKey(regKeyPath, writable: true);
-			if (key == null)
-			{
-				Log.Error("[Injector] Could not open registry key for pending file rename operations.");
-				return;
-			}
-
-			var pendingDeletes = (key.GetValue(RegValueName) as string[] ?? []).ToList();
-
-			// Remove existing entries for matching file to avoid duplicates
-			for (int i = pendingDeletes.Count - 2; i >= 0; i -= 2)
-			{
-				if (pendingDeletes[i].EndsWith(longPath, StringComparison.OrdinalIgnoreCase) ||
-					pendingDeletes[i].EndsWith(ntPath, StringComparison.OrdinalIgnoreCase))
-				{
-					// Remove the destination marker first, then the source
-					if (i + 1 < pendingDeletes.Count)
-						pendingDeletes.RemoveAt(i + 1);
-
-					pendingDeletes.RemoveAt(i);
-				}
-			}
-
-			// Add our new deletion entry
-			pendingDeletes.Add(ntPath);
-			pendingDeletes.Add(string.Empty);
-
-			key.SetValue(RegValueName, pendingDeletes.ToArray(), RegistryValueKind.MultiString);
-			Log.Information($"[Injector] Scheduled file for deletion on next OS reboot: {filePath}");
-		}
-		catch (UnauthorizedAccessException)
-		{
-			Log.Error($"[Injector] Access denied when trying to schedule file for deletion: {filePath}.");
-		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, $"[Injector] Failed to schedule file for deletion: {filePath}");
 		}
 	}
 
@@ -475,12 +437,12 @@ internal sealed class Injector : IDisposable
 		// Clean up temp files
 		if (this.remoteCtrlDllPath != null)
 		{
-			ScheduleForDeletion(this.remoteCtrlDllPath);
+			FileService.ScheduleFileForDeletion(this.remoteCtrlDllPath, true);
 		}
 
 		if (this.fasmDllPath != null)
 		{
-			ScheduleForDeletion(this.fasmDllPath);
+			FileService.ScheduleFileForDeletion(this.fasmDllPath, true);
 		}
 
 		this.isDisposed = true;
