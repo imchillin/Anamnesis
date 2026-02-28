@@ -1268,8 +1268,8 @@ public class ControllerService : ServiceBase<ControllerService>
 	private byte[] SendDriverCommandInternal(ReadOnlySpan<byte> payload, int timeout = IPC_TIMEOUT_MS)
 	{
 #if DEBUG
-    if (payload.Length < sizeof(DriverCommand))
-        throw new ArgumentException("Driver command payload must start with a serialized DriverCommand enum value.");
+		if (payload.Length < sizeof(DriverCommand))
+			throw new ArgumentException("Driver command payload must start with a serialized DriverCommand enum value.");
 #endif
 
 		ushort seq = this.GetNextSequence(MessageId.DRIVER_COMMAND_ID);
