@@ -782,12 +782,13 @@ public class ControllerService : ServiceBase<ControllerService>
 	/// </summary>
 	/// <typeparam name="TResult">The expected return type.</typeparam>
 	/// <param name="command">The driver command.</param>
+	/// <param name="timeout">The timeout in milliseconds for the command to complete.</param>
 	/// <param name="args">Arguments to serialize and send.</param>
 	/// <returns>The deserialized result, or null if the call failed.</returns>
-	public TResult? SendDriverCommand<TResult>(DriverCommand command, params object[] args)
+	public TResult? SendDriverCommand<TResult>(DriverCommand command, int timeout = IPC_TIMEOUT_MS, params object[] args)
 		where TResult : unmanaged
 	{
-		byte[] response = this.SendDriverCommandRaw(command, args);
+		byte[] response = this.SendDriverCommandRaw(command, timeout, args: args);
 		if (response.Length < Unsafe.SizeOf<TResult>())
 			return null;
 
@@ -798,9 +799,10 @@ public class ControllerService : ServiceBase<ControllerService>
 	/// Sends a raw driver command with serialized arguments.
 	/// </summary>
 	/// <param name="command">The driver command.</param>
+	/// <param name="timeout">The timeout in milliseconds for the command to complete.</param>
 	/// <param name="args">Arguments to serialize.</param>
 	/// <returns>Raw response bytes, or empty array on failure.</returns>
-	public byte[] SendDriverCommandRaw(DriverCommand command, params object[] args)
+	public byte[] SendDriverCommandRaw(DriverCommand command, int timeout = IPC_TIMEOUT_MS, params object[] args)
 	{
 		if (this.outgoingEndpoint == null || !this.isConnected)
 			return [];
@@ -816,7 +818,31 @@ public class ControllerService : ServiceBase<ControllerService>
 		if (argsSize > 0)
 			MarshalUtils.SerializeArgs(payload[sizeof(int)..], args);
 
-		return this.SendDriverCommandInternal(payload);
+		return this.SendDriverCommandInternal(payload, timeout);
+	}
+
+	/// <summary>
+	/// Sends a raw driver command with serialized arguments.
+	/// </summary>
+	/// <param name="command">The driver command.</param>
+	/// <param name="serializedArgs">Arguments that have already been serialized to a byte array.</param>
+	/// <param name="timeout">The timeout in milliseconds for the command to complete.</param>
+	/// <returns>Raw response bytes, or empty array on failure.</returns>
+	public byte[] SendDriverCommandRaw(DriverCommand command, ReadOnlySpan<byte> serializedArgs, int timeout = IPC_TIMEOUT_MS)
+	{
+		if (this.outgoingEndpoint == null || !this.isConnected)
+			return [];
+
+		int payloadSize = sizeof(int) + serializedArgs.Length;
+
+		Span<byte> payload = payloadSize <= 256
+			? stackalloc byte[payloadSize]
+			: new byte[payloadSize];
+
+		MarshalUtils.Write(payload, (int)command);
+		serializedArgs.CopyTo(payload[sizeof(int)..]);
+
+		return this.SendDriverCommandInternal(payload, timeout);
 	}
 
 	/// <summary>
@@ -1194,7 +1220,7 @@ public class ControllerService : ServiceBase<ControllerService>
 		}
 	}
 
-	private byte[] SendDriverCommandInternal(ReadOnlySpan<byte> payload)
+	private byte[] SendDriverCommandInternal(ReadOnlySpan<byte> payload, int timeout = IPC_TIMEOUT_MS)
 	{
 		uint requestId = this.GetNextRequestId();
 		var pending = this.wrapperRequestPool.Get();
@@ -1206,7 +1232,7 @@ public class ControllerService : ServiceBase<ControllerService>
 			if (!this.outgoingEndpoint!.Write(header, payload, IPC_TIMEOUT_MS))
 				return [];
 
-			if (!pending.Wait(IPC_TIMEOUT_MS))
+			if (!pending.Wait(timeout))
 				return [];
 
 			if (!pending.TryGetResult(out byte[]? result) || result == null)

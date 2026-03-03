@@ -220,7 +220,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 				// Display a warning if there is a face bones mismatch.
 				// We should not load expressions if the face bones are mismatched.
 				// We skip this step for non-humanoid actors
-				if (actor.Customize!.Age != ActorCustomizeMemory.Ages.None
+				if (actor.DrawData.Customize!.Age != ActorCustomizeMemory.Ages.None
 					&& importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly)
 				{
 					mismatchedFaceBones = isLegacyFile || poseFile.IsPreDTPoseFile() != skeleton.HasPreDTFace;
@@ -322,7 +322,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 						skeleton.ClearSelection();
 
 						// Pre-DT faces need to be imported without positions.
-						bool doLegacyImport = actor.Customize!.Age == ActorCustomizeMemory.Ages.None
+						bool doLegacyImport = actor.DrawData.Customize!.Age == ActorCustomizeMemory.Ages.None
 											|| (poseFile.IsPreDTPoseFile() && skeleton.HasPreDTFace && mode.HasFlagUnsafe(PoseMode.Position));
 						if (doLegacyImport)
 						{
@@ -411,7 +411,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		if (targetBone == null || targetBone.TransformMemory == null)
 			throw new ArgumentException("The target bone and its transform memory cannot be null");
 
-		if (targetBone.Name.StartsWith("iv_shiri") || targetBone.Name.StartsWith("iv_kougan"))
+		if (targetBone.Name.StartsWith("iv_shiri") || targetBone.Name.StartsWith("iv_kougan") || targetBone.Name.Contains("j_ex"))
 			return;
 
 		CmQuaternion newRotation = targetBone.TransformMemory.Rotation.Mirror(); // character-relative transform
@@ -539,7 +539,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		{
 			List<Bone> boneChildren = targetBone.GetDescendants();
 			foreach (var childBone in boneChildren)
-		{
+			{
 				bonePositions.Add(childBone, childBone.Position);
 			}
 		}

@@ -132,21 +132,11 @@ public static class NpcAppearanceSearch
 			if (a.ModelType != npc.ModelCharaRow)
 				return false;
 
-			if (a.Customize != null)
-			{
-				if (!IsCustomize(a.Customize, npc))
-				{
-					return false;
-				}
-			}
+			if (a.DrawData.Customize != null && !IsCustomize(a.DrawData.Customize, npc))
+				return false;
 
-			if (a.Equipment != null)
-			{
-				if (!IsEquipment(a.Equipment, npc))
-				{
-					return false;
-				}
-			}
+			if (a.DrawData.Equipment != null && !IsEquipment(a.DrawData.Equipment, npc))
+				return false;
 
 			return true;
 		}) == true;

@@ -12,7 +12,8 @@ public class ActorModelMemory : DrawObjectMemory
 	/// <summary>
 	/// Gets or sets the main-hand weapon memory object.
 	/// </summary>
-	[Bind(0x030, BindFlags.Pointer)] public new ExtendedWeaponMemory? ChildObject
+	[Bind(0x030, BindFlags.Pointer)]
+	public new ExtendedWeaponMemory? ChildObject
 	{
 		get => base.ChildObject as ExtendedWeaponMemory;
 		set

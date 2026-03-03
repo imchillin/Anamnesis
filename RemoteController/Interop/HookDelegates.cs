@@ -7,6 +7,13 @@ using RemoteController.Interop.Types;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
+public static class BoneKineDriver
+{
+	[FunctionBind("48 8B C4 55 57 48 83 EC 58")]
+	[UnmanagedFunctionPointer(CallingConvention.StdCall)]
+	public delegate void ApplyKineDriverTransforms(IntPtr kineDriverPtr, IntPtr hkaPosePtr);
+}
+
 public static class Camera
 {
 	[FunctionBind("E8 ?? ?? ?? ?? 0F 28 C7 0F 28 CE")]
@@ -27,6 +34,29 @@ public static class Character
 	[FunctionBind("E8 ?? ?? ?? ?? 84 C0 8B CF")]
 	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
 	public delegate bool IsWanderer(nint charPtr);
+}
+
+public static class DrawDataContainer
+{
+	[FunctionBind("E8 ?? ?? ?? ?? 0F B6 44 2F ?? A8 20")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public delegate nint HideVieraEars(nint containerPtr, byte hide);
+
+	[FunctionBind("E8 ?? ?? ?? ?? 0F B6 55 C9")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public delegate byte HideHeadgear(nint containerPtr, uint a2, byte hide);
+
+	[FunctionBind("E8 ?? ?? ?? ?? 0F B6 55 CB")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public delegate nint SetVisor(nint containerPtr, byte state);
+
+	[FunctionBind("E8 ?? ?? ?? ?? EB 50 44 8B 03")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public delegate byte SetFacewear(nint containerPtr, ushort slotIndex, ushort facewearId);
+
+	[FunctionBind("E8 ?? ?? ?? ?? 4C 8B 45 7F")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public delegate void LoadWeapon(nint containerPtr, WeaponSlot weaponSlot, WeaponModelId weaponId, byte forceReload, byte triggerEvent, byte skipObjUpdate, byte keepState, int loadMode);
 }
 
 public static class Framework
@@ -91,9 +121,9 @@ public static class HkaPose
 	public delegate void SyncModelSpace(nint posePtr);
 }
 
-public static class BoneKineDriver
+public static class Human
 {
-	[FunctionBind("48 8B C4 55 57 48 83 EC 58")]
-	[UnmanagedFunctionPointer(CallingConvention.StdCall)]
-	public delegate void ApplyKineDriverTransforms(IntPtr kineDriverPtr, IntPtr hkaPosePtr);
+	[FunctionBind("E8 ?? ?? ?? ?? 83 BF ?? ?? ?? ?? ?? 75 34")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public unsafe delegate bool UpdateDrawData(nint hPtr, byte* data, bool skipEquipment);
 }

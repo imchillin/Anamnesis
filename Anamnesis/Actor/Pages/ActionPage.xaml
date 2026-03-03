@@ -281,7 +281,7 @@
 			                Height="26"
 			                DataHead="{Binding Actor.Unsafe.ModelObject.DataHead}"
 			                DataPath="{Binding Actor.Unsafe.ModelObject.DataPath}"
-			                Tribe="{Binding Actor.Unsafe.Customize.Tribe}"
+			                Tribe="{Binding Actor.Unsafe.DrawData.Customize.Tribe}"
 			            />
 
                         <XivToolsWpf:TextBlock Key="Character_Action_ModelRow"

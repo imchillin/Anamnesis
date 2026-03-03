@@ -5,10 +5,12 @@ namespace Anamnesis.Memory;
 
 using Anamnesis.Actor.Refresh;
 using Anamnesis.Core.Extensions;
+using Anamnesis.Files;
 using Anamnesis.Services;
 using Anamnesis.Utils;
 using PropertyChanged;
 using RemoteController.Interop.Delegates;
+using RemoteController.Interop.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,7 +20,7 @@ using System.Threading.Tasks;
 
 public class ActorMemory : GameObjectMemory, IDisposable
 {
-	private const int REFRESH_DEBOUNCE_TIMEOUT = 200;
+	private const double REFRESH_DEBOUNCE_TIMEOUT_MS = 16;
 
 	private static readonly List<IActorRefresher> s_actorRefreshers =
 	[
@@ -35,6 +37,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 
 	private int isRefreshing = 0;
 	private bool needsRefresh = false;
+	private bool forceReloadOnRefresh = false;
 
 	public ActorMemory()
 	{
@@ -48,7 +51,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		this.PropertyChanged += this.HandlePropertyChanged;
 
 		// Initialize the debounce timer
-		this.refreshDebounceTimer = new(REFRESH_DEBOUNCE_TIMEOUT) { AutoReset = false };
+		this.refreshDebounceTimer = new(REFRESH_DEBOUNCE_TIMEOUT_MS) { AutoReset = false };
 		this.refreshDebounceTimer.Elapsed += async (s, e) => { await this.Refresh(); };
 	}
 
@@ -64,16 +67,6 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		Carrying = 9,
 		InPositionLoop = 11,
 		Performance = 16,
-	}
-
-	[Flags]
-	public enum CharacterFlagDefs : byte
-	{
-		None = 0,
-		WeaponsVisible = 1 << 0,
-		WeaponsDrawn = 1 << 2,
-		VisorToggled = 1 << 4,
-		HeadgearEarsHidden = 1 << 5,
 	}
 
 	[Bind(0x0100, BindFlags.Pointer)]
@@ -95,13 +88,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	[Bind(0x0680, BindFlags.Pointer)] public ActorMemory? Mount { get; set; } // Targets object within MountContainer
 	[Bind(0x0688)] public ushort MountId { get; set; }
 	[Bind(0x06E8, BindFlags.Pointer)] public CompanionMemory? Companion { get; set; } // Targets object within CompanionContainer
-	[Bind(0x0708)] public WeaponMemory? MainHand { get; set; }
-	[Bind(0x0778)] public WeaponMemory? OffHand { get; set; }
-	[Bind(0x08C8)] public ActorEquipmentMemory? Equipment { get; set; }
-	[Bind(0x0918)] public ActorCustomizeMemory? Customize { get; set; }
-	[Bind(0x0936, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
-	[Bind(0x0937, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
-	[Bind(0x0938)] public GlassesMemory? Glasses { get; set; }
+	[Bind(Actor.DRAW_DATA_OFFSET)] public DrawDataMemory DrawData { get; set; } = new();
 	[Bind(0x0970, BindFlags.Pointer)] public OrnamentMemory? Ornament { get; set; } // Targets object within OrnamentContainer
 	[Bind(0x0978)] public ushort OrnamentId { get; set; }
 	[Bind(0x0A30)] public AnimationMemory? Animation { get; set; }
@@ -157,40 +144,6 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	[DependsOn(nameof(Companion))]
 	public bool HasCompanion => this.Companion != null;
 
-	[DependsOn(nameof(CharacterFlags))]
-	public bool VisorToggled
-	{
-		get => this.CharacterFlags.HasFlagUnsafe(CharacterFlagDefs.VisorToggled);
-		set
-		{
-			if (value)
-			{
-				this.CharacterFlags |= CharacterFlagDefs.VisorToggled;
-			}
-			else
-			{
-				this.CharacterFlags &= ~CharacterFlagDefs.VisorToggled;
-			}
-		}
-	}
-
-	[DependsOn(nameof(CharacterFlags))]
-	public bool HeadgearEarsHidden
-	{
-		get => this.CharacterFlags.HasFlagUnsafe(CharacterFlagDefs.HeadgearEarsHidden);
-		set
-		{
-			if (value)
-			{
-				this.CharacterFlags |= CharacterFlagDefs.HeadgearEarsHidden;
-			}
-			else
-			{
-				this.CharacterFlags &= ~CharacterFlagDefs.HeadgearEarsHidden;
-			}
-		}
-	}
-
 	[DependsOn(nameof(IsMotionDisabled))]
 	public bool IsMotionEnabled
 	{
@@ -203,6 +156,9 @@ public class ActorMemory : GameObjectMemory, IDisposable
 
 	[DependsOn(nameof(CharacterMode))]
 	public bool IsAnimationOverridden => this.CharacterMode == CharacterModes.AnimLock;
+
+	[DoNotNotify]
+	public CharacterFile? LastAppearanceSnapshot { get; set; }
 
 	/// <summary>Determines if the actor can be refreshed.</summary>
 	/// <param name="actor">The actor to check.</param>
@@ -224,8 +180,9 @@ public class ActorMemory : GameObjectMemory, IDisposable
 
 	/// <summary>Refreshes the specified actor.</summary>
 	/// <param name="actor">The actor to refresh.</param>
+	/// <param name="forceReload">If set, a full redraw will be forced, ignoring any optimizations that would normally be applied.</param>
 	/// <returns>True if the actor was refreshed, otherwise false.</returns>
-	public static async Task<bool> RefreshActor(ActorMemory actor)
+	public static async Task<bool> RefreshActor(ActorMemory actor, bool forceReload = false)
 	{
 		if (CanRefreshActor(actor))
 		{
@@ -233,8 +190,8 @@ public class ActorMemory : GameObjectMemory, IDisposable
 			{
 				if (actorRefresher.CanRefresh(actor))
 				{
-					Log.Information($"Executing {actorRefresher.GetType().Name} refresh for actor address: {actor.Address}");
-					await actorRefresher.RefreshActor(actor);
+					Log.Information($"Executing {actorRefresher.GetType().Name} refresh for actor address: 0x{actor.Address:X}");
+					await actorRefresher.RefreshActor(actor, forceReload);
 					return true;
 				}
 			}
@@ -287,17 +244,26 @@ public class ActorMemory : GameObjectMemory, IDisposable
 			return;
 
 		base.Synchronize(inclGroups, exclGroups);
+
+		// Take the initial snapshot after the first synchronization
+		if (this.LastAppearanceSnapshot == null)
+		{
+			var snapshot = new CharacterFile();
+			snapshot.WriteToFile(this, CharacterFile.SaveModes.All);
+			this.LastAppearanceSnapshot = snapshot;
+		}
 	}
 
 	/// <summary>
 	/// Asynchronously refresh the actor to force the game to reflect appearance changes.
 	/// </summary>
-	public async Task Refresh()
+	public async Task Refresh(bool forceReload = false)
 	{
 		if (this.IsRefreshing)
 		{
 			Log.Verbose("Refresh requested while busy. Marking as pending.");
 			this.needsRefresh = true;
+			this.forceReloadOnRefresh |= forceReload;
 			return;
 		}
 
@@ -306,21 +272,24 @@ public class ActorMemory : GameObjectMemory, IDisposable
 
 		try
 		{
-			Log.Information($"Attempting actor refresh for actor address: 0x{this.Address:X}");
+			Log.Verbose($"Attempting actor refresh for actor address: 0x{this.Address:X}");
 
 			this.IsRefreshing = true;
 
 			do
 			{
 				this.needsRefresh = false;
-				if (await RefreshActor(this))
+
+				if (await RefreshActor(this, this.forceReloadOnRefresh))
 				{
-					Log.Information($"Completed actor refresh cycle for: 0x{this.Address:X}");
+					Log.Verbose($"Completed actor refresh cycle for: 0x{this.Address:X}");
 				}
 				else
 				{
-					Log.Information($"Could not refresh actor: 0x{this.Address:X}");
+					Log.Warning($"Could not refresh actor: 0x{this.Address:X}");
 				}
+
+				this.forceReloadOnRefresh = false;
 			}
 			while (this.needsRefresh);
 		}
@@ -363,6 +332,14 @@ public class ActorMemory : GameObjectMemory, IDisposable
 			Log.Verbose($"Failed to invoke 'IsWanderer' hook for actor at address 0x{this.Address:X}");
 			return false;
 		}
+	}
+
+	internal HumanDrawData BuildDrawData()
+	{
+		HumanDrawData drawData = default;
+		this.DrawData.Customize?.WriteTo(ref drawData);
+		this.DrawData.Equipment?.WriteTo(ref drawData);
+		return drawData;
 	}
 
 	protected virtual void OnRefreshed()

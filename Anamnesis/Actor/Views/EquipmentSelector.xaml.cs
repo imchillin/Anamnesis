@@ -312,10 +312,10 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 
 	private bool CanEquip(Item item)
 	{
-		if (!item.EquipRestriction.IsValid || this.actor == null || this.actor.Customize == null)
+		if (!item.EquipRestriction.IsValid || this.actor == null || this.actor.DrawData.Customize == null)
 			return true;
 
-		return item.EquipRestriction.Value.CanEquip(this.actor.Customize.Race, this.actor.Customize.Gender);
+		return item.EquipRestriction.Value.CanEquip(this.actor.DrawData.Customize.Race, this.actor.DrawData.Customize.Gender);
 	}
 
 	private void ClearSlot()

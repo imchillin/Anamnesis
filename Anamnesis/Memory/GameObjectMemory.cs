@@ -7,6 +7,7 @@ using Anamnesis.Styles;
 using Anamnesis.Utils;
 using FontAwesome.Sharp;
 using PropertyChanged;
+using RemoteController.Interop.Types;
 using System;
 
 public class GameObjectMemory : MemoryBase
@@ -28,7 +29,7 @@ public class GameObjectMemory : MemoryBase
 	[Bind(0x094)] public byte DistanceFromPlayerX { get; set; }
 	[Bind(0x096)] public byte DistanceFromPlayerY { get; set; }
 	[Bind(0x00C4)] public float Scale { get; set; }
-	[Bind(0x0100, BindFlags.Pointer)] public DrawObjectMemory? ModelObject { get; set; }
+	[Bind(GameObject.DRAW_OBJECT_OFFSET, BindFlags.Pointer)] public DrawObjectMemory? ModelObject { get; set; }
 	[Bind(0x0118)] public RenderModes RenderMode { get; set; }
 
 	public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.Address}";

@@ -6,14 +6,111 @@ namespace Anamnesis.Memory;
 using Anamnesis.Actor.Utilities;
 using Anamnesis.Core.Extensions;
 using Anamnesis.GameData;
+using PropertyChanged;
+using RemoteController.Interop.Types;
+using System.Threading;
 using static Anamnesis.Actor.Utilities.DyeUtility;
 
 public class ItemMemory : MemoryBase, IEquipmentItemMemory
 {
-	[Bind(0x000, BindFlags.ActorRefresh)] public ushort Base { get; set; }
-	[Bind(0x002, BindFlags.ActorRefresh)] public byte Variant { get; set; }
-	[Bind(0x003, BindFlags.ActorRefresh)] public byte Dye { get; set; }
-	[Bind(0x004, BindFlags.ActorRefresh)] public byte Dye2 { get; set; }
+	private readonly Lock itemLock = new();
+	private ItemModelId itemModelId;
+
+	[AlsoNotifyFor(nameof(Base), nameof(Variant), nameof(Dye), nameof(Dye2))]
+	[Bind(0x000, BindFlags.ActorRefresh)]
+	public ItemModelId ItemId
+	{
+		get
+		{
+			lock (this.itemLock)
+			{
+				return this.itemModelId;
+			}
+		}
+		set
+		{
+			lock (this.itemLock)
+			{
+				this.itemModelId = value;
+			}
+		}
+	}
+
+	[AlsoNotifyFor(nameof(ItemId))]
+	public ushort Base
+	{
+		get
+		{
+			lock (this.itemLock)
+			{
+				return this.itemModelId.Id;
+			}
+		}
+		set
+		{
+			lock (this.itemLock)
+			{
+				this.itemModelId.Id = value;
+			}
+		}
+	}
+
+	[AlsoNotifyFor(nameof(ItemId))]
+	public byte Variant
+	{
+		get
+		{
+			lock (this.itemLock)
+			{
+				return this.itemModelId.Variant;
+			}
+		}
+		set
+		{
+			lock (this.itemLock)
+			{
+				this.itemModelId.Variant = value;
+			}
+		}
+	}
+
+	[AlsoNotifyFor(nameof(ItemId))]
+	public byte Dye
+	{
+		get
+		{
+			lock (this.itemLock)
+			{
+				return this.itemModelId.Dye;
+			}
+		}
+		set
+		{
+			lock (this.itemLock)
+			{
+				this.itemModelId.Dye = value;
+			}
+		}
+	}
+
+	[AlsoNotifyFor(nameof(ItemId))]
+	public byte Dye2
+	{
+		get
+		{
+			lock (this.itemLock)
+			{
+				return this.itemModelId.Dye2;
+			}
+		}
+		set
+		{
+			lock (this.itemLock)
+			{
+				this.itemModelId.Dye2 = value;
+			}
+		}
+	}
 
 	// Items dont have a 'Set' but the UI wants to bind to something, so...
 	public ushort Set { get; set; } = 0;

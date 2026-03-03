@@ -772,13 +772,18 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				MemoryBase? memory = bind.Property.GetValue(this) as MemoryBase;
 				bool isNew = false;
 
-				if (memory == null && bindAddress != IntPtr.Zero)
+				if (bindAddress != IntPtr.Zero)
 				{
-					isNew = true;
-					memory = Activator.CreateInstance(bind.Type) as MemoryBase;
 					if (memory == null)
 					{
-						throw new Exception($"Failed to create instance of child memory type: {bind.Type}");
+						isNew = true;
+						memory = Activator.CreateInstance(bind.Type) as MemoryBase
+							?? throw new Exception($"Failed to create instance of child memory type: {bind.Type}");
+					}
+					else if (memory.parent == null)
+					{
+						// Treat default-constructed objects as new objects to allow for address assignment and proper initialization
+						isNew = true;
 					}
 				}
 

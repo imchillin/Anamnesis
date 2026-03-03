@@ -38,7 +38,7 @@ public class PoseService : ServiceBase<PoseService>
 	public bool FreezePhysics
 	{
 		get => ControllerService.Instance.SendDriverCommand<bool>(DriverCommand.GetFreezePhysics) ?? false;
-		set => ControllerService.Instance.SendDriverCommand<bool>(DriverCommand.SetFreezePhysics, value);
+		set => ControllerService.Instance.SendDriverCommand<bool>(DriverCommand.SetFreezePhysics, args: value);
 	}
 
 	public bool WorldStateNotFrozen => !this.FreezeWorldState;
@@ -48,7 +48,7 @@ public class PoseService : ServiceBase<PoseService>
 		get => ControllerService.Instance.SendDriverCommand<bool>(DriverCommand.GetFreezeWorldVisualState) ?? false;
 		set
 		{
-			ControllerService.Instance.SendDriverCommand<bool>(DriverCommand.SetFreezeWorldVisualState, value);
+			ControllerService.Instance.SendDriverCommand<bool>(DriverCommand.SetFreezeWorldVisualState, args: value);
 			this.RaisePropertyChanged(nameof(this.FreezeWorldState));
 			this.RaisePropertyChanged(nameof(this.WorldStateNotFrozen));
 			FreezeWorldStateEnabledChanged?.Invoke(value);
@@ -78,7 +78,7 @@ public class PoseService : ServiceBase<PoseService>
 			return;
 
 		// Send command to remote controller
-		bool? result = ControllerService.Instance.SendDriverCommand<bool>(DriverCommand.SetPosingEnabled, enabled);
+		bool? result = ControllerService.Instance.SendDriverCommand<bool>(DriverCommand.SetPosingEnabled, args: enabled);
 		if (result != true)
 		{
 			Log.Warning($"Failed to {(enabled ? "enable" : "disable")} posing via remote controller.");

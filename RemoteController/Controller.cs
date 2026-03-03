@@ -5,6 +5,7 @@ namespace RemoteController;
 
 using RemoteController.Drivers;
 using RemoteController.Interop;
+using RemoteController.Interop.Types;
 using RemoteController.IPC;
 using RemoteController.Memory;
 using Serilog;
@@ -22,7 +23,7 @@ public class Controller
 {
 	private const string BUF_SHMEM_OUTGOING = "Local\\ANAM_SHMEM_CTRL_TO_MAIN";
 	private const string BUF_SHMEM_INCOMING = "Local\\ANAM_SHMEM_MAIN_TO_CTRL";
-	
+
 	private const int PROCESS_MONITOR_JOIN_TIMEOUT_MS = 500;
 	private const int ACTIVE_WRITERS_DRAIN_TIMEOUT_MS = 500;
 	private const int IPC_TIMEOUT_MS = 100;
@@ -34,7 +35,6 @@ public class Controller
 	private const string FASM_RESOURCE_FILENAME = $"{FASM_RESOURCE_NAME}.dll";
 	private const string FASM_RESOURCE_SEARCH_PATTERN = $"{FASM_RESOURCE_NAME}.*dll";
 
-	private static readonly InProcessMemoryReader s_memoryReader = new();
 	private static readonly int s_sizeOfInt = sizeof(int);
 	private static readonly Func<uint, byte, byte> s_incrementFunc = static (_, v) => (byte)((v + 1) & 0xFF);
 	private static readonly byte[] s_emptyPayload = [];
@@ -78,9 +78,16 @@ public class Controller
 		[DriverCommand.GetIsInGpose] = DriverCommandHandler.ConditionalGetter(
 			() => GposeDriver.IsInitialized,
 			() => GposeDriver.Instance.IsInGpose),
+
+		// Actor driver commands
+		[DriverCommand.RedrawActor] = HandleRedrawActor,
+		[DriverCommand.ActorSetVisor] = DriverCommandHandler.Invoke<SetVisorCommandPayload, bool>(p => ActorDriver.Instance.SetVisor(p.Ptr, p.State)),
+		[DriverCommand.ActorHideHeadgear] = DriverCommandHandler.Invoke<HideHeadgearCommandPayload, bool>(p => ActorDriver.Instance.SetHeadgearHidden(p.Ptr, p.Hide)),
+		[DriverCommand.ActorHideVieraEars] = DriverCommandHandler.Invoke<HideVieraEarsCommandPayload, bool>(p => ActorDriver.Instance.SetVieraEarsHidden(p.Ptr, p.Hide)),
 	};
 
 #pragma warning disable CA2211
+	public static InProcessMemoryReader MemoryReader => new();
 	public static SignatureScanner? Scanner = null;
 	public static SignatureResolver? SigResolver = null;
 #pragma warning restore CA2211
@@ -92,7 +99,7 @@ public class Controller
 	private static bool s_dllImportResolverSet = false;
 	private static IntPtr s_mainProcessHandle = IntPtr.Zero;
 	private static Thread? s_processMonitorThread = null;
-	private static CancellationTokenSource s_shutdownCts= new();
+	private static CancellationTokenSource s_shutdownCts = new();
 	private static int s_activeWriters = 0;
 
 	[RequiresDynamicCode("Requires dynamic code")]
@@ -371,8 +378,8 @@ public class Controller
 				Log.Error("Failed to get main module of the current process.");
 				return;
 			}
-			Scanner = new SignatureScanner(currentProcess.MainModule, s_memoryReader);
-			SigResolver = new SignatureResolver(Scanner, s_memoryReader);
+			Scanner = new SignatureScanner(currentProcess.MainModule, MemoryReader);
+			SigResolver = new SignatureResolver(Scanner, MemoryReader);
 
 			Log.Debug("Creating IPC endpoints...");
 			try
@@ -525,7 +532,7 @@ public class Controller
 
 			// [0] The Process
 			// [1] The Cancellation Token
-			WaitHandle[] handles = { processWaitHandle, s_shutdownCts.Token.WaitHandle };
+			WaitHandle[] handles = [processWaitHandle, s_shutdownCts.Token.WaitHandle];
 			Log.Debug($"Monitoring Handle: {s_mainProcessHandle}. Blocking thread until signal...");
 
 			bool requestedShutdown = false;
@@ -650,7 +657,7 @@ public class Controller
 						break;
 
 					case PayloadType.Bye:
-						HandleGoodbyeMessage(header.Id);
+						HandleGoodbyeMessage();
 						break;
 
 					case PayloadType.Register:
@@ -703,16 +710,24 @@ public class Controller
 		try
 		{
 			var regPayload = MemoryMarshal.Read<HookRegistrationData>(data);
-			string delegateKey = regPayload.GetKey();
-			uint hookId = HookRegistry.Instance.RegisterHook(regPayload);
-			if (hookId != 0)
+
+			byte[] result = FrameworkDriver.RunOnTick(() =>
 			{
-				byte[] payload = BitConverter.GetBytes(hookId);
-				var header = new MessageHeader(requestId, PayloadType.Ack, (ulong)payload.Length);
-				s_outgoingEndpoint?.Write(header, payload, IPC_TIMEOUT_MS);
+				uint hookId = HookRegistry.Instance.RegisterHook(regPayload);
+				if (hookId == 0)
+					return []; // Failure
+
+				return BitConverter.GetBytes(hookId);
+			});
+
+			if (result.Length > 0)
+			{
+				var header = new MessageHeader(requestId, PayloadType.Ack, (ulong)result.Length);
+				s_outgoingEndpoint?.Write(header, result, IPC_TIMEOUT_MS);
 			}
 			else
 			{
+				Log.Error($"Failed to register hook for request {requestId} on framework thread.");
 				SendResponse(requestId, PayloadType.NAck);
 			}
 		}
@@ -725,8 +740,22 @@ public class Controller
 	[RequiresDynamicCode("HookRegistry requires dynamic code")]
 	private static void HandleHookUnregister(uint hookId)
 	{
-		bool success = HookRegistry.Instance.UnregisterHook(hookId);
-		SendResponse(hookId, success ? PayloadType.Ack : PayloadType.NAck);
+		try
+		{
+			byte[] result = FrameworkDriver.RunOnTick(() =>
+			{
+				bool success = HookRegistry.Instance.UnregisterHook(hookId);
+				return [(byte)(success ? 1 : 0)];
+			});
+
+			bool wasSuccessful = result.Length > 0 && result[0] == 1;
+			SendResponse(hookId, wasSuccessful ? PayloadType.Ack : PayloadType.NAck);
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, $"Failed to unregister hook {hookId} on framework thread.");
+			SendResponse(hookId, PayloadType.NAck);
+		}
 	}
 
 	private static void SendResponse(uint msgId, PayloadType responseType)
@@ -742,7 +771,7 @@ public class Controller
 	{
 		if (s_outgoingEndpoint == null)
 			return;
-		
+
 		var header = new MessageHeader(msgId, responseType, (ulong)payload.Length);
 		s_outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS);
 	}
@@ -768,7 +797,7 @@ public class Controller
 
 			if (mode == DispatchMode.FrameworkTick && FrameworkDriver.IsInitialized)
 			{
-				result = FrameworkDriver.EnqueueAndWait(ExecuteLogic);
+				result = FrameworkDriver.RunOnTick(ExecuteLogic);
 			}
 			else
 			{
@@ -929,13 +958,13 @@ public class Controller
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex, $"Error executing driver command: 0x{commandId:X4}");
+				Log.Error(ex, $"Error executing driver command: 0x{(int)commandId:X4}");
 				response = [];
 			}
 		}
 		else
 		{
-			Log.Warning($"Unknown driver command: 0x{commandId:X4}");
+			Log.Warning($"Unknown driver command: 0x{(int)commandId:X4}");
 			response = [];
 		}
 
@@ -1012,7 +1041,45 @@ public class Controller
 		}
 	}
 
-	private static void HandleGoodbyeMessage(uint msgId)
+	private unsafe static byte[] HandleRedrawActor(ReadOnlySpan<byte> args)
+	{
+		if (!ActorDriver.IsInitialized || args.Length < sizeof(RedrawHeader))
+			return [0];
+
+		var header = MemoryMarshal.Read<RedrawHeader>(args);
+		var request = new RedrawRequest(header.Type, header.ObjectIndex);
+
+		if (header.Type == RedrawType.Partial)
+		{
+			int offset = Unsafe.SizeOf<RedrawHeader>();
+			RedrawFlags flags = (RedrawFlags)args[offset++];
+			request.Flags = flags;
+
+			if (flags.HasFlag(RedrawFlags.Weapons))
+			{
+				request.MainHandId = MemoryMarshal.Read<WeaponModelId>(args[offset..]);
+				offset += Unsafe.SizeOf<WeaponModelId>();
+				request.OffHandId = MemoryMarshal.Read<WeaponModelId>(args[offset..]);
+				offset += Unsafe.SizeOf<WeaponModelId>();
+			}
+
+			if (flags.HasFlag(RedrawFlags.Facewear))
+			{
+				request.FacewearId = MemoryMarshal.Read<ushort>(args[offset..]);
+				offset += sizeof(uint);
+			}
+
+			if (flags.HasFlag(RedrawFlags.Appearance))
+			{
+				request.DrawData = args[offset..].ToArray();
+			}
+		}
+
+		bool success = ActorDriver.Instance.RedrawActor(request);
+		return [(byte)(success ? 1 : 0)];
+	}
+
+	private static void HandleGoodbyeMessage()
 	{
 		Log.Information("Received goodbye message from host. Shutting down controller...");
 		s_running = false;

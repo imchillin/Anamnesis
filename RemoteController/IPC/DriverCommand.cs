@@ -21,6 +21,12 @@ public enum DriverCommand : int
 
 	// Gpose driver commands
 	GetIsInGpose,
+
+	// Actor driver commands
+	RedrawActor,
+	ActorSetVisor,
+	ActorHideHeadgear,
+	ActorHideVieraEars,
 }
 
 /// <summary>

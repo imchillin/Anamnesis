@@ -119,10 +119,10 @@ public partial class CustomizeEditor : UserControl
 		if (this.Customize != null)
 			this.Customize.PropertyChanged -= this.OnAppearancePropertyChanged;
 
-		if (actor == null || actor.Customize == null)
+		if (actor?.DrawData.Customize == null)
 			return;
 
-		this.Customize = actor.Customize;
+		this.Customize = actor.DrawData.Customize;
 		this.Customize.PropertyChanged += this.OnAppearancePropertyChanged;
 
 		Application.Current.Dispatcher.Invoke(this.UpdateRaceAndTribe);

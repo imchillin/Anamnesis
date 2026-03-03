@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory;
 
 using PropertyChanged;
+using RemoteController.Interop.Types;
 
 /// <summary>
 /// Represents a drawable scene object in memory.
@@ -13,7 +14,7 @@ public class DrawObjectMemory : SceneObjectMemory
 	/// <summary>
 	/// Gets or sets the flags for the drawable object.
 	/// </summary>
-	[Bind(0x88)] public byte Flags { get; set; }
+	[Bind(DrawObject.FLAGS_OFFSET)] public byte Flags { get; set; }
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the object is visible.
