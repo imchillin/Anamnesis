@@ -191,7 +191,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 			{
 				if (actorRefresher.CanRefresh(actor))
 				{
-					Log.Information($"Executing {actorRefresher.GetType().Name} refresh for actor address: 0x{actor.Address:X}");
+					Log.Verbose($"Executing {actorRefresher.GetType().Name} refresh for actor address: 0x{actor.Address:X}");
 					await actorRefresher.RefreshActor(actor, forceReload);
 					return true;
 				}
