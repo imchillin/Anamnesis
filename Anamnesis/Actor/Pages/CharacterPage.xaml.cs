@@ -388,18 +388,18 @@ public partial class CharacterPage : UserControl
 	{
 		this.Actor?.Do(a =>
 		{
-			a.MainHand?.SwapDyeChannels();
-			a.OffHand?.SwapDyeChannels();
-			a.Equipment?.Head?.SwapDyeChannels();
-			a.Equipment?.Chest?.SwapDyeChannels();
-			a.Equipment?.Arms?.SwapDyeChannels();
-			a.Equipment?.Legs?.SwapDyeChannels();
-			a.Equipment?.Feet?.SwapDyeChannels();
-			a.Equipment?.Ear?.SwapDyeChannels();
-			a.Equipment?.Neck?.SwapDyeChannels();
-			a.Equipment?.Wrist?.SwapDyeChannels();
-			a.Equipment?.RFinger?.SwapDyeChannels();
-			a.Equipment?.LFinger?.SwapDyeChannels();
+			a.DrawData.MainHand?.SwapDyeChannels();
+			a.DrawData.OffHand?.SwapDyeChannels();
+			a.DrawData.Equipment?.Head?.SwapDyeChannels();
+			a.DrawData.Equipment?.Chest?.SwapDyeChannels();
+			a.DrawData.Equipment?.Arms?.SwapDyeChannels();
+			a.DrawData.Equipment?.Legs?.SwapDyeChannels();
+			a.DrawData.Equipment?.Feet?.SwapDyeChannels();
+			a.DrawData.Equipment?.Ear?.SwapDyeChannels();
+			a.DrawData.Equipment?.Neck?.SwapDyeChannels();
+			a.DrawData.Equipment?.Wrist?.SwapDyeChannels();
+			a.DrawData.Equipment?.RFinger?.SwapDyeChannels();
+			a.DrawData.Equipment?.LFinger?.SwapDyeChannels();
 		});
 	}
 
