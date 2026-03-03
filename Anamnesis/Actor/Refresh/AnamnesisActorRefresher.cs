@@ -173,14 +173,7 @@ public class AnamnesisActorRefresher : IActorRefresher
 
 	private static async Task<byte[]> ExecuteRedraw(ActorMemory actor, RedrawType type, byte[] payload, int payloadLength)
 	{
-		var isInGpose = GposeService.IsInGpose() ?? GposeService.Instance.IsGpose;
-		bool useNpcFaceHack = type == RedrawType.Full &&
-						  SettingsService.Current.EnableNpcHack &&
-						  !isInGpose &&
-						  actor.ObjectKind == ObjectTypes.Player;
-
-		// NOTE: This workaround is necessary only when we're in the overworld
-		if (useNpcFaceHack)
+		if (SettingsService.Current.EnableNpcHack && type == RedrawType.Full && actor.ObjectKind == ObjectTypes.Player)
 		{
 			actor.ObjectKind = ObjectTypes.EventNpc;
 			var res = ControllerService.Instance.SendDriverCommandRaw(DriverCommand.RedrawActor, payload.AsSpan(0, payloadLength), ACTOR_REFRESH_TIMEOUT_MS);
