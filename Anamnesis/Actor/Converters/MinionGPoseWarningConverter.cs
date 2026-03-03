@@ -16,9 +16,9 @@ public class MinionGposeWarningConverter : IMultiValueConverter
 		if (values.Length != 2)
 			throw new ArgumentException("The values array must contain exactly two elements.", nameof(values));
 
-		if (values[0] is ActorTypes type && values[1] is int model)
+		if (values[0] is ObjectTypes type && values[1] is int model)
 		{
-			if (type != ActorTypes.Companion)
+			if (type != ObjectTypes.Companion)
 				return Visibility.Collapsed;
 
 			if (model == 0)

@@ -100,20 +100,28 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	public MemoryBase()
 	{
 		var processedNames = new HashSet<string>();
+		Type? currentType = this.GetType();
 
 		// Enumerate through the class' properties to retrieve memory offsets.
-		foreach (PropertyInfo property in this.GetType().GetProperties())
+		while (currentType != null && currentType != typeof(MemoryBase) && currentType != typeof(object))
 		{
-			// As some classes re-declare properties from their base classes, we need to
-			// filter out duplicates. Add only the first occurrence, which is the most-derived one.
-			if (!processedNames.Add(property.Name))
-				continue;
+			// Fetch only properties declared at the current inheritance level
+			var properties = currentType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
-			BindAttribute? attribute = property.GetCustomAttribute<BindAttribute>();
-			if (attribute == null)
-				continue;
+			foreach (PropertyInfo property in properties)
+			{
+				if (!processedNames.Add(property.Name))
+					continue;
 
-			this.Binds.Add(property.Name, new PropertyBindInfo(this, property, attribute));
+				BindAttribute? attribute = property.GetCustomAttribute<BindAttribute>();
+				if (attribute == null)
+					continue;
+
+				this.Binds.Add(property.Name, new PropertyBindInfo(this, property, attribute));
+			}
+
+			// Move up to the base class
+			currentType = currentType.BaseType;
 		}
 	}
 

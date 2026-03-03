@@ -255,7 +255,7 @@
 			                Grid.Column="0"
 			                Style="{StaticResource Label}"/>
 
-						<ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Source={x:Static anaMem:ActorType.AllActorTypes}}" SelectedIndex="{Binding Actor.Unsafe.ObjectKindInt}">
+						<ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Source={x:Static anaMem:ObjectType.AllActorTypes}}" SelectedIndex="{Binding Actor.Unsafe.ObjectKindInt}">
                             <ComboBox.ItemContainerStyle>
                                 <Style TargetType="{x:Type ComboBoxItem}">
                                     <Setter Property="IsEnabled" Value="{Binding IsSupportedType}"/>

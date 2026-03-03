@@ -57,7 +57,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	public bool IsValid { get; private set; }
 
 	[DependsOn(nameof(Memory))]
-	public ActorTypes Kind => this.Memory?.Do(a => a.ObjectKind) ?? ActorTypes.None;
+	public ObjectTypes Kind => this.Memory?.Do(a => a.ObjectKind) ?? ObjectTypes.None;
 
 	[DependsOn(nameof(Memory))]
 	public bool IsGPoseActor => this.Memory?.Do(a => a.IsGPoseActor) ?? false;
@@ -213,7 +213,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		backup.Apply(this.Memory, slot == null ? CharacterFile.SaveModes.All : CharacterFile.SaveModes.EquipmentSlot, slot);
 
 		// If we were a player, really make sure we are again.
-		if (backup.ObjectKind == ActorTypes.Player)
+		if (backup.ObjectKind == ObjectTypes.Player)
 		{
 			this.Memory.Do(a => a.ObjectKind = backup.ObjectKind);
 		}
@@ -382,7 +382,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		var objectKind = this.Memory.Do(a => a.ObjectKind);
 		if (objectKind != null)
 		{
-			this.Icon = ((ActorTypes)objectKind).GetIcon();
+			this.Icon = ((ObjectTypes)objectKind).GetIcon();
 		}
 
 		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Kind)));
@@ -412,7 +412,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 			var objectKind = this.Memory.Do(a => a.ObjectKind);
 			if (objectKind != null)
 			{
-				this.Icon = ((ActorTypes)objectKind).GetIcon();
+				this.Icon = ((ObjectTypes)objectKind).GetIcon();
 			}
 
 			return;
