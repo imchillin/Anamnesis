@@ -290,6 +290,11 @@ public partial class ItemView : UserControl
 		}
 	}
 
+	private void OnSwapDyeChannels(object sender, RoutedEventArgs e)
+	{
+		this.ItemModel?.SwapDyeChannels();
+	}
+
 	private void SetItem(IItem? item, bool autoOffhand = false, bool forceMain = false, bool forceOff = false)
 	{
 		this.lockViewModel = true;

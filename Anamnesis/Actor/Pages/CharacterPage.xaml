@@ -181,10 +181,27 @@
 										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
+								<Separator/>
+								<MenuItem Click="OnSwapDyeChannels">
+									<MenuItem.Header>
+										<XivToolsWpf:TextBlock Key="Character_Equipment_SwapDyeChannels"/>
+									</MenuItem.Header>
+									<MenuItem.Icon>
+										<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+									</MenuItem.Icon>
+								</MenuItem>
 							</ContextMenu>
 						</Button.ContextMenu>
 						
 						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="_1"/>
+					</Button>
+
+					<Button Click="OnSwapDyeChannels" Style="{StaticResource TransparentIconButton}">
+						<Button.ToolTip>
+							<XivToolsWpf:TextBlock Key="Character_Equipment_SwapDyeChannels"/>
+						</Button.ToolTip>
+
+						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="ArrowRightArrowLeft"/>
 					</Button>
 
 					<Button Click="OnSetDye2OnAllEquipmentClicked" MouseUp="OnSetDye2OnAllEquipmentMouseUp" Style="{StaticResource TransparentIconButton}">
@@ -268,6 +285,15 @@
 									</MenuItem.Header>
 									<MenuItem.Icon>
 										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<Separator/>
+								<MenuItem Click="OnSwapDyeChannels">
+									<MenuItem.Header>
+										<XivToolsWpf:TextBlock Key="Character_Equipment_SwapDyeChannels"/>
+									</MenuItem.Header>
+									<MenuItem.Icon>
+										<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 							</ContextMenu>

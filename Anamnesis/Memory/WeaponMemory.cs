@@ -214,4 +214,9 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 		if (dyeSlot.HasFlagUnsafe(DyeSlot.Second))
 			this.Dye2 = (dye != null) ? dye.Id : DyeUtility.NoneDye.Id;
 	}
+
+	public void SwapDyeChannels()
+	{
+		(this.Dye2, this.Dye) = (this.Dye, this.Dye2);
+	}
 }

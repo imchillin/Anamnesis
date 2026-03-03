@@ -12,5 +12,6 @@ public interface IEquipmentItemMemory : INotifyPropertyChanged
 	byte Dye2 { get; set; }
 	ushort Set { get; set; }
 
+	public void SwapDyeChannels();
 	public void Clear(bool isPlayer);
 }
