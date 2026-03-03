@@ -614,7 +614,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		}
 	}
 
-	private async void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
+	private void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 	{
 		var newActorHandle = this.DataContext as ObjectHandle<ActorMemory>;
 
@@ -642,12 +642,12 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		this.Actor = newActorHandle;
 
-		await this.Refresh();
+		_ = this.Refresh();
 	}
 
-	private async void OnActorRefreshed(object? sender, EventArgs? e)
+	private void OnActorRefreshed(object? sender, EventArgs? e)
 	{
-		await this.Refresh();
+		_ = this.Refresh();
 	}
 
 	private void OnModelObjectChanged(object? sender, PropertyChangedEventArgs e)
@@ -658,9 +658,9 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		}
 	}
 
-	private async Task Refresh()
+	private Task Refresh()
 	{
-		_ = WorkQueue.Value.Enqueue(async () =>
+		return WorkQueue.Value.Enqueue(async () =>
 		{
 			await Dispatch.MainThread();
 

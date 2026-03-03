@@ -48,63 +48,66 @@ public class AnamnesisActorRefresher : IActorRefresher
 
 	public async Task RefreshActor(ActorMemory actor, bool forceReload = false)
 	{
-		int actorIndex = ActorService.Instance.ObjectTable.GetIndexOf(actor.Address);
-		if (actorIndex == -1)
-			return;
-
-		var handle = ActorService.Instance.ObjectTable.Get<ActorMemory>(actor.Address);
-		if (handle == null)
-			return;
-
-		// Capture current state annd compute change diff
-		var currentSnapshot = CaptureSnapshot(handle);
-		var diff = ComputeChangeset(actor, currentSnapshot);
-		Log.Verbose($"Computed character file diff for redraw: {diff}");
-
-		if (!forceReload && !diff.HasChanges)
+		await Task.Run(() =>
 		{
-			Log.Verbose("No appearance changes detected, skipping actor redraw.");
-			return;
-		}
+			int actorIndex = ActorService.Instance.ObjectTable.GetIndexOf(actor.Address);
+			if (actorIndex == -1)
+				return;
 
-		bool doPartialRedraw = actor.IsHuman && !diff.Changes.HasFlagUnsafe(CharChangeType.Base) && !forceReload;
-		var redrawType = doPartialRedraw ? RedrawType.Partial : RedrawType.Full;
+			var handle = ActorService.Instance.ObjectTable.Get<ActorMemory>(actor.Address);
+			if (handle == null)
+				return;
 
-		var (payload, length) = PackRedrawPayload(actor, actorIndex, redrawType, diff);
-		try
-		{
-			this.OnRedraw?.Invoke(handle, RedrawStage.Before);
+			// Capture current state annd compute change diff
+			var currentSnapshot = CaptureSnapshot(handle);
+			var diff = ComputeChangeset(actor, currentSnapshot);
+			Log.Verbose($"Computed character file diff for redraw: {diff}");
 
-			byte[] response = await ExecuteRedraw(actor, redrawType, payload, length);
-			if (response.Length > 0 && response[0] == 1)
+			if (!forceReload && !diff.HasChanges)
 			{
-				UpdateSnapshot(actor, currentSnapshot); // Success, update the actor's snapshot
+				Log.Verbose("No appearance changes detected, skipping actor redraw.");
+				return;
 			}
-			else if (doPartialRedraw)
+
+			bool doPartialRedraw = actor.IsHuman && !diff.Changes.HasFlagUnsafe(CharChangeType.Base) && !forceReload;
+			var redrawType = doPartialRedraw ? RedrawType.Partial : RedrawType.Full;
+
+			var (payload, length) = PackRedrawPayload(actor, actorIndex, redrawType, diff);
+			try
 			{
-				Log.Warning($"Partial redraw failed on actor 0x{actor.Address:X}. Attempting full redraw as fallback...");
-				payload[0] = (byte)RedrawType.Full;
-				response = await ExecuteRedraw(actor, RedrawType.Full, payload, Unsafe.SizeOf<RedrawHeader>());
+				this.OnRedraw?.Invoke(handle, RedrawStage.Before);
+
+				byte[] response = ExecuteRedraw(actor, redrawType, payload, length);
 				if (response.Length > 0 && response[0] == 1)
 				{
-					Log.Information("Successful fallback redraw attempt.");
 					UpdateSnapshot(actor, currentSnapshot); // Success, update the actor's snapshot
+				}
+				else if (doPartialRedraw)
+				{
+					Log.Warning($"Partial redraw failed on actor 0x{actor.Address:X}. Attempting full redraw as fallback...");
+					payload[0] = (byte)RedrawType.Full;
+					response = ExecuteRedraw(actor, RedrawType.Full, payload, Unsafe.SizeOf<RedrawHeader>());
+					if (response.Length > 0 && response[0] == 1)
+					{
+						Log.Information("Successful fallback redraw attempt.");
+						UpdateSnapshot(actor, currentSnapshot); // Success, update the actor's snapshot
+					}
+					else
+					{
+						Log.Error($"Both partial and full redraw attempts failed on actor: 0x{actor.Address:X}");
+					}
 				}
 				else
 				{
-					Log.Error($"Both partial and full redraw attempts failed on actor: 0x{actor.Address:X}");
+					Log.Error($"Full actor redraw failed on actor: 0x{actor.Address:X}");
 				}
 			}
-			else
+			finally
 			{
-				Log.Error($"Full actor redraw failed on actor: 0x{actor.Address:X}");
+				ArrayPool<byte>.Shared.Return(payload);
+				this.OnRedraw?.Invoke(handle, RedrawStage.After);
 			}
-		}
-		finally
-		{
-			ArrayPool<byte>.Shared.Return(payload);
-			this.OnRedraw?.Invoke(handle, RedrawStage.After);
-		}
+		});
 	}
 
 	private static CharacterFile CaptureSnapshot(ObjectHandle<ActorMemory> actor)
@@ -171,7 +174,7 @@ public class AnamnesisActorRefresher : IActorRefresher
 		return (buffer, writer.Position);
 	}
 
-	private static async Task<byte[]> ExecuteRedraw(ActorMemory actor, RedrawType type, byte[] payload, int payloadLength)
+	private static byte[] ExecuteRedraw(ActorMemory actor, RedrawType type, byte[] payload, int payloadLength)
 	{
 		if (SettingsService.Current.EnableNpcHack && type == RedrawType.Full && actor.ObjectKind == ObjectTypes.Player)
 		{
