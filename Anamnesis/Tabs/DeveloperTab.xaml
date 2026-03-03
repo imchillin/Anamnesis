@@ -47,6 +47,24 @@
 						Style="{StaticResource TransparentButton}"
 						Padding="6,3"/>
 
+				<Button Content="Test framework task"
+						Click="OnFrameworkTask"
+						Height="32"
+						Style="{StaticResource TransparentButton}"
+						Padding="6,3"/>
+
+				<Button Content="Test framework task (Delayed)"
+						Click="OnFrameworkTaskDelayed"
+						Height="32"
+						Style="{StaticResource TransparentButton}"
+						Padding="6,3"/>
+
+				<Button Content="Test framework task (Cond)"
+						Click="OnFrameworkTaskCond"
+						Height="32"
+						Style="{StaticResource TransparentButton}"
+						Padding="6,3"/>
+
 			</StackPanel>
 		</GroupBox>
 

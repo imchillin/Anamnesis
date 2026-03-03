@@ -6,6 +6,7 @@ namespace RemoteController.Interop;
 using Reloaded.Hooks;
 using Reloaded.Hooks.Definitions;
 using RemoteController.IPC;
+using RemoteController.Memory;
 using Serilog;
 using System;
 using System.Buffers;
@@ -32,6 +33,9 @@ public static class HookFactory
 	/// <param name="hookId">
 	/// The unique hook identifier.
 	/// </param>
+	/// <param name="address">
+	/// The target address of the function hook.
+	/// </param>
 	/// <param name="regData">
 	/// The hook registration data.
 	/// </param>
@@ -41,7 +45,7 @@ public static class HookFactory
 	/// <returns>
 	/// The created function hook, or null if creation failed.
 	/// </returns>
-	public static IFunctionHook? Create(string delegateKey, uint hookId, HookRegistrationData regData, ReloadedHooks reloadedHooks)
+	public static IFunctionHook? Create(string delegateKey, uint hookId, nint address, HookRegistrationData regData, ReloadedHooks reloadedHooks)
 	{
 		Type? delegateType = null;
 		foreach (var (type, _) in HookDelegateRegistry.GetAll())
@@ -63,26 +67,26 @@ public static class HookFactory
 			.GetMethod(nameof(CreateTyped), BindingFlags.NonPublic | BindingFlags.Static)!
 			.MakeGenericMethod(delegateType);
 
-		return createMethod.Invoke(null, [delegateKey, hookId, regData, reloadedHooks]) as IFunctionHook;
+		return createMethod.Invoke(null, [delegateKey, hookId, address, regData, reloadedHooks]) as IFunctionHook;
 	}
 
-	private static IFunctionHook? CreateTyped<TDelegate>(string delegateKey, uint hookId, HookRegistrationData regData, ReloadedHooks reloadedHooks)
+	private static IFunctionHook? CreateTyped<TDelegate>(string delegateKey, uint hookId, nint address, HookRegistrationData regData, ReloadedHooks reloadedHooks)
 		where TDelegate : Delegate
 	{
 		try
 		{
 			if (regData.HookType == HookType.Wrapper)
 			{
-				var wrapper = reloadedHooks.CreateWrapper<TDelegate>(regData.Address, out _);
-				return new FunctionWrapper<TDelegate>(hookId, delegateKey, regData.Address, wrapper);
+				var wrapper = reloadedHooks.CreateWrapper<TDelegate>(address, out _);
+				return new FunctionWrapper<TDelegate>(hookId, delegateKey, address, wrapper);
 			}
 
 			IHook<TDelegate>? hook = null;
 			var detour = DetourBuilder.Build<TDelegate>(hookId, regData.HookBehavior, () => hook!.OriginalFunction);
-			hook = reloadedHooks.CreateHook(detour, regData.Address);
+			hook = reloadedHooks.CreateHook(detour, address);
 			hook.Activate();
 
-			return new FunctionHook<TDelegate>(hookId, delegateKey, regData.HookBehavior, regData.Address, hook);
+			return new FunctionHook<TDelegate>(hookId, delegateKey, regData.HookBehavior, address, hook);
 		}
 		catch (Exception ex)
 		{

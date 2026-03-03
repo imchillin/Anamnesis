@@ -1,7 +1,7 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Memory;
+namespace RemoteController.Memory;
 
 using Iced.Intel;
 using Serilog;
@@ -28,6 +28,7 @@ using System.Runtime.CompilerServices;
 /// </remarks>
 public sealed unsafe class SignatureScanner
 {
+	private readonly IProcessMemoryReader memoryReader;
 	private readonly MemoryMappedFile file;
 	private readonly MemoryMappedViewAccessor textSectionAccessor;
 	private readonly MemoryMappedViewAccessor dataSectionAccessor;
@@ -40,11 +41,12 @@ public sealed unsafe class SignatureScanner
 	/// Initializes a new instance of the <see cref="SignatureScanner"/> class.
 	/// </summary>
 	/// <param name="module">The process to be used for scanning.</param>
-	public SignatureScanner(ProcessModule module)
+	public SignatureScanner(ProcessModule module, IProcessMemoryReader memoryReader)
 	{
 		Debug.Assert(module != null, "Process module cannot be null.");
 		this.Module = module;
 		this.moduleBaseAddress = module.BaseAddress;
+		this.memoryReader = memoryReader;
 
 		string? fileName = module.FileName;
 		if (string.IsNullOrEmpty(fileName))
@@ -54,7 +56,7 @@ public sealed unsafe class SignatureScanner
 		this.file = MemoryMappedFile.CreateFromFile(fileName, FileMode.Open, null, 0, MemoryMappedFileAccess.Read);
 
 		// Limit the search space to .text section.
-		SetupSearchSpace(module, out SectionInfo textSection, out SectionInfo dataSection);
+		this.SetupSearchSpace(module, out SectionInfo textSection, out SectionInfo dataSection);
 		this.textSectionVirtualAddress = textSection.VirtualAddress;
 		this.dataSectionVirtualAddress = dataSection.VirtualAddress;
 
@@ -109,7 +111,7 @@ public sealed unsafe class SignatureScanner
 	/// </note>
 	public IntPtr Scan(MemoryMappedViewAccessor section, string signature)
 	{
-		if (!MemoryService.IsProcessAlive)
+		if (!this.memoryReader.IsProcessAlive)
 			return IntPtr.Zero;
 
 		var (needle, mask, badCharShift) = ParseSignature(signature);
@@ -138,10 +140,10 @@ public sealed unsafe class SignatureScanner
 		ArgumentNullException.ThrowIfNull(signature);
 
 		IntPtr scanRet = this.Scan(this.textSectionAccessor, signature);
-		var startByte = MemoryService.ReadByte(scanRet);
+		var startByte = this.memoryReader.ReadByte(scanRet);
 		if (startByte == 0xE8 || startByte == 0xE9)
 		{
-			scanRet = ReadJmpCallSig(scanRet);
+			scanRet = this.ReadJmpCallSig(scanRet);
 			var rel = scanRet.ToInt64() - this.moduleBaseAddress.ToInt64();
 			if (rel < 0 || rel >= (int)this.textSectionAccessor.Capacity)
 			{
@@ -177,7 +179,7 @@ public sealed unsafe class SignatureScanner
 
 		try
 		{
-			var reader = new UnsafeCodeReader(instructionAddress, signature.Length + 8);
+			var reader = new UnsafeCodeReader(this.memoryReader, instructionAddress, signature.Length + 8);
 			var decoder = Decoder.Create(64, reader, (ulong)instructionAddress, DecoderOptions.AMD);
 			while (reader.CanReadByte)
 			{
@@ -195,7 +197,7 @@ public sealed unsafe class SignatureScanner
 					else
 					{
 						// Otherwise, resolve the static address by reading the memory displacement and adding it to the instruction address.
-						return IntPtr.Add((nint)instructionAddress, MemoryService.ReadInt32((nint)instructionAddress) + 4);
+						return IntPtr.Add((nint)instructionAddress, this.memoryReader.ReadInt32((nint)instructionAddress) + 4);
 					}
 				}
 			}
@@ -276,9 +278,9 @@ public sealed unsafe class SignatureScanner
 	/// </summary>
 	/// <param name="sigLocation">The address the CALL sig resolved to.</param>
 	/// <returns>The real offset of the signature.</returns>
-	private static IntPtr ReadJmpCallSig(IntPtr sigLocation)
+	private IntPtr ReadJmpCallSig(IntPtr sigLocation)
 	{
-		int jumpOffset = MemoryService.ReadInt32(IntPtr.Add(sigLocation, 1));
+		int jumpOffset = this.memoryReader.ReadInt32(IntPtr.Add(sigLocation, 1));
 		return IntPtr.Add(sigLocation, 5 + jumpOffset);
 	}
 
@@ -316,7 +318,7 @@ public sealed unsafe class SignatureScanner
 		return -1;
 	}
 
-	private static void SetupSearchSpace(ProcessModule module, out SectionInfo textSection, out SectionInfo dataSection)
+	private void SetupSearchSpace(ProcessModule module, out SectionInfo textSection, out SectionInfo dataSection)
 	{
 		textSection = default;
 		dataSection = default;
@@ -324,32 +326,32 @@ public sealed unsafe class SignatureScanner
 		IntPtr baseAddress = module.BaseAddress;
 
 		// We don't want to read all of IMAGE_DOS_HEADER or IMAGE_NT_HEADER stuff so we cheat here.
-		int ntNewOffset = MemoryService.ReadInt32(baseAddress, 0x3C);
+		int ntNewOffset = this.memoryReader.ReadInt32(baseAddress, 0x3C);
 		IntPtr ntHeader = baseAddress + ntNewOffset;
 
 		// IMAGE_NT_HEADER
 		IntPtr fileHeader = ntHeader + 4;
-		short numSections = MemoryService.ReadInt16(ntHeader, 6);
-		short sizeOfOptionalHeader = MemoryService.ReadInt16(ntHeader, 20);
+		short numSections = this.memoryReader.ReadInt16(ntHeader, 6);
+		short sizeOfOptionalHeader = this.memoryReader.ReadInt16(ntHeader, 20);
 		IntPtr sectionHeaderStart = ntHeader + 24 + sizeOfOptionalHeader; // IMAGE_OPTIONAL_HEADER
 
 		// IMAGE_SECTION_HEADER
 		for (int i = 0; i < numSections; i++)
 		{
 			IntPtr sectionCursor = sectionHeaderStart + (i * 40);
-			long sectionName = MemoryService.ReadInt64(sectionCursor);
+			long sectionName = this.memoryReader.ReadInt64(sectionCursor);
 			switch (sectionName)
 			{
 				case 0x747865742E: // .text
-					var textSize = MemoryService.ReadInt32(sectionCursor, 8);               // VirtualSize
-					var textVirtualAddr = (uint)MemoryService.ReadInt32(sectionCursor, 12); // VirtualAddress
-					var textOffset = MemoryService.ReadInt32(sectionCursor, 20);            // PointerToRawData
+					var textSize = this.memoryReader.ReadInt32(sectionCursor, 8);               // VirtualSize
+					var textVirtualAddr = (uint)this.memoryReader.ReadInt32(sectionCursor, 12); // VirtualAddress
+					var textOffset = this.memoryReader.ReadInt32(sectionCursor, 20);            // PointerToRawData
 					textSection = new SectionInfo(textOffset, textSize, textVirtualAddr);
 					break;
 				case 0x617461642E: // .data
-					var dataSize = MemoryService.ReadInt32(sectionCursor, 8);               // VirtualSize
-					var dataVirtualAddr = (uint)MemoryService.ReadInt32(sectionCursor, 12); // VirtualAddress
-					var dataOffset = MemoryService.ReadInt32(sectionCursor, 20);            // PointerToRawData
+					var dataSize = this.memoryReader.ReadInt32(sectionCursor, 8);               // VirtualSize
+					var dataVirtualAddr = (uint)this.memoryReader.ReadInt32(sectionCursor, 12); // VirtualAddress
+					var dataOffset = this.memoryReader.ReadInt32(sectionCursor, 20);            // PointerToRawData
 					dataSection = new SectionInfo(dataOffset, dataSize, dataVirtualAddr);
 					break;
 			}
@@ -366,8 +368,9 @@ public sealed unsafe class SignatureScanner
 		public uint VirtualAddress { get; } = virtualAddress;
 	}
 
-	private unsafe class UnsafeCodeReader(byte* address, int length) : CodeReader
+	private unsafe class UnsafeCodeReader(IProcessMemoryReader reader, byte* address, int length) : CodeReader
 	{
+		private readonly IProcessMemoryReader memoryReader = reader;
 		private int pos = 0;
 
 		public bool CanReadByte => this.pos < length;
@@ -377,7 +380,7 @@ public sealed unsafe class SignatureScanner
 			if (this.pos >= length)
 				return -1;
 
-			return MemoryService.ReadByte((nint)(address + this.pos++));
+			return this.memoryReader.ReadByte((nint)(address + this.pos++));
 		}
 	}
 }

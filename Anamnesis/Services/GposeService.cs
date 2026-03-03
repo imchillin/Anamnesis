@@ -46,7 +46,7 @@ public class GposeService : ServiceBase<GposeService>
 	/// Checks if the user is in GPose photo mode by probing the game process' memory.
 	/// </summary>
 	/// <returns>True if the user is in GPose, false otherwise.</returns>
-	public static bool IsInGpose()
+	public static bool? IsInGpose()
 	{
 		if (s_isInGposeHook == null || !s_isInGposeHook.IsValid)
 			return false;
@@ -54,7 +54,7 @@ public class GposeService : ServiceBase<GposeService>
 		bool? result = null;
 		try
 		{
-			result = ControllerService.Instance.InvokeHook<bool>(s_isInGposeHook);
+			result = ControllerService.Instance.InvokeHook<bool>(s_isInGposeHook, timeoutMs: 250);
 			if (result == null)
 			{
 				Log.Warning("Gpose check hook did not return a result.");
@@ -65,7 +65,7 @@ public class GposeService : ServiceBase<GposeService>
 			Log.Verbose($"Failed to invoke 'IsGpose' hook.");
 		}
 
-		return result ?? false;
+		return result;
 	}
 
 	/// <inheritdoc/>
@@ -84,11 +84,11 @@ public class GposeService : ServiceBase<GposeService>
 		{
 			try
 			{
-				bool newGpose = IsInGpose();
-				if (newGpose != this.IsGpose)
+				bool? newGpose = IsInGpose();
+				if (newGpose.HasValue && newGpose != this.IsGpose)
 				{
-					this.IsGpose = newGpose;
-					GposeStateChanged?.Invoke(newGpose);
+					this.IsGpose = newGpose.Value;
+					GposeStateChanged?.Invoke(newGpose.Value);
 				}
 
 				await Task.Delay(TASK_DELAY_MS, cancellationToken);

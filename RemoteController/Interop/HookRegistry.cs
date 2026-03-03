@@ -102,9 +102,16 @@ public sealed class HookRegistry
 			}
 
 			uint hookId = this.AllocateHookId();
+			nint address = Controller.SigResolver?.Resolve(delegateKey) ?? 0;
 			try
 			{
-				var registeredHook = HookDelegateRegistry.CreateHook(delegateKey, hookId, regData, s_reloadedHooks.Value);
+				if (address == 0)
+				{
+					Log.Error($"Failed to resolve address for delegate key: {delegateKey}");
+					return 0;
+				}
+
+				var registeredHook = HookDelegateRegistry.CreateHook(delegateKey, hookId, address, regData, s_reloadedHooks.Value);
 				if (registeredHook == null)
 				{
 					Log.Error($"Failed to create hook instance for: {delegateKey}");
@@ -114,7 +121,7 @@ public sealed class HookRegistry
 				this.activeHooks[hookId] = registeredHook;
 				this.keyToHookId[delegateKey] = hookId;
 
-				Log.Information($"Registered hook[ID: {hookId}, Key: {delegateKey}] at 0x{regData.Address:X}");
+				Log.Information($"Registered hook[ID: {hookId}, Key: {delegateKey}] at 0x{address:X}");
 				return hookId;
 			}
 			catch (Exception ex)
@@ -205,7 +212,7 @@ public sealed class HookRegistry
 		{
 			uint candidate = this.nextHookID++;
 
-			if (this.nextHookID >= HookMessageId.MAX_HOOK_ID)
+			if (this.nextHookID >= HookMessageId.MAX_STANDARD_HOOK_ID)
 				this.nextHookID = 1; // Skip 0 (Reserved for invalid hooks)
 
 			if (!this.activeHooks.ContainsKey(candidate))

@@ -27,6 +27,8 @@
     <NeutralLanguage>en</NeutralLanguage>
     <TrimmerRootAssembly>Serilog; RemoteController</TrimmerRootAssembly>
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
   </PropertyGroup>
   <ItemGroup>
     <RemoteControllerSources

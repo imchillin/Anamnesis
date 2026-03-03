@@ -456,7 +456,7 @@ public class CharacterFile : JsonFileBase
 
 			// Setting customize values will reset the extended appearance, which me must read.
 			actor.PauseSynchronization = false;
-			actor.Synchronize();
+			actor.Synchronize(exclGroups: TargetService.ExcludeSkeletonGroup);
 			actor.PauseSynchronization = true;
 		}
 

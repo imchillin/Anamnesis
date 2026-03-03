@@ -16,6 +16,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using XivToolsWpf;
+using static RemoteController.Interop.Delegates.GameMain;
 
 /// <summary>
 /// A service that manages the selection and pinning of actors in the application.
@@ -436,9 +437,8 @@ public class TargetService : ServiceBase<TargetService>
 		{
 			try
 			{
-				bool isGpose = GposeService.IsInGpose();
-
 				var actorHandles = ActorService.Instance.ObjectTable.GetAll();
+				bool? isGpose = GposeService.IsInGpose();
 
 				// We want the first non-hidden actor with a name in the same mode as the game
 				foreach (var handle in actorHandles)
@@ -457,7 +457,7 @@ public class TargetService : ServiceBase<TargetService>
 						if (string.IsNullOrEmpty(a.Name))
 							return false;
 
-						if (a.IsGPoseActor != isGpose)
+						if (!isGpose.HasValue || a.IsGPoseActor != isGpose.Value)
 							return false;
 
 						return true;

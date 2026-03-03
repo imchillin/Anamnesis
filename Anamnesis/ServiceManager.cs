@@ -129,6 +129,12 @@ public class ServiceManager
 
 		foreach (IService service in reversedServices)
 		{
+			if (!service.IsInitialized || !service.IsAlive)
+			{
+				Log.Verbose($"Skipping shutdown of service: {service.GetType().Name} as it is not initialized or already shut down.");
+				continue;
+			}
+
 			try
 			{
 				// If this throws an exception we should keep trying to shut down the rest

@@ -34,6 +34,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	private readonly FuncQueue backupQueue;
 
 	private int isRefreshing = 0;
+	private bool needsRefresh = false;
 
 	public ActorMemory()
 	{
@@ -253,32 +254,38 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	public async Task Refresh()
 	{
 		if (this.IsRefreshing)
+		{
+			Log.Verbose("Refresh requested while busy. Marking as pending.");
+			this.needsRefresh = true;
 			return;
+		}
 
-		if (!this.CanRefresh)
-			return;
-
-		if (this.Address == IntPtr.Zero)
+		if (!this.CanRefresh || this.Address == IntPtr.Zero)
 			return;
 
 		try
 		{
-			Log.Information($"Attempting actor refresh for actor address: {this.Address}");
+			Log.Information($"Attempting actor refresh for actor address: 0x{this.Address:X}");
 
 			this.IsRefreshing = true;
 
-			if (await RefreshActor(this))
+			do
 			{
-				Log.Information($"Completed actor refresh for actor address: {this.Address}");
+				this.needsRefresh = false;
+				if (await RefreshActor(this))
+				{
+					Log.Information($"Completed actor refresh cycle for: 0x{this.Address:X}");
+				}
+				else
+				{
+					Log.Information($"Could not refresh actor: 0x{this.Address:X}");
+				}
 			}
-			else
-			{
-				Log.Information($"Could not refresh actor: {this.Address}");
-			}
+			while (this.needsRefresh);
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, $"Error refreshing actor: {this.Address}");
+			Log.Error(ex, $"Error refreshing actor: 0x{this.Address:X}");
 		}
 		finally
 		{

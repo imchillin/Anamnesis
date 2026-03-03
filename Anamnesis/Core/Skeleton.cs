@@ -20,8 +20,6 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-// TODO: Add fallback to the old method of adding bones if the new method fails.
-
 /// <summary>
 /// Represents a skeleton of hierarchically-parented bones of an actor that can be posed.
 /// </summary>
@@ -205,7 +203,7 @@ public class Skeleton : INotifyPropertyChanged
 	/// <summary>Reads the transforms of all bones in the skeleton.</summary>
 	public void ReadTransforms()
 	{
-		if (this.Bones == null || (this.Actor?.Do(a => a.ModelObject?.Skeleton == null) ?? true) || !GposeService.IsInGpose())
+		if (this.Bones == null || (this.Actor?.Do(a => a.ModelObject?.Skeleton == null) ?? true) || !GposeService.Instance.IsGpose)
 			return;
 
 		// If history is restoring, wait until it's done.

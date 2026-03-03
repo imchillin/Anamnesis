@@ -1,7 +1,7 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace RemoteController.IPC;
+namespace RemoteController.Memory;
 
 using System;
 using System.Diagnostics.CodeAnalysis;

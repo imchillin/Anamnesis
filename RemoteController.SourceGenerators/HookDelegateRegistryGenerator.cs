@@ -7,7 +7,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using System;
 using System.Collections.Immutable;
 using System.Text;
 
@@ -164,6 +163,7 @@ public class HookDelegateRegistryGenerator : IIncrementalGenerator
 			using Reloaded.Hooks;
 			using RemoteController.Interop.Delegates;
 			using RemoteController.IPC;
+			using RemoteController.Memory;
 			using Serilog;
 			using System.Collections.Concurrent;
 			using System.Diagnostics.CodeAnalysis;
@@ -252,14 +252,15 @@ public class HookDelegateRegistryGenerator : IIncrementalGenerator
 				/// </summary>
 				/// <param name="delegateKey">The unique identifier of the delegate</param>
 				/// <param name="hookId">The unique hook identifier.</param>
+				/// <param name="address">The target address of the function hook.</param>
 				/// <param name="regData">The hook registration data.</param>
 				/// <param name="reloadedHooks">A reference to a ReloadedHooks instance.</param>
 				/// <returns>The created function hook/wrapper, or null on failure.</returns>
-				public static IFunctionHook? CreateHook(string delegateKey, uint hookId, HookRegistrationData regData, ReloadedHooks reloadedHooks)
+				public static IFunctionHook? CreateHook(string delegateKey, uint hookId, nint address, HookRegistrationData regData, ReloadedHooks reloadedHooks)
 				{
 					try
 					{
-						if (regData.Address == 0)
+						if (address == 0)
 							return null;
 
 						var delegateType = Type.GetType(delegateKey);
@@ -275,7 +276,7 @@ public class HookDelegateRegistryGenerator : IIncrementalGenerator
 							return null;
 						}
 
-						var hook = HookFactory.Create(delegateKey, hookId, regData, reloadedHooks);
+						var hook = HookFactory.Create(delegateKey, hookId, address, regData, reloadedHooks);
 						if (hook == null)
 							return null;
 
@@ -453,8 +454,9 @@ public class HookDelegateRegistryGenerator : IIncrementalGenerator
 
 	private static string GetFieldName(DelegateInfo del)
 	{
+		var classPrefix = string.IsNullOrEmpty(del.ParentClassName) ? "" : $"{char.ToLowerInvariant(del.ParentClassName[0])}{del.ParentClassName.Substring(1)}";
 		var name = del.DelegateName;
-		return $"s_{char.ToLowerInvariant(name[0])}{name.Substring(1)}";
+		return $"s_{classPrefix}{name}";
 	}
 
 	private static string GetFullDelegateTypeName(DelegateInfo del)
@@ -466,12 +468,14 @@ public class HookDelegateRegistryGenerator : IIncrementalGenerator
 
 	private static string GetSetupMethodName(DelegateInfo del)
 	{
-		return $"Setup{del.DelegateName}";
+		var classPrefix = string.IsNullOrEmpty(del.ParentClassName) ? "" : $"{del.ParentClassName}";
+		return $"Setup{classPrefix}{del.DelegateName}";
 	}
 
 	private static string GetInvokeMethodName(DelegateInfo del)
 	{
-		return $"Invoke{del.DelegateName}Typed";
+		var classPrefix = string.IsNullOrEmpty(del.ParentClassName) ? "" : $"{del.ParentClassName}";
+		return $"Invoke{classPrefix}{del.DelegateName}Typed";
 	}
 
 	private sealed class DelegateInfo(

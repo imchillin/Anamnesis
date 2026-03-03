@@ -165,6 +165,27 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	}
 
 	/// <summary>
+	/// Gets the address of the object at the specified index.
+	/// </summary>
+	/// <param name="index">The index in the object table.</param>
+	/// <returns>The address of the object, or IntPtr.Zero if empty/out of bounds.</returns>
+	public IntPtr GetAddress(int index)
+	{
+		if (index < 0 || index >= OBJECT_TABLE_SIZE)
+			return IntPtr.Zero;
+
+		this.tableLock.EnterReadLock();
+		try
+		{
+			return this.objTable[index];
+		}
+		finally
+		{
+			this.tableLock.ExitReadLock();
+		}
+	}
+
+	/// <summary>
 	/// Checks if the object table contains the provided object pointer.
 	/// </summary>
 	/// <param name="ptr">The object pointer to check for.</param>

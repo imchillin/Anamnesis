@@ -254,7 +254,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 			this.Memory?.Do(a => a.PropertyChanged -= this.OnViewModelPropertyChanged);
 
 			ObjectHandle<GameObjectMemory>? newHandle = null;
-			bool isGPose = GposeService.IsInGpose();
+			bool? isGpose = GposeService.IsInGpose();
 
 			var actorHandles = ActorService.Instance.ObjectTable.GetAll();
 
@@ -279,7 +279,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 					if (a.IsHidden)
 						return false;
 
-					if (a.IsGPoseActor != isGPose)
+					if (!isGpose.HasValue || a.IsGPoseActor != isGpose.Value)
 						return false;
 
 					return true;
@@ -309,7 +309,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 						if (a.IsHidden)
 							return false;
 
-						if (a.IsGPoseActor != isGPose)
+						if (!isGpose.HasValue || a.IsGPoseActor != isGpose.Value)
 							return false;
 
 						// Is this actor memory already pinned to a different pin?
@@ -449,8 +449,9 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 	private void OnRetargetedActor()
 	{
+		var isGpose = GposeService.IsInGpose();
 		// If we need to apply the appearance thanks to a GPose boundary changes?
-		if (SettingsService.Current.ReapplyAppearance || GposeService.IsInGpose())
+		if (SettingsService.Current.ReapplyAppearance || isGpose == true)
 		{
 			this.RestoreCharacterBackup(BackupModes.Gpose);
 

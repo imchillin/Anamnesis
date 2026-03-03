@@ -6,26 +6,19 @@ namespace RemoteController.Interop;
 using System;
 
 /// <summary>
-/// An enum that specifies the invocation context of a function hook.
-/// Applicable only to <see cref="HookType.Wrapper"/> hooks.
+/// An enum that specifies the dispatch mode for function wrappers.
 /// </summary>
-/// <remarks>
-/// <see cref="HookType.Interceptor"/> function hooks are always invoked
-/// synchronously within the existing call flow of the original function.
-/// </remarks>
-public enum HookInvokeContext
+public enum DispatchMode : byte
 {
 	/// <summary>
-	/// Invoke the function hook at the beginning of a framework
-	/// thread frame.
+	/// Executes the wrapper immediately as a detached thread call.
 	/// </summary>
-	FrameworkThread,
+	Immediate = 0,
 
 	/// <summary>
-	/// Invoke the function hook asynchronously, detached from
-	/// the framework thread.
+	/// Executes the wrapper on the next framework tick.
 	/// </summary>
-	Detached,
+	FrameworkTick = 1,
 }
 
 /// <summary>
@@ -49,6 +42,9 @@ public enum HookBehavior
 	Replace,
 }
 
+/// <summary>
+/// An enum that specifies the type of function hook to create.
+/// </summary>
 public enum HookType
 {
 	/// <summary>
@@ -63,6 +59,33 @@ public enum HookType
 	/// <see cref="HookBehavior"/> for all available hook behavior options.
 	/// </summary>
 	Interceptor,
+
+	/// <summary>
+	/// A special interceptor hook type designed for system-level functions
+	/// that usually requires specific handling.
+	/// </summary>
+	System,
+}
+
+/// <summary>
+/// An enum that specifies the strategy for resolving memory signatures.
+/// </summary>
+public enum SigResolveStrategy
+{
+	/// <summary>
+	/// Resolves the signature by scanning the module's .text section for a matching byte pattern.
+	/// </summary>
+	TextScan,
+
+	/// <summary>
+	/// Resolves the signature as a static address, with an optional offset.
+	/// </summary>
+	StaticAddress,
+
+	/// <summary>
+	/// Resolves the signature as a vtable entry, with an optional offset.
+	/// </summary>
+	VTableLookup,
 }
 
 /// <summary>
@@ -72,7 +95,10 @@ public enum HookType
 /// <param name="signature">The memory signature of the function to hook.</param>
 /// <param name="offset">An optional offset to apply after signature resolution.</param>
 [AttributeUsage(AttributeTargets.Delegate, AllowMultiple = false)]
-public sealed class FunctionBindAttribute(string signature, int offset = 0, HookInvokeContext invokeCtx = HookInvokeContext.Detached) : Attribute
+public sealed class FunctionBindAttribute(
+	string signature,
+	int offset = 0,
+	SigResolveStrategy strategy = SigResolveStrategy.TextScan) : Attribute
 {
 	/// <summary>
 	/// Gets the memory signature of the function to hook.
@@ -85,11 +111,8 @@ public sealed class FunctionBindAttribute(string signature, int offset = 0, Hook
 	public int Offset { get; } = offset;
 
 	/// <summary>
-	/// Gets the invocation context for this function hook.
+	/// Gets the resolution strategy for the specified signature.
+	/// The default is <see cref="SigResolveStrategy.TextScan"/>.
 	/// </summary>
-	/// <remarks>
-	/// See <see cref="HookInvokeContext"/> for more information
-	/// on all available hook invocation contexts.
-	/// </remarks>
-	public HookInvokeContext InvokeContext { get; } = invokeCtx;
+	public SigResolveStrategy Strategy { get; } = strategy;
 }

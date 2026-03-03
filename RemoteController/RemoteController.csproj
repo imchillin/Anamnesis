@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
@@ -12,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Iced" Version="1.21.0" />
     <PackageReference Include="Reloaded.Hooks" Version="4.3.3" />
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
@@ -34,7 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RemoteController.SourceGenerators\RemoteController.SourceGenerators.csproj"
-                      OutputItemType="Analyzer" />
+    <ProjectReference Include="..\RemoteController.SourceGenerators\RemoteController.SourceGenerators.csproj" OutputItemType="Analyzer" />
   </ItemGroup>
 </Project>

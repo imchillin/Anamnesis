@@ -87,6 +87,10 @@ internal sealed class FunctionHook<TDelegate>(uint id, string delegateKey, HookB
 		if (disposing)
 		{
 			this.hook.Disable();
+			if (this.hook is IDisposable disposable)
+			{
+				disposable.Dispose();
+			}
 		}
 		this.isDisposed = true;
 	}

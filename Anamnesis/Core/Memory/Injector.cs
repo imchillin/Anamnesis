@@ -4,8 +4,10 @@
 namespace Anamnesis.Memory;
 
 using Iced.Intel;
+using Microsoft.Win32;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -257,14 +259,57 @@ internal sealed class Injector : IDisposable
 		}
 	}
 
-	private static void ScheduleForDeletion(string path)
+	private static void ScheduleForDeletion(string filePath)
 	{
-		if (!File.Exists(path))
+		const string RegValueName = "PendingFileRenameOperations";
+
+		if (!File.Exists(filePath))
 			return;
 
-		// Fallback
-		MoveFileEx(path, null, (uint)MoveFileFlag.MOVEFILE_DELAY_UNTIL_REBOOT);
-		Log.Information($"[Injector] Scheduled file for deletion on OS reboot: {path}");
+		try
+		{
+			string regKeyPath = string.Join("\\", "SYSTEM", "CurrentControlSet", "Control", "Session Manager");
+			string longPath = Path.GetFullPath(filePath);
+			string ntPath = longPath.StartsWith(@"\??\") ? longPath : @"\??\" + longPath;
+
+			using var key = Registry.LocalMachine.OpenSubKey(regKeyPath, writable: true);
+			if (key == null)
+			{
+				Log.Error("[Injector] Could not open registry key for pending file rename operations.");
+				return;
+			}
+
+			var pendingDeletes = (key.GetValue(RegValueName) as string[] ?? []).ToList();
+
+			// Remove existing entries for matching file to avoid duplicates
+			for (int i = pendingDeletes.Count - 2; i >= 0; i -= 2)
+			{
+				if (pendingDeletes[i].EndsWith(longPath, StringComparison.OrdinalIgnoreCase) ||
+					pendingDeletes[i].EndsWith(ntPath, StringComparison.OrdinalIgnoreCase))
+				{
+					// Remove the destination marker first, then the source
+					if (i + 1 < pendingDeletes.Count)
+						pendingDeletes.RemoveAt(i + 1);
+
+					pendingDeletes.RemoveAt(i);
+				}
+			}
+
+			// Add our new deletion entry
+			pendingDeletes.Add(ntPath);
+			pendingDeletes.Add(string.Empty);
+
+			key.SetValue(RegValueName, pendingDeletes.ToArray(), RegistryValueKind.MultiString);
+			Log.Information($"[Injector] Scheduled file for deletion on next OS reboot: {filePath}");
+		}
+		catch (UnauthorizedAccessException)
+		{
+			Log.Error($"[Injector] Access denied when trying to schedule file for deletion: {filePath}.");
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, $"[Injector] Failed to schedule file for deletion: {filePath}");
+		}
 	}
 
 	private void CallExport(IntPtr hModule, string funcName)

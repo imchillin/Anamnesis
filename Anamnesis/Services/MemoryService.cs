@@ -11,6 +11,7 @@ using Anamnesis.GUI.Windows;
 using Anamnesis.Keyboard;
 using Anamnesis.Services;
 using PropertyChanged;
+using RemoteController.Memory;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,7 +28,7 @@ using static Anamnesis.Memory.NativeFunctions;
 /// A service that handles memory operations on the game process.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public partial class MemoryService : ServiceBase<MemoryService>
+public partial class MemoryService : ServiceBase<MemoryService>, IProcessMemoryReader
 {
 	/// <summary>
 	/// The maximum number of attempts to read from memory before failing.
@@ -115,6 +116,9 @@ public partial class MemoryService : ServiceBase<MemoryService>
 		}
 	}
 
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.IsProcessAlive => IsProcessAlive;
+
 	/// <summary>
 	/// Reads a pointer from the specified memory address.
 	/// </summary>
@@ -143,7 +147,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// <param name="address">The memory address to read the value from.</param>
 	/// <returns>The value read from the specified memory address, or null if the read fails.</returns>
 	/// <exception cref="Exception">Thrown if the specified memory address is invalid.</exception>
-	public static T? Read<T>(UIntPtr address)
+	public static T Read<T>(UIntPtr address)
 				where T : struct
 	{
 		unsafe
@@ -558,6 +562,54 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	}
 
 	/// <inheritdoc/>
+	IntPtr IProcessMemoryReader.ReadPtr(IntPtr address) => ReadPtr(address);
+
+	/// <inheritdoc/>
+	T IProcessMemoryReader.Read<T>(IntPtr address) => Read<T>(address);
+
+	/// <inheritdoc/>
+	T IProcessMemoryReader.Read<T>(UIntPtr address) => Read<T>(address);
+
+	/// <inheritdoc/>
+	object IProcessMemoryReader.Read(IntPtr address, Type type) => Read(address, type);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Read(UIntPtr address, byte[] buffer, UIntPtr size) => Read(address, buffer, size);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Read(IntPtr address, byte[] buffer, int size) => Read(address, buffer, size);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Read(IntPtr address, Span<byte> buffer) => Read(address, buffer);
+
+	/// <inheritdoc/>
+	byte IProcessMemoryReader.ReadByte(nint address, int offset) => ReadByte(address, offset);
+
+	/// <inheritdoc/>
+	short IProcessMemoryReader.ReadInt16(nint address, int offset) => ReadInt16(address, offset);
+
+	/// <inheritdoc/>
+	int IProcessMemoryReader.ReadInt32(nint address, int offset) => ReadInt32(address, offset);
+
+	/// <inheritdoc/>
+	long IProcessMemoryReader.ReadInt64(nint address, int offset) => ReadInt64(address, offset);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Write(IntPtr address, byte[] buffer) => Write(address, buffer);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Write(IntPtr address, Span<byte> buffer) => Write(address, buffer);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Write<T>(IntPtr address, T value) => Write(address, value);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Write(IntPtr address, object value) => Write(address, value);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Write(IntPtr address, object value, Type type) => Write(address, value, type);
+
+	/// <inheritdoc/>
 	public override async Task Initialize()
 	{
 		await base.Initialize();
@@ -624,7 +676,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 			this.modules.Add(module.ModuleName, module.BaseAddress);
 		}
 
-		Scanner = new SignatureScanner(process.MainModule);
+		Scanner = new SignatureScanner(process.MainModule, this);
 	}
 
 	/// <summary>

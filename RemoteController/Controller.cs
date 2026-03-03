@@ -5,15 +5,18 @@ namespace RemoteController;
 
 using RemoteController.Interop;
 using RemoteController.IPC;
+using RemoteController.Memory;
 using Serilog;
 using SharedMemoryIPC;
 using System.Buffers;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [RequiresUnreferencedCode("This class uses reflection-based hook invocation.")]
+[RequiresDynamicCode("This class uses dynamic code for hook invocation.")]
 public class Controller
 {
 	private const string BUF_SHMEM_OUTGOING = "Local\\ANAM_SHMEM_CTRL_TO_MAIN";
@@ -21,7 +24,16 @@ public class Controller
 	private const uint WATCHDOG_TIMEOUT_MS = 60000;
 	private const uint WATCHDOG_TIMER_INTERVAL_MS = 15000;
 	private const int IPC_TIMEOUT_MS = 100;
+	private const int IPC_FAST_FAIL_TIMEOUT_MS = 16;
+	private const int BATCH_INVOKE_BUFFER_STARTSIZE = 1024;
+	private const int STACKALLOC_THRESHOLD = 256;
 
+	private const string FASM_RESOURCE_NAME = "FASMX64";
+	private const string FASM_RESOURCE_FILENAME = $"{FASM_RESOURCE_NAME}.dll";
+	private const string FASM_RESOURCE_SEARCH_PATTERN = $"{FASM_RESOURCE_NAME}.*dll";
+
+	private static readonly InProcessMemoryReader s_memoryReader = new();
+	private static readonly int s_sizeOfInt = sizeof(int);
 	private static readonly Func<uint, byte, byte> s_incrementFunc = static (_, v) => (byte)((v + 1) & 0xFF);
 	private static readonly byte[] s_emptyPayload = [];
 	private static readonly ArrayPool<byte> s_bufferPool = ArrayPool<byte>.Shared;
@@ -29,12 +41,20 @@ public class Controller
 	private static readonly ConcurrentDictionary<uint, byte> s_sequenceCounters = new(); // Key: Packed hook ID, Value: Sequence counter
 	private static readonly ObjectPool<PendingRequest<byte[]>> s_pendingRequestPool = new(maxSize: 128);
 
+	private static readonly WorkPipeline s_workPipeline = new(Math.Max(Environment.ProcessorCount / 2, 1));
+	private static readonly ObjectPool<WorkItem<(uint, byte[], int)>> s_workItemPool = new(maxSize: 128);
+
+	public static SignatureScanner? Scanner = null;
+	public static SignatureResolver? SigResolver = null;
+	private static FrameworkDriver? s_frameworkDriver = null;
+
 	private static Endpoint? s_outgoingEndpoint = null;
 	private static Endpoint? s_incomingEndpoint = null;
 
 	private static long s_heartbeatTimestamp = 0;
 	private static Timer? s_watchdogTimer;
 	private static volatile bool s_running = true;
+	private static bool s_dllImportResolverSet = false;
 
 	[RequiresDynamicCode("Requires dynamic code")]
 	private static unsafe void* NativePtr() => (delegate* unmanaged<void>)&RemoteControllerEntry;
@@ -84,7 +104,7 @@ public class Controller
 			// Wait for response
 			if (!pending.Wait(IPC_TIMEOUT_MS))
 			{
-				Log.Warning($"Timeout waiting for intercept response for hook {hookIndex}");
+				Log.Warning($"Timeout waiting for intercept response for hook {hookIndex} (MsgId: {msgId}).");
 				return s_emptyPayload;
 			}
 
@@ -92,6 +112,75 @@ public class Controller
 		}
 		finally
 		{
+			s_pendingHooks.TryRemove(msgId, out _);
+			pending.Reset();
+			s_pendingRequestPool.Return(pending);
+		}
+	}
+
+	/// <summary>
+	/// Sends a framework tick handle request to the host application and waits for a response.
+	/// </summary>
+	/// <returns>
+	/// True if if the framework should continue propagating tick detours; false otherwise.
+	/// </returns>
+	[RequiresDynamicCode("MarshalUtils.Serialize requires dynamic code")]
+	public static bool SendFrameworkRequest()
+	{
+		if (!s_running || s_outgoingEndpoint == null)
+			return false;
+
+		byte seq = GetNextSequence(HookMessageId.FRAMEWORK_SYSTEM_ID);
+		uint msgId = HookMessageId.Pack(HookMessageId.FRAMEWORK_SYSTEM_ID, seq);
+
+		var pending = s_pendingRequestPool.Get();
+		if (!s_pendingHooks.TryAdd(msgId, pending))
+		{
+			s_pendingRequestPool.Return(pending);
+			return false;
+		}
+
+		byte[]? rented = null;
+		int payloadSize = Unsafe.SizeOf<FrameworkMessageData>();
+		var data = new FrameworkMessageData { Type = FrameworkMessageType.TickSyncRequest };
+		var header = new MessageHeader(msgId, PayloadType.Request, (ulong)payloadSize);
+		bool sent;
+
+		try
+		{
+			if (payloadSize <= STACKALLOC_THRESHOLD)
+			{
+				Span<byte> payload = stackalloc byte[payloadSize];
+				MarshalUtils.Write(payload, in data);
+				sent = s_outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS);
+			}
+			else
+			{
+				rented = ArrayPool<byte>.Shared.Rent(payloadSize);
+				Span<byte> rentedSpan = rented.AsSpan(0, payloadSize);
+				MarshalUtils.Write(rentedSpan, in data);
+				sent = s_outgoingEndpoint.Write(header, rentedSpan, IPC_TIMEOUT_MS);
+			}
+
+			if (!sent)
+			{
+				Log.Warning("Failed to send framework tick sync request.");
+				return false;
+			}
+
+			if (!pending.Wait(IPC_FAST_FAIL_TIMEOUT_MS))
+				return false;
+
+			if (pending.TryGetResult(out byte[]? result) && result != null && result.Length > 0)
+				return result[0] != 0;
+
+			return false;
+		}
+		finally
+		{
+			if (rented != null)
+				ArrayPool<byte>.Shared.Return(rented);
+
 			s_pendingHooks.TryRemove(msgId, out _);
 			pending.Reset();
 			s_pendingRequestPool.Return(pending);
@@ -133,6 +222,32 @@ public class Controller
 				Log.Error("Failed to set up assembler path.");
 				return;
 			}
+
+			// Locate the last copied library to avoid linking Reloaded.Hooks to a mismatched resource
+			string? fasmPath = FindFasmDll(Directory.GetCurrentDirectory());
+			if (fasmPath == null)
+				return;
+
+			if (!s_dllImportResolverSet)
+			{
+				NativeLibrary.SetDllImportResolver(typeof(Reloaded.Hooks.ReloadedHooks).Assembly, (libName, asm, searchPath) =>
+				{
+					if (libName.Equals(FASM_RESOURCE_FILENAME, StringComparison.OrdinalIgnoreCase) || libName.Equals(FASM_RESOURCE_NAME, StringComparison.OrdinalIgnoreCase))
+						return NativeLibrary.Load(fasmPath);
+
+					return IntPtr.Zero;
+				});
+				s_dllImportResolverSet = true;
+			}
+
+			Process currentProcess = Process.GetCurrentProcess();
+			if (currentProcess.MainModule == null)
+			{
+				Log.Error("Failed to get main module of the current process.");
+				return;
+			}
+			Scanner = new SignatureScanner(currentProcess.MainModule, s_memoryReader);
+			SigResolver = new SignatureResolver(Scanner, s_memoryReader);
 
 			Log.Debug("Creating IPC endpoints...");
 			try
@@ -230,11 +345,30 @@ public class Controller
 		}
 	}
 
+	private static string? FindFasmDll(string directory)
+	{
+		var dirInfo = new DirectoryInfo(directory);
+		var latestFasmDll = dirInfo.GetFiles(FASM_RESOURCE_SEARCH_PATTERN, SearchOption.TopDirectoryOnly)
+			.OrderByDescending(f => f.LastWriteTimeUtc)
+			.FirstOrDefault();
+
+		if (latestFasmDll == null)
+		{
+			Log.Error($"Failed to locate FASMX64 library in {directory}");
+			return null;
+		}
+
+		Log.Debug($"Discovered FASM DLL: {latestFasmDll.FullName}");
+		return latestFasmDll.FullName;
+	}
+
 	[RequiresDynamicCode("HookRegistry requires dynamic code")]
 	private static void Cleanup()
 	{
 		Log.Information("Running shutdown sequence...");
 		HookRegistry.Instance.UnregisterAll();
+		s_frameworkDriver?.Dispose();
+		s_frameworkDriver = null;
 		s_watchdogTimer?.Dispose();
 		s_outgoingEndpoint?.Dispose();
 		s_outgoingEndpoint = null;
@@ -271,11 +405,18 @@ public class Controller
 				switch (header.Type)
 				{
 					case PayloadType.Request:
-						HandleWrapperInvoke(header.Id, payload);
+						if (HookMessageId.GetHookId(header.Id) != HookMessageId.FRAMEWORK_SYSTEM_ID)
+						{
+							HandleWrapperInvoke(header.Id, payload);
+						}
+						else
+						{
+							HandleFrameworkCommand(header.Id, payload);
+						}
 						break;
 
 					case PayloadType.Blob:
-						HandleInterceptResponse(header.Id, payload);
+						HandleHookResponse(header.Id, payload);
 						break;
 
 					case PayloadType.Bye:
@@ -324,19 +465,54 @@ public class Controller
 			return;
 		}
 
-		var registerPayload = MemoryMarshal.Read<HookRegistrationData>(data);
-		string delegateKey = registerPayload.GetKey();
-		uint hookId = HookRegistry.Instance.RegisterHook(registerPayload);
+		var regPayload = MemoryMarshal.Read<HookRegistrationData>(data);
+		string delegateKey = regPayload.GetKey();
 
-		if (hookId != 0)
+		if (regPayload.HookType == HookType.System)
 		{
-			byte[] payload = BitConverter.GetBytes(hookId);
-			var header = new MessageHeader(requestId, PayloadType.Ack, (ulong)payload.Length);
-			s_outgoingEndpoint?.Write(header, payload, IPC_TIMEOUT_MS);
+			// Handle system hook registration
+			nint address = SigResolver?.Resolve(delegateKey) ?? 0;
+			try
+			{
+				if (address == 0)
+					throw new Exception($"Failed to resolve address for delegate key: {delegateKey}.");
+
+				if (regPayload.HookId == HookMessageId.FRAMEWORK_SYSTEM_ID)
+				{
+					s_frameworkDriver?.Dispose();
+					s_frameworkDriver = new FrameworkDriver(address);
+					Log.Information($"Framework driver registered at 0x{address:X}.");
+					byte[] payload = BitConverter.GetBytes(HookMessageId.FRAMEWORK_SYSTEM_ID);
+					var header = new MessageHeader(requestId, PayloadType.Ack, (ulong)payload.Length);
+					s_outgoingEndpoint?.Write(header, payload, IPC_TIMEOUT_MS);
+				}
+				else
+				{
+					Log.Warning($"Unknown system hook ID: {regPayload.HookId}. Failed registration.");
+					SendResponse(requestId, PayloadType.NAck);
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, $"Failed to register system hook with request ID {requestId}.");
+				SendResponse(requestId, PayloadType.NAck);
+			}
 		}
 		else
 		{
-			SendResponse(requestId, PayloadType.NAck);
+			// Handle standard hook registration
+			uint hookId = HookRegistry.Instance.RegisterHook(regPayload);
+
+			if (hookId != 0)
+			{
+				byte[] payload = BitConverter.GetBytes(hookId);
+				var header = new MessageHeader(requestId, PayloadType.Ack, (ulong)payload.Length);
+				s_outgoingEndpoint?.Write(header, payload, IPC_TIMEOUT_MS);
+			}
+			else
+			{
+				SendResponse(requestId, PayloadType.NAck);
+			}
 		}
 	}
 
@@ -356,36 +532,115 @@ public class Controller
 		s_outgoingEndpoint.Write(header, IPC_TIMEOUT_MS);
 	}
 
+	private static void ProcessInvokeInternal((uint MsgId, byte[] Data, int Length) state)
+	{
+		uint hookId = HookMessageId.GetHookId(state.MsgId);
+
+		try
+		{
+			DispatchMode mode = (DispatchMode)state.Data[0];
+			byte[] result;
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			byte[] ExecuteLogic()
+			{
+				var args = new ReadOnlySpan<byte>(state.Data, 1, state.Length - 1);
+				if (hookId != HookMessageId.BATCH_HOOK_ID)
+					return HookRegistry.Instance.InvokeOriginal(hookId, args);
+				else
+					return ProcessInvokeBatch(args);
+			}
+
+			if (mode == DispatchMode.FrameworkTick)
+			{
+				result = FrameworkDriver.EnqueueAndWait(ExecuteLogic);
+			}
+			else
+			{
+				result = ExecuteLogic();
+			}
+
+			SendWrapperResult(state.MsgId, result);
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, $"Error invoking hook[ID: {hookId}]");
+			SendWrapperResult(state.MsgId, []);
+		}
+		finally
+		{
+			s_bufferPool.Return(state.Data);
+		}
+	}
+
 	[RequiresDynamicCode("HookRegistry requires dynamic code")]
 	private static void HandleWrapperInvoke(uint msgId, ReadOnlySpan<byte> argsPayload)
 	{
 		int payloadLength = argsPayload.Length;
-		byte[] args = s_bufferPool.Rent(payloadLength);
-		argsPayload.CopyTo(args);
+		byte[] rentedBuffer = s_bufferPool.Rent(payloadLength);
+		argsPayload.CopyTo(rentedBuffer);
 
-		// Execute on thread pool to not block the incoming message processing loop
-		ThreadPool.UnsafeQueueUserWorkItem(
-			static state =>
+		var workItem = s_workItemPool.Get();
+		unsafe
+		{
+			workItem.Initialize(s_workItemPool, &ProcessInvokeInternal, (msgId, rentedBuffer, payloadLength));
+		}
+
+		s_workPipeline.Enqueue(workItem);
+	}
+
+	[RequiresDynamicCode("MarshalUtils requires dynamic code")]
+	private static byte[] ProcessInvokeBatch(ReadOnlySpan<byte> batchArgs)
+	{
+		// Payload layout:
+		// [Int32 HookCount][(Int32 HookId, Int32 PayloadLength, byte[] Payload),...]
+
+		byte[] resultBuffer = s_bufferPool.Rent(BATCH_INVOKE_BUFFER_STARTSIZE);
+		int writeOffset = 0;
+
+		try
+		{
+			int count = MarshalUtils.Deserialize<int>(batchArgs[..s_sizeOfInt]);
+			ReadOnlySpan<byte> cursor = batchArgs[s_sizeOfInt..];
+
+			for (int i = 0; i < count; i++)
 			{
-				try
+				uint hId = MarshalUtils.Deserialize<uint>(cursor[..s_sizeOfInt]);
+				int argLen = MarshalUtils.Deserialize<int>(cursor.Slice(s_sizeOfInt, s_sizeOfInt));
+				ReadOnlySpan<byte> args = cursor.Slice(2 * s_sizeOfInt, argLen);
+
+				// Invoke
+				byte[] result = HookRegistry.Instance.InvokeOriginal(hId, args);
+
+				// Resize if needed
+				int needed = sizeof(int) + result.Length;
+				if (writeOffset + needed > resultBuffer.Length)
 				{
-					byte[] result = HookRegistry.Instance.InvokeOriginal(
-						state.HookIndex,
-						state.Args.AsSpan(0, state.ArgsLength));
-					SendWrapperResult(state.MsgId, result);
+					var newBuffer = s_bufferPool.Rent(Math.Max(resultBuffer.Length * 2, writeOffset + needed));
+					Buffer.BlockCopy(resultBuffer, 0, newBuffer, 0, writeOffset);
+					s_bufferPool.Return(resultBuffer);
+					resultBuffer = newBuffer;
 				}
-				catch (Exception ex)
+
+				// Write [Len][Data]
+				MarshalUtils.Write(resultBuffer.AsSpan(writeOffset), result.Length);
+				writeOffset += sizeof(int);
+
+				if (result.Length > 0)
 				{
-					Log.Error(ex, $"Error invoking wrapper hook[ID: {state.HookIndex}].");
-					SendWrapperResult(state.MsgId, []);
+					Buffer.BlockCopy(result, 0, resultBuffer, writeOffset, result.Length);
+					writeOffset += result.Length;
 				}
-				finally
-				{
-					s_bufferPool.Return(state.Args);
-				}
-			},
-			new HookWorkItem(HookMessageId.GetHookId(msgId), args, msgId, payloadLength),
-			true);
+
+				cursor = cursor[((2 * s_sizeOfInt) + argLen)..];
+			}
+
+			return resultBuffer.AsSpan(0, writeOffset).ToArray();
+		}
+		finally
+		{
+			s_bufferPool.Return(resultBuffer);
+		}
 	}
 
 	private static void SendWrapperResult(uint msgId, byte[] resultPayload)
@@ -400,7 +655,7 @@ public class Controller
 		}
 	}
 
-	private static void HandleInterceptResponse(uint msgId, ReadOnlySpan<byte> data)
+	private static void HandleHookResponse(uint msgId, ReadOnlySpan<byte> data)
 	{
 		if (s_pendingHooks.TryGetValue(msgId, out var pending))
 		{
@@ -408,22 +663,47 @@ public class Controller
 		}
 		else
 		{
-			Log.Warning($"Received response for unknown request: {msgId:X8}");
+			Log.Warning($"Received response for unknown request with message ID: {msgId}.");
 		}
+	}
+
+	private static void HandleFrameworkCommand(uint msgId, ReadOnlySpan<byte> payload)
+	{
+		if (payload.Length < Unsafe.SizeOf<FrameworkMessageData>())
+		{
+			SendResponse(msgId, PayloadType.NAck);
+			return;
+		}
+
+		var msg = MemoryMarshal.Read<FrameworkMessageData>(payload);
+
+		if (msg.Type == FrameworkMessageType.EnableTickSync)
+		{
+			if (s_frameworkDriver != null)
+			{
+				s_frameworkDriver.IsSyncEnabled = true;
+				SendResponse(msgId, PayloadType.Ack);
+				return;
+			}
+		}
+		else
+		{
+			Log.Warning($"Unhandled framework command: {msg.Type}");
+		}
+
+		SendResponse(msgId, PayloadType.NAck);
 	}
 
 	private static void HandleGoodbyeMessage(uint msgId)
 	{
-		Log.Information("Received goodbye message from host. Shutting down controller...");
-		s_running = false;
-
-		if (s_outgoingEndpoint == null)
-			return;
-
-		var header = new MessageHeader(msgId, PayloadType.Ack, 0);
-		if (!s_outgoingEndpoint.Write(header, s_emptyPayload, IPC_TIMEOUT_MS))
+		try
 		{
-			Log.Error($"Failed to acknowledge goodbye message from host application.");
+			Log.Information("Received goodbye message from host. Shutting down controller...");
+			SendResponse(msgId, PayloadType.Ack);
+		}
+		finally
+		{
+			s_running = false;
 		}
 	}
 
@@ -432,6 +712,4 @@ public class Controller
 	{
 		return s_sequenceCounters.AddOrUpdate(hookIndex, 1, s_incrementFunc);
 	}
-
-	private record struct HookWorkItem(uint HookIndex, byte[] Args, uint MsgId, int ArgsLength);
 }
