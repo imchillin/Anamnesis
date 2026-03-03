@@ -143,10 +143,9 @@
     <ProjectReference Include="..\Lib\SharedMemoryIPC\SharedMemoryIPC\SharedMemoryIPC.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RemoteController\RemoteController.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Remove="obj\x64\Debug\Remote\RemoteController.dll" />
+    <ProjectReference Include="..\RemoteController\RemoteController.csproj">
+      <GlobalPropertiesToRemove>RuntimeIdentifier</GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(SolutionDir)obj\RemotePublish\RemoteController.dll">

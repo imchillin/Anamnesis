@@ -36,13 +36,13 @@ public static class HookUtils
 /// </remarks>
 public static class HookMessageId
 {
-	public const uint MAX_HOOK_ID = 0x00FFFFFF;
+	public const uint MAX_HOOK_ID = 0x000FFFFF; // 20 bits (1,048,575)
+	public const uint MAX_SEQ_NUM = 0xFFF;      // 12 bits (4,095)
 
 	// Special-case message identifiers
-	public const int SPECIAL_HOOK_COUNT = 3;
+	public const int SPECIAL_HOOK_COUNT = 2;
 	public const uint FRAMEWORK_SYSTEM_ID = MAX_HOOK_ID - 1;
 	public const uint BATCH_HOOK_ID = FRAMEWORK_SYSTEM_ID - 1;
-	public const uint GOODBYE_MESSAGE_ID = BATCH_HOOK_ID - 1;
 
 	// Maximum hook identifier for non-specialized hooks.
 	public const uint MAX_STANDARD_HOOK_ID = MAX_HOOK_ID - SPECIAL_HOOK_COUNT - 1;
@@ -50,11 +50,20 @@ public static class HookMessageId
 	/// <summary>
 	/// Combines the hook identifier and message sequence number into a single packed identifier.
 	/// </summary>
-	/// <param name="hookId">The unique identifier of the hook. Only the lower 24 bits are used.</param>
-	/// <param name="seqNum">The sequence number of the message (0-255).</param>
-	/// <returns>The packed identifier containing both the hook ID and sequence number.</returns>
+	/// <param name="hookId">
+	/// The unique identifier of the hook.
+	/// Only the lower 20 bits are used, allowing for values from 0 to 1,048,575.
+	/// </param>
+	/// <param name="seqNum">
+	/// The sequence number of the message.
+	/// Only the lower 12 bits are used, allowing for values from 0 to 4095.
+	/// </param>
+	/// <returns>
+	/// The packed identifier containing both the hook ID and sequence number.
+	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static uint Pack(uint hookId, byte seqNum) => ((uint)seqNum << 24) | (hookId & MAX_HOOK_ID);
+	public static uint Pack(uint hookId, ushort seqNum) => ((uint)(seqNum & MAX_SEQ_NUM) << 20) | (hookId & MAX_HOOK_ID);
+
 
 	/// <summary>
 	/// Extracts the hook identifier from the packed identifier.
@@ -68,7 +77,9 @@ public static class HookMessageId
 	/// Extracts the message sequence number from the packed identifier.
 	/// </summary>
 	/// <param name="packedId">The packed identifier.</param>
-	/// <returns>The sequence number of the message (0-255).</returns>
+	/// <returns>
+	/// The sequence number of the message (0-4095).
+	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static byte GetSeqNum(uint packedId) => (byte)(packedId >> 24);
+	public static ushort GetSeqNum(uint packedId) => (ushort)((packedId >> 20) & MAX_SEQ_NUM);
 }

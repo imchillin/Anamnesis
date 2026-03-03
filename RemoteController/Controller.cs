@@ -3,6 +3,7 @@
 
 namespace RemoteController;
 
+using RemoteController.Drivers;
 using RemoteController.Interop;
 using RemoteController.IPC;
 using RemoteController.Memory;
@@ -21,8 +22,9 @@ public class Controller
 {
 	private const string BUF_SHMEM_OUTGOING = "Local\\ANAM_SHMEM_CTRL_TO_MAIN";
 	private const string BUF_SHMEM_INCOMING = "Local\\ANAM_SHMEM_MAIN_TO_CTRL";
-	private const uint WATCHDOG_TIMEOUT_MS = 60000;
-	private const uint WATCHDOG_TIMER_INTERVAL_MS = 15000;
+	
+	private const int PROCESS_MONITOR_JOIN_TIMEOUT_MS = 500;
+	private const int ACTIVE_WRITERS_DRAIN_TIMEOUT_MS = 500;
 	private const int IPC_TIMEOUT_MS = 100;
 	private const int IPC_FAST_FAIL_TIMEOUT_MS = 16;
 	private const int BATCH_INVOKE_BUFFER_STARTSIZE = 1024;
@@ -38,26 +40,63 @@ public class Controller
 	private static readonly byte[] s_emptyPayload = [];
 	private static readonly ArrayPool<byte> s_bufferPool = ArrayPool<byte>.Shared;
 	private static readonly ConcurrentDictionary<uint, PendingRequest<byte[]>> s_pendingHooks = new();
-	private static readonly ConcurrentDictionary<uint, byte> s_sequenceCounters = new(); // Key: Packed hook ID, Value: Sequence counter
+	private static readonly ConcurrentDictionary<uint, ushort> s_sequenceCounters = new(); // Key: Packed hook ID, Value: Sequence counter
+	private static readonly ConcurrentDictionary<EventId, int> s_eventSubscriptionRefCount = new();
 	private static readonly ObjectPool<PendingRequest<byte[]>> s_pendingRequestPool = new(maxSize: 128);
 
 	private static readonly WorkPipeline s_workPipeline = new(Math.Max(Environment.ProcessorCount / 2, 1));
 	private static readonly ObjectPool<WorkItem<(uint, byte[], int)>> s_workItemPool = new(maxSize: 128);
 
+	private static readonly Dictionary<DriverCommand, Func<ReadOnlySpan<byte>, byte[]>> s_commandHandlers = new()
+	{
+		// Posing driver commands
+		[DriverCommand.GetPosingEnabled] = DriverCommandHandler.ConditionalGetter(
+			() => PosingDriver.IsInitialized,
+			() => PosingDriver.Instance.PosingEnabled),
+
+		[DriverCommand.SetPosingEnabled] = DriverCommandHandler.ConditionalSetter<bool>(
+			() => PosingDriver.IsInitialized,
+			v => PosingDriver.Instance.PosingEnabled = v),
+
+		[DriverCommand.GetFreezePhysics] = DriverCommandHandler.ConditionalGetter(
+			() => PosingDriver.IsInitialized,
+			() => PosingDriver.Instance.FreezePhysics),
+
+		[DriverCommand.SetFreezePhysics] = DriverCommandHandler.ConditionalSetter<bool>(
+			() => PosingDriver.IsInitialized,
+			v => PosingDriver.Instance.FreezePhysics = v),
+
+		[DriverCommand.GetFreezeWorldVisualState] = DriverCommandHandler.ConditionalGetter(
+			() => PosingDriver.IsInitialized,
+			() => PosingDriver.Instance.FreezeWorldVisualState),
+
+		[DriverCommand.SetFreezeWorldVisualState] = DriverCommandHandler.ConditionalSetter<bool>(
+			() => PosingDriver.IsInitialized,
+			v => PosingDriver.Instance.FreezeWorldVisualState = v),
+
+		// Gpose driver commands
+		[DriverCommand.GetIsInGpose] = DriverCommandHandler.ConditionalGetter(
+			() => GposeDriver.IsInitialized,
+			() => GposeDriver.Instance.IsInGpose),
+	};
+
+#pragma warning disable CA2211
 	public static SignatureScanner? Scanner = null;
 	public static SignatureResolver? SigResolver = null;
-	private static FrameworkDriver? s_frameworkDriver = null;
+#pragma warning restore CA2211
 
+	private static DriverManager? s_driverManager = null;
 	private static Endpoint? s_outgoingEndpoint = null;
 	private static Endpoint? s_incomingEndpoint = null;
-
-	private static long s_heartbeatTimestamp = 0;
-	private static Timer? s_watchdogTimer;
 	private static volatile bool s_running = true;
 	private static bool s_dllImportResolverSet = false;
+	private static IntPtr s_mainProcessHandle = IntPtr.Zero;
+	private static Thread? s_processMonitorThread = null;
+	private static CancellationTokenSource s_shutdownCts= new();
+	private static int s_activeWriters = 0;
 
 	[RequiresDynamicCode("Requires dynamic code")]
-	private static unsafe void* NativePtr() => (delegate* unmanaged<void>)&RemoteControllerEntry;
+	private static unsafe void* NativePtr() => (delegate* unmanaged<IntPtr, void>)&RemoteControllerEntry;
 
 	/// <summary>
 	/// Sends an intercept request to the host application and waits for a response.
@@ -79,42 +118,54 @@ public class Controller
 	/// </remarks>
 	public static byte[] SendInterceptRequest(uint hookIndex, ReadOnlySpan<byte> argsPayload)
 	{
-		if (!s_running || s_outgoingEndpoint == null)
+		if (!s_running)
 			return s_emptyPayload;
 
-		byte seq = GetNextSequence(hookIndex);
-		uint msgId = HookMessageId.Pack(hookIndex, seq);
-
-		var pending = s_pendingRequestPool.Get();
-		if (!s_pendingHooks.TryAdd(msgId, pending))
-		{
-			s_pendingRequestPool.Return(pending);
-			return s_emptyPayload;
-		}
-
+		Interlocked.Increment(ref s_activeWriters);
 		try
 		{
-			var header = new MessageHeader(msgId, PayloadType.Request, (ulong)argsPayload.Length);
-			if (!s_outgoingEndpoint.Write(header, argsPayload, IPC_TIMEOUT_MS))
+			var endpoint = s_outgoingEndpoint;
+			if (!s_running || endpoint == null)
+				return s_emptyPayload;
+
+			ushort seq = GetNextSequence(hookIndex);
+			uint msgId = HookMessageId.Pack(hookIndex, seq);
+
+			var pending = s_pendingRequestPool.Get();
+			if (!s_pendingHooks.TryAdd(msgId, pending))
 			{
-				Log.Warning($"Failed to send intercept request for hook {hookIndex}");
+				s_pendingRequestPool.Return(pending);
 				return s_emptyPayload;
 			}
 
-			// Wait for response
-			if (!pending.Wait(IPC_TIMEOUT_MS))
+			try
 			{
-				Log.Warning($"Timeout waiting for intercept response for hook {hookIndex} (MsgId: {msgId}).");
-				return s_emptyPayload;
-			}
+				var header = new MessageHeader(msgId, PayloadType.Request, (ulong)argsPayload.Length);
+				if (!endpoint.Write(header, argsPayload, IPC_TIMEOUT_MS))
+				{
+					Log.Warning($"Failed to send intercept request for hook {hookIndex}");
+					return s_emptyPayload;
+				}
 
-			return pending.TryGetResult(out byte[]? result) ? result ?? [] : [];
+				// Wait for response
+				if (!pending.Wait(IPC_TIMEOUT_MS))
+				{
+					Log.Warning($"Timeout waiting for intercept response for hook {hookIndex} (MsgId: {msgId}).");
+					return s_emptyPayload;
+				}
+
+				return pending.TryGetResult(out byte[]? result) ? result ?? [] : [];
+			}
+			finally
+			{
+				s_pendingHooks.TryRemove(msgId, out _);
+				pending.Reset();
+				s_pendingRequestPool.Return(pending);
+			}
 		}
 		finally
 		{
-			s_pendingHooks.TryRemove(msgId, out _);
-			pending.Reset();
-			s_pendingRequestPool.Return(pending);
+			Interlocked.Decrement(ref s_activeWriters);
 		}
 	}
 
@@ -127,63 +178,136 @@ public class Controller
 	[RequiresDynamicCode("MarshalUtils.Serialize requires dynamic code")]
 	public static bool SendFrameworkRequest()
 	{
-		if (!s_running || s_outgoingEndpoint == null)
+		if (!s_running)
 			return false;
 
-		byte seq = GetNextSequence(HookMessageId.FRAMEWORK_SYSTEM_ID);
-		uint msgId = HookMessageId.Pack(HookMessageId.FRAMEWORK_SYSTEM_ID, seq);
-
-		var pending = s_pendingRequestPool.Get();
-		if (!s_pendingHooks.TryAdd(msgId, pending))
-		{
-			s_pendingRequestPool.Return(pending);
-			return false;
-		}
-
-		byte[]? rented = null;
-		int payloadSize = Unsafe.SizeOf<FrameworkMessageData>();
-		var data = new FrameworkMessageData { Type = FrameworkMessageType.TickSyncRequest };
-		var header = new MessageHeader(msgId, PayloadType.Request, (ulong)payloadSize);
-		bool sent;
-
+		Interlocked.Increment(ref s_activeWriters);
 		try
 		{
-			if (payloadSize <= STACKALLOC_THRESHOLD)
-			{
-				Span<byte> payload = stackalloc byte[payloadSize];
-				MarshalUtils.Write(payload, in data);
-				sent = s_outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS);
-			}
-			else
-			{
-				rented = ArrayPool<byte>.Shared.Rent(payloadSize);
-				Span<byte> rentedSpan = rented.AsSpan(0, payloadSize);
-				MarshalUtils.Write(rentedSpan, in data);
-				sent = s_outgoingEndpoint.Write(header, rentedSpan, IPC_TIMEOUT_MS);
-			}
+			var endpoint = s_outgoingEndpoint;
+			if (!s_running || endpoint == null)
+				return false;
 
-			if (!sent)
+			ushort seq = GetNextSequence(HookMessageId.FRAMEWORK_SYSTEM_ID);
+			uint msgId = HookMessageId.Pack(HookMessageId.FRAMEWORK_SYSTEM_ID, seq);
+
+			var pending = s_pendingRequestPool.Get();
+			if (!s_pendingHooks.TryAdd(msgId, pending))
 			{
-				Log.Warning("Failed to send framework tick sync request.");
+				s_pendingRequestPool.Return(pending);
 				return false;
 			}
 
-			if (!pending.Wait(IPC_FAST_FAIL_TIMEOUT_MS))
+			byte[]? rented = null;
+			int payloadSize = Unsafe.SizeOf<FrameworkMessageData>();
+			var data = new FrameworkMessageData { Type = FrameworkMessageType.TickSyncRequest };
+			var header = new MessageHeader(msgId, PayloadType.Request, (ulong)payloadSize);
+			bool sent;
+
+			try
+			{
+				if (payloadSize <= STACKALLOC_THRESHOLD)
+				{
+					Span<byte> payload = stackalloc byte[payloadSize];
+					MarshalUtils.Write(payload, in data);
+					sent = endpoint.Write(header, payload, IPC_TIMEOUT_MS);
+				}
+				else
+				{
+					rented = ArrayPool<byte>.Shared.Rent(payloadSize);
+					Span<byte> rentedSpan = rented.AsSpan(0, payloadSize);
+					MarshalUtils.Write(rentedSpan, in data);
+					sent = endpoint.Write(header, rentedSpan, IPC_TIMEOUT_MS);
+				}
+
+				if (!sent)
+				{
+					Log.Warning("Failed to send framework tick sync request.");
+					return false;
+				}
+
+				if (!pending.Wait(IPC_FAST_FAIL_TIMEOUT_MS))
+					return false;
+
+				if (pending.TryGetResult(out byte[]? result) && result != null && result.Length > 0)
+					return result[0] != 0;
+
 				return false;
+			}
+			finally
+			{
+				if (rented != null)
+					ArrayPool<byte>.Shared.Return(rented);
 
-			if (pending.TryGetResult(out byte[]? result) && result != null && result.Length > 0)
-				return result[0] != 0;
-
-			return false;
+				s_pendingHooks.TryRemove(msgId, out _);
+				pending.Reset();
+				s_pendingRequestPool.Return(pending);
+			}
 		}
 		finally
 		{
-			if (rented != null)
-				ArrayPool<byte>.Shared.Return(rented);
+			Interlocked.Decrement(ref s_activeWriters);
+		}
+	}
 
-			s_pendingHooks.TryRemove(msgId, out _);
-			pending.Reset();
-			s_pendingRequestPool.Return(pending);
+	/// <summary>
+	/// Publishes an event to the main application if at least one subscriber exists.
+	/// </summary>
+	/// <typeparam name="T">The event payload type.</typeparam>
+	/// <param name="eventId">The event identifier.</param>
+	/// <param name="data">The event payload data.</param>
+	public static void PublishEvent<T>(EventId eventId, T data)
+		where T : unmanaged
+	{
+		if (!s_running)
+			return;
+
+		// Check if anyone is subscribed
+		if (!s_eventSubscriptionRefCount.TryGetValue(eventId, out int refCount) || refCount <= 0)
+			return;
+
+		Interlocked.Increment(ref s_activeWriters);
+		try
+		{
+			var endpoint = s_outgoingEndpoint;
+			if (!s_running || endpoint == null)
+				return;
+
+			int payloadSize = Unsafe.SizeOf<T>();
+			bool result = false;
+			byte[]? rented = null;
+			var header = new MessageHeader((uint)eventId, PayloadType.Event, (ulong)payloadSize);
+
+			try
+			{
+				if (payloadSize <= STACKALLOC_THRESHOLD)
+				{
+					Span<byte> payload = stackalloc byte[payloadSize];
+					MarshalUtils.Write(payload, in data);
+					result = endpoint.Write(header, payload, IPC_TIMEOUT_MS);
+				}
+				else
+				{
+					rented = ArrayPool<byte>.Shared.Rent(payloadSize);
+					Span<byte> rentedSpan = rented.AsSpan(0, payloadSize);
+					MarshalUtils.Write(rentedSpan, in data);
+					result = endpoint.Write(header, rentedSpan, IPC_TIMEOUT_MS);
+				}
+
+				if (!result)
+				{
+					Log.Verbose($"Failed to publish event {eventId}.");
+				}
+			}
+			finally
+			{
+				if (rented != null)
+					ArrayPool<byte>.Shared.Return(rented);
+			}
+		}
+		finally
+		{
+			Interlocked.Decrement(ref s_activeWriters);
 		}
 	}
 
@@ -196,9 +320,10 @@ public class Controller
 	[UnmanagedCallersOnly(EntryPoint = "RemoteControllerEntry")]
 	[RequiresUnreferencedCode("This code snippet is not trimming-safe.")]
 	[RequiresDynamicCode("HookRegistry requires dynamic code")]
-	public static void RemoteControllerEntry()
+	public static void RemoteControllerEntry(IntPtr mainProcessHandle)
 	{
-		Cleanup(); // Ensure that no previous state lingers
+		Cleanup();
+		s_mainProcessHandle = mainProcessHandle;
 		var workerThread = new Thread(Main)
 		{
 			IsBackground = true,
@@ -263,13 +388,31 @@ public class Controller
 
 			Log.Debug("Successfully created IPC endpoints.");
 			s_running = true;
-			s_heartbeatTimestamp = Environment.TickCount64;
-			s_watchdogTimer = new Timer(CheckWatchdog, null, WATCHDOG_TIMER_INTERVAL_MS, WATCHDOG_TIMER_INTERVAL_MS);
+
+			s_processMonitorThread = new Thread(MonitorMainAppProcess)
+			{
+				IsBackground = true,
+				Name = "RemoteController.ProcessMonitor",
+			};
+			s_processMonitorThread.Start();
+
+			s_driverManager = new DriverManager();
+			s_driverManager.Initialize();
 
 			// Main loop
-			while (s_running)
+			uint taskIndex = 0;
+			IntPtr avrtHandle = NativeFunctions.AvSetMmThreadCharacteristics("Games", ref taskIndex);
+			try
 			{
-				ProcessIncomingMessages();
+				while (s_running)
+				{
+					ProcessIncomingMessages();
+				}
+			}
+			finally
+			{
+				if (avrtHandle != IntPtr.Zero)
+					NativeFunctions.AvRevertMmThreadCharacteristics(avrtHandle);
 			}
 		}
 		catch (Exception ex)
@@ -362,33 +505,117 @@ public class Controller
 		return latestFasmDll.FullName;
 	}
 
+	private static void MonitorMainAppProcess()
+	{
+		Log.Information("Process monitor started.");
+
+		if (s_mainProcessHandle == IntPtr.Zero)
+		{
+			Log.Warning("Handle is null. Cannot monitor.");
+			s_running = false;
+			return;
+		}
+
+		try
+		{
+			using var processWaitHandle = new ManualResetEvent(false)
+			{
+				SafeWaitHandle = new Microsoft.Win32.SafeHandles.SafeWaitHandle(s_mainProcessHandle, ownsHandle: false)
+			};
+
+			// [0] The Process
+			// [1] The Cancellation Token
+			WaitHandle[] handles = { processWaitHandle, s_shutdownCts.Token.WaitHandle };
+			Log.Debug($"Monitoring Handle: {s_mainProcessHandle}. Blocking thread until signal...");
+
+			bool requestedShutdown = false;
+			while (!requestedShutdown)
+			{
+				int signaledIndex = WaitHandle.WaitAny(handles);
+				if (signaledIndex == 0) // The Process signaled (Index 0)
+				{
+					Log.Information("Main application process terminated. Initiating shutdown...");
+					requestedShutdown = true;
+				}
+				else if (signaledIndex == 1) // Shutdown requested via cancellation token (Index 1)
+				{
+					Log.Debug("Monitor cancelled by user/shutdown request.");
+					requestedShutdown = true;
+				}
+				else // Spurious wakeup, check if process is alive
+				{
+					if (NativeFunctions.GetExitCodeProcess(s_mainProcessHandle, out uint exitCode) && exitCode != NativeFunctions.PROCESS_STILL_ALIVE)
+					{
+						Log.Information($"[SPURIOUS WAKEUP] Main application terminated with code {exitCode}. Initiating shutdown...");
+						requestedShutdown = false;
+					}
+				}
+			}
+		}
+		catch (ArgumentException)
+		{
+			// Occurs if the process exits between GetProcessId and GetProcessById
+			Log.Information("Process exited during initialization.");
+		}
+		finally
+		{
+			s_running = false;
+		}
+
+		Log.Debug("Process monitor exiting (shutdown requested).");
+	}
+
 	[RequiresDynamicCode("HookRegistry requires dynamic code")]
 	private static void Cleanup()
 	{
 		Log.Information("Running shutdown sequence...");
+
+		s_shutdownCts.Cancel();
+		s_running = false;
+
+		if (s_processMonitorThread != null && s_processMonitorThread.IsAlive)
+		{
+			if (!s_processMonitorThread.Join(PROCESS_MONITOR_JOIN_TIMEOUT_MS))
+				Log.Warning("Process monitor thread did not exit in time.");
+
+			s_processMonitorThread = null;
+		}
+
+		if (s_mainProcessHandle != IntPtr.Zero)
+		{
+			NativeFunctions.CloseHandle(s_mainProcessHandle);
+			s_mainProcessHandle = IntPtr.Zero;
+		}
+
+		s_shutdownCts.Dispose();
+		s_shutdownCts = new CancellationTokenSource();
+
+		if (!SpinWait.SpinUntil(() => Volatile.Read(ref s_activeWriters) == 0, ACTIVE_WRITERS_DRAIN_TIMEOUT_MS))
+		{
+			Log.Warning($"Active writers did not drain within {ACTIVE_WRITERS_DRAIN_TIMEOUT_MS}ms (remaining: {s_activeWriters}). Proceeding with disposal.");
+		}
+		else
+		{
+			Log.Debug("All active writers drained successfully.");
+		}
+
 		HookRegistry.Instance.UnregisterAll();
-		s_frameworkDriver?.Dispose();
-		s_frameworkDriver = null;
-		s_watchdogTimer?.Dispose();
+		s_driverManager?.Dispose();
+		s_driverManager = null;
+
 		s_outgoingEndpoint?.Dispose();
 		s_outgoingEndpoint = null;
 		s_incomingEndpoint?.Dispose();
 		s_incomingEndpoint = null;
 
+		s_pendingHooks.Clear();
+		s_sequenceCounters.Clear();
+		s_eventSubscriptionRefCount.Clear();
+
 		Log.Information("Shutdown complete. Remember us...Remember...that we once lived.");
 		Logger.Deinitialize(); // Keep the logger as the last step
 		GC.Collect(2, GCCollectionMode.Forced, true);
 		GC.WaitForPendingFinalizers();
-	}
-
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void CheckWatchdog(object? state)
-	{
-		if (Environment.TickCount64 - s_heartbeatTimestamp > WATCHDOG_TIMEOUT_MS)
-		{
-			Log.Warning("No heartbeat received for 60 seconds. Controller shutdown is requested.");
-			s_running = false;
-		}
 	}
 
 	[RequiresDynamicCode("HookRegistry requires dynamic code")]
@@ -405,14 +632,17 @@ public class Controller
 				switch (header.Type)
 				{
 					case PayloadType.Request:
-						if (HookMessageId.GetHookId(header.Id) != HookMessageId.FRAMEWORK_SYSTEM_ID)
 						{
-							HandleWrapperInvoke(header.Id, payload);
+							uint hookId = HookMessageId.GetHookId(header.Id);
+							if (hookId == HookMessageId.FRAMEWORK_SYSTEM_ID)
+								HandleFrameworkCommand(header.Id, payload);
+							else
+								HandleWrapperInvoke(header.Id, payload);
 						}
-						else
-						{
-							HandleFrameworkCommand(header.Id, payload);
-						}
+						break;
+
+					case PayloadType.Command:
+						HandleDriverCommand(header.Id, payload);
 						break;
 
 					case PayloadType.Blob:
@@ -423,11 +653,6 @@ public class Controller
 						HandleGoodbyeMessage(header.Id);
 						break;
 
-					case PayloadType.Heartbeat:
-						s_heartbeatTimestamp = Environment.TickCount64;
-						Log.Verbose("Received heartbeat message.");
-						break;
-
 					case PayloadType.Register:
 						Log.Verbose("Received register hook message.");
 						HandleHookRegister(header.Id, payload);
@@ -436,6 +661,16 @@ public class Controller
 					case PayloadType.Unregister:
 						Log.Verbose("Received unregister hook message.");
 						HandleHookUnregister(header.Id);
+						break;
+
+					case PayloadType.EventSubscribe:
+						Log.Verbose("Received event subscribe message.");
+						HandleEventSubscribe(header.Id, payload);
+						break;
+
+					case PayloadType.EventUnsubscribe:
+						Log.Verbose("Received event unsubscribe message.");
+						HandleEventUnsubscribe(header.Id, payload);
 						break;
 
 					default:
@@ -465,44 +700,11 @@ public class Controller
 			return;
 		}
 
-		var regPayload = MemoryMarshal.Read<HookRegistrationData>(data);
-		string delegateKey = regPayload.GetKey();
-
-		if (regPayload.HookType == HookType.System)
+		try
 		{
-			// Handle system hook registration
-			nint address = SigResolver?.Resolve(delegateKey) ?? 0;
-			try
-			{
-				if (address == 0)
-					throw new Exception($"Failed to resolve address for delegate key: {delegateKey}.");
-
-				if (regPayload.HookId == HookMessageId.FRAMEWORK_SYSTEM_ID)
-				{
-					s_frameworkDriver?.Dispose();
-					s_frameworkDriver = new FrameworkDriver(address);
-					Log.Information($"Framework driver registered at 0x{address:X}.");
-					byte[] payload = BitConverter.GetBytes(HookMessageId.FRAMEWORK_SYSTEM_ID);
-					var header = new MessageHeader(requestId, PayloadType.Ack, (ulong)payload.Length);
-					s_outgoingEndpoint?.Write(header, payload, IPC_TIMEOUT_MS);
-				}
-				else
-				{
-					Log.Warning($"Unknown system hook ID: {regPayload.HookId}. Failed registration.");
-					SendResponse(requestId, PayloadType.NAck);
-				}
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, $"Failed to register system hook with request ID {requestId}.");
-				SendResponse(requestId, PayloadType.NAck);
-			}
-		}
-		else
-		{
-			// Handle standard hook registration
+			var regPayload = MemoryMarshal.Read<HookRegistrationData>(data);
+			string delegateKey = regPayload.GetKey();
 			uint hookId = HookRegistry.Instance.RegisterHook(regPayload);
-
 			if (hookId != 0)
 			{
 				byte[] payload = BitConverter.GetBytes(hookId);
@@ -513,6 +715,10 @@ public class Controller
 			{
 				SendResponse(requestId, PayloadType.NAck);
 			}
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, $"Unhandled exception when registering hook.");
 		}
 	}
 
@@ -530,6 +736,15 @@ public class Controller
 
 		var header = new MessageHeader(msgId, responseType);
 		s_outgoingEndpoint.Write(header, IPC_TIMEOUT_MS);
+	}
+
+	private static void SendResponse(uint msgId, ReadOnlySpan<byte> payload, PayloadType responseType = PayloadType.Blob)
+	{
+		if (s_outgoingEndpoint == null)
+			return;
+		
+		var header = new MessageHeader(msgId, responseType, (ulong)payload.Length);
+		s_outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS);
 	}
 
 	private static void ProcessInvokeInternal((uint MsgId, byte[] Data, int Length) state)
@@ -551,7 +766,7 @@ public class Controller
 					return ProcessInvokeBatch(args);
 			}
 
-			if (mode == DispatchMode.FrameworkTick)
+			if (mode == DispatchMode.FrameworkTick && FrameworkDriver.IsInitialized)
 			{
 				result = FrameworkDriver.EnqueueAndWait(ExecuteLogic);
 			}
@@ -679,9 +894,9 @@ public class Controller
 
 		if (msg.Type == FrameworkMessageType.EnableTickSync)
 		{
-			if (s_frameworkDriver != null)
+			if (FrameworkDriver.IsInitialized)
 			{
-				s_frameworkDriver.IsSyncEnabled = true;
+				FrameworkDriver.Instance.IsSyncEnabled = true;
 				SendResponse(msgId, PayloadType.Ack);
 				return;
 			}
@@ -694,22 +909,118 @@ public class Controller
 		SendResponse(msgId, PayloadType.NAck);
 	}
 
-	private static void HandleGoodbyeMessage(uint msgId)
+	private static void HandleDriverCommand(uint msgId, ReadOnlySpan<byte> payload)
 	{
+		if (payload.Length < sizeof(int))
+		{
+			SendResponse(msgId, []);
+			return;
+		}
+
+		DriverCommand commandId = MarshalUtils.Read<DriverCommand>(payload);
+		ReadOnlySpan<byte> args = payload[sizeof(int)..];
+
+		byte[] response;
+		if (s_commandHandlers.TryGetValue(commandId, out var handler))
+		{
+			try
+			{
+				response = handler(args);
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, $"Error executing driver command: 0x{commandId:X4}");
+				response = [];
+			}
+		}
+		else
+		{
+			Log.Warning($"Unknown driver command: 0x{commandId:X4}");
+			response = [];
+		}
+
+		SendResponse(msgId, response);
+	}
+
+	private static void HandleEventSubscribe(uint messageId, ReadOnlySpan<byte> payload)
+	{
+		if (payload.Length < Unsafe.SizeOf<EventSubscriptionData>())
+		{
+			SendResponse(messageId, PayloadType.NAck);
+			return;
+		}
+
 		try
 		{
-			Log.Information("Received goodbye message from host. Shutting down controller...");
-			SendResponse(msgId, PayloadType.Ack);
+			var data = MemoryMarshal.Read<EventSubscriptionData>(payload);
+
+			// Increment refcount
+			int newCount = s_eventSubscriptionRefCount.AddOrUpdate(
+				data.EventId,
+				addValue: 1,
+				updateValueFactory: (_, current) => ++current);
+
+			Log.Information($"Event subscription added: {data.EventId} (refcount: {newCount})");
+			SendResponse(messageId, PayloadType.Ack);
 		}
-		finally
+		catch (Exception ex)
 		{
-			s_running = false;
+			Log.Error(ex, "Error handling event subscribe message.");
+			SendResponse(messageId, PayloadType.NAck);
 		}
 	}
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static byte GetNextSequence(uint hookIndex)
+	private static void HandleEventUnsubscribe(uint messageId, ReadOnlySpan<byte> payload)
 	{
-		return s_sequenceCounters.AddOrUpdate(hookIndex, 1, s_incrementFunc);
+		if (payload.Length < Unsafe.SizeOf<EventSubscriptionData>())
+		{
+			SendResponse(messageId, PayloadType.NAck);
+			return;
+		}
+
+		try
+		{
+			var data = MemoryMarshal.Read<EventSubscriptionData>(payload);
+
+			if (data.Flags.HasFlag(EventSubscriptionFlags.UnsubscribeAll))
+			{
+				s_eventSubscriptionRefCount.TryRemove(data.EventId, out int previousCount);
+				Log.Information($"Unsubscribed all from event: {data.EventId} (cleared refcount from {previousCount})");
+			}
+			else
+			{
+				// Decrement refcount
+				int newCount = s_eventSubscriptionRefCount.AddOrUpdate(
+					data.EventId,
+					addValue: 0,
+					updateValueFactory: (_, current) => Math.Max(0, --current));
+
+				if (newCount == 0)
+				{
+					s_eventSubscriptionRefCount.TryRemove(data.EventId, out _);
+				}
+
+				Log.Information($"Event subscription removed: {data.EventId} (refcount: {newCount})");
+			}
+
+			SendResponse(messageId, PayloadType.Ack);
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Error handling event unsubscribe message.");
+			SendResponse(messageId, PayloadType.NAck);
+		}
+	}
+
+	private static void HandleGoodbyeMessage(uint msgId)
+	{
+		Log.Information("Received goodbye message from host. Shutting down controller...");
+		s_running = false;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static ushort GetNextSequence(uint hookIndex)
+	{
+		return (ushort)s_sequenceCounters.AddOrUpdate(hookIndex, 1, (_, v) => (ushort)((v + 1) & HookMessageId.MAX_SEQ_NUM));
 	}
 }

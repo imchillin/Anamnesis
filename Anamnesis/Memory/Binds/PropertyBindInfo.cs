@@ -92,6 +92,10 @@ public class PropertyBindInfo : BindInfo
 		{
 			bindAddress += offsets[i];
 			bindAddress = MemoryService.Read<IntPtr>(bindAddress);
+
+			// If the intermediate pointer is null or invalid, abort early.
+			if (bindAddress == IntPtr.Zero || bindAddress.ToInt64() < 0)
+				return IntPtr.Zero;
 		}
 
 		bindAddress += offsets[count - 1];

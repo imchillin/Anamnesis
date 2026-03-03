@@ -5,7 +5,8 @@ namespace Anamnesis.Services;
 
 using Anamnesis.Core;
 using PropertyChanged;
-using RemoteController.Interop.Delegates;
+using RemoteController.IPC;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,9 +17,9 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class GposeService : ServiceBase<GposeService>
 {
-	private const int TASK_DELAY_MS = 1000;
+	private const int INITIAL_STATE_RETRY_MS = 1000;
 
-	private static HookHandle? s_isInGposeHook = null;
+	private EventSubscription? gposeEventSubsription;
 
 	/// <summary>
 	/// The delegate object for the <see cref="GposeService.GposeStateChanged"/> event.
@@ -32,6 +33,11 @@ public class GposeService : ServiceBase<GposeService>
 	public static event GposeEvent? GposeStateChanged;
 
 	/// <summary>
+	/// Event that is triggered exactly once when the initial GPose state has been determined.
+	/// </summary>
+	public static event Action? InitialStateResolved;
+
+	/// <summary>
 	/// Gets a value indicating whether the signed-in character is currently in the GPose photo mode.
 	/// </summary>
 	/// <remarks>
@@ -39,8 +45,13 @@ public class GposeService : ServiceBase<GposeService>
 	/// </remarks>
 	public bool IsGpose { get; private set; } = false;
 
+	/// <summary>
+	/// Gets a value indicating whether the initial GPose state has been determined.
+	/// </summary>
+	public bool HasInitialState { get; private set; } = false;
+
 	/// <inheritdoc/>
-	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GameService.Instance];
+	protected override IEnumerable<IService> Dependencies => [AddressService.Instance, GameService.Instance, ControllerService.Instance];
 
 	/// <summary>
 	/// Checks if the user is in GPose photo mode by probing the game process' memory.
@@ -48,56 +59,94 @@ public class GposeService : ServiceBase<GposeService>
 	/// <returns>True if the user is in GPose, false otherwise.</returns>
 	public static bool? IsInGpose()
 	{
-		if (s_isInGposeHook == null || !s_isInGposeHook.IsValid)
-			return false;
+		if (ControllerService.InstanceOrNull?.IsConnected != true)
+			return null;
 
 		bool? result = null;
 		try
 		{
-			result = ControllerService.Instance.InvokeHook<bool>(s_isInGposeHook, timeoutMs: 250);
+			result = ControllerService.Instance.SendDriverCommand<bool>(DriverCommand.GetIsInGpose);
 			if (result == null)
 			{
-				Log.Warning("Gpose check hook did not return a result.");
+				Log.Warning("GPose driver command did not return a result.");
 			}
 		}
 		catch
 		{
-			Log.Verbose($"Failed to invoke 'IsGpose' hook.");
+			Log.Verbose("Failed to query GPose state via driver command.");
 		}
 
 		return result;
 	}
 
 	/// <inheritdoc/>
+	public override Task Shutdown()
+	{
+		this.gposeEventSubsription?.Dispose();
+		this.gposeEventSubsription = null;
+		this.HasInitialState = false;
+		return base.Shutdown();
+	}
+
+	/// <inheritdoc/>
 	protected override async Task OnStart()
 	{
-		s_isInGposeHook ??= ControllerService.Instance.RegisterWrapper<GameMain.IsInGPose>();
+		this.gposeEventSubsription = ControllerService.Instance.SubscribeEvent<GposeStateChangedPayload>(
+			EventId.GposeStateChanged,
+			this.OnGposeStateChanged);
 
 		this.CancellationTokenSource = new CancellationTokenSource();
-		this.BackgroundTask = Task.Run(() => this.CheckThread(this.CancellationToken));
+		this.BackgroundTask = Task.Run(() => this.QueryInitialState(this.CancellationToken));
 		await base.OnStart();
 	}
 
-	private async Task CheckThread(CancellationToken cancellationToken)
+	private void MarkInitialStateResolved()
 	{
-		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
+		if (this.HasInitialState)
+			return;
+
+		this.HasInitialState = true;
+		InitialStateResolved?.Invoke();
+	}
+
+	private async Task QueryInitialState(CancellationToken cancellationToken)
+	{
+		while (!this.HasInitialState && !cancellationToken.IsCancellationRequested)
 		{
-			try
+			bool? initialState = IsInGpose();
+			if (initialState.HasValue)
 			{
-				bool? newGpose = IsInGpose();
-				if (newGpose.HasValue && newGpose != this.IsGpose)
+				Log.Debug($"Initial GPose state: {(initialState.Value ? "In GPose" : "Not in GPose")}");
+				if (initialState.Value != this.IsGpose)
 				{
-					this.IsGpose = newGpose.Value;
-					GposeStateChanged?.Invoke(newGpose.Value);
+					this.IsGpose = initialState.Value;
+					GposeStateChanged?.Invoke(initialState.Value);
 				}
 
-				await Task.Delay(TASK_DELAY_MS, cancellationToken);
+				this.MarkInitialStateResolved();
+				return;
+			}
+
+			try
+			{
+				await Task.Delay(INITIAL_STATE_RETRY_MS, cancellationToken);
 			}
 			catch (TaskCanceledException)
 			{
-				// Task was canceled, exit the loop.
 				break;
 			}
+		}
+	}
+
+	private void OnGposeStateChanged(GposeStateChangedPayload payload)
+	{
+		// Mark as received in case the event is received before the initial state query succeeds.
+		this.MarkInitialStateResolved();
+
+		if (payload.IsInGpose != this.IsGpose)
+		{
+			this.IsGpose = payload.IsInGpose;
+			GposeStateChanged?.Invoke(payload.IsInGpose);
 		}
 	}
 }

@@ -1,10 +1,12 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace RemoteController;
+namespace RemoteController.Drivers;
 
 using Reloaded.Hooks;
 using Reloaded.Hooks.Definitions;
+using RemoteController;
+using RemoteController.Interop;
 using RemoteController.Interop.Delegates;
 using Serilog;
 using System.Collections.Concurrent;
@@ -16,28 +18,35 @@ using System.Diagnostics.CodeAnalysis;
 /// </summary>
 [RequiresUnreferencedCode("This class is not trimming-safe")]
 [RequiresDynamicCode("This class requires dynamic code due to hook reflection")]
-public class FrameworkDriver : IDisposable
+public class FrameworkDriver : DriverBase<FrameworkDriver>
 {
 	private const int FRAMEWORK_DEFAULT_TIMEOUT_MS = 1000;
 
 	private static readonly ConcurrentQueue<WorkItem> s_marshaledWork = new();
 	private static readonly ConcurrentBag<WorkItem> s_workItemPool = new();
 
-	private readonly IHook<Framework.Tick> tickHook;
-	private bool disposedValue = false;
+	private readonly FunctionHook<Framework.Tick> tickHook;
+	private readonly Framework.Tick detourTick;
 	private volatile int isSyncEnabled = 0;
 	private int requestVersion = 0;
 
 	/// <summary>
+	/// Event triggered on every frame update of the main game loop.
+	/// CAUTION: This runs on the game thread. Keep subscribers lightweight.
+	/// </summary>
+	public event Action? GameTick;
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="FrameworkDriver"/> class.
 	/// </summary>
-	/// <param name="tickFuncAddr">
-	/// The target function address of the framework tick method to hook.
-	/// </param>
-	public FrameworkDriver(IntPtr tickFuncAddr)
+	public FrameworkDriver()
 	{
-		this.tickHook = ReloadedHooks.Instance.CreateHook<Framework.Tick>(this.DetourTick, tickFuncAddr);
-		this.tickHook.Activate();
+		if (Controller.SigResolver == null)
+			throw new InvalidOperationException("Cannot initialize posing driver: signature resolver is not available.");
+
+		this.detourTick = this.DetourTick;
+		this.tickHook = HookRegistry.CreateAndActivateHook(this.detourTick);
+		this.RegisterInstance();
 	}
 
 	/// <summary>
@@ -105,10 +114,13 @@ public class FrameworkDriver : IDisposable
 	}
 
 	/// <inheritdoc/>
-	public void Dispose()
+	protected override void OnDispose()
 	{
-		this.Dispose(disposing: true);
-		GC.SuppressFinalize(this);
+		this.tickHook.Dispose();
+		while (s_workItemPool.TryTake(out var item))
+			item.Dispose();
+
+		s_workItemPool.Clear();
 	}
 
 	private byte DetourTick(nint fPtr)
@@ -123,6 +135,15 @@ public class FrameworkDriver : IDisposable
 			{
 				work.Completion.Set();
 			}
+		}
+
+		try
+		{
+			this.GameTick?.Invoke();
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Encountered error during framework game tick event invocation.");
 		}
 
 		// FAST EXIT: If there's no pending work, run the original function directly
@@ -152,26 +173,6 @@ public class FrameworkDriver : IDisposable
 		}
 
 		return this.tickHook!.OriginalFunction(fPtr);
-	}
-
-	private void Dispose(bool disposing)
-	{
-		if (!this.disposedValue)
-		{
-			if (disposing)
-			{
-				this.tickHook.Disable();
-				if (this.tickHook is IDisposable disposable)
-				{
-					disposable.Dispose();
-				}
-
-				while (s_workItemPool.TryTake(out var item))
-					item.Dispose();
-			}
-
-			this.disposedValue = true;
-		}
 	}
 
 	/// <summary>

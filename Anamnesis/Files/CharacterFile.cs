@@ -455,9 +455,16 @@ public class CharacterFile : JsonFileBase
 			}
 
 			// Setting customize values will reset the extended appearance, which me must read.
-			actor.PauseSynchronization = false;
-			actor.Synchronize(exclGroups: TargetService.ExcludeSkeletonGroup);
-			actor.PauseSynchronization = true;
+			try
+			{
+				actor.PauseSynchronization = false;
+				actor.Synchronize(exclGroups: TargetService.ExcludeSkeletonGroup);
+				actor.PauseSynchronization = true;
+			}
+			catch (Exception)
+			{
+				Log.Warning("Failed to synchronize actor after applying appearance values. Extended appearance may not be applied correctly.");
+			}
 		}
 
 		Log.Verbose("Begin reading Extended Appearance from file");

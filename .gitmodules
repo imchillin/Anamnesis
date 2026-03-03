@@ -4,4 +4,5 @@
 	branch = Anamnesis
 [submodule "Lib/SharedMemoryIPC"]
 	path = Lib/SharedMemoryIPC
-	url = https://github.com/ergoxiv/SharedMemoryIPC.git
+	url = https://github.com/Aether-Tools/SharedMemoryIPC
+	branch = main

@@ -380,26 +380,11 @@ public partial class MainWindow : ChromedWindow
 		this.IsClosing = true;
 		this.mini?.Close();
 
-		e.Cancel = true; // Cancel to give enough time for services to shutdown properly
-		this.Hide();
-
 		SettingsService.SettingsChanged -= this.OnSettingsChanged;
 		ViewService.ShowingDrawer -= this.OnShowDrawer;
 
-		try
-		{
-			SettingsService.Current.WindowPosition = new Point(this.Left, this.Top);
-			SettingsService.Save();
-
-			await ServiceManager.ShutdownServices();
-
-			Log.Information("Shutdown complete. Exiting.");
-			Log.CloseAndFlush();
-		}
-		finally
-		{
-			this.Close();
-		}
+		SettingsService.Current.WindowPosition = new Point(this.Left, this.Top);
+		SettingsService.Save();
 	}
 
 	private void OpenHyperlink(object sender, ExecutedRoutedEventArgs e)

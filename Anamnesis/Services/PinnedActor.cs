@@ -261,7 +261,16 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 			// As we do not actively update non-pinned actors, synchronize first
 			foreach (var handle in actorHandles)
 			{
-				handle.Do(a => a.Synchronize());
+				try
+				{
+					handle.Do(a => a.Synchronize());
+				}
+				catch
+				(Exception ex)
+				{
+					Log.Warning(ex, "Failed to synchronize actor during retargeting");
+					continue;
+				}
 			}
 
 			// Search for an exact match first

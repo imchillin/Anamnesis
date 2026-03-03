@@ -31,6 +31,7 @@ internal static partial class NativeFunctions
 	public const int ERROR_NOT_ALL_ASSIGNED = 0x514;
 	public const string ENV_COMPAT_LAYER_VARNAME = "__COMPAT_LAYER";
 	public const string ENV_COMPAT_RUN_AS_ENVOKER = "RunAsInvoker";
+	public const int TIMERR_NOERROR = 0;
 
 	public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
@@ -673,6 +674,117 @@ internal static partial class NativeFunctions
 	}
 
 	/// <summary>
+	/// An enum that declares values that specify access rights for processes.
+	/// </summary>
+	[Flags]
+	public enum ProcessAccessFlags : long
+	{
+		// --- Standard Access Rights ---
+
+		/// <summary>
+		/// Required to delete the object.
+		/// </summary>
+		DELETE = 0x00010000L,
+
+		/// <summary>
+		/// Required to read information in the security descriptor for the object, not
+		/// including the information in the SACL. To read or write the SACL, you must
+		/// request the ACCESS_SYSTEM_SECURITY access right.
+		/// </summary>
+		READ_CONTROL = 0x00020000L,
+
+		/// <summary>
+		/// The right to use the object for synchronization. This enables a thread to
+		/// wait until the object is in the signaled state.
+		/// </summary>
+		SYNCHRONIZE = 0x00100000L,
+
+		/// <summary>
+		/// Required to modify the DACL in the security descriptor for the object.
+		/// </summary>
+		WRITE_DAC = 0x00040000L,
+
+		/// <summary>
+		/// Required to change the owner in the security descriptor for the object.
+		/// </summary>
+		WRITE_OWNER = 0x00080000L,
+
+		// --- Process-Specific Access Rights ---
+
+		/// <summary>
+		/// Required to terminate a process using TerminateProcess.
+		/// </summary>
+		PROCESS_TERMINATE = 0x0001L,
+
+		/// <summary>
+		/// Required to create a thread in the process.
+		/// </summary>
+		PROCESS_CREATE_THREAD = 0x0002L,
+
+		/// <summary>
+		/// Required to perform an operation on the address space of a process
+		/// (see VirtualProtectEx and WriteProcessMemory).
+		/// </summary>
+		PROCESS_VM_OPERATION = 0x0008L,
+
+		/// <summary>
+		/// Required to read memory in a process using ReadProcessMemory.
+		/// </summary>
+		PROCESS_VM_READ = 0x0010L,
+
+		/// <summary>
+		/// Required to write to memory in a process using WriteProcessMemory.
+		/// </summary>
+		PROCESS_VM_WRITE = 0x0020L,
+
+		/// <summary>
+		/// Required to duplicate a handle using DuplicateHandle.
+		/// </summary>
+		PROCESS_DUP_HANDLE = 0x0040L,
+
+		/// <summary>
+		/// Required to use this process as the parent process with
+		/// PROC_THREAD_ATTRIBUTE_PARENT_PROCESS.
+		/// </summary>
+		PROCESS_CREATE_PROCESS = 0x0080L,
+
+		/// <summary>
+		/// Required to set memory limits using SetProcessWorkingSetSize.
+		/// </summary>
+		PROCESS_SET_QUOTA = 0x0100L,
+
+		/// <summary>
+		/// Required to set certain information about a process, such as its
+		/// priority class (see SetPriorityClass).
+		/// </summary>
+		PROCESS_SET_INFORMATION = 0x0200L,
+
+		/// <summary>
+		/// Required to retrieve certain information about a process, such as
+		/// its token, exit code, and priority class (see OpenProcessToken).
+		/// </summary>
+		PROCESS_QUERY_INFORMATION = 0x0400L,
+
+		/// <summary>
+		/// Required to suspend or resume a process.
+		/// </summary>
+		PROCESS_SUSPEND_RESUME = 0x0800L,
+
+		/// <summary>
+		/// Required to retrieve certain information about a process
+		/// (see GetExitCodeProcess, GetPriorityClass, IsProcessInJob, QueryFullProcessImageName).
+		/// A handle that has the PROCESS_QUERY_INFORMATION access right is automatically
+		/// granted PROCESS_QUERY_LIMITED_INFORMATION.
+		/// </summary>
+		PROCESS_QUERY_LIMITED_INFORMATION = 0x1000L,
+
+		/// <summary>
+		/// All possible access rights for a process object.
+		/// </summary>
+		PROCESS_ALL_ACCESS = 0x1FFFFFL,
+	}
+
+	/// <summary>
 	/// Status codes returned by Windows NT API functions.
 	/// </summary>
 	/// <remarks>
@@ -1271,6 +1383,74 @@ internal static partial class NativeFunctions
 	public static partial IntPtr GetCurrentProcess();
 
 	/// <summary>
+	/// Duplicates an object handle.
+	/// </summary>
+	/// <param name="hSourceProcessHandle">
+	/// A handle to the process with the handle to be duplicated.
+	///
+	/// The handle must have the PROCESS_DUP_HANDLE access right.
+	/// </param>
+	/// <param name="hSourceHandle">
+	/// The handle to be duplicated. This is an open object handle that is valid in the context of the
+	/// source process. For a list of objects whose handles can be duplicated, see the following Remarks section.
+	///
+	/// If hSourceHandle is a pseudo handle returned by GetCurrentProcess or GetCurrentThread, hSourceProcessHandle
+	/// should be a handle to the process calling DuplicateHandle.
+	/// </param>
+	/// <param name="hTargetProcessHandle">
+	/// A handle to the process that is to receive the duplicated handle. The handle must have the
+	/// PROCESS_DUP_HANDLE access right.
+	///
+	/// This parameter is optional and can be specified as NULL if the DUPLICATE_CLOSE_SOURCE flag is
+	/// set in Options.
+	/// </param>
+	/// <param name="lpTargetHandle">
+	/// A pointer to a variable that receives the duplicate handle. This handle value is valid in the context
+	/// of the target process.
+	///
+	/// If hSourceHandle is a pseudo handle returned by GetCurrentProcess or GetCurrentThread, DuplicateHandle
+	/// converts it to a real handle to a process or thread, respectively.
+	///
+	/// If lpTargetHandle is NULL, the function duplicates the handle, but does not return the duplicate handle
+	/// value to the caller.This behavior exists only for backward compatibility with previous versions of this
+	/// function. You should not use this feature, as you will lose system resources until the target process terminates.
+	///
+	/// This parameter is ignored if hTargetProcessHandle is NULL.
+	/// </param>
+	/// <param name="dwDesiredAccess">
+	/// The access requested for the new handle.
+	///
+	/// This parameter is ignored if the dwOptions parameter specifies the DUPLICATE_SAME_ACCESS flag.
+	/// Otherwise, the flags that can be specified depend on the type of object whose handle is to be duplicated.
+	///
+	/// This parameter is ignored if hTargetProcessHandle is NULL.
+	/// </param>
+	/// <param name="bInheritHandle">
+	/// A variable that indicates whether the handle is inheritable. If TRUE, the duplicate handle can be inherited
+	/// by new processes created by the target process. If FALSE, the new handle cannot be inherited.
+	///
+	/// This parameter is ignored if hTargetProcessHandle is NULL.
+	/// </param>
+	/// <param name="dwOptions">
+	/// Optional actions. This parameter can be zero, or any combination of the following values.
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, the return value is nonzero.
+	///
+	/// If the function fails, the return value is zero.To get extended error information, call GetLastError.
+	/// </returns>
+	[LibraryImport("kernel32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static partial bool DuplicateHandle(
+		IntPtr hSourceProcessHandle,
+		IntPtr hSourceHandle,
+		IntPtr hTargetProcessHandle,
+		out IntPtr lpTargetHandle,
+		uint dwDesiredAccess,
+		[MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
+		uint dwOptions);
+
+	/// <summary>
 	/// The ImpersonateSelf function obtains an access token that impersonates the security context of the
 	/// calling process. The token is assigned to the calling thread.
 	/// </summary>
@@ -1482,6 +1662,68 @@ internal static partial class NativeFunctions
 		IntPtr ppSacl);
 
 	/// <summary>
+	/// Associates the calling thread with the specified task.
+	/// </summary>
+	/// <param name="taskName">
+	/// The name of the task to be performed. This name must match the name of one of the subkeys of the following
+	/// key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks
+	/// </param>
+	/// <param name="taskIndex">
+	/// The unique task identifier. The first time this function is called, this value must be 0 on input.
+	/// The index value is returned on output and can be used as input in subsequent calls.
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, it returns a handle to the task.
+	///
+	/// If the function fails, it returns 0. To retrieve extended error information, call GetLastError.
+	/// </returns>
+	[LibraryImport("avrt.dll", SetLastError = true, EntryPoint = "AvSetMmThreadCharacteristicsW", StringMarshalling = StringMarshalling.Utf16)]
+	public static partial IntPtr AvSetMmThreadCharacteristics(string taskName, ref uint taskIndex);
+
+	/// <summary>
+	/// Indicates that a thread is no longer performing work associated with the specified task.
+	/// </summary>
+	/// <param name="avrtHandle">
+	/// A handle to the task.
+	/// This handle is returned by the AvSetMmThreadCharacteristics or AvSetMmMaxThreadCharacteristics function.
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, the return value is nonzero.
+	///
+	/// If the function fails, the return value is zero.To get extended error information, call GetLastError.
+	/// </returns>
+	[LibraryImport("avrt.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static partial bool AvRevertMmThreadCharacteristics(IntPtr avrtHandle);
+
+	/// <summary>
+	/// The timeBeginPeriod function requests a minimum resolution for periodic timers.
+	/// </summary>
+	/// <param name="uMilliseconds">
+	/// Minimum timer resolution, in milliseconds, for the application or device driver.
+	/// A lower value specifies a higher (more accurate) resolution.
+	/// </param>
+	/// <returns>
+	/// Returns TIMERR_NOERROR if successful or TIMERR_NOCANDO if the resolution
+	/// specified in uPeriod is out of range.
+	/// </returns>
+	[LibraryImport("winmm.dll", EntryPoint = "timeBeginPeriod")]
+	public static partial uint TimeBeginPeriod(uint uMilliseconds);
+
+	/// <summary>
+	/// The timeEndPeriod function clears a previously set minimum timer resolution.
+	/// </summary>
+	/// <param name="uMilliseconds">
+	/// Minimum timer resolution specified in the previous call to the timeBeginPeriod function.
+	/// </param>
+	/// <returns>
+	/// Returns TIMERR_NOERROR if successful or TIMERR_NOCANDO if
+	/// the resolution specified in uPeriod is out of range.
+	/// </returns>
+	[LibraryImport("winmm.dll", EntryPoint = "timeEndPeriod")]
+	public static partial uint TimeEndPeriod(uint uMilliseconds);
+
+	/// <summary>
 	/// Frees the specified local memory object and invalidates its handle.
 	/// </summary>
 	/// <param name="hMem">
@@ -1524,7 +1766,7 @@ internal static partial class NativeFunctions
 	[LibraryImport("advapi32.dll", SetLastError = true, EntryPoint = "SetEntriesInAclW")]
 	public static partial uint SetEntriesInAcl(
 		uint cCountOfExplicitEntries,
-		[MarshalAs(UnmanagedType.LPArray)] ExplicitAccess[] pListOfExplicitEntries,
+		[MarshalAs(UnmanagedType.LPArray), In] ExplicitAccess[] pListOfExplicitEntries,
 		IntPtr OldAcl,
 		out IntPtr NewAcl);
 

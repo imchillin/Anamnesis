@@ -119,6 +119,16 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 				continue;
 
 			handle.Do(actor => actor.Synchronize());
+
+			try
+			{
+				handle.Do(actor => actor.Synchronize());
+			}
+			catch (Exception ex)
+			{
+				Log.Warning(ex, "Failed to synchronize actor during target selector load");
+				continue;
+			}
 		}
 
 		this.AddItems(actorHandles);

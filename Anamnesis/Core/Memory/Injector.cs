@@ -7,7 +7,6 @@ using Iced.Intel;
 using Microsoft.Win32;
 using Serilog;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -329,6 +328,12 @@ internal sealed class Injector : IDisposable
 			if (!this.Write(remoteMem, nameBytes))
 				throw new InvalidOperationException("Failed to write function name to remote memory");
 
+			// Duplicate process handle to pass to the remote controller
+			// This allows the controller to monitor the process and perform cleanup on handle invalidation
+			IntPtr currentProcessHandle = Process.GetCurrentProcess().Handle;
+			if (!DuplicateHandle(currentProcessHandle, currentProcessHandle, this.targetProcess.Handle, out IntPtr duplicatedHandle, (uint)ProcessAccessFlags.SYNCHRONIZE, false, 0))
+				throw new Win32Exception(Marshal.GetLastWin32Error(), "Failed to duplicate process handle for remote controller");
+
 			// Assemble shellcode
 			var asm = new Assembler(64);
 			var labelExit = asm.CreateLabel();
@@ -350,8 +355,9 @@ internal sealed class Injector : IDisposable
 			asm.jz(labelExit);       // Jump to exit (rax is 0, which we will use as error code)
 
 			// Function found
-			asm.mov(rbx, rax);       // Save function pointer
-			asm.call(rbx);           // Call the entry point
+			asm.mov(rbx, rax);                    // Save function pointer
+			asm.mov(rcx, (long)duplicatedHandle); // Pass duplicated process handle as first argument to the entry point
+			asm.call(rbx);                        // Call the entry point
 
 			// Set success code (1)
 			asm.mov(rax, 1);

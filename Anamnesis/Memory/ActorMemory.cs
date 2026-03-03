@@ -115,6 +115,8 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	[DependsOn(nameof(IsValid), nameof(IsOverworldActor), nameof(Name), nameof(RenderMode))]
 	public bool CanRefresh => CanRefreshActor(this);
 
+	public RefreshBlockedReason RefreshBlockReason => GetRefreshBlockedReason(this);
+
 	public bool IsHuman => this.ModelObject != null && this.ModelObject.IsHuman;
 
 	[DependsOn(nameof(ModelType))]
@@ -228,6 +230,32 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		return false;
 	}
 
+	/// <summary>
+	/// Determines if the actor object can be refreshed or not.
+	/// Returns <see cref="RefreshBlockedReason.None"/> if any refresher can handle the actor.
+	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static RefreshBlockedReason GetRefreshBlockedReason(ActorMemory actor)
+	{
+		if (!actor.IsValid)
+			return RefreshBlockedReason.IntegrationDisabled;
+
+		RefreshBlockedReason lastReason = RefreshBlockedReason.IntegrationDisabled;
+
+		foreach (IActorRefresher actorRefresher in s_actorRefreshers)
+		{
+			var reason = actorRefresher.GetRefreshAvailability(actor);
+			if (reason == RefreshBlockedReason.None)
+				return RefreshBlockedReason.None;
+
+			// Prefer more specific reasons over IntegrationDisabled
+			if (reason != RefreshBlockedReason.IntegrationDisabled)
+				lastReason = reason;
+		}
+
+		return lastReason;
+	}
+
 	public override void Dispose()
 	{
 		this.PropertyChanged -= this.HandlePropertyChanged;
@@ -308,6 +336,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	public void RaiseRefreshChanged()
 	{
 		this.OnPropertyChanged(nameof(this.CanRefresh));
+		this.OnPropertyChanged(nameof(this.RefreshBlockReason));
 	}
 
 	public bool IsWanderer()

@@ -10,6 +10,8 @@ using System.Runtime.InteropServices;
 /// </summary>
 internal static partial class NativeFunctions
 {
+	public const int PROCESS_STILL_ALIVE = 259;
+
 	/// <summary>
 	/// Specifies options for retrieving a module handle using native methods.
 	/// </summary>
@@ -22,6 +24,17 @@ internal static partial class NativeFunctions
 		GET_MODULE_HANDLE_EX_FLAG_PIN = 0x00000001,
 		GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT = 0x00000002,
 		GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS = 0x00000004,
+	}
+
+	/// <summary>
+	/// An enum that represents the possible return values of the WaitForSingleObject function.
+	/// </summary>
+	public enum WaitResult : uint
+	{
+		WAIT_OBJECT_0 = 0x00000000,
+		WAIT_ABANDONED = 0x00000080,
+		WAIT_TIMEOUT = 0x00000102,
+		WAIT_FAILED = 0xFFFFFFFF,
 	}
 
 	/// <summary>
@@ -122,4 +135,61 @@ internal static partial class NativeFunctions
 	/// </returns>
 	[LibraryImport("kernel32.dll", SetLastError = true, EntryPoint = "GetModuleFileNameW")]
 	public static unsafe partial uint GetModuleFileName(IntPtr hModule, char* lpFilename, uint nSize);
+
+	[LibraryImport("kernel32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static partial bool GetExitCodeProcess(IntPtr hProcess, out uint lpExitCode);
+
+	/// <summary>
+	/// Closes an open object handle.
+	/// </summary>
+	/// <param name="hObject">A valid handle to an open object.</param>
+	/// <returns>
+	/// If the function succeeds, the return value is nonzero.
+	///
+	/// If the function fails, the return value is zero.To get extended error information, call GetLastError.
+	///
+	/// If the application is running under a debugger, the function will throw an exception if it receives
+	/// either a handle value that is not valid or a pseudo-handle value. This can happen if you close a
+	/// handle twice, or if you call CloseHandle on a handle returned by the FindFirstFile function instead
+	/// of calling the FindClose function.
+	/// </returns>
+	[LibraryImport("kernel32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static partial bool CloseHandle(IntPtr hObject);
+
+	/// <summary>
+	/// Associates the calling thread with the specified task.
+	/// </summary>
+	/// <param name="taskName">
+	/// The name of the task to be performed. This name must match the name of one of the subkeys of the following
+	/// key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks
+	/// </param>
+	/// <param name="taskIndex">
+	/// The unique task identifier. The first time this function is called, this value must be 0 on input.
+	/// The index value is returned on output and can be used as input in subsequent calls.
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, it returns a handle to the task.
+	///
+	/// If the function fails, it returns 0. To retrieve extended error information, call GetLastError.
+	/// </returns>
+	[LibraryImport("avrt.dll", SetLastError = true, EntryPoint = "AvSetMmThreadCharacteristicsW", StringMarshalling = StringMarshalling.Utf16)]
+	public static partial IntPtr AvSetMmThreadCharacteristics(string taskName, ref uint taskIndex);
+
+	/// <summary>
+	/// Indicates that a thread is no longer performing work associated with the specified task.
+	/// </summary>
+	/// <param name="avrtHandle">
+	/// A handle to the task.
+	/// This handle is returned by the AvSetMmThreadCharacteristics or AvSetMmMaxThreadCharacteristics function.
+	/// </param>
+	/// <returns>
+	/// If the function succeeds, the return value is nonzero.
+	///
+	/// If the function fails, the return value is zero.To get extended error information, call GetLastError.
+	/// </returns>
+	[LibraryImport("avrt.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static partial bool AvRevertMmThreadCharacteristics(IntPtr avrtHandle);
 }

@@ -341,7 +341,7 @@ public class PoseFile : JsonFileBase
 		{
 			headBone.Rotation = (Quaternion)originalHeadRotation;
 			headBone.Position = (Vector3)originalHeadPosition;
-			headBone.WriteTransform(true);
+			headBone.WriteTransform(true, true);
 		}
 
 		// If we are not loading the position of bones, restore the positions of all bones that were not explicitly written to.
@@ -352,7 +352,7 @@ public class PoseFile : JsonFileBase
 			foreach (var bone in sortedBones)
 			{
 				bone.Position = posedBonePos[bone];
-				bone.WriteTransform(true);
+				bone.WriteTransform(true, false);
 			}
 		}
 
@@ -366,7 +366,7 @@ public class PoseFile : JsonFileBase
 				bone.Rotation = unposedBoneTransforms[bone].Rotation;
 				bone.Position = unposedBoneTransforms[bone].Position;
 				bone.Scale = unposedBoneTransforms[bone].Scale;
-				bone.WriteTransform(false);
+				bone.WriteTransform(false, false);
 			}
 		}
 

@@ -4,6 +4,7 @@
 namespace Anamnesis;
 
 using Anamnesis.Core;
+using Anamnesis.Memory;
 using Anamnesis.Services;
 using RemoteController;
 using RemoteController.Interop;
@@ -301,9 +302,49 @@ public class BatchInvokeScope(ControllerService service) : IDisposable
 }
 
 /// <summary>
+/// Represents a handle to an event subscription to a remote controller event.
+/// </summary>
+public sealed class EventSubscription : IDisposable
+{
+	private readonly ControllerService service;
+	private readonly EventId eventId;
+	private readonly Action<ReadOnlySpan<byte>> wrappedHandler;
+	private bool isDisposed;
+
+	internal EventSubscription(ControllerService service, EventId eventId, Action<ReadOnlySpan<byte>> wrappedHandler)
+	{
+		this.service = service;
+		this.eventId = eventId;
+		this.wrappedHandler = wrappedHandler;
+	}
+
+	/// <summary>
+	/// Gets the event ID this subscription is for.
+	/// </summary>
+	public EventId EventId => this.eventId;
+
+	/// <summary>
+	/// Gets a value indicating whether this subscription is still active.
+	/// </summary>
+	public bool IsActive => !this.isDisposed;
+
+	/// <summary>
+	/// Unsubscribes from the event.
+	/// </summary>
+	public void Dispose()
+	{
+		if (this.isDisposed)
+			return;
+
+		this.service.UnsubscribeEventInternal(this.eventId, this.wrappedHandler);
+		this.isDisposed = true;
+	}
+}
+
+/// <summary>
 /// A service that communicates with the remote controller that we inject into the game process.
 /// The service is responsible for sending and receiving messages to and from the controller, including
-/// watchdog heartbeats, and function hook communication.
+/// function hook communication, driver commands, and events, driver commands.
 /// </summary>
 public class ControllerService : ServiceBase<ControllerService>
 {
@@ -314,8 +355,8 @@ public class ControllerService : ServiceBase<ControllerService>
 	private const uint BUF_BLK_COUNT = 128;
 	private const ulong BUF_BLK_SIZE = 8192;
 
+	private const int THREAD_JOIN_TIMEOUT_MS = 500;
 	private const int IPC_REGISTER_TIMEOUT_MS = 1000;
-	private const int HEARTBEAT_INTERVAL_MS = 15_000;
 	private const int STACKALLOC_THRESHOLD = 256;
 	private const int CONN_CHECK_DELAY_MS = 1000;
 
@@ -330,23 +371,31 @@ public class ControllerService : ServiceBase<ControllerService>
 	private readonly ConcurrentDictionary<uint, PendingRequest<uint>> pendingRegistrations = new();
 	private readonly ConcurrentDictionary<uint, PendingRequest<bool>> pendingUnregistrations = new();
 	private readonly ConcurrentDictionary<uint, Func<ReadOnlySpan<byte>, byte[]>> handlers = new();
-	private readonly ConcurrentDictionary<uint, byte> sequenceCounters = new();
+	private readonly ConcurrentDictionary<uint, ushort> sequenceCounters = new();
 	private readonly ConcurrentDictionary<string, uint> delegateKeyToHookId = new();
 	private readonly ObjectPool<PendingRequest<byte[]>> wrapperRequestPool = new(maxSize: 128);
-	private readonly PendingRequest<bool> pendingByeMessage = new();
 
-	private readonly WorkPipeline workPipeline = new(Math.Max(Environment.ProcessorCount / 2, 1));
+	private readonly ConcurrentDictionary<uint, PendingRequest<byte[]>> pendingDriverCommands = new();
+
+	private readonly ConcurrentDictionary<EventId, HashSet<Action<ReadOnlySpan<byte>>>> eventHandlers = new();
+	private readonly ConcurrentDictionary<EventId, PendingRequest<bool>> pendingEventSubscriptions = new();
+	private readonly ConcurrentDictionary<EventId, PendingRequest<bool>> pendingEventUnsubscriptions = new();
+	private readonly ObjectPool<WorkItem<(ControllerService, EventId, byte[])>> eventWorkItemPool = new(maxSize: 64);
+	private readonly Lock eventHandlersLock = new();
+
 	private readonly ObjectPool<WorkItem<(ControllerService, uint, byte[], int)>> workItemPool = new(maxSize: 128);
 
 	private readonly WorkQueue frameworkQueue = new();
 	private FrameworkService? framework;
 
 	private uint nextRequestId = 0;
+	private WorkPipeline? eventPipeline;
+	private WorkPipeline? workPipeline;
 
 	private Endpoint? outgoingEndpoint = null;
 	private Endpoint? incomingEndpoint = null;
-	private Timer? heartbeatTimer;
 	private bool isConnected = false;
+	private Thread? ipcMsgListener = null;
 
 	/// <summary>
 	/// Gets the framework service used for executing
@@ -354,6 +403,11 @@ public class ControllerService : ServiceBase<ControllerService>
 	/// </summary>
 	public FrameworkService Framework => this.framework
 		?? throw new InvalidOperationException("Framework is not initialized");
+
+	/// <summary>
+	/// Gets a value indicating whether the controller service is currently connected to the remote controller.
+	/// </summary>
+	public bool IsConnected => this.isConnected;
 
 	/// <inheritdoc/>
 	protected override IEnumerable<IService> Dependencies => [GameService.Instance];
@@ -369,34 +423,61 @@ public class ControllerService : ServiceBase<ControllerService>
 	public override async Task Shutdown()
 	{
 		this.SendShutdownMessage();
+		this.isConnected = false;
+
+		// IMPORTANT: Shut down the background task first to stop the incoming message processing loop
+		// This should happen before we start disposing the object the loop depends on.
+		await base.Shutdown();
+
+		if (this.ipcMsgListener != null)
+		{
+			if (!this.ipcMsgListener.Join(THREAD_JOIN_TIMEOUT_MS))
+				Log.Warning("Controller service message listener thread did not exit within the timeout period.");
+
+			this.ipcMsgListener = null;
+		}
+
+		this.workPipeline?.Dispose();
+		this.workPipeline = null;
+		this.eventPipeline?.Dispose();
+		this.eventPipeline = null;
+
+		// NOTE: We invalidate hooks but do not dispose of them here.
+		// They can be used for re-initialization on follow-up controller service startups.
+		this.InvalidateAllHooks();
 
 		foreach (var kvp in this.pendingHookRequests)
-		{
 			kvp.Value.Dispose();
-		}
 
 		foreach (var kvp in this.pendingRegistrations)
-		{
 			kvp.Value.Dispose();
-		}
 
 		foreach (var kvp in this.pendingUnregistrations)
-		{
 			kvp.Value.Dispose();
-		}
 
-		foreach (var kvp in this.allHooks)
-		{
-			kvp.Value.Handle.Dispose();
-		}
+		foreach (var kvp in this.pendingEventSubscriptions)
+			kvp.Value.Dispose();
+
+		foreach (var kvp in this.pendingEventUnsubscriptions)
+			kvp.Value.Dispose();
+
+		foreach (var kvp in this.pendingDriverCommands)
+			kvp.Value.Dispose();
+
+		// NOTE: No need to unsubscribe from events since the remote controller will
+		// automatically clean up all subscriptions as part of its own shutdown process
 
 		this.pendingHookRequests.Clear();
 		this.pendingRegistrations.Clear();
 		this.pendingUnregistrations.Clear();
-		this.allHooks.Clear();
+		this.pendingEventSubscriptions.Clear();
+		this.pendingEventUnsubscriptions.Clear();
+		this.pendingDriverCommands.Clear();
+
 		this.outgoingEndpoint?.Dispose();
+		this.outgoingEndpoint = null;
 		this.incomingEndpoint?.Dispose();
-		await base.Shutdown();
+		this.incomingEndpoint = null;
 	}
 
 	/// <summary>
@@ -437,7 +518,7 @@ public class ControllerService : ServiceBase<ControllerService>
 			return default;
 		}
 
-		byte seq = this.GetNextSequence(hookId);
+		ushort seq = this.GetNextSequence(hookId);
 		uint msgId = HookMessageId.Pack(hookId, seq);
 
 		var pending = this.wrapperRequestPool.Get();
@@ -696,6 +777,124 @@ public class ControllerService : ServiceBase<ControllerService>
 		return this.UnregisterHookById(handle.HookId, timeoutMs);
 	}
 
+	/// <summary>
+	/// Sends a driver command and returns a typed result.
+	/// </summary>
+	/// <typeparam name="TResult">The expected return type.</typeparam>
+	/// <param name="command">The driver command.</param>
+	/// <param name="args">Arguments to serialize and send.</param>
+	/// <returns>The deserialized result, or null if the call failed.</returns>
+	public TResult? SendDriverCommand<TResult>(DriverCommand command, params object[] args)
+		where TResult : unmanaged
+	{
+		byte[] response = this.SendDriverCommandRaw(command, args);
+		if (response.Length < Unsafe.SizeOf<TResult>())
+			return null;
+
+		return MarshalUtils.Deserialize<TResult>(response);
+	}
+
+	/// <summary>
+	/// Sends a raw driver command with serialized arguments.
+	/// </summary>
+	/// <param name="command">The driver command.</param>
+	/// <param name="args">Arguments to serialize.</param>
+	/// <returns>Raw response bytes, or empty array on failure.</returns>
+	public byte[] SendDriverCommandRaw(DriverCommand command, params object[] args)
+	{
+		if (this.outgoingEndpoint == null || !this.isConnected)
+			return [];
+
+		int argsSize = MarshalUtils.ComputeArgsSize(args);
+		int payloadSize = sizeof(int) + argsSize;
+
+		Span<byte> payload = payloadSize <= 256
+			? stackalloc byte[payloadSize]
+			: new byte[payloadSize];
+
+		MarshalUtils.Write(payload, (int)command);
+		if (argsSize > 0)
+			MarshalUtils.SerializeArgs(payload[sizeof(int)..], args);
+
+		return this.SendDriverCommandInternal(payload);
+	}
+
+	/// <summary>
+	/// Subscribes to an event from the remote controller.
+	/// </summary>
+	/// <remarks>
+	/// It is possible to subscribe multiple handlers to the same
+	/// event, but their relative order of execution on trigger is not guaranteed.
+	/// </remarks>
+	/// <typeparam name="T">The event payload type.</typeparam>
+	/// <param name="eventId">The event to subscribe to.</param>
+	/// <param name="handler">The handler to invoke when the event is received.</param>
+	/// <param name="timeoutMs">Timeout for the subscription acknowledgment.</param>
+	/// <returns>
+	/// An <see cref="EventSubscription"/> handle that can be disposed to unsubscribe,
+	/// or <c>null</c> if the subscription failed.
+	/// </returns>
+	public EventSubscription? SubscribeEvent<T>(EventId eventId, Action<T> handler, int timeoutMs = IPC_TIMEOUT_MS)
+		where T : unmanaged
+	{
+		void WrappedHandler(ReadOnlySpan<byte> payload)
+		{
+			if (payload.Length < Unsafe.SizeOf<T>())
+			{
+				Log.Warning($"Received event {eventId} with unexpected payload size. Expected at least {Unsafe.SizeOf<T>()} bytes, got {payload.Length} bytes. Corrupted payload?");
+				return;
+			}
+
+			var data = MarshalUtils.Deserialize<T>(payload);
+			handler(data);
+		}
+
+		return this.SubscribeEventInternal(eventId, WrappedHandler, timeoutMs);
+	}
+
+	/// <summary>
+	/// Subscribes to an event that carries no payload data.
+	/// </summary>
+	/// <param name="eventId">The event to subscribe to.</param>
+	/// <param name="handler">The handler to invoke when the event is received.</param>
+	/// <param name="timeoutMs">Timeout for the subscription acknowledgment.</param>
+	/// <returns>
+	/// An <see cref="EventSubscription"/> handle that can be disposed to unsubscribe,
+	/// or <c>null</c> if the subscription failed.
+	/// </returns>
+	public EventSubscription? SubscribeEvent(EventId eventId, Action handler, int timeoutMs = IPC_TIMEOUT_MS)
+	{
+#pragma warning disable SA1313
+		void WrappedHandler(ReadOnlySpan<byte> _) => handler();
+#pragma warning restore SA1313
+
+		return this.SubscribeEventInternal(eventId, WrappedHandler, timeoutMs);
+	}
+
+	/// <summary>
+	/// Unsubscribes all handlers from an event.
+	/// </summary>
+	/// <param name="eventId">The event to unsubscribe from.</param>
+	/// <param name="timeoutMs">Timeout for the unsubscription acknowledgment.</param>
+	/// <returns>True if unsubscription was successful.</returns>
+	public bool UnsubscribeAllFromEvent(EventId eventId, int timeoutMs = IPC_TIMEOUT_MS)
+	{
+		int handlerCount;
+		lock (this.eventHandlersLock)
+		{
+			if (!this.eventHandlers.TryRemove(eventId, out var handlers))
+				return true;
+
+			handlerCount = handlers.Count;
+			handlers.Clear();
+		}
+
+		if (!this.isConnected || handlerCount == 0)
+			return true;
+
+		return this.SendEventSubscription(eventId, PayloadType.EventUnsubscribe, timeoutMs, EventSubscriptionFlags.UnsubscribeAll);
+	}
+
 	internal static void ClearActiveBatch()
 	{
 		s_currentBatch = null;
@@ -707,6 +906,25 @@ public class ControllerService : ServiceBase<ControllerService>
 			return;
 
 		this.UnregisterHookById(hookId, IPC_TIMEOUT_MS);
+	}
+
+	internal void UnsubscribeEventInternal(EventId eventId, Action<ReadOnlySpan<byte>> wrappedHandler)
+	{
+		bool removed;
+		lock (this.eventHandlersLock)
+		{
+			if (!this.eventHandlers.TryGetValue(eventId, out var handlers))
+				return;
+
+			removed = handlers.Remove(wrappedHandler);
+			if (handlers.Count == 0)
+				this.eventHandlers.TryRemove(eventId, out _);
+		}
+
+		if (removed && this.isConnected)
+		{
+			this.SendEventSubscription(eventId, PayloadType.EventUnsubscribe, IPC_TIMEOUT_MS);
+		}
 	}
 
 	/// <inheritdoc/>
@@ -729,17 +947,26 @@ public class ControllerService : ServiceBase<ControllerService>
 			throw;
 		}
 
+		this.eventPipeline = new WorkPipeline(1); // Just one worker to keep event order sequential
+		this.workPipeline = new WorkPipeline(Math.Max(Environment.ProcessorCount / 2, 1));
+
+		// If hooks exist (e.g. on game restart), requeue them for registration
+		if (!this.allHooks.IsEmpty)
+			this.RequeueAllInvalidatedHooks();
+
 		_ = Task.Factory.StartNew(
 			() => this.ConnectionMonitorLoop(this.CancellationToken),
 			this.CancellationToken,
 			TaskCreationOptions.LongRunning,
 			TaskScheduler.Default);
 
-		this.BackgroundTask = Task.Factory.StartNew(
-			() => this.ProcessIncomingMessages(this.CancellationToken),
-			this.CancellationToken,
-			TaskCreationOptions.LongRunning,
-			TaskScheduler.Default);
+		this.ipcMsgListener = new Thread(() => this.ProcessIncomingMessages(this.CancellationToken))
+		{
+			IsBackground = true,
+			Priority = ThreadPriority.Highest,
+			Name = "Anamnesis.CtrlIpcMsgListener",
+		};
+		this.ipcMsgListener.Start();
 
 		await base.OnStart();
 	}
@@ -749,6 +976,18 @@ public class ControllerService : ServiceBase<ControllerService>
 		try
 		{
 			state.Ctrl.HandleHookRequest(state.MsgId, state.Data.AsSpan(0, state.Length));
+		}
+		finally
+		{
+			ArrayPool<byte>.Shared.Return(state.Data);
+		}
+	}
+
+	private static void ProcessEventInternal((ControllerService Ctrl, uint EventId, byte[] Data, int Length) state)
+	{
+		try
+		{
+			state.Ctrl.BroadcastEventToSubscribers((EventId)state.EventId, state.Data.AsSpan(0, state.Length));
 		}
 		finally
 		{
@@ -955,6 +1194,126 @@ public class ControllerService : ServiceBase<ControllerService>
 		}
 	}
 
+	private byte[] SendDriverCommandInternal(ReadOnlySpan<byte> payload)
+	{
+		uint requestId = this.GetNextRequestId();
+		var pending = this.wrapperRequestPool.Get();
+		this.pendingDriverCommands[requestId] = pending;
+
+		try
+		{
+			var header = new MessageHeader(requestId, PayloadType.Command, (ulong)payload.Length);
+			if (!this.outgoingEndpoint!.Write(header, payload, IPC_TIMEOUT_MS))
+				return [];
+
+			if (!pending.Wait(IPC_TIMEOUT_MS))
+				return [];
+
+			if (!pending.TryGetResult(out byte[]? result) || result == null)
+				return [];
+
+			return result;
+		}
+		finally
+		{
+			this.pendingDriverCommands.TryRemove(requestId, out _);
+			pending.Reset();
+			this.wrapperRequestPool.Return(pending);
+		}
+	}
+
+	private EventSubscription? SubscribeEventInternal(EventId eventId, Action<ReadOnlySpan<byte>> wrappedHandler, int timeoutMs)
+	{
+		lock (this.eventHandlersLock)
+		{
+			if (!this.eventHandlers.TryGetValue(eventId, out var handlers))
+			{
+				handlers = [];
+				this.eventHandlers[eventId] = handlers;
+			}
+
+			handlers.Add(wrappedHandler);
+		}
+
+		if (this.isConnected)
+		{
+			if (!this.SendEventSubscription(eventId, PayloadType.EventSubscribe, timeoutMs))
+			{
+				lock (this.eventHandlersLock)
+				{
+					if (this.eventHandlers.TryGetValue(eventId, out var handlers))
+						handlers.Remove(wrappedHandler);
+				}
+
+				return null;
+			}
+		}
+
+		return new EventSubscription(this, eventId, wrappedHandler);
+	}
+
+	private bool SendEventSubscription(EventId eventId, PayloadType type, int timeoutMs, EventSubscriptionFlags flags = EventSubscriptionFlags.None)
+	{
+		if (this.outgoingEndpoint == null)
+			return false;
+
+		if (type != PayloadType.EventSubscribe && type != PayloadType.EventUnsubscribe)
+			throw new ArgumentException("Invalid payload type provided for event (un)subscription.", nameof(type));
+
+		var data = new EventSubscriptionData { EventId = eventId, Flags = flags };
+		int payloadSize = Unsafe.SizeOf<EventSubscriptionData>();
+		Span<byte> payload = stackalloc byte[payloadSize];
+		MarshalUtils.Write(payload, in data);
+		uint messageId = (uint)eventId;
+
+		var pendingDict = type == PayloadType.EventSubscribe
+			? this.pendingEventSubscriptions
+			: this.pendingEventUnsubscriptions;
+
+		using var pending = new PendingRequest<bool>();
+		pendingDict[eventId] = pending;
+
+		try
+		{
+			var header = new MessageHeader(messageId, type, (ulong)payloadSize);
+			if (!this.outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS))
+				return false;
+
+			if (!pending.Wait(timeoutMs))
+				return false;
+
+			return pending.TryGetResult(out bool success) && success;
+		}
+		finally
+		{
+			pendingDict.TryRemove(eventId, out _);
+		}
+	}
+
+	private void ResendActiveEventSubscriptions()
+	{
+		List<(EventId EventId, int Count)> subscriptions;
+		lock (this.eventHandlersLock)
+		{
+			subscriptions = this.eventHandlers
+				.Where(kvp => kvp.Value.Count > 0)
+				.Select(kvp => (kvp.Key, kvp.Value.Count))
+				.ToList();
+		}
+
+		foreach (var (eventId, count) in subscriptions)
+		{
+			// Send one subscription per handler to restore correct refcount
+			for (int i = 0; i < count; ++i)
+			{
+				if (!this.SendEventSubscription(eventId, PayloadType.EventSubscribe, IPC_REGISTER_TIMEOUT_MS))
+				{
+					Log.Warning($"Failed to re-subscribe to event {eventId} (subscription {i + 1}/{count}) after reconnection.");
+				}
+			}
+		}
+	}
+
 	private Task SendPendingRegistrations()
 	{
 		// Process the entire queue
@@ -995,11 +1354,7 @@ public class ControllerService : ServiceBase<ControllerService>
 				{
 					if (this.isConnected)
 					{
-						// NOTE: The heartbeat timer is stopped not to flood the ring buffer
-						// while the remote controller is not available.
 						Log.Warning("Connection lost with remote controller.");
-						this.heartbeatTimer?.Dispose();
-						this.heartbeatTimer = null;
 
 						// Deactivate system hooks
 						if (this.framework != null)
@@ -1020,15 +1375,22 @@ public class ControllerService : ServiceBase<ControllerService>
 					Log.Information("Connection established with remote controller.");
 					this.RequeueAllInvalidatedHooks();
 					await this.SendPendingRegistrations();
-					this.heartbeatTimer ??= new Timer(this.SendHeartbeat, null, HEARTBEAT_INTERVAL_MS, HEARTBEAT_INTERVAL_MS);
 
 					// Register system hooks
 					if (this.framework != null)
 					{
 						this.framework.Active = true;
-						this.RegisterFrameworkHook();
+						this.handlers[HookMessageId.FRAMEWORK_SYSTEM_ID] = _ =>
+						{
+							if (this.framework == null)
+								return [0];
+
+							bool keepSyncing = this.framework?.ProcessTick() ?? false;
+							return [keepSyncing ? (byte)1 : (byte)0];
+						};
 					}
 
+					this.ResendActiveEventSubscriptions();
 					this.isConnected = true;
 				}
 
@@ -1045,72 +1407,72 @@ public class ControllerService : ServiceBase<ControllerService>
 		}
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveOptimization)]
 	private void ProcessIncomingMessages(CancellationToken cancellationToken)
 	{
-		while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
-		{
-			if (this.incomingEndpoint == null)
-				return;
+		uint taskIndex = 0;
+		IntPtr avrtHandle = NativeFunctions.AvSetMmThreadCharacteristics("Games", ref taskIndex);
 
-			try
-			{
-				while (this.incomingEndpoint.Read(out MessageHeader header, out ReadOnlySpan<byte> payload, IPC_TIMEOUT_MS))
-				{
-					switch (header.Type)
-					{
-						case PayloadType.Ack:
-							this.HandleAck(header.Id, payload);
-							break;
-
-						case PayloadType.NAck:
-							this.HandleNAck(header.Id);
-							break;
-
-						case PayloadType.Request when payload.Length > 0:
-							this.EnqueueHookRequest(header.Id, payload);
-							break;
-
-						case PayloadType.Blob:
-							this.HandleHookReturn(header.Id, payload);
-							break;
-
-						default:
-							Log.Warning($"Unexpected message type from controller: {header.Type}");
-							break;
-					}
-				}
-			}
-			catch (NullReferenceException ex)
-			{
-				Log.Warning(ex, "IPC endpoint closed unexpectedly (shared memory was disposed). Stopping message processing.");
-				this.CancellationTokenSource?.Cancel();
-			}
-			catch (ObjectDisposedException ex)
-			{
-				Log.Warning(ex, "IPC endpoint disposed. Stopping message processing.");
-				this.CancellationTokenSource?.Cancel();
-			}
-			catch (TaskCanceledException)
-			{
-				// Task was canceled, exit the loop
-				break;
-			}
-		}
-	}
-
-	private void SendHeartbeat(object? state)
-	{
 		try
 		{
-			if (this.outgoingEndpoint != null && this.IsInitialized)
+			while (this.IsInitialized && !cancellationToken.IsCancellationRequested)
 			{
-				var heartbeatHeader = new MessageHeader(type: PayloadType.Heartbeat);
-				this.outgoingEndpoint.Write(heartbeatHeader, IPC_TIMEOUT_MS);
+				if (this.incomingEndpoint == null)
+					return;
+
+				try
+				{
+					while (this.incomingEndpoint.Read(out MessageHeader header, out ReadOnlySpan<byte> payload, IPC_TIMEOUT_MS))
+					{
+						switch (header.Type)
+						{
+							case PayloadType.Ack:
+								this.HandleAck(header.Id, payload);
+								break;
+
+							case PayloadType.NAck:
+								this.HandleNAck(header.Id);
+								break;
+
+							case PayloadType.Event:
+								this.EnqueueEvent(header.Id, payload);
+								break;
+
+							case PayloadType.Request when payload.Length > 0:
+								this.EnqueueHookRequest(header.Id, payload);
+								break;
+
+							case PayloadType.Blob:
+								this.HandleHookReturn(header.Id, payload);
+								break;
+
+							default:
+								Log.Warning($"Unexpected message type from controller: {header.Type}");
+								break;
+						}
+					}
+				}
+				catch (NullReferenceException ex)
+				{
+					Log.Warning(ex, "IPC endpoint closed unexpectedly (shared memory was disposed). Stopping message processing.");
+					this.CancellationTokenSource?.Cancel();
+				}
+				catch (ObjectDisposedException ex)
+				{
+					Log.Warning(ex, "IPC endpoint disposed. Stopping message processing.");
+					this.CancellationTokenSource?.Cancel();
+				}
+				catch (TaskCanceledException)
+				{
+					// Task was canceled, exit the loop
+					break;
+				}
 			}
 		}
-		catch (Exception ex)
+		finally
 		{
-			Log.Verbose(ex, "Failed to send heartbeat to remote controller.");
+			if (avrtHandle != IntPtr.Zero)
+				NativeFunctions.AvRevertMmThreadCharacteristics(avrtHandle);
 		}
 	}
 
@@ -1138,10 +1500,20 @@ public class ControllerService : ServiceBase<ControllerService>
 			return;
 		}
 
-		if (msgId == HookMessageId.GOODBYE_MESSAGE_ID)
+		EventId eventId = (EventId)msgId;
+		if (Enum.IsDefined(eventId))
 		{
-			this.pendingByeMessage.SetResult(true);
-			return;
+			if (this.pendingEventSubscriptions.TryGetValue(eventId, out var subPending))
+			{
+				subPending.SetResult(true);
+				return;
+			}
+
+			if (this.pendingEventUnsubscriptions.TryGetValue(eventId, out var unsubPending))
+			{
+				unsubPending.SetResult(true);
+				return;
+			}
 		}
 	}
 
@@ -1159,23 +1531,38 @@ public class ControllerService : ServiceBase<ControllerService>
 			return;
 		}
 
-		if (msgId == HookMessageId.GOODBYE_MESSAGE_ID)
+		EventId eventId = (EventId)msgId;
+		if (Enum.IsDefined(eventId))
 		{
-			this.pendingByeMessage.SetResult(false);
-			return;
+			if (this.pendingEventSubscriptions.TryGetValue(eventId, out var subPending))
+			{
+				subPending.SetResult(false);
+				return;
+			}
+
+			if (this.pendingEventUnsubscriptions.TryGetValue(eventId, out var unsubPending))
+			{
+				unsubPending.SetResult(false);
+				return;
+			}
 		}
 	}
 
 	private void HandleHookReturn(uint msgId, ReadOnlySpan<byte> resultData)
 	{
+		if (this.pendingDriverCommands.TryGetValue(msgId, out var driverPending))
+		{
+			driverPending.SetResult(resultData.ToArray());
+			return;
+		}
+
 		if (this.pendingHookRequests.TryGetValue(msgId, out var pending))
 		{
 			pending.SetResult(resultData.ToArray());
+			return;
 		}
-		else
-		{
-			Log.Warning($"Received hook result for unknown request: {msgId}");
-		}
+
+		Log.Warning($"Received hook result for unknown request: {msgId}");
 	}
 
 	private void EnqueueHookRequest(uint msgId, ReadOnlySpan<byte> payload)
@@ -1190,7 +1577,53 @@ public class ControllerService : ServiceBase<ControllerService>
 			workItem.Initialize(this.workItemPool, &ProcessHookRequestInternal, (this, msgId, payloadCopy, length));
 		}
 
-		this.workPipeline.Enqueue(workItem);
+		this.workPipeline?.Enqueue(workItem);
+	}
+
+	private void EnqueueEvent(uint eventIdRaw, ReadOnlySpan<byte> payload)
+	{
+		EventId eventId = (EventId)eventIdRaw;
+		lock (this.eventHandlersLock)
+		{
+			if (!this.eventHandlers.TryGetValue(eventId, out var handlers) || handlers.Count == 0)
+				return; // Subscribers may have unsubscribed before the event signal; Abort
+		}
+
+		byte[] payloadCopy = ArrayPool<byte>.Shared.Rent(payload.Length);
+		int length = payload.Length;
+		payload.CopyTo(payloadCopy);
+
+		var workItem = this.workItemPool.Get();
+		unsafe
+		{
+			workItem.Initialize(this.workItemPool, &ProcessEventInternal, (this, eventIdRaw, payloadCopy, length));
+		}
+
+		this.eventPipeline?.Enqueue(workItem);
+	}
+
+	private void BroadcastEventToSubscribers(EventId eventId, ReadOnlySpan<byte> payload)
+	{
+		Action<ReadOnlySpan<byte>>[] handlersSnapshot;
+		lock (this.eventHandlersLock)
+		{
+			if (!this.eventHandlers.TryGetValue(eventId, out var handlers) || handlers.Count == 0)
+				return; // Subscribers may have unsubscribed since enqueue; Abort
+
+			handlersSnapshot = [.. handlers];
+		}
+
+		foreach (var handler in handlersSnapshot)
+		{
+			try
+			{
+				handler(payload);
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, $"Error in event handler for {eventId}");
+			}
+		}
 	}
 
 	private void HandleHookRequest(uint msgId, ReadOnlySpan<byte> payload)
@@ -1228,81 +1661,6 @@ public class ControllerService : ServiceBase<ControllerService>
 		this.outgoingEndpoint.Write(header, response, IPC_TIMEOUT_MS);
 	}
 
-	private void RegisterFrameworkHook()
-	{
-		if (this.outgoingEndpoint == null)
-			throw new InvalidOperationException("Controller service not initialized.");
-
-		Type delType = typeof(RemoteController.Interop.Delegates.Framework.Tick);
-		string delegateKey = HookUtils.GetKey(delType);
-
-		if (this.delegateKeyToHookId.ContainsKey(delegateKey))
-		{
-			Log.Warning($"Hook already registered for: {delegateKey}");
-			return;
-		}
-
-		var registerPayload = new HookRegistrationData
-		{
-			HookType = HookType.System,
-			HookBehavior = HookBehavior.After, // Ignored
-			DelegateKeyLength = delegateKey.Length,
-			HookId = HookMessageId.FRAMEWORK_SYSTEM_ID,
-		};
-		registerPayload.SetKey(delegateKey);
-
-		byte[] payload = MarshalUtils.Serialize(registerPayload);
-		uint requestId = this.GetNextRequestId();
-
-		using var pending = new PendingRequest<uint>();
-		this.pendingRegistrations[requestId] = pending;
-		try
-		{
-			var header = new MessageHeader(requestId, PayloadType.Register, (ulong)payload.Length);
-
-			if (!this.outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS))
-			{
-				Log.Error($"Failed to send hook registration request for: {delegateKey}");
-				return;
-			}
-
-			if (!pending.Wait(IPC_REGISTER_TIMEOUT_MS))
-			{
-				Log.Error($"Hook registration timed out for: {delegateKey}");
-				return;
-			}
-
-			if (!pending.TryGetResult(out uint hookId) || hookId == 0)
-			{
-				Log.Error($"Hook registration failed for: {delegateKey}");
-				return;
-			}
-
-			// Payload: [1] = Keep Syncing, [0] = Stop Syncing
-			this.handlers[HookMessageId.FRAMEWORK_SYSTEM_ID] = _ =>
-			{
-				if (this.framework == null)
-					return [0];
-
-				bool keepSyncing = this.framework?.ProcessTick() ?? false;
-				return [keepSyncing ? (byte)1 : (byte)0];
-			};
-
-			this.delegateKeyToHookId[delegateKey] = hookId;
-			Log.Information($"Registered hook[ID: {hookId}] for: {delegateKey}");
-			return;
-		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, $"Exception during IPC registration for {delegateKey}");
-			return;
-		}
-		finally
-		{
-			this.pendingRegistrations.TryRemove(requestId, out _);
-		}
-	}
-
 	private void SendFrameworkSyncRequest()
 	{
 		if (this.outgoingEndpoint == null)
@@ -1312,7 +1670,7 @@ public class ControllerService : ServiceBase<ControllerService>
 		int payloadSize = Unsafe.SizeOf<FrameworkMessageData>();
 		var header = new MessageHeader(HookMessageId.FRAMEWORK_SYSTEM_ID, PayloadType.Request, (ulong)payloadSize);
 
-		byte seq = this.GetNextSequence(HookMessageId.FRAMEWORK_SYSTEM_ID);
+		ushort seq = this.GetNextSequence(HookMessageId.FRAMEWORK_SYSTEM_ID);
 		uint msgId = HookMessageId.Pack(HookMessageId.FRAMEWORK_SYSTEM_ID, seq);
 		var pending = new PendingRequest<byte[]>();
 		this.pendingHookRequests[msgId] = pending;
@@ -1357,9 +1715,9 @@ public class ControllerService : ServiceBase<ControllerService>
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private byte GetNextSequence(uint hookIndex)
+	private ushort GetNextSequence(uint hookIndex)
 	{
-		return this.sequenceCounters.AddOrUpdate(hookIndex, 1, s_incrementFunc);
+		return (ushort)this.sequenceCounters.AddOrUpdate(hookIndex, 1, (_, v) => (ushort)((v + 1) & HookMessageId.MAX_SEQ_NUM));
 	}
 
 	private void SendShutdownMessage()
@@ -1367,23 +1725,11 @@ public class ControllerService : ServiceBase<ControllerService>
 		if (this.outgoingEndpoint == null)
 			return;
 
-		this.pendingByeMessage.Reset();
-		var header = new MessageHeader(HookMessageId.GOODBYE_MESSAGE_ID, type: PayloadType.Bye);
-		this.outgoingEndpoint.Write(header, IPC_TIMEOUT_MS);
-
-		if (this.pendingByeMessage.Wait(IPC_TIMEOUT_MS))
-			Log.Information("Remote controller acknowledged shutdown message.");
-		else
-			Log.Warning("No acknowledgment received for shutdown message.");
-
-		// Regardless of the result, mark as disconnected
-		// This will avoid hooks from attempting to use the IPC during disposal
-		this.isConnected = false;
-
-		if (this.pendingByeMessage.TryGetResult(out bool success) && success)
-			Log.Information("Remote controller shutdown completed successfully.");
-		else
-			Log.Warning("Remote controller shutdown reported failure.");
+		var header = new MessageHeader(0, type: PayloadType.Bye);
+		if (!this.outgoingEndpoint.Write(header, IPC_TIMEOUT_MS))
+		{
+			Log.Warning("Failed to send shutdown message to remote controller.");
+		}
 	}
 
 	private record HookRegistrationInfo(

@@ -72,7 +72,13 @@ public class WorkQueue
 		var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 		if (this.writer.TryWrite(new WorkItem(action, tcs)))
 		{
-			return tcs.Task.ContinueWith(_ => true, TaskScheduler.Default);
+			return tcs.Task.ContinueWith(
+				t =>
+				{
+					t.GetAwaiter().GetResult();
+					return true;
+				},
+				TaskScheduler.Default);
 		}
 
 		return Task.FromResult(false);

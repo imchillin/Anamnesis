@@ -83,7 +83,7 @@ public class Bone : ITransform
 	public bool IsTransformLocked { get; set; } = false;
 
 	/// <inheritdoc/>
-	public bool CanTranslate => PoseService.Instance.FreezePositions && !this.IsTransformLocked;
+	public bool CanTranslate => PoseService.Instance.IsEnabled && !this.IsTransformLocked;
 
 	/// <summary>
 	/// Gets or sets the parent-relative position of the bone.
@@ -106,7 +106,7 @@ public class Bone : ITransform
 	}
 
 	/// <inheritdoc/>
-	public bool CanRotate => PoseService.Instance.FreezeRotation && !this.IsTransformLocked;
+	public bool CanRotate => PoseService.Instance.IsEnabled && !this.IsTransformLocked;
 
 	/// <summary>
 	/// Gets or sets the parent-relative rotation of the bone.
@@ -134,7 +134,7 @@ public class Bone : ITransform
 		: Quaternion.Normalize(this.Skeleton.RootRotation * this.Parent.TransformMemory!.Rotation);
 
 	/// <inheritdoc/>
-	public bool CanScale => PoseService.Instance.FreezeScale && !this.IsTransformLocked;
+	public bool CanScale => PoseService.Instance.IsEnabled && !this.IsTransformLocked;
 
 	/// <summary>Gets or sets the scale of the bone.</summary>
 	public Vector3 Scale
@@ -262,15 +262,6 @@ public class Bone : ITransform
 		}
 
 		return depth;
-	}
-
-	/// <summary>Synchronizes the bone with its transform memories.</summary>
-	public virtual void Synchronize()
-	{
-		foreach (TransformMemory transformMemory in this.TransformMemories)
-			transformMemory.Synchronize();
-
-		this.ReadTransform();
 	}
 
 	/// <summary>Reads the transform of the bone from game memory or a snapshot.</summary>

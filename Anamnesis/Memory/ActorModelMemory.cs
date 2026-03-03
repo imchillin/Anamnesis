@@ -21,8 +21,7 @@ public class ActorModelMemory : DrawObjectMemory
 	[Bind(0x2EC)] public float Drenched { get; set; }
 	[Bind(0xAA0)] public short DataPath { get; set; }
 	[Bind(0xAA4)] public byte DataHead { get; set; }
-	[Bind(0xBF0, 0x024)] public int ExtendedAppearanceFlags { get; private set; }
-	[Bind(0xBF0, 0x028, BindFlags.Pointer)] public ExtendedAppearanceMemory? ExtendedAppearanceUnsafePtr { get; private set; }
+	[Bind(0xBF0, BindFlags.Pointer)] public ConstantBufferMemory<ExtendedAppearanceMemory>? CustomizeParameterCBuffer { get; private set; }
 
 	public bool LockWetness
 	{
@@ -51,20 +50,19 @@ public class ActorModelMemory : DrawObjectMemory
 	}
 
 	public ExtendedAppearanceMemory? ExtendedAppearance
-		=> (this.IsHuman && (this.ExtendedAppearanceFlags & 0x4003) == 0) ? this.ExtendedAppearanceUnsafePtr : null;
+		=> this.IsHuman ? this.CustomizeParameterCBuffer?.TryGetSourcePtr() : null;
 
 	protected override bool CanRead(BindInfo bind)
 	{
-		if (bind.Name == nameof(this.ExtendedAppearanceFlags) ||
-			bind.Name == nameof(this.ExtendedAppearanceUnsafePtr))
+		if (bind.Name == nameof(this.CustomizeParameterCBuffer))
 		{
 			// No extended appearance for anything that isn't a player!
 			if (!this.IsHuman)
 			{
-				if (this.ExtendedAppearanceUnsafePtr != null)
+				if (this.CustomizeParameterCBuffer != null)
 				{
-					this.ExtendedAppearanceUnsafePtr?.Dispose();
-					this.ExtendedAppearanceUnsafePtr = null;
+					this.CustomizeParameterCBuffer?.Dispose();
+					this.CustomizeParameterCBuffer = null;
 				}
 
 				return false;

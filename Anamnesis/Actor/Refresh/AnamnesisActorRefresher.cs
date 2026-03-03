@@ -20,16 +20,16 @@ public class AnamnesisActorRefresher : IActorRefresher
 {
 	public RedrawService RedrawService { get; } = new RedrawService();
 
-	public bool CanRefresh(ActorMemory actor)
+	public RefreshBlockedReason GetRefreshAvailability(ActorMemory actor)
 	{
 		if (PoseService.Instance.IsEnabled)
-			return false;
+			return RefreshBlockedReason.PoseEnabled;
 
 		// Ana can't refresh world frozen actors
-		if (PoseService.Instance.FreezeWorldPosition)
-			return false;
+		if (PoseService.Instance.FreezeWorldState)
+			return RefreshBlockedReason.WorldFrozen;
 
-		return true;
+		return RefreshBlockedReason.None;
 	}
 
 	public async Task RefreshActor(ActorMemory actor)
@@ -67,17 +67,39 @@ public class RedrawService
 	public delegate void RedrawEvent(ObjectHandle<GameObjectMemory> obj, RedrawStage stage);
 	public event RedrawEvent? OnRedraw;
 
+	public static async Task WaitForDrawing(int objectIndex)
+	{
+		if (ControllerService.Instance == null || ControllerService.Instance.Framework?.Active != true)
+			return;
+
+		IntPtr currentPtr = ActorService.Instance.ObjectTable.GetAddress(objectIndex);
+		using var obj = new ObjectHandle<GameObjectMemory>(currentPtr, ActorService.Instance.ObjectTable);
+
+		const int maxAttempts = 100;
+		const int delayMs = 16;
+		int attempts = 0;
+
+		while (attempts < maxAttempts)
+		{
+			if (obj.Do(o => o.ModelObject?.IsVisible == true) == true)
+				return;
+
+			await Task.Delay(delayMs);
+			attempts++;
+		}
+	}
+
 	public async Task Redraw(ObjectHandle<GameObjectMemory> obj)
 	{
 		if (!obj.IsValid)
 			return;
 
-		string name = obj.DoRef(a => a.DisplayName) ?? "Unknown";
+		string id = obj.DoRef(a => a.IdNoAddress) ?? "Unknown";
 
 		int objectIndex = ActorService.Instance.ObjectTable.GetIndexOf(obj.Address);
 		if (objectIndex == -1)
 		{
-			Log.Error($"Could not find the object index for the actor \"{name}\"[Index: {objectIndex}, Address: 0x{obj.Address:X}].");
+			Log.Error($"Could not find the object index for the actor ID \"{id}\"[Index: {objectIndex}, Address: 0x{obj.Address:X}].");
 			return;
 		}
 
@@ -94,11 +116,13 @@ public class RedrawService
 				batch.AddCall<byte>(s_enableDrawHook!, args: objPtr);
 			}
 
+			await WaitForDrawing(objectIndex);
+
 			this.OnRedraw?.Invoke(obj, RedrawStage.After);
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, $"Failed to redraw object \"{name}\"[Index: {objectIndex}, Address: 0x{obj.Address:X}].");
+			Log.Error(ex, $"Failed to redraw object ID \"{id}\"[Index: {objectIndex}, Address: 0x{obj.Address:X}].");
 		}
 	}
 }

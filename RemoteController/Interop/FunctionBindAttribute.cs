@@ -59,12 +59,6 @@ public enum HookType
 	/// <see cref="HookBehavior"/> for all available hook behavior options.
 	/// </summary>
 	Interceptor,
-
-	/// <summary>
-	/// A special interceptor hook type designed for system-level functions
-	/// that usually requires specific handling.
-	/// </summary>
-	System,
 }
 
 /// <summary>

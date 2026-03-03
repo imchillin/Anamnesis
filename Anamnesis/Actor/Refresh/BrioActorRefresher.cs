@@ -3,32 +3,30 @@
 
 namespace Anamnesis.Actor.Refresh;
 
-using Anamnesis.Actor.Pages;
-using Anamnesis.Actor.Posing;
 using Anamnesis.Brio;
-using Anamnesis.Core;
-using Anamnesis.Files;
 using Anamnesis.Memory;
 using Anamnesis.Services;
-using Serilog;
 using System.Threading.Tasks;
 using XivToolsWpf;
 
 public class BrioActorRefresher : IActorRefresher
 {
-	public bool CanRefresh(ActorMemory actor)
+	public RefreshBlockedReason GetRefreshAvailability(ActorMemory actor)
 	{
 		// Only if Brio integration is really enabled
 		if (!SettingsService.Current.UseExternalRefreshBrio)
-			return false;
+			return RefreshBlockedReason.IntegrationDisabled;
+
+		if (PoseService.Instance.IsEnabled)
+			return RefreshBlockedReason.PoseEnabled;
 
 		// Brio doesn't support refresh on world-frozen actors.
 		// Trying to refresh a world-frozen actor will cause the actor to be
 		// sent to world origin (0, 0, 0).
-		if (PoseService.Instance.FreezeWorldPosition)
-			return false;
+		if (PoseService.Instance.FreezeWorldState)
+			return RefreshBlockedReason.WorldFrozen;
 
-		return true;
+		return RefreshBlockedReason.None;
 	}
 
 	public async Task RefreshActor(ActorMemory actor)
@@ -37,55 +35,17 @@ public class BrioActorRefresher : IActorRefresher
 
 		bool doNpcHack = SettingsService.Current.EnableNpcHack && actor.ObjectKind == ActorTypes.Player;
 
-		if (PoseService.Instance.IsEnabled)
+		try
 		{
-			// Save the current pose
-			var poseFile = new PoseFile();
-			var actorHandle = ActorService.Instance.ObjectTable.Get<ActorMemory>(actor.Address);
-			if (actorHandle == null)
-			{
-				Log.Warning($"Failed to refresh actor {actor.Id} as they are not part of the object table");
-				return;
-			}
-
-			var skeleton = new Skeleton(actorHandle);
-			poseFile.WriteToFile(actorHandle, skeleton, null);
-
-			// Redraw
 			if (doNpcHack)
 				actor.ObjectKind = ActorTypes.EventNpc;
 
-			try
-			{
-				var result = await Brio.Redraw(actor.ObjectIndex);
-
-				if (result == "\"Full\"")
-				{
-					var skeletonEntity = new SkeletonEntity(actorHandle);
-					await PosePage.ImportPose(actorHandle, skeletonEntity, PosePage.PoseImportOptions.Character, PoseMode.All & ~PoseMode.Scale);
-				}
-			}
-			finally
-			{
-				if (doNpcHack)
-					actor.ObjectKind = ActorTypes.Player;
-			}
+			await Brio.Redraw(actor.ObjectIndex);
 		}
-		else
+		finally
 		{
-			// Outside of pose mode we can just refresh
 			if (doNpcHack)
-				actor.ObjectKind = ActorTypes.EventNpc;
-
-			try
-			{
-				await Brio.Redraw(actor.ObjectIndex);
-			}
-			finally
-			{
-				if (doNpcHack)
-					actor.ObjectKind = ActorTypes.Player;
-			}
+				actor.ObjectKind = ActorTypes.Player;
 		}
 	}
 }

@@ -20,6 +20,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 /// <summary>
 /// A representation of the game's object table in memory.
@@ -35,6 +36,7 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	private readonly byte[] objTableBuffer;
 	private readonly ReaderWriterLockSlim tableLock = new();
 	private HashSet<IntPtr> objSet = [];
+	private int isRefreshing = 0;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ObjectTable"/> class.
@@ -65,38 +67,50 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	/// </exception>
 	public void Refresh()
 	{
-		if (!MemoryService.Read(AddressService.ObjectTable, this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes)))
-			throw new Exception("Failed to read object table from memory.");
+		ObjectDisposedException.ThrowIf(this.tableLock == null, nameof(ObjectTable));
 
-		Span<IntPtr> newSpan = MemoryMarshal.Cast<byte, IntPtr>(this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes));
-		bool hasChanged = false;
+		if (Interlocked.CompareExchange(ref this.isRefreshing, 1, 0) != 0)
+			return; // Prevent re-entrant calls
 
-		this.tableLock.EnterUpgradeableReadLock();
 		try
 		{
-			hasChanged = !this.objTable.AsSpan().SequenceEqual(newSpan);
+			if (!MemoryService.Read(AddressService.ObjectTable, this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes)))
+				throw new Exception("Failed to read object table from memory.");
 
-			if (!hasChanged)
-				return; // No changes detected, exit early.
+			Span<IntPtr> newSpan = MemoryMarshal.Cast<byte, IntPtr>(this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes));
+			bool hasChanged = false;
 
-			this.tableLock.EnterWriteLock();
+			this.tableLock.EnterUpgradeableReadLock();
 			try
 			{
-				newSpan.CopyTo(this.objTable);
-				this.objSet = this.objTable.ToHashSet();
+				hasChanged = !this.objTable.AsSpan().SequenceEqual(newSpan);
+
+				if (!hasChanged)
+					return; // No changes detected, exit early.
+
+				this.tableLock.EnterWriteLock();
+				try
+				{
+					newSpan.CopyTo(this.objTable);
+					this.objSet = this.objTable.ToHashSet();
+				}
+				finally
+				{
+					this.tableLock.ExitWriteLock();
+				}
 			}
 			finally
 			{
-				this.tableLock.ExitWriteLock();
+				this.tableLock.ExitUpgradeableReadLock();
 			}
+
+			TableChanged?.Invoke();
+			Log.Verbose("Object table updated.");
 		}
 		finally
 		{
-			this.tableLock.ExitUpgradeableReadLock();
+			Interlocked.Exchange(ref this.isRefreshing, 0);
 		}
-
-		TableChanged?.Invoke();
-		Log.Verbose("Object table updated.");
 	}
 
 	/// <summary>
@@ -332,6 +346,10 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 					obj.Synchronize(inclGroups, exclGroups);
 			}
 		}
+		catch (Exception ex)
+		{
+			Log.Warning(ex, $"Failed to synchronize object handle at address: 0x{this.Address:X}");
+		}
 		finally
 		{
 			ObjectHandleCache.ListPool.Return(targets);
@@ -519,12 +537,19 @@ public class ActorService : ServiceBase<ActorService>
 	private const int OVERWORLD_PLAYER_INDEX = 0;
 	private const int GPOSE_PLAYER_INDEX = 201;
 
-	private readonly ObjectTable objectTable = new();
+	private ObjectTable? objectTable = new();
 
 	/// <summary>
 	/// Gets the instance of the actor object table.
 	/// </summary>
-	public ObjectTable ObjectTable => this.objectTable;
+	public ObjectTable ObjectTable
+	{
+		get
+		{
+			ObjectDisposedException.ThrowIf(this.objectTable == null, nameof(this.ObjectTable));
+			return this.objectTable;
+		}
+	}
 
 	/// <inheritdoc/>
 	protected override IEnumerable<IService> Dependencies => [AddressService.Instance];
@@ -565,6 +590,9 @@ public class ActorService : ServiceBase<ActorService>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsGPoseActor(IntPtr actorAddress)
 	{
+		if (this.objectTable == null)
+			return false;
+
 		int objectIndex = this.objectTable.GetIndexOf(actorAddress);
 		if (objectIndex == -1)
 			return false;
@@ -584,6 +612,9 @@ public class ActorService : ServiceBase<ActorService>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsLocalOverworldPlayer(IntPtr actorAddress)
 	{
+		if (this.objectTable == null)
+			return false;
+
 		int objectIndex = this.objectTable.GetIndexOf(actorAddress);
 		if (objectIndex == -1)
 			return false;
@@ -597,6 +628,9 @@ public class ActorService : ServiceBase<ActorService>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsLocalGPosePlayer(IntPtr actorAddress)
 	{
+		if (this.objectTable == null)
+			return false;
+
 		int objectIndex = this.objectTable.GetIndexOf(actorAddress);
 		if (objectIndex == -1)
 			return false;
@@ -611,8 +645,43 @@ public class ActorService : ServiceBase<ActorService>
 	public bool IsLocalPlayer(IntPtr actorAddress) => this.IsLocalOverworldPlayer(actorAddress) || this.IsLocalGPosePlayer(actorAddress);
 
 	/// <inheritdoc/>
+	public override async Task Shutdown()
+	{
+		// Trigger a token cancellation first before disposing of the actor table.
+		await base.Shutdown();
+
+		if (App.Current != null)
+		{
+			App.Current.Dispatcher.Invoke(() =>
+			{
+				this.objectTable?.Dispose();
+				this.objectTable = null;
+			});
+		}
+		else
+		{
+			this.objectTable?.Dispose();
+			this.objectTable = null;
+		}
+
+		// Clear all cached handles to prevent stale references
+		lock (ObjectHandleCache.Lock)
+		{
+			foreach (var entry in ObjectHandleCache.Cache.Values)
+			{
+				if (!entry.Object.IsDisposed)
+					entry.Object.Dispose();
+			}
+
+			ObjectHandleCache.Cache.Clear();
+		}
+	}
+
+	/// <inheritdoc/>
 	protected override async Task OnStart()
 	{
+		this.objectTable ??= new ObjectTable();
+
 		this.CancellationTokenSource = new CancellationTokenSource();
 		this.BackgroundTask = Task.Run(() => this.Tick(this.CancellationToken));
 		await base.OnStart();
@@ -628,7 +697,7 @@ public class ActorService : ServiceBase<ActorService>
 			try
 			{
 				if (GameService.Ready)
-					this.objectTable.Refresh();
+					this.objectTable?.Refresh();
 
 				await Task.Delay(TICK_DELAY, cancellationToken);
 			}

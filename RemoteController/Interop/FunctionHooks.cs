@@ -16,7 +16,7 @@ using System.Diagnostics.CodeAnalysis;
 /// </typeparam>
 [RequiresUnreferencedCode("Uses HookDelegateRegistry which requires reflection.")]
 [RequiresDynamicCode("Uses HookDelegateRegistry which requires dynamic code.")]
-internal sealed class FunctionHook<TDelegate>(uint id, string delegateKey, HookBehavior behavior, nint targetAddress, IHook<TDelegate> hook) : IFunctionHook<TDelegate>, IDisposable
+public sealed class FunctionHook<TDelegate>(uint id, string delegateKey, HookBehavior behavior, nint targetAddress, IHook<TDelegate> hook) : IFunctionHook<TDelegate>, IDisposable
 	where TDelegate : Delegate
 {
 	private readonly IHook<TDelegate> hook = hook;
@@ -105,7 +105,7 @@ internal sealed class FunctionHook<TDelegate>(uint id, string delegateKey, HookB
 /// </typeparam>
 [RequiresUnreferencedCode("Uses HookDelegateRegistry which requires reflection.")]
 [RequiresDynamicCode("Uses HookDelegateRegistry which requires dynamic code.")]
-internal sealed class FunctionWrapper<TDelegate>(uint id, string delegateKey, nint targetAddress, TDelegate wrapper) : IFunctionHook<TDelegate>
+public sealed class FunctionWrapper<TDelegate>(uint id, string delegateKey, nint targetAddress, TDelegate wrapper) : IFunctionHook<TDelegate>
 	where TDelegate : Delegate
 {
 	private readonly TDelegate wrapper = wrapper;
