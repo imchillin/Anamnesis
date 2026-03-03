@@ -118,6 +118,10 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 		{
 			try
 			{
+				IntPtr arrayAddress = this.ArrayAddress;
+				int arrayLength = this.Length;
+				int elementSize = this.ElementSize;
+
 				if (s_isMemoryObject)
 				{
 					// Re-initialize the array if the structure changed
@@ -131,11 +135,11 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 
 						this.items.Clear();
 						this.Children.Clear();
-						this.items.Capacity = this.Length;
+						this.items.Capacity = arrayLength;
 					}
 
-					IntPtr currentAddress = this.ArrayAddress;
-					for (int i = 0; i < this.Length; ++i)
+					IntPtr currentAddress = arrayAddress;
+					for (int i = 0; i < arrayLength; ++i)
 					{
 						TValue instance;
 
@@ -159,7 +163,7 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 							instance = this.items[i];
 						}
 
-						currentAddress += this.ElementSize;
+						currentAddress += elementSize;
 					}
 				}
 				else // Handle primitive types
@@ -168,15 +172,31 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 					{
 						this.items.Clear();
 						this.Children.Clear();
-						this.items.Capacity = this.Length;
+						this.items.Capacity = arrayLength;
 					}
 
-					int totalByteSize = this.Length * this.ElementSize;
+					int totalByteSize;
+					try
+					{
+						checked
+						{
+							totalByteSize = arrayLength * elementSize;
+						}
+					}
+					catch (OverflowException)
+					{
+						Log.Warning($"Failed to bulk read array at address: 0x{arrayAddress:X}: Byte size overflow.");
+						return;
+					}
 
 					byte[] buffer = ArrayPool<byte>.Shared.Rent(totalByteSize);
 					try
 					{
-						if (MemoryService.Read(this.ArrayAddress, buffer, totalByteSize))
+						if (buffer.Length < totalByteSize)
+						{
+							Log.Warning($"Rented buffer smaller than requested size. Requested: {totalByteSize}, Actual: {buffer.Length}");
+						}
+						else if (MemoryService.Read(arrayAddress, buffer, totalByteSize))
 						{
 							Type type = typeof(TValue);
 							Type readType = type;
@@ -190,9 +210,9 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 							{
 								fixed (byte* bufferPtr = buffer)
 								{
-									for (int i = 0; i < this.Length; ++i)
+									for (int i = 0; i < arrayLength; ++i)
 									{
-										IntPtr elementPtr = (IntPtr)(bufferPtr + (i * this.ElementSize));
+										IntPtr elementPtr = (IntPtr)(bufferPtr + (i * elementSize));
 										object? val = Marshal.PtrToStructure(elementPtr, readType);
 
 										if (val != null)
@@ -216,7 +236,7 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 						}
 						else
 						{
-							Log.Warning($"Failed to bulk read array at address: 0x{this.ArrayAddress:X}");
+							Log.Warning($"Failed to bulk read array at address: 0x{arrayAddress:X}");
 						}
 					}
 					finally
