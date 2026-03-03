@@ -165,8 +165,13 @@ public sealed class WorkPipeline : IDisposable
 
 		if (disposing)
 		{
-			this.cts.Cancel();
 			this.writer.TryComplete();
+			this.cts.Cancel();
+
+			// Drain all unprocessed items to return memory to the pool
+			while (this.channel.Reader.TryRead(out var work))
+				work.Cleanup();
+
 			Task.WaitAll(this.workers);
 			this.cts.Dispose();
 		}

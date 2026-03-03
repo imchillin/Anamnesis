@@ -1,7 +1,7 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace RemoteController;
+namespace RemoteController.IPC;
 
 using System;
 using System.Runtime.CompilerServices;
@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 /// <summary>
 /// A set of utility methods for working with hooks.
 /// </summary>
-public static class HookUtils
+public static class MessageUtils
 {
 	/// <summary>
 	/// Generates a unique string key for the specified type
@@ -34,15 +34,21 @@ public static class HookUtils
 /// detours. If the origin is the main application, the call context is a wrapper hook that is
 /// invoked directly.
 /// </remarks>
-public static class HookMessageId
+public static class MessageId
 {
 	public const uint MAX_HOOK_ID = 0x000FFFFF; // 20 bits (1,048,575)
 	public const uint MAX_SEQ_NUM = 0xFFF;      // 12 bits (4,095)
 
 	// Special-case message identifiers
-	public const int SPECIAL_HOOK_COUNT = 2;
-	public const uint FRAMEWORK_SYSTEM_ID = MAX_HOOK_ID - 1;
-	public const uint BATCH_HOOK_ID = FRAMEWORK_SYSTEM_ID - 1;
+	public const int SPECIAL_HOOK_COUNT = 8;
+	public const uint FRAMEWORK_SYNC_COMMAND_ID = MAX_HOOK_ID - 1;
+	public const uint BATCH_HOOK_ID = MAX_HOOK_ID - 2;
+	public const uint HOOK_REGISTRATION_ID = MAX_HOOK_ID - 3;
+	public const uint HOOK_DEREGISTRATION_ID = MAX_HOOK_ID - 4;
+	public const uint DRIVER_COMMAND_ID = MAX_HOOK_ID - 5;
+	public const uint CONFIG_COMMAND_ID = MAX_HOOK_ID - 6;
+	public const uint EVENT_SUBSCRIBE_ID = MAX_HOOK_ID - 7;
+	public const uint EVENT_UNSUBSCRIBE_ID = MAX_HOOK_ID - 8;
 
 	// Maximum hook identifier for non-specialized hooks.
 	public const uint MAX_STANDARD_HOOK_ID = MAX_HOOK_ID - SPECIAL_HOOK_COUNT - 1;
@@ -50,8 +56,8 @@ public static class HookMessageId
 	/// <summary>
 	/// Combines the hook identifier and message sequence number into a single packed identifier.
 	/// </summary>
-	/// <param name="hookId">
-	/// The unique identifier of the hook.
+	/// <param name="embedId">
+	/// The embed identifier of the message.
 	/// Only the lower 20 bits are used, allowing for values from 0 to 1,048,575.
 	/// </param>
 	/// <param name="seqNum">
@@ -62,8 +68,7 @@ public static class HookMessageId
 	/// The packed identifier containing both the hook ID and sequence number.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static uint Pack(uint hookId, ushort seqNum) => ((uint)(seqNum & MAX_SEQ_NUM) << 20) | (hookId & MAX_HOOK_ID);
-
+	public static uint Pack(uint embedId, ushort seqNum) => ((uint)(seqNum & MAX_SEQ_NUM) << 20) | (embedId & MAX_HOOK_ID);
 
 	/// <summary>
 	/// Extracts the hook identifier from the packed identifier.
@@ -71,7 +76,7 @@ public static class HookMessageId
 	/// <param name="packedId">The packed identifier.</param>
 	/// <returns>The unique identifier of the hook.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static uint GetHookId(uint packedId) => packedId & MAX_HOOK_ID;
+	public static uint GetEmbeddedId(uint packedId) => packedId & MAX_HOOK_ID;
 
 	/// <summary>
 	/// Extracts the message sequence number from the packed identifier.

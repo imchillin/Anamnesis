@@ -34,6 +34,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 
 	private readonly System.Timers.Timer refreshDebounceTimer;
 	private readonly FuncQueue backupQueue;
+	private readonly SemaphoreSlim snapshotSemaphore = new(1, 1);
 
 	private int isRefreshing = 0;
 	private bool needsRefresh = false;
@@ -190,7 +191,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 			{
 				if (actorRefresher.CanRefresh(actor))
 				{
-					Log.Information($"Executing {actorRefresher.GetType().Name} refresh for actor address: 0x{actor.Address:X}");
+					Log.Verbose($"Executing {actorRefresher.GetType().Name} refresh for actor address: 0x{actor.Address:X}");
 					await actorRefresher.RefreshActor(actor, forceReload);
 					return true;
 				}
@@ -248,9 +249,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		// Take the initial snapshot after the first synchronization
 		if (this.LastAppearanceSnapshot == null)
 		{
-			var snapshot = new CharacterFile();
-			snapshot.WriteToFile(this, CharacterFile.SaveModes.All);
-			this.LastAppearanceSnapshot = snapshot;
+			_ = this.TakeInitialSnapshotAsync();
 		}
 	}
 
@@ -280,7 +279,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 			{
 				this.needsRefresh = false;
 
-				if (await RefreshActor(this, this.forceReloadOnRefresh))
+				if (await RefreshActor(this, this.forceReloadOnRefresh | forceReload))
 				{
 					Log.Verbose($"Completed actor refresh cycle for: 0x{this.Address:X}");
 				}
@@ -391,6 +390,29 @@ public class ActorMemory : GameObjectMemory, IDisposable
 			// Restart the debounce timer if it's already running, otherwise start it
 			this.refreshDebounceTimer.Stop();
 			this.refreshDebounceTimer.Start();
+		}
+	}
+
+	private async Task TakeInitialSnapshotAsync()
+	{
+		await this.snapshotSemaphore.WaitAsync();
+		try
+		{
+			if (this.LastAppearanceSnapshot != null)
+				return;
+
+			var snapshot = await Task.Run(() =>
+			{
+				var newSnapshot = new CharacterFile();
+				newSnapshot.WriteToFile(this, CharacterFile.SaveModes.All);
+				return newSnapshot;
+			});
+
+			this.LastAppearanceSnapshot = snapshot;
+		}
+		finally
+		{
+			this.snapshotSemaphore.Release();
 		}
 	}
 }

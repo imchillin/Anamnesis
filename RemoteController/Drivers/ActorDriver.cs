@@ -3,6 +3,7 @@
 
 namespace RemoteController.Drivers;
 
+using Serilog;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -35,6 +36,8 @@ public sealed class ActorDriver : DriverBase<ActorDriver>
 		this.objTablePtr = Controller.Scanner?.GetStaticAddressFromSig(OBJECT_TABLE_SIGNATURE) ?? nint.Zero;
 		if (this.objTablePtr == nint.Zero)
 			throw new InvalidOperationException("Failed to resolve object table pointer.");
+
+		Log.Debug($"Object table instance found at address: 0x{this.objTablePtr:X}");
 
 		this.Redraw = new RedrawModule(this.objTablePtr);
 		this.RegisterInstance();

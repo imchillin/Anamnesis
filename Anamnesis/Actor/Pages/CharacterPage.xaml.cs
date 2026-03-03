@@ -447,6 +447,14 @@ public partial class CharacterPage : UserControl
 		});
 	}
 
+	private async void OnForceRedraw(object sender, RoutedEventArgs e)
+	{
+		if (this.Actor == null)
+			return;
+
+		await this.Actor.DoAsync(a => a.Refresh(forceReload: true));
+	}
+
 	private async void OnResetClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.Actor == null)

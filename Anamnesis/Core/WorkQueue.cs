@@ -62,26 +62,32 @@ public class WorkQueue
 	/// True if the item was enqueued successfully; otherwise, false.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public Task<bool> Enqueue(Action action)
+	public async Task<bool> Enqueue(Action action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
 
 		if (!this.Enabled)
-			return Task.FromResult(false);
+			return false;
 
 		var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 		if (this.writer.TryWrite(new WorkItem(action, tcs)))
 		{
-			return tcs.Task.ContinueWith(
-				t =>
-				{
-					t.GetAwaiter().GetResult();
-					return true;
-				},
-				TaskScheduler.Default);
+			try
+			{
+				await tcs.Task.ConfigureAwait(false);
+				return true;
+			}
+			catch (OperationCanceledException)
+			{
+				return false;
+			}
+			catch (Exception)
+			{
+				throw;
+			}
 		}
 
-		return Task.FromResult(false);
+		return false;
 	}
 
 	/// <summary>
@@ -197,6 +203,17 @@ public class WorkQueue
 		}
 
 		return false; // Queue is fully drained
+	}
+
+	/// <summary>
+	/// Drains the rest of the queue and cancels any pending tasks.
+	/// </summary>
+	public void Clear()
+	{
+		while (this.reader.TryRead(out var item))
+		{
+			item.Tcs?.TrySetCanceled();
+		}
 	}
 
 	private readonly struct WorkItem(Action action, TaskCompletionSource? tcs = null)

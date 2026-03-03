@@ -6,6 +6,7 @@ namespace RemoteController.Drivers;
 using RemoteController;
 using RemoteController.Interop;
 using RemoteController.Interop.Delegates;
+using RemoteController.IPC;
 using Serilog;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -20,7 +21,10 @@ using System.Runtime.CompilerServices;
 [RequiresDynamicCode("This class requires dynamic code due to hook reflection")]
 public class FrameworkDriver : DriverBase<FrameworkDriver>
 {
+	public const string FRAMEWORK_INSTANCE_SIGNATURE = "48 8B 1D ?? ?? ?? ?? 8B 7C 24";
+
 	private const int FRAMEWORK_DEFAULT_TIMEOUT_MS = 1000;
+	private const int CONFIG_SYNC_TIMEOUT_MS = 5000;
 
 	private static readonly ConcurrentQueue<WorkItem> s_marshaledWork = new();
 	private static readonly ConcurrentBag<WorkItem> s_workItemPool = new();
@@ -31,10 +35,13 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 
 	private readonly FunctionHook<Framework.Tick> tickHook;
 	private readonly Framework.Tick detourTick;
+	private readonly nint frameworkInstancePtr;
 
 	private volatile int isSyncEnabled = 0;
 	private int requestVersion = 0;
 	private ulong tickCount = 0;
+
+	private GameConfigModule GameConfig { get; }
 
 	/// <summary>
 	/// Event triggered on every frame update of the main game loop.
@@ -56,8 +63,20 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 		if (Controller.SigResolver == null)
 			throw new InvalidOperationException("Cannot initialize posing driver: signature resolver is not available.");
 
+		this.frameworkInstancePtr = Controller.Scanner?.GetStaticAddressFromSig(FRAMEWORK_INSTANCE_SIGNATURE) ?? nint.Zero;
+		if (this.frameworkInstancePtr == nint.Zero)
+			throw new InvalidOperationException("Failed to read framework pointer from memory.");
+
+		this.frameworkInstancePtr = Controller.MemoryReader.ReadPtr(this.frameworkInstancePtr);
+		if (this.frameworkInstancePtr == nint.Zero)
+			throw new InvalidOperationException("Failed to resolve framework instance pointer.");
+
+		Log.Debug($"Framework instance found at address: 0x{this.frameworkInstancePtr:X}");
+
 		this.detourTick = this.DetourTick;
 		this.tickHook = HookRegistry.CreateAndActivateHook(this.detourTick);
+		this.GameConfig = new GameConfigModule(this, this.frameworkInstancePtr);
+
 		this.RegisterInstance();
 	}
 
@@ -196,6 +215,57 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 			tcs));
 
 		return tcs.Task;
+	}
+
+	public void SynchronizeConfig()
+	{
+		// NOTE: As the synchronization is done asynchronously, we do not need a tight deadline
+		Task.Run(async () =>
+		{
+			uint? currentFps = await this.GameConfig.GetUIntAsync("FPSInActive"); // 1 when the limiter is on, 0 when its off
+			if (currentFps != null)
+			{
+				Log.Debug($"Current FPS limiter setting is: {(currentFps == 1u ? "ENABLED" : "DISABLED")}");
+
+				bool overrideLimiter = false;
+				if (Controller.GetConfig(ConfigIdentifier.FpsLimiter, ref overrideLimiter, CONFIG_SYNC_TIMEOUT_MS))
+				{
+					// Disable the FPS limiter if the override setting is toggled on. If toggled off, leave it as is.
+					if (overrideLimiter)
+					{
+						this.SetFpsLimiterEnabled(!overrideLimiter, "SYNC");
+					}
+				}
+				else
+				{
+					Log.Warning($"Failed to synchronize inactive FPS limiter setting with main application.");
+				}
+			}
+		});
+
+	}
+
+	public async void SetFpsLimiterEnabled(bool enabled, string? source = null)
+	{
+		string prefix = source != null ? $"[{source}] " : string.Empty;
+
+		uint targetValue = enabled ? 1u : 0u;
+		uint? currentValue = await this.GameConfig.GetUIntAsync("FPSInActive");
+		if (currentValue == targetValue)
+		{
+			Log.Debug($"{prefix}FPS limiter already {(enabled ? "enabled" : "disabled")}, no change needed.");
+			return;
+		}
+
+		try
+		{
+			await this.GameConfig.SetUIntAsync("FPSInActive", targetValue);
+			Log.Information($"{prefix}Successfully {(enabled ? "enabled" : "disabled")} FPS limiter.");
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, $"{prefix}Failed to {(enabled ? "enable" : "disable")} FPS limiter.");
+		}
 	}
 
 	/// <inheritdoc/>

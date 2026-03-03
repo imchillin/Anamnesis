@@ -237,8 +237,15 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 				if (mismatchedFaceBones && importOption == PoseImportOptions.ExpressionOnly)
 					return;
 
-				var importPoseInternal = (bool retryApply) =>
+				var capturedSkeleton = skeleton;
+				void ImportPoseInternal(bool retryApply)
 				{
+					if (capturedSkeleton == null || capturedSkeleton.Bones.IsEmpty)
+					{
+						Log.Warning("Could not apply pose as the actor skeleton is no longer available.");
+						return;
+					}
+
 					PoseService.Instance.SetEnabled(true);
 					PoseService.Instance.IsEnabled |= mode.HasFlagUnsafe(PoseMode.Scale);
 					PoseService.Instance.IsEnabled |= mode.HasFlagUnsafe(PoseMode.Rotation);
@@ -254,8 +261,8 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 						};
 
 						// Don't unselected bones after import. Let the user decide what to do with the selection.
-						var selectedBones = skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
-						poseFile.Apply(actorHandle, skeleton, selectedBones, options);
+						var selectedBones = capturedSkeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
+						poseFile.Apply(actorHandle, capturedSkeleton, selectedBones, options);
 						return;
 					}
 
@@ -268,25 +275,25 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 							RetryApply = retryApply,
 						};
 
-						skeleton.SelectWeapons();
-						var selectedBoneNames = skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
-						poseFile.Apply(actorHandle, skeleton, selectedBoneNames, options);
-						skeleton.ClearSelection();
+						capturedSkeleton.SelectWeapons();
+						var selectedBoneNames = capturedSkeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
+						poseFile.Apply(actorHandle, capturedSkeleton, selectedBoneNames, options);
+						capturedSkeleton.ClearSelection();
 						return;
 					}
 
 					// Backup face bone positions before importing the body pose.
 					// "Freeze Position" toggle resets them, so restore after import. Relevant only when pose service is enabled.
-					skeleton.SelectHead();
-					facePositions = skeleton.SelectedBones.ToDictionary(bone => bone as Bone, bone => bone.Position);
-					skeleton.ClearSelection();
+					capturedSkeleton.SelectHead();
+					facePositions = capturedSkeleton.SelectedBones.ToDictionary(bone => bone as Bone, bone => bone.Position);
+					capturedSkeleton.ClearSelection();
 
 					// Step 1: Import body part of the pose
 					if (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.BodyOnly)
 					{
-						skeleton.SelectBody();
-						var selectedBoneNames = skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
-						skeleton.ClearSelection();
+						capturedSkeleton.SelectBody();
+						var selectedBoneNames = capturedSkeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
+						capturedSkeleton.ClearSelection();
 
 						// Don't import body with positions during default pose import.
 						// Otherwise, the body will be deformed if the pose file was created for another race.
@@ -305,7 +312,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 						// Don't apply the facial expression hack for the body import step.
 						// Otherwise, the head won't pose as intended and will return to its original position.
-						poseFile.Apply(actorHandle, skeleton, selectedBoneNames, options);
+						poseFile.Apply(actorHandle, capturedSkeleton, selectedBoneNames, options);
 
 						// Re-enable positions if they were disabled.
 						if (doLegacyImport)
@@ -317,13 +324,13 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 					// Step 2: Import the facial expression
 					if (!mismatchedFaceBones && (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly))
 					{
-						skeleton.SelectHead();
-						var selectedBones = skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
-						skeleton.ClearSelection();
+						capturedSkeleton.SelectHead();
+						var selectedBones = capturedSkeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
+						capturedSkeleton.ClearSelection();
 
 						// Pre-DT faces need to be imported without positions.
 						bool doLegacyImport = actor.DrawData.Customize!.Age == ActorCustomizeMemory.Ages.None
-											|| (poseFile.IsPreDTPoseFile() && skeleton.HasPreDTFace && mode.HasFlagUnsafe(PoseMode.Position));
+											|| (poseFile.IsPreDTPoseFile() && capturedSkeleton.HasPreDTFace && mode.HasFlagUnsafe(PoseMode.Position));
 						if (doLegacyImport)
 						{
 							mode &= ~PoseMode.Position;
@@ -337,7 +344,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 						};
 
 						// Apply facial expression hack for the expression import
-						poseFile.Apply(actorHandle, skeleton, selectedBones, options);
+						poseFile.Apply(actorHandle, capturedSkeleton, selectedBones, options);
 
 						// Re-enable positions if they were disabled.
 						if (doLegacyImport)
@@ -352,16 +359,16 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 					{
 						RestoreBonePositions(facePositions);
 					}
-				};
+				}
 
 				if (WorkQueue.Value.Enabled)
 				{
-					await WorkQueue.Value.Enqueue(() => importPoseInternal(false));
+					await WorkQueue.Value.Enqueue(() => ImportPoseInternal(false));
 				}
 				else
 				{
 					// Fallback: Perform the import action synchronously if the work queue is not available
-					importPoseInternal(true);
+					ImportPoseInternal(true);
 				}
 			}
 			catch (Exception ex)
@@ -552,6 +559,11 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private void OnLoaded(object sender, RoutedEventArgs e)
 	{
+		if (s_renderSkeletonHook != null && s_renderSkeletonHook.IsValid)
+		{
+			WorkQueue.Value.Enabled |= true;
+		}
+
 		this.OnDataContextChanged(null, default);
 
 		HistoryService.OnHistoryApplied += this.OnHistoryApplied;
@@ -560,6 +572,9 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private void OnUnloaded(object sender, RoutedEventArgs e)
 	{
+		WorkQueue.Value.Enabled = false;
+		WorkQueue.Value.Clear();
+
 		PoseService.PropertyChanged -= this.OnPoseServicePropertyChanged;
 		HistoryService.OnHistoryApplied -= this.OnHistoryApplied;
 

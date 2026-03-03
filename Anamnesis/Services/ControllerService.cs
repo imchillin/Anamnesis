@@ -6,7 +6,6 @@ namespace Anamnesis;
 using Anamnesis.Core;
 using Anamnesis.Memory;
 using Anamnesis.Services;
-using RemoteController;
 using RemoteController.Interop;
 using RemoteController.IPC;
 using RemoteController.Memory;
@@ -264,7 +263,7 @@ public class BatchInvokeScope(ControllerService service) : IDisposable
 		MarshalUtils.WriteToSpan(finalBuffer[..s_sizeOfInt], this.hookCount);
 		this.buffer.WrittenSpan.CopyTo(finalBuffer[s_sizeOfInt..]);
 
-		byte[]? response = this.service.InvokeHookRaw(HookMessageId.BATCH_HOOK_ID, finalBuffer, this.Mode, this.TimeoutMs);
+		byte[]? response = this.service.InvokeHookRaw(MessageId.BATCH_HOOK_ID, finalBuffer, this.Mode, this.TimeoutMs);
 
 		try
 		{
@@ -367,20 +366,13 @@ public class ControllerService : ServiceBase<ControllerService>
 
 	private readonly ConcurrentDictionary<string, HookRegistrationInfo> allHooks = new();
 	private readonly ConcurrentQueue<HookRegistrationInfo> registrationQueue = new();
-	private readonly ConcurrentDictionary<uint, PendingRequest<byte[]>> pendingHookRequests = new();
-	private readonly ConcurrentDictionary<uint, PendingRequest<uint>> pendingRegistrations = new();
-	private readonly ConcurrentDictionary<uint, PendingRequest<bool>> pendingUnregistrations = new();
 	private readonly ConcurrentDictionary<uint, Func<ReadOnlySpan<byte>, byte[]>> handlers = new();
 	private readonly ConcurrentDictionary<uint, ushort> sequenceCounters = new();
 	private readonly ConcurrentDictionary<string, uint> delegateKeyToHookId = new();
-	private readonly ObjectPool<PendingRequest<byte[]>> wrapperRequestPool = new(maxSize: 128);
+	private readonly ObjectPool<PendingRequest<byte[]>> msgRequestPool = new(maxSize: 256);
+	private readonly ConcurrentDictionary<uint, PendingRequest<byte[]>> pendingMsgRequests = new();
 
-	private readonly ConcurrentDictionary<uint, PendingRequest<byte[]>> pendingDriverCommands = new();
-
-	private readonly ConcurrentDictionary<EventId, HashSet<Action<ReadOnlySpan<byte>>>> eventHandlers = new();
-	private readonly ConcurrentDictionary<EventId, PendingRequest<bool>> pendingEventSubscriptions = new();
-	private readonly ConcurrentDictionary<EventId, PendingRequest<bool>> pendingEventUnsubscriptions = new();
-	private readonly ObjectPool<WorkItem<(ControllerService, EventId, byte[])>> eventWorkItemPool = new(maxSize: 64);
+	private readonly ConcurrentDictionary<EventId, HashSet<WeakReference<Action<ReadOnlySpan<byte>>>>> eventHandlers = new();
 	private readonly Lock eventHandlersLock = new();
 
 	private readonly ObjectPool<WorkItem<(ControllerService, uint, byte[], int)>> workItemPool = new(maxSize: 128);
@@ -388,7 +380,6 @@ public class ControllerService : ServiceBase<ControllerService>
 	private readonly WorkQueue frameworkQueue = new();
 	private FrameworkService? framework;
 
-	private uint nextRequestId = 0;
 	private WorkPipeline? eventPipeline;
 	private WorkPipeline? workPipeline;
 
@@ -437,6 +428,8 @@ public class ControllerService : ServiceBase<ControllerService>
 			this.ipcMsgListener = null;
 		}
 
+		this.framework?.CancelPendingWork();
+
 		this.workPipeline?.Dispose();
 		this.workPipeline = null;
 		this.eventPipeline?.Dispose();
@@ -446,33 +439,13 @@ public class ControllerService : ServiceBase<ControllerService>
 		// They can be used for re-initialization on follow-up controller service startups.
 		this.InvalidateAllHooks();
 
-		foreach (var kvp in this.pendingHookRequests)
-			kvp.Value.Dispose();
-
-		foreach (var kvp in this.pendingRegistrations)
-			kvp.Value.Dispose();
-
-		foreach (var kvp in this.pendingUnregistrations)
-			kvp.Value.Dispose();
-
-		foreach (var kvp in this.pendingEventSubscriptions)
-			kvp.Value.Dispose();
-
-		foreach (var kvp in this.pendingEventUnsubscriptions)
-			kvp.Value.Dispose();
-
-		foreach (var kvp in this.pendingDriverCommands)
+		foreach (var kvp in this.pendingMsgRequests)
 			kvp.Value.Dispose();
 
 		// NOTE: No need to unsubscribe from events since the remote controller will
 		// automatically clean up all subscriptions as part of its own shutdown process
 
-		this.pendingHookRequests.Clear();
-		this.pendingRegistrations.Clear();
-		this.pendingUnregistrations.Clear();
-		this.pendingEventSubscriptions.Clear();
-		this.pendingEventUnsubscriptions.Clear();
-		this.pendingDriverCommands.Clear();
+		this.pendingMsgRequests.Clear();
 
 		this.outgoingEndpoint?.Dispose();
 		this.outgoingEndpoint = null;
@@ -519,15 +492,15 @@ public class ControllerService : ServiceBase<ControllerService>
 		}
 
 		ushort seq = this.GetNextSequence(hookId);
-		uint msgId = HookMessageId.Pack(hookId, seq);
-
-		var pending = this.wrapperRequestPool.Get();
-		this.pendingHookRequests[msgId] = pending;
+		uint msgId = MessageId.Pack(hookId, seq);
 
 		int argsLength = argsPayload.Length + 1;
 		Span<byte> packedPayload = stackalloc byte[argsLength];
 		packedPayload[0] = (byte)mode;
 		argsPayload.CopyTo(packedPayload[1..]);
+
+		var pending = this.msgRequestPool.Get();
+		this.pendingMsgRequests[msgId] = pending;
 
 		try
 		{
@@ -565,9 +538,9 @@ public class ControllerService : ServiceBase<ControllerService>
 		}
 		finally
 		{
-			this.pendingHookRequests.TryRemove(msgId, out _);
+			this.pendingMsgRequests.TryRemove(msgId, out _);
 			pending.Reset();
-			this.wrapperRequestPool.Return(pending);
+			this.msgRequestPool.Return(pending);
 		}
 	}
 
@@ -921,6 +894,56 @@ public class ControllerService : ServiceBase<ControllerService>
 		return this.SendEventSubscription(eventId, PayloadType.EventUnsubscribe, timeoutMs, EventSubscriptionFlags.UnsubscribeAll);
 	}
 
+	/// <summary>
+	/// Sends a configuration set command to the remote controller.
+	/// </summary>
+	/// <param name="configId">The target configuration identifier.</param>
+	/// <param name="value">The value to set for the configuration.</param>
+	/// <param name="timeout">The timeout in milliseconds for the command to complete.</param>
+	/// <returns>
+	/// True if the command was sent successfully and acknowledged by the remote controller; otherwise, false.
+	/// </returns>
+	public bool SendConfigSet<T>(ConfigIdentifier configId, T value, int timeout = IPC_TIMEOUT_MS)
+		where T : unmanaged
+	{
+		if (this.outgoingEndpoint == null || !this.isConnected)
+			return false;
+
+		int valueSize = Unsafe.SizeOf<T>();
+		int payloadSize = sizeof(ConfigIdentifier) + valueSize;
+
+		Span<byte> payload = stackalloc byte[payloadSize];
+		MarshalUtils.Write(payload, (ConfigIdentifier)configId);
+		MarshalUtils.Write(payload[sizeof(ConfigIdentifier)..], value);
+
+		ushort seq = this.GetNextSequence(MessageId.CONFIG_COMMAND_ID);
+		uint msgId = MessageId.Pack(MessageId.CONFIG_COMMAND_ID, seq);
+
+		var pending = this.msgRequestPool.Get();
+		this.pendingMsgRequests[msgId] = pending;
+
+		try
+		{
+			var header = new MessageHeader(msgId, PayloadType.Config, (ulong)payload.Length);
+			if (!this.outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS))
+				return false;
+
+			if (!pending.Wait(timeout))
+				return false;
+
+			if (!pending.TryGetResult(out byte[]? result) || result == null || result.Length == 0)
+				return false;
+
+			return result.Length == 1 && result[0] == 1;
+		}
+		finally
+		{
+			this.pendingMsgRequests.TryRemove(msgId, out _);
+			pending.Reset();
+			this.msgRequestPool.Return(pending);
+		}
+	}
+
 	internal static void ClearActiveBatch()
 	{
 		s_currentBatch = null;
@@ -936,18 +959,22 @@ public class ControllerService : ServiceBase<ControllerService>
 
 	internal void UnsubscribeEventInternal(EventId eventId, Action<ReadOnlySpan<byte>> wrappedHandler)
 	{
-		bool removed;
+		int removedCount = 0;
 		lock (this.eventHandlersLock)
 		{
 			if (!this.eventHandlers.TryGetValue(eventId, out var handlers))
 				return;
 
-			removed = handlers.Remove(wrappedHandler);
+			removedCount = handlers.RemoveWhere(wr =>
+			{
+				return wr.TryGetTarget(out var target) && target == wrappedHandler;
+			});
+
 			if (handlers.Count == 0)
 				this.eventHandlers.TryRemove(eventId, out _);
 		}
 
-		if (removed && this.isConnected)
+		if (removedCount > 0 && this.isConnected)
 		{
 			this.SendEventSubscription(eventId, PayloadType.EventUnsubscribe, IPC_TIMEOUT_MS);
 		}
@@ -1049,13 +1076,15 @@ public class ControllerService : ServiceBase<ControllerService>
 			return false;
 
 		byte[] payload = MarshalUtils.Serialize(data);
-		uint requestId = this.GetNextRequestId();
+		ushort seq = this.GetNextSequence(MessageId.HOOK_REGISTRATION_ID);
+		uint msgId = MessageId.Pack(MessageId.HOOK_REGISTRATION_ID, seq);
 
-		using var pending = new PendingRequest<uint>();
-		this.pendingRegistrations[requestId] = pending;
+		var pending = this.msgRequestPool.Get();
+		this.pendingMsgRequests[msgId] = pending;
+
 		try
 		{
-			var header = new MessageHeader(requestId, PayloadType.Register, (ulong)payload.Length);
+			var header = new MessageHeader(msgId, PayloadType.Register, (ulong)payload.Length);
 
 			if (!this.outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS))
 			{
@@ -1069,9 +1098,16 @@ public class ControllerService : ServiceBase<ControllerService>
 				return false;
 			}
 
-			if (!pending.TryGetResult(out uint hookId) || hookId == 0)
+			if (!pending.TryGetResult(out byte[]? result) || result == null || result.Length < 4)
 			{
-				Log.Error($"Hook registration failed for: {handle.DelegateKey}");
+				Log.Error($"Hook registration failed for key {handle.DelegateKey}: Invalid payload");
+				return false;
+			}
+
+			uint hookId = MarshalUtils.Read<uint>(result);
+			if (hookId == 0)
+			{
+				Log.Error($"Hook registration failed for key {handle.DelegateKey}: Invalid hook index");
 				return false;
 			}
 
@@ -1093,7 +1129,9 @@ public class ControllerService : ServiceBase<ControllerService>
 		}
 		finally
 		{
-			this.pendingRegistrations.TryRemove(requestId, out _);
+			this.pendingMsgRequests.TryRemove(msgId, out _);
+			pending.Reset();
+			this.msgRequestPool.Return(pending);
 		}
 	}
 
@@ -1107,7 +1145,7 @@ public class ControllerService : ServiceBase<ControllerService>
 		if (this.outgoingEndpoint == null)
 			throw new InvalidOperationException("Controller service not initialized.");
 
-		string delegateKey = HookUtils.GetKey(typeof(TDelegate));
+		string delegateKey = MessageUtils.GetKey(typeof(TDelegate));
 
 		if (this.delegateKeyToHookId.ContainsKey(delegateKey))
 		{
@@ -1147,13 +1185,19 @@ public class ControllerService : ServiceBase<ControllerService>
 		if (this.outgoingEndpoint == null)
 			return false;
 
-		using var pending = new PendingRequest<bool>();
-		this.pendingUnregistrations[hookId] = pending;
+		ushort seq = this.GetNextSequence(MessageId.HOOK_DEREGISTRATION_ID);
+		uint msgId = MessageId.Pack(MessageId.HOOK_DEREGISTRATION_ID, seq);
+
+		var pending = this.msgRequestPool.Get();
+		this.pendingMsgRequests[msgId] = pending;
 
 		try
 		{
-			var header = new MessageHeader(hookId, PayloadType.Unregister);
-			if (!this.outgoingEndpoint.Write(header, IPC_TIMEOUT_MS))
+			Span<byte> payload = stackalloc byte[sizeof(uint)];
+			MarshalUtils.Write(payload, hookId);
+
+			var header = new MessageHeader(hookId, PayloadType.Unregister, (ulong)payload.Length);
+			if (!this.outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS))
 			{
 				Log.Error($"Failed to send hook unregistration request for hook ID: {hookId}");
 				return false;
@@ -1165,11 +1209,10 @@ public class ControllerService : ServiceBase<ControllerService>
 				return false;
 			}
 
-			if (!pending.TryGetResult(out bool success))
-			{
+			if (!pending.TryGetResult(out byte[]? result) || result == null || result.Length == 0)
 				return false;
-			}
 
+			bool success = result[0] == 1;
 			if (success)
 			{
 				this.handlers.TryRemove(hookId, out _);
@@ -1188,7 +1231,9 @@ public class ControllerService : ServiceBase<ControllerService>
 		}
 		finally
 		{
-			this.pendingUnregistrations.TryRemove(hookId, out _);
+			this.pendingMsgRequests.TryRemove(msgId, out _);
+			pending.Reset();
+			this.msgRequestPool.Return(pending);
 		}
 	}
 
@@ -1222,13 +1267,20 @@ public class ControllerService : ServiceBase<ControllerService>
 
 	private byte[] SendDriverCommandInternal(ReadOnlySpan<byte> payload, int timeout = IPC_TIMEOUT_MS)
 	{
-		uint requestId = this.GetNextRequestId();
-		var pending = this.wrapperRequestPool.Get();
-		this.pendingDriverCommands[requestId] = pending;
+#if DEBUG
+		if (payload.Length < sizeof(DriverCommand))
+			throw new ArgumentException("Driver command payload must start with a serialized DriverCommand enum value.");
+#endif
+
+		ushort seq = this.GetNextSequence(MessageId.DRIVER_COMMAND_ID);
+		uint msgId = MessageId.Pack(MessageId.DRIVER_COMMAND_ID, seq);
+
+		var pending = this.msgRequestPool.Get();
+		this.pendingMsgRequests[msgId] = pending;
 
 		try
 		{
-			var header = new MessageHeader(requestId, PayloadType.Command, (ulong)payload.Length);
+			var header = new MessageHeader(msgId, PayloadType.Command, (ulong)payload.Length);
 			if (!this.outgoingEndpoint!.Write(header, payload, IPC_TIMEOUT_MS))
 				return [];
 
@@ -1242,9 +1294,9 @@ public class ControllerService : ServiceBase<ControllerService>
 		}
 		finally
 		{
-			this.pendingDriverCommands.TryRemove(requestId, out _);
+			this.pendingMsgRequests.TryRemove(msgId, out _);
 			pending.Reset();
-			this.wrapperRequestPool.Return(pending);
+			this.msgRequestPool.Return(pending);
 		}
 	}
 
@@ -1258,7 +1310,7 @@ public class ControllerService : ServiceBase<ControllerService>
 				this.eventHandlers[eventId] = handlers;
 			}
 
-			handlers.Add(wrappedHandler);
+			handlers.Add(new WeakReference<Action<ReadOnlySpan<byte>>>(wrappedHandler));
 		}
 
 		if (this.isConnected)
@@ -1268,7 +1320,7 @@ public class ControllerService : ServiceBase<ControllerService>
 				lock (this.eventHandlersLock)
 				{
 					if (this.eventHandlers.TryGetValue(eventId, out var handlers))
-						handlers.Remove(wrappedHandler);
+						handlers.RemoveWhere(wr => wr.TryGetTarget(out var target) && target == wrappedHandler);
 				}
 
 				return null;
@@ -1283,36 +1335,43 @@ public class ControllerService : ServiceBase<ControllerService>
 		if (this.outgoingEndpoint == null)
 			return false;
 
-		if (type != PayloadType.EventSubscribe && type != PayloadType.EventUnsubscribe)
-			throw new ArgumentException("Invalid payload type provided for event (un)subscription.", nameof(type));
+		uint baseId = type switch
+		{
+			PayloadType.EventSubscribe => MessageId.EVENT_SUBSCRIBE_ID,
+			PayloadType.EventUnsubscribe => MessageId.EVENT_UNSUBSCRIBE_ID,
+			_ => throw new ArgumentException("Invalid payload type provided for event (un)subscription.", nameof(type)),
+		};
+
+		ushort seq = this.GetNextSequence(baseId);
+		uint msgId = MessageId.Pack(baseId, seq);
 
 		var data = new EventSubscriptionData { EventId = eventId, Flags = flags };
 		int payloadSize = Unsafe.SizeOf<EventSubscriptionData>();
 		Span<byte> payload = stackalloc byte[payloadSize];
 		MarshalUtils.Write(payload, in data);
-		uint messageId = (uint)eventId;
 
-		var pendingDict = type == PayloadType.EventSubscribe
-			? this.pendingEventSubscriptions
-			: this.pendingEventUnsubscriptions;
-
-		using var pending = new PendingRequest<bool>();
-		pendingDict[eventId] = pending;
+		var pending = this.msgRequestPool.Get();
+		this.pendingMsgRequests[msgId] = pending;
 
 		try
 		{
-			var header = new MessageHeader(messageId, type, (ulong)payloadSize);
+			var header = new MessageHeader(msgId, type, (ulong)payloadSize);
 			if (!this.outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS))
 				return false;
 
 			if (!pending.Wait(timeoutMs))
 				return false;
 
-			return pending.TryGetResult(out bool success) && success;
+			if (!pending.TryGetResult(out byte[]? result) || result == null || result.Length == 0)
+				return false;
+
+			return result[0] == 1;
 		}
 		finally
 		{
-			pendingDict.TryRemove(eventId, out _);
+			this.pendingMsgRequests.TryRemove(msgId, out _);
+			pending.Reset();
+			this.msgRequestPool.Return(pending);
 		}
 	}
 
@@ -1406,7 +1465,7 @@ public class ControllerService : ServiceBase<ControllerService>
 					if (this.framework != null)
 					{
 						this.framework.Active = true;
-						this.handlers[HookMessageId.FRAMEWORK_SYSTEM_ID] = _ =>
+						this.handlers[MessageId.FRAMEWORK_SYNC_COMMAND_ID] = _ =>
 						{
 							if (this.framework == null)
 								return [0];
@@ -1464,12 +1523,12 @@ public class ControllerService : ServiceBase<ControllerService>
 								this.EnqueueEvent(header.Id, payload);
 								break;
 
-							case PayloadType.Request when payload.Length > 0:
+							case PayloadType.Request:
 								this.EnqueueHookRequest(header.Id, payload);
 								break;
 
-							case PayloadType.Blob:
-								this.HandleHookReturn(header.Id, payload);
+							case PayloadType.Config:
+								this.HandleConfigGetRequest(header.Id, payload);
 								break;
 
 							default:
@@ -1504,91 +1563,20 @@ public class ControllerService : ServiceBase<ControllerService>
 
 	private void HandleAck(uint msgId, ReadOnlySpan<byte> payload)
 	{
-		if (this.pendingRegistrations.TryGetValue(msgId, out var regPending))
+		if (this.pendingMsgRequests.TryGetValue(msgId, out var pending))
 		{
-			if (payload.Length >= sizeof(uint))
-			{
-				uint hookId = BitConverter.ToUInt32(payload);
-				regPending.SetResult(hookId);
-			}
-			else
-			{
-				Log.Warning($"Registration ACK missing hookId payload for request: {msgId}");
-				regPending.SetResult(0);
-			}
-
+			pending.SetResult(payload.ToArray());
 			return;
-		}
-
-		if (this.pendingUnregistrations.TryGetValue(msgId, out var unregPending))
-		{
-			unregPending.SetResult(true);
-			return;
-		}
-
-		EventId eventId = (EventId)msgId;
-		if (Enum.IsDefined(eventId))
-		{
-			if (this.pendingEventSubscriptions.TryGetValue(eventId, out var subPending))
-			{
-				subPending.SetResult(true);
-				return;
-			}
-
-			if (this.pendingEventUnsubscriptions.TryGetValue(eventId, out var unsubPending))
-			{
-				unsubPending.SetResult(true);
-				return;
-			}
 		}
 	}
 
 	private void HandleNAck(uint msgId)
 	{
-		if (this.pendingRegistrations.TryGetValue(msgId, out var regPending))
+		if (this.pendingMsgRequests.TryGetValue(msgId, out var pending))
 		{
-			regPending.SetResult(0); // 0 indicates failure
+			pending.SetResult([]); // Failure
 			return;
 		}
-
-		if (this.pendingUnregistrations.TryGetValue(msgId, out var unregPending))
-		{
-			unregPending.SetResult(false);
-			return;
-		}
-
-		EventId eventId = (EventId)msgId;
-		if (Enum.IsDefined(eventId))
-		{
-			if (this.pendingEventSubscriptions.TryGetValue(eventId, out var subPending))
-			{
-				subPending.SetResult(false);
-				return;
-			}
-
-			if (this.pendingEventUnsubscriptions.TryGetValue(eventId, out var unsubPending))
-			{
-				unsubPending.SetResult(false);
-				return;
-			}
-		}
-	}
-
-	private void HandleHookReturn(uint msgId, ReadOnlySpan<byte> resultData)
-	{
-		if (this.pendingDriverCommands.TryGetValue(msgId, out var driverPending))
-		{
-			driverPending.SetResult(resultData.ToArray());
-			return;
-		}
-
-		if (this.pendingHookRequests.TryGetValue(msgId, out var pending))
-		{
-			pending.SetResult(resultData.ToArray());
-			return;
-		}
-
-		Log.Warning($"Received hook result for unknown request: {msgId}");
 	}
 
 	private void EnqueueHookRequest(uint msgId, ReadOnlySpan<byte> payload)
@@ -1630,13 +1618,23 @@ public class ControllerService : ServiceBase<ControllerService>
 
 	private void BroadcastEventToSubscribers(EventId eventId, ReadOnlySpan<byte> payload)
 	{
-		Action<ReadOnlySpan<byte>>[] handlersSnapshot;
+		List<Action<ReadOnlySpan<byte>>> handlersSnapshot = [];
 		lock (this.eventHandlersLock)
 		{
 			if (!this.eventHandlers.TryGetValue(eventId, out var handlers) || handlers.Count == 0)
 				return; // Subscribers may have unsubscribed since enqueue; Abort
 
-			handlersSnapshot = [.. handlers];
+			var deadRefs = new List<WeakReference<Action<ReadOnlySpan<byte>>>>();
+			foreach (var wr in handlers)
+			{
+				if (wr.TryGetTarget(out var target))
+					handlersSnapshot.Add(target);
+				else
+					deadRefs.Add(wr);
+			}
+
+			foreach (var dead in deadRefs)
+				handlers.Remove(dead);
 		}
 
 		foreach (var handler in handlersSnapshot)
@@ -1654,7 +1652,7 @@ public class ControllerService : ServiceBase<ControllerService>
 
 	private void HandleHookRequest(uint msgId, ReadOnlySpan<byte> payload)
 	{
-		uint hookId = HookMessageId.GetHookId(msgId);
+		uint hookId = MessageId.GetEmbeddedId(msgId);
 		byte[] response;
 
 		if (this.handlers.TryGetValue(hookId, out var handler))
@@ -1675,16 +1673,47 @@ public class ControllerService : ServiceBase<ControllerService>
 			response = [];
 		}
 
-		this.SendResponse(msgId, response);
+		this.SendResponse(msgId, response, PayloadType.Ack);
 	}
 
-	private void SendResponse(uint msgId, byte[] response)
+	private void HandleConfigGetRequest(uint msgId, ReadOnlySpan<byte> payload)
+	{
+		if (payload.Length < sizeof(ConfigIdentifier))
+		{
+			this.SendResponse(msgId, PayloadType.NAck);
+			return;
+		}
+
+		byte[] responseData = [];
+		ConfigIdentifier configId = MarshalUtils.Read<ConfigIdentifier>(payload);
+		switch (configId)
+		{
+			case ConfigIdentifier.FpsLimiter:
+				responseData = [(byte)(SettingsService.Current.OverrideFpsLimiter ? 1 : 0)];
+				break;
+
+			default:
+				Log.Warning($"Received unknown config get request: {configId}");
+				this.SendResponse(msgId, PayloadType.NAck);
+				return;
+		}
+
+		this.SendResponse(msgId, responseData, PayloadType.Ack);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private bool SendResponse(uint msgId, PayloadType responseType = PayloadType.Blob)
+	{
+		return this.SendResponse(msgId, default, responseType);
+	}
+
+	private bool SendResponse(uint msgId, ReadOnlySpan<byte> payload, PayloadType responseType = PayloadType.NAck)
 	{
 		if (this.outgoingEndpoint == null)
-			return;
+			return false;
 
-		var header = new MessageHeader(msgId, PayloadType.Blob, (ulong)response.Length);
-		this.outgoingEndpoint.Write(header, response, IPC_TIMEOUT_MS);
+		var header = new MessageHeader(msgId, responseType, (ulong)payload.Length);
+		return this.outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS);
 	}
 
 	private void SendFrameworkSyncRequest()
@@ -1692,58 +1721,19 @@ public class ControllerService : ServiceBase<ControllerService>
 		if (this.outgoingEndpoint == null)
 			return;
 
-		var data = new FrameworkMessageData { Type = FrameworkMessageType.EnableTickSync };
-		int payloadSize = Unsafe.SizeOf<FrameworkMessageData>();
-		var header = new MessageHeader(HookMessageId.FRAMEWORK_SYSTEM_ID, PayloadType.Request, (ulong)payloadSize);
+		ushort seq = this.GetNextSequence(MessageId.FRAMEWORK_SYNC_COMMAND_ID);
+		uint msgId = MessageId.Pack(MessageId.FRAMEWORK_SYNC_COMMAND_ID, seq);
 
-		ushort seq = this.GetNextSequence(HookMessageId.FRAMEWORK_SYSTEM_ID);
-		uint msgId = HookMessageId.Pack(HookMessageId.FRAMEWORK_SYSTEM_ID, seq);
-		var pending = new PendingRequest<byte[]>();
-		this.pendingHookRequests[msgId] = pending;
-
-		byte[]? rented = null;
-		bool sent;
-
-		try
+		if (!this.SendResponse(msgId, PayloadType.Request))
 		{
-			if (payloadSize <= STACKALLOC_THRESHOLD)
-			{
-				Span<byte> payload = stackalloc byte[payloadSize];
-				MarshalUtils.Write(payload, in data);
-				sent = this.outgoingEndpoint.Write(header, payload, IPC_TIMEOUT_MS);
-			}
-			else
-			{
-				rented = ArrayPool<byte>.Shared.Rent(payloadSize);
-				Span<byte> rentedSpan = rented.AsSpan(0, payloadSize);
-				MarshalUtils.Write(rentedSpan, in data);
-				sent = this.outgoingEndpoint.Write(header, rentedSpan, IPC_TIMEOUT_MS);
-			}
-
-			if (!sent)
-			{
-				Log.Warning("Failed to send framework sync request");
-				this.pendingHookRequests.TryRemove(msgId, out _);
-			}
+			Log.Warning("Failed to send framework sync request");
 		}
-		finally
-		{
-			if (rented != null)
-			{
-				ArrayPool<byte>.Shared.Return(rented);
-			}
-		}
-	}
-
-	private uint GetNextRequestId()
-	{
-		return Interlocked.Increment(ref this.nextRequestId);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private ushort GetNextSequence(uint hookIndex)
 	{
-		return (ushort)this.sequenceCounters.AddOrUpdate(hookIndex, 1, (_, v) => (ushort)((v + 1) & HookMessageId.MAX_SEQ_NUM));
+		return (ushort)this.sequenceCounters.AddOrUpdate(hookIndex, 1, (_, v) => (ushort)((v + 1) & MessageId.MAX_SEQ_NUM));
 	}
 
 	private void SendShutdownMessage()
@@ -1778,7 +1768,7 @@ public class ControllerService : ServiceBase<ControllerService>
 /// The internal work queue used for task processing.
 /// </param>
 /// <param name="sendSyncRequest">
-/// An action to trigger a syncrhonization request with the remote
+/// An action to trigger a synchronization request with the remote
 /// controller's framework driver.
 /// </param>
 public class FrameworkService(WorkQueue queue, Action sendSyncRequest)
@@ -2052,6 +2042,23 @@ public class FrameworkService(WorkQueue queue, Action sendSyncRequest)
 		}
 
 		return false;
+	}
+
+	/// <summary>
+	/// Cancels any pending work and resets the framework service to an idle state.
+	/// </summary>
+	internal void CancelPendingWork()
+	{
+		lock (this.conditionalTasks)
+		{
+			foreach (var task in this.conditionalTasks)
+				task.Tcs?.TrySetCanceled();
+
+			this.conditionalTasks.Clear();
+		}
+
+		this.workQueue.Clear();
+		Interlocked.Exchange(ref this.header.LoopState, 0);
 	}
 
 	private bool HasWork()

@@ -118,7 +118,7 @@ public class AddressService : ServiceBase<AddressService>
 			GetAddressFromSignature("TargetSystem", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 3B C6 0F 95 C0", 3, (p) => { TargetSystem = p; }),
 			GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { s_cameraManager = p; }),
 			GetAddressFromTextSignature("TimeAsm", "48 89 87 ?? ?? ?? ?? 48 69 C0", (p) => TimeAsm = p),
-			GetAddressFromSignature("Framework", "48 8B 1D ?? ?? ?? ?? 8B 7C 24", 0, (p) => Framework = MemoryService.ReadPtr(p)),
+			GetAddressFromSignature("Framework", FrameworkDriver.FRAMEWORK_INSTANCE_SIGNATURE, 0, (p) => Framework = MemoryService.ReadPtr(p)),
 		};
 
 		await Task.WhenAll(tasks.ToArray());
