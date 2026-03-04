@@ -7,6 +7,7 @@ using Anamnesis.Styles;
 using Anamnesis.Utils;
 using FontAwesome.Sharp;
 using PropertyChanged;
+using RemoteController.Interop.Types;
 using System;
 
 public class GameObjectMemory : MemoryBase
@@ -23,12 +24,12 @@ public class GameObjectMemory : MemoryBase
 	[Bind(0x084)] public uint DataId { get; set; }
 	[Bind(0x088)] public uint OwnerId { get; set; }
 	[Bind(0x08C)] public ushort ObjectIndex { get; set; }
-	[Bind(0x090, BindFlags.ActorRefresh)] public ActorTypes ObjectKind { get; set; }
+	[Bind(0x090, BindFlags.ActorRefresh)] public ObjectTypes ObjectKind { get; set; }
 	[Bind(0x091)] public byte SubKind { get; set; }
 	[Bind(0x094)] public byte DistanceFromPlayerX { get; set; }
 	[Bind(0x096)] public byte DistanceFromPlayerY { get; set; }
 	[Bind(0x00C4)] public float Scale { get; set; }
-	[Bind(0x0100, BindFlags.Pointer)] public DrawObjectMemory? ModelObject { get; set; }
+	[Bind(GameObject.DRAW_OBJECT_OFFSET, BindFlags.Pointer)] public DrawObjectMemory? ModelObject { get; set; }
 	[Bind(0x0118)] public RenderModes RenderMode { get; set; }
 
 	public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.Address}";
@@ -65,11 +66,11 @@ public class GameObjectMemory : MemoryBase
 	public int ObjectKindInt
 	{
 		get => (int)this.ObjectKind;
-		set => this.ObjectKind = (ActorTypes)value;
+		set => this.ObjectKind = (ObjectTypes)value;
 	}
 
 	[DependsOn(nameof(ObjectKind))]
-	public bool IsPlayer => this.ObjectKind == ActorTypes.Player;
+	public bool IsPlayer => this.ObjectKind == ObjectTypes.Player;
 
 	[DependsOn(nameof(ObjectIndex), nameof(Address))]
 	public bool IsValid
@@ -99,9 +100,9 @@ public class GameObjectMemory : MemoryBase
 				if (actor.IsDisposed)
 					return false;
 
-				if (actor.ObjectKind != ActorTypes.Player &&
-					actor.ObjectKind != ActorTypes.BattleNpc &&
-					actor.ObjectKind != ActorTypes.EventNpc)
+				if (actor.ObjectKind != ObjectTypes.Player &&
+					actor.ObjectKind != ObjectTypes.BattleNpc &&
+					actor.ObjectKind != ObjectTypes.EventNpc)
 					return false;
 
 				return actor.ObjectId == this.OwnerId;

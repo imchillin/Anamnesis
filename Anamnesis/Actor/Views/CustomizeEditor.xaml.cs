@@ -119,10 +119,10 @@ public partial class CustomizeEditor : UserControl
 		if (this.Customize != null)
 			this.Customize.PropertyChanged -= this.OnAppearancePropertyChanged;
 
-		if (actor == null || actor.Customize == null)
+		if (actor?.DrawData.Customize == null)
 			return;
 
-		this.Customize = actor.Customize;
+		this.Customize = actor.DrawData.Customize;
 		this.Customize.PropertyChanged += this.OnAppearancePropertyChanged;
 
 		Application.Current.Dispatcher.Invoke(this.UpdateRaceAndTribe);
@@ -165,7 +165,7 @@ public partial class CustomizeEditor : UserControl
 		if (dataPath.HasValue && CustomizeOptionsCache.ValidFaceIds.TryGetValue(dataPath.Value, out var validFaces))
 		{
 			// Apply offset logic for specific tribes
-			if (this.Actor != null && this.Actor.ObjectKind != ActorTypes.Player)
+			if (this.Actor != null && this.Actor.ObjectKind != ObjectTypes.Player)
 			{
 				this.ValidFaceOptions = validFaces.ToList();
 			}

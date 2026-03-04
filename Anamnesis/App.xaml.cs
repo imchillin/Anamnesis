@@ -3,6 +3,7 @@
 
 namespace Anamnesis;
 
+using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Windows;
 using Serilog;
@@ -29,7 +30,16 @@ public partial class App : Application
 		this.Dispatcher.UnhandledException += this.DispatcherOnUnhandledException;
 		Application.Current.DispatcherUnhandledException += this.CurrentOnDispatcherUnhandledException;
 		TaskScheduler.UnobservedTaskException += this.TaskSchedulerOnUnobservedTaskException;
-		this.Exit += this.OnExit;
+
+		uint timeBeginResult = NativeFunctions.TimeBeginPeriod(1);
+		if (timeBeginResult != NativeFunctions.TIMERR_NOERROR)
+		{
+#if DEBUG
+			System.Diagnostics.Debug.WriteLine($"TimeBeginPeriod failed with result: 0x{timeBeginResult:X}");
+#else
+			System.Console.WriteLine($"TimeBeginPeriod failed with result: 0x{timeBeginResult:X}");
+#endif
+		}
 
 		base.OnStartup(e);
 
@@ -37,6 +47,43 @@ public partial class App : Application
 		this.MainWindow.Show();
 
 		Task.Run(this.Start);
+	}
+
+	protected override void OnExit(ExitEventArgs e)
+	{
+		// NOTE: A dispatcher frame is used to keep the application alive until all services have been shutdown.
+		// This is necessary to allow all services to clean up properly before the application exits.
+		var frame = new DispatcherFrame();
+		_ = Task.Run(async () =>
+		{
+			try
+			{
+				await ServiceManager.ShutdownServices();
+				Log.Information("Shutdown complete. Exiting.");
+				Log.CloseAndFlush();
+			}
+			catch (Exception ex)
+			{
+				Log.Fatal(ex, "Error during service shutdown.");
+			}
+			finally
+			{
+				uint timeEndResult = NativeFunctions.TimeEndPeriod(1);
+				if (timeEndResult != NativeFunctions.TIMERR_NOERROR)
+				{
+#if DEBUG
+					System.Diagnostics.Debug.WriteLine($"TimeBeginPeriod failed with result: 0x{timeEndResult:X}");
+#else
+					System.Console.WriteLine($"TimeBeginPeriod failed with result: 0x{timeEndResult:X}");
+#endif
+				}
+
+				frame.Continue = false;
+			}
+		});
+		Dispatcher.PushFrame(frame);
+
+		base.OnExit(e);
 	}
 
 	private static void CheckWorkingDirectory()
@@ -80,11 +127,6 @@ public partial class App : Application
 		{
 			throw new Exception($"Multiple {name} processes found. Please close all other instances.");
 		}
-	}
-
-	private void OnExit(object sender, ExitEventArgs e)
-	{
-		Task.Run(ServiceManager.ShutdownServices);
 	}
 
 	private void TaskSchedulerOnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)

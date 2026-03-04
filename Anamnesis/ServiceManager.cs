@@ -63,6 +63,7 @@ public class ServiceManager
 			await Add<ActorService>();
 			await Add<GameDataService>();
 			await Add<GameService>();
+			await Add<ControllerService>();
 			await Add<FileService>();
 			await Add<TimeService>();
 			await Add<GposeService>();
@@ -128,6 +129,12 @@ public class ServiceManager
 
 		foreach (IService service in reversedServices)
 		{
+			if (!service.IsInitialized || !service.IsAlive)
+			{
+				Log.Verbose($"Skipping shutdown of service: {service.GetType().Name} as it is not initialized or already shut down.");
+				continue;
+			}
+
 			try
 			{
 				// If this throws an exception we should keep trying to shut down the rest
@@ -143,6 +150,8 @@ public class ServiceManager
 				Log.Error(ex, "Failed to shutdown service.");
 			}
 		}
+
+		IsStarted = false;
 	}
 
 	private static void CheckWindowsVersion()

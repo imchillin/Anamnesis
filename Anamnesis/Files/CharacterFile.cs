@@ -6,10 +6,13 @@ namespace Anamnesis.Files;
 using Anamnesis.Actor.Utilities;
 using Anamnesis.Core.Extensions;
 using Anamnesis.GameData;
+using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
+using System.Threading.Tasks;
 using XivToolsWpf.Math3D.Extensions;
 
 [Serializable]
@@ -42,7 +45,7 @@ public class CharacterFile : JsonFileBase
 
 	public string? Nickname { get; set; } = null;
 	public uint ModelType { get; set; } = 0;
-	public ActorTypes ObjectKind { get; set; } = ActorTypes.None;
+	public ObjectTypes ObjectKind { get; set; } = ObjectTypes.None;
 
 	// appearance
 	public ActorCustomizeMemory.Races? Race { get; set; }
@@ -107,6 +110,9 @@ public class CharacterFile : JsonFileBase
 	public float? MuscleTone { get; set; }
 	public float? HeightMultiplier { get; set; }
 
+	// unrelated, used for char diff redraw logic
+	public bool? IsWeaponDrawn { get; set; }
+
 	public void WriteToFile(ObjectHandle<ActorMemory> handle, SaveModes mode)
 	{
 		handle.Do(actor => this.WriteToFile(actor, mode));
@@ -114,99 +120,90 @@ public class CharacterFile : JsonFileBase
 
 	public void Apply(ObjectHandle<ActorMemory> handle, SaveModes mode, ItemSlots? slot = null)
 	{
-		handle.Do(actor => this.Apply(actor, mode, slot));
+		handle.Do(async actor => await this.Apply(actor, mode, slot));
 	}
 
-	private static void WriteEquipment(ItemSave? itemSave, ItemMemory? itemMemory)
+	/// <summary>
+	/// Computes the changes between this file and another.
+	/// </summary>
+	/// <param name="target">The target state to compare against.</param>
+	/// <param name="mode">Which sections to compare.</param>
+	public CharFileDiff CompareTo(CharacterFile target, SaveModes mode = SaveModes.All)
 	{
-		if (itemSave != null)
-		{
-			itemSave.Write(itemMemory);
-		}
-		else if (itemMemory != null)
-		{
-			itemMemory.Base = ItemUtility.NoneItem.ModelBase;
-			itemMemory.Variant = (byte)ItemUtility.NoneItem.ModelVariant;
-			itemMemory.Dye = (byte)ItemUtility.NoneDye.RowId;
-			itemMemory.Dye2 = (byte)ItemUtility.NoneDye.RowId;
-		}
+		return CharFileDiff.Create(current: this, target: target, mode: mode);
 	}
 
-	private bool IncludeSection(SaveModes section, SaveModes mode)
-	{
-		return this.SaveMode.HasFlagUnsafe(section) && mode.HasFlagUnsafe(section);
-	}
-
-	private void WriteToFile(ActorMemory actor, SaveModes mode)
+	internal void WriteToFile(ActorMemory actor, SaveModes mode)
 	{
 		this.Nickname = actor.Nickname;
 		this.ModelType = (uint)actor.ModelType;
 		this.ObjectKind = actor.ObjectKind;
 
-		if (actor.Customize == null)
-			return;
+		var drawData = actor.DrawData;
+		if (drawData.Customize == null || drawData.Equipment == null)
+			return; // Malformed actor object. Don't attempt to write.
 
 		this.SaveMode = mode;
 
 		if (this.IncludeSection(SaveModes.EquipmentWeapons, mode))
 		{
-			if (actor.MainHand != null)
-				this.MainHand = new WeaponSave(actor.MainHand);
+			if (drawData.MainHand != null)
+				this.MainHand = new WeaponSave(drawData.MainHand);
 			////this.MainHand.Color = actor.GetValue(Offsets.Main.MainHandColor);
 			////this.MainHand.Scale = actor.GetValue(Offsets.Main.MainHandScale);
 
-			if (actor.OffHand != null)
-				this.OffHand = new WeaponSave(actor.OffHand);
+			if (drawData.OffHand != null)
+				this.OffHand = new WeaponSave(drawData.OffHand);
 			////this.OffHand.Color = actor.GetValue(Offsets.Main.OffhandColor);
 			////this.OffHand.Scale = actor.GetValue(Offsets.Main.OffhandScale);
 		}
 
 		if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 		{
-			if (actor.Equipment?.Head != null)
-				this.HeadGear = new ItemSave(actor.Equipment.Head);
+			if (drawData.Equipment?.Head != null)
+				this.HeadGear = new ItemSave(drawData.Equipment.Head);
 
-			if (actor.Equipment?.Chest != null)
-				this.Body = new ItemSave(actor.Equipment.Chest);
+			if (drawData.Equipment?.Chest != null)
+				this.Body = new ItemSave(drawData.Equipment.Chest);
 
-			if (actor.Equipment?.Arms != null)
-				this.Hands = new ItemSave(actor.Equipment.Arms);
+			if (drawData.Equipment?.Arms != null)
+				this.Hands = new ItemSave(drawData.Equipment.Arms);
 
-			if (actor.Equipment?.Legs != null)
-				this.Legs = new ItemSave(actor.Equipment.Legs);
+			if (drawData.Equipment?.Legs != null)
+				this.Legs = new ItemSave(drawData.Equipment.Legs);
 
-			if (actor.Equipment?.Feet != null)
-				this.Feet = new ItemSave(actor.Equipment.Feet);
+			if (drawData.Equipment?.Feet != null)
+				this.Feet = new ItemSave(drawData.Equipment.Feet);
 
 			// glasses - technically on the left side
-			if (actor.Glasses != null)
-				this.Glasses = new GlassesSave(actor.Glasses);
+			if (drawData.Glasses != null)
+				this.Glasses = new GlassesSave(drawData.Glasses);
 		}
 
 		if (this.IncludeSection(SaveModes.EquipmentAccessories, mode))
 		{
-			if (actor.Equipment?.Ear != null)
-				this.Ears = new ItemSave(actor.Equipment.Ear);
+			if (drawData.Equipment?.Ear != null)
+				this.Ears = new ItemSave(drawData.Equipment.Ear);
 
-			if (actor.Equipment?.Neck != null)
-				this.Neck = new ItemSave(actor.Equipment.Neck);
+			if (drawData.Equipment?.Neck != null)
+				this.Neck = new ItemSave(drawData.Equipment.Neck);
 
-			if (actor.Equipment?.Wrist != null)
-				this.Wrists = new ItemSave(actor.Equipment.Wrist);
+			if (drawData.Equipment?.Wrist != null)
+				this.Wrists = new ItemSave(drawData.Equipment.Wrist);
 
-			if (actor.Equipment?.LFinger != null)
-				this.LeftRing = new ItemSave(actor.Equipment.LFinger);
+			if (drawData.Equipment?.LFinger != null)
+				this.LeftRing = new ItemSave(drawData.Equipment.LFinger);
 
-			if (actor.Equipment?.RFinger != null)
-				this.RightRing = new ItemSave(actor.Equipment.RFinger);
+			if (drawData.Equipment?.RFinger != null)
+				this.RightRing = new ItemSave(drawData.Equipment.RFinger);
 		}
 
 		if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 		{
-			this.Hair = actor.Customize?.Hair;
-			this.EnableHighlights = actor.Customize?.EnableHighlights;
-			this.HairTone = actor.Customize?.HairTone;
-			this.Highlights = actor.Customize?.Highlights;
+			this.Hair = drawData.Customize?.Hair;
+			this.EnableHighlights = drawData.Customize?.EnableHighlights;
+			this.HairTone = drawData.Customize?.HairTone;
+			this.Highlights = drawData.Customize?.Highlights;
 			this.HairColor = actor.ModelObject?.ExtendedAppearance?.HairColor;
 			this.HairGloss = actor.ModelObject?.ExtendedAppearance?.HairGloss;
 			this.HairHighlight = actor.ModelObject?.ExtendedAppearance?.HairHighlight;
@@ -214,27 +211,27 @@ public class CharacterFile : JsonFileBase
 
 		if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode))
 		{
-			this.Race = actor.Customize?.Race;
-			this.Gender = actor.Customize?.Gender;
-			this.Tribe = actor.Customize?.Tribe;
-			this.Age = actor.Customize?.Age;
+			this.Race = drawData.Customize?.Race;
+			this.Gender = drawData.Customize?.Gender;
+			this.Tribe = drawData.Customize?.Tribe;
+			this.Age = drawData.Customize?.Age;
 		}
 
 		if (this.IncludeSection(SaveModes.AppearanceFace, mode))
 		{
-			this.Head = actor.Customize?.Head;
-			this.REyeColor = actor.Customize?.REyeColor;
-			this.LimbalEyes = actor.Customize?.FacialFeatureColor;
-			this.FacialFeatures = actor.Customize?.FacialFeatures;
-			this.Eyebrows = actor.Customize?.Eyebrows;
-			this.LEyeColor = actor.Customize?.LEyeColor;
-			this.Eyes = actor.Customize?.Eyes;
-			this.Nose = actor.Customize?.Nose;
-			this.Jaw = actor.Customize?.Jaw;
-			this.Mouth = actor.Customize?.Mouth;
-			this.LipsToneFurPattern = actor.Customize?.LipsToneFurPattern;
-			this.FacePaint = actor.Customize?.FacePaint;
-			this.FacePaintColor = actor.Customize?.FacePaintColor;
+			this.Head = drawData.Customize?.Head;
+			this.REyeColor = drawData.Customize?.REyeColor;
+			this.LimbalEyes = drawData.Customize?.FacialFeatureColor;
+			this.FacialFeatures = drawData.Customize?.FacialFeatures;
+			this.Eyebrows = drawData.Customize?.Eyebrows;
+			this.LEyeColor = drawData.Customize?.LEyeColor;
+			this.Eyes = drawData.Customize?.Eyes;
+			this.Nose = drawData.Customize?.Nose;
+			this.Jaw = drawData.Customize?.Jaw;
+			this.Mouth = drawData.Customize?.Mouth;
+			this.LipsToneFurPattern = drawData.Customize?.LipsToneFurPattern;
+			this.FacePaint = drawData.Customize?.FacePaint;
+			this.FacePaintColor = drawData.Customize?.FacePaintColor;
 			this.LeftEyeColor = actor.ModelObject?.ExtendedAppearance?.LeftEyeColor;
 			this.RightEyeColor = actor.ModelObject?.ExtendedAppearance?.RightEyeColor;
 			this.LimbalRingColor = actor.ModelObject?.ExtendedAppearance?.LimbalRingColor;
@@ -243,11 +240,11 @@ public class CharacterFile : JsonFileBase
 
 		if (this.IncludeSection(SaveModes.AppearanceBody, mode))
 		{
-			this.Height = actor.Customize?.Height;
-			this.Skintone = actor.Customize?.Skintone;
-			this.EarMuscleTailSize = actor.Customize?.EarMuscleTailSize;
-			this.TailEarsType = actor.Customize?.TailEarsType;
-			this.Bust = actor.Customize?.Bust;
+			this.Height = drawData.Customize?.Height;
+			this.Skintone = drawData.Customize?.Skintone;
+			this.EarMuscleTailSize = drawData.Customize?.EarMuscleTailSize;
+			this.TailEarsType = drawData.Customize?.TailEarsType;
+			this.Bust = drawData.Customize?.Bust;
 
 			this.HeightMultiplier = actor.ModelObject?.Height;
 			this.SkinColor = actor.ModelObject?.ExtendedAppearance?.SkinColor;
@@ -256,9 +253,11 @@ public class CharacterFile : JsonFileBase
 			this.BustScale = actor.ModelObject?.Bust?.Scale;
 			this.Transparency = actor.Transparency;
 		}
+
+		this.IsWeaponDrawn = actor.Animation?.IsWeaponDrawn;
 	}
 
-	private void Apply(ActorMemory actor, SaveModes mode, ItemSlots? slot = null)
+	internal async Task Apply(ActorMemory actor, SaveModes mode, ItemSlots? slot = null)
 	{
 		if (this.Tribe == 0)
 			this.Tribe = ActorCustomizeMemory.Tribes.Midlander;
@@ -272,50 +271,78 @@ public class CharacterFile : JsonFileBase
 		if (this.Race != null && !Enum.IsDefined((ActorCustomizeMemory.Races)this.Race))
 			throw new Exception($"Invalid race: {this.Race} in appearance file");
 
-		if (actor.Customize == null)
+		var drawData = actor.DrawData;
+		if (drawData.Customize == null)
 			return;
 
 		this.Glasses ??= new GlassesSave();
+		if (!actor.CanRefresh)
+		{
+			Log.Warning($"Actor '{actor.Name}' cannot be refreshed. Appearance will not be applied.");
+			return;
+		}
 
 		Log.Information("Reading appearance from file");
+		var existingModelType = actor.ModelType;
+		var existingRace = drawData.Customize.Race;
+		var existingGender = drawData.Customize.Gender;
+		var existingTribe = drawData.Customize.Tribe;
+		var existingHead = drawData.Customize.Head;
 
-		if (actor.CanRefresh)
+		bool needsRedraw = false;
+		bool isStructuralChange = false;
+		bool prevAutoRefresh = actor.AutomaticRefreshEnabled;
+
+		try
 		{
+			// Disable automatic per-property refresh so we can batch changes
+			// into a single controlled redraw at the end.
+			actor.AutomaticRefreshEnabled = false;
 			actor.PauseSynchronization = true;
 
 			if (!string.IsNullOrEmpty(this.Nickname))
 				actor.Nickname = this.Nickname;
 
+			// Model type change always requires a full redraw
 			actor.ModelType = (int)this.ModelType;
-			////actor.ObjectKind = this.ObjectKind;
+			if (actor.ModelType != existingModelType)
+			{
+				needsRedraw = true;
+				isStructuralChange = true;
+			}
 
 			if (this.IncludeSection(SaveModes.EquipmentWeapons, mode))
 			{
-				this.MainHand?.Write(actor.MainHand, true);
-				this.OffHand?.Write(actor.OffHand, false);
+				this.MainHand?.Write(drawData.MainHand, true);
+				this.OffHand?.Write(drawData.OffHand, false);
+				needsRedraw = true;
 			}
 
 			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 			{
-				WriteEquipment(this.HeadGear, actor.Equipment?.Head);
-				WriteEquipment(this.Body, actor.Equipment?.Chest);
-				WriteEquipment(this.Hands, actor.Equipment?.Arms);
-				WriteEquipment(this.Legs, actor.Equipment?.Legs);
-				WriteEquipment(this.Feet, actor.Equipment?.Feet);
+				WriteEquipment(this.HeadGear, drawData.Equipment?.Head);
+				WriteEquipment(this.Body, drawData.Equipment?.Chest);
+				WriteEquipment(this.Hands, drawData.Equipment?.Arms);
+				WriteEquipment(this.Legs, drawData.Equipment?.Legs);
+				WriteEquipment(this.Feet, drawData.Equipment?.Feet);
 
 				if (this.Glasses != null)
-					this.Glasses.Write(actor.Glasses);
-				else if (actor.Glasses != null)
-					actor.Glasses.GlassesId = 0;
+					this.Glasses.Write(drawData.Glasses);
+				else if (drawData.Glasses != null)
+					drawData.Glasses.GlassesId = 0;
+
+				needsRedraw = true;
 			}
 
 			if (this.IncludeSection(SaveModes.EquipmentAccessories, mode))
 			{
-				WriteEquipment(this.Ears, actor.Equipment?.Ear);
-				WriteEquipment(this.Neck, actor.Equipment?.Neck);
-				WriteEquipment(this.Wrists, actor.Equipment?.Wrist);
-				WriteEquipment(this.LeftRing, actor.Equipment?.LFinger);
-				WriteEquipment(this.RightRing, actor.Equipment?.RFinger);
+				WriteEquipment(this.Ears, drawData.Equipment?.Ear);
+				WriteEquipment(this.Neck, drawData.Equipment?.Neck);
+				WriteEquipment(this.Wrists, drawData.Equipment?.Wrist);
+				WriteEquipment(this.LeftRing, drawData.Equipment?.LFinger);
+				WriteEquipment(this.RightRing, drawData.Equipment?.RFinger);
+
+				needsRedraw = true;
 			}
 
 			if (mode == SaveModes.EquipmentSlot && slot != null)
@@ -323,144 +350,193 @@ public class CharacterFile : JsonFileBase
 				switch (slot)
 				{
 					case ItemSlots.MainHand:
-						this.MainHand?.Write(actor.MainHand, true);
+						this.MainHand?.Write(drawData.MainHand, true);
 						break;
 					case ItemSlots.OffHand:
-						this.OffHand?.Write(actor.OffHand, false);
+						this.OffHand?.Write(drawData.OffHand, false);
 						break;
 					case ItemSlots.Head:
-						this.HeadGear?.Write(actor.Equipment?.Head);
+						this.HeadGear?.Write(drawData.Equipment?.Head);
 						break;
 					case ItemSlots.Body:
-						this.Body?.Write(actor.Equipment?.Chest);
+						this.Body?.Write(drawData.Equipment?.Chest);
 						break;
 					case ItemSlots.Hands:
-						this.Hands?.Write(actor.Equipment?.Arms);
+						this.Hands?.Write(drawData.Equipment?.Arms);
 						break;
 					case ItemSlots.Legs:
-						this.Legs?.Write(actor.Equipment?.Legs);
+						this.Legs?.Write(drawData.Equipment?.Legs);
 						break;
 					case ItemSlots.Feet:
-						this.Feet?.Write(actor.Equipment?.Feet);
+						this.Feet?.Write(drawData.Equipment?.Feet);
 						break;
 					case ItemSlots.Ears:
-						this.Ears?.Write(actor.Equipment?.Ear);
+						this.Ears?.Write(drawData.Equipment?.Ear);
 						break;
 					case ItemSlots.Neck:
-						this.Neck?.Write(actor.Equipment?.Neck);
+						this.Neck?.Write(drawData.Equipment?.Neck);
 						break;
 					case ItemSlots.Wrists:
-						this.Wrists?.Write(actor.Equipment?.Wrist);
+						this.Wrists?.Write(drawData.Equipment?.Wrist);
 						break;
 					case ItemSlots.LeftRing:
-						this.LeftRing?.Write(actor.Equipment?.LFinger);
+						this.LeftRing?.Write(drawData.Equipment?.LFinger);
 						break;
 					case ItemSlots.RightRing:
-						this.RightRing?.Write(actor.Equipment?.RFinger);
+						this.RightRing?.Write(drawData.Equipment?.RFinger);
 						break;
 					case ItemSlots.Glasses:
-						this.Glasses?.Write(actor.Glasses);
+						this.Glasses?.Write(drawData.Glasses);
 						break;
 				}
+
+				needsRedraw = true;
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 			{
 				if (this.Hair != null)
-					actor.Customize.Hair = (byte)this.Hair;
+					drawData.Customize.Hair = (byte)this.Hair;
 
 				if (this.EnableHighlights != null)
-					actor.Customize.EnableHighlights = (bool)this.EnableHighlights;
+					drawData.Customize.EnableHighlights = (bool)this.EnableHighlights;
 
 				if (this.HairTone != null)
-					actor.Customize.HairTone = (byte)this.HairTone;
+					drawData.Customize.HairTone = (byte)this.HairTone;
 
 				if (this.Highlights != null)
-					actor.Customize.Highlights = (byte)this.Highlights;
+					drawData.Customize.Highlights = (byte)this.Highlights;
+
+				needsRedraw = true;
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
 				if (this.Race != null)
-					actor.Customize.Race = (ActorCustomizeMemory.Races)this.Race;
+					drawData.Customize.Race = (ActorCustomizeMemory.Races)this.Race;
 
 				if (this.Gender != null)
-					actor.Customize.Gender = (ActorCustomizeMemory.Genders)this.Gender;
+					drawData.Customize.Gender = (ActorCustomizeMemory.Genders)this.Gender;
 
 				if (this.Tribe != null)
-					actor.Customize.Tribe = (ActorCustomizeMemory.Tribes)this.Tribe;
+					drawData.Customize.Tribe = (ActorCustomizeMemory.Tribes)this.Tribe;
 
 				if (this.Age != null)
-					actor.Customize.Age = (ActorCustomizeMemory.Ages)this.Age;
+					drawData.Customize.Age = (ActorCustomizeMemory.Ages)this.Age;
+
+				needsRedraw = true;
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode))
 			{
 				if (this.Head != null)
-					actor.Customize.Head = (byte)this.Head;
+					drawData.Customize.Head = (byte)this.Head;
 
 				if (this.REyeColor != null)
-					actor.Customize.REyeColor = (byte)this.REyeColor;
+					drawData.Customize.REyeColor = (byte)this.REyeColor;
 
 				if (this.FacialFeatures != null)
-					actor.Customize.FacialFeatures = (ActorCustomizeMemory.FacialFeature)this.FacialFeatures;
+					drawData.Customize.FacialFeatures = (ActorCustomizeMemory.FacialFeature)this.FacialFeatures;
 
 				if (this.LimbalEyes != null)
-					actor.Customize.FacialFeatureColor = (byte)this.LimbalEyes;
+					drawData.Customize.FacialFeatureColor = (byte)this.LimbalEyes;
 
 				if (this.Eyebrows != null)
-					actor.Customize.Eyebrows = (byte)this.Eyebrows;
+					drawData.Customize.Eyebrows = (byte)this.Eyebrows;
 
 				if (this.LEyeColor != null)
-					actor.Customize.LEyeColor = (byte)this.LEyeColor;
+					drawData.Customize.LEyeColor = (byte)this.LEyeColor;
 
 				if (this.Eyes != null)
-					actor.Customize.Eyes = (byte)this.Eyes;
+					drawData.Customize.Eyes = (byte)this.Eyes;
 
 				if (this.Nose != null)
-					actor.Customize.Nose = (byte)this.Nose;
+					drawData.Customize.Nose = (byte)this.Nose;
 
 				if (this.Jaw != null)
-					actor.Customize.Jaw = (byte)this.Jaw;
+					drawData.Customize.Jaw = (byte)this.Jaw;
 
 				if (this.Mouth != null)
-					actor.Customize.Mouth = (byte)this.Mouth;
+					drawData.Customize.Mouth = (byte)this.Mouth;
 
 				if (this.LipsToneFurPattern != null)
-					actor.Customize.LipsToneFurPattern = (byte)this.LipsToneFurPattern;
+					drawData.Customize.LipsToneFurPattern = (byte)this.LipsToneFurPattern;
 
 				if (this.FacePaint != null)
-					actor.Customize.FacePaint = (byte)this.FacePaint;
+					drawData.Customize.FacePaint = (byte)this.FacePaint;
 
 				if (this.FacePaintColor != null)
-					actor.Customize.FacePaintColor = (byte)this.FacePaintColor;
+					drawData.Customize.FacePaintColor = (byte)this.FacePaintColor;
+
+				needsRedraw = true;
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
 				if (this.Height != null)
-					actor.Customize.Height = (byte)this.Height;
+					drawData.Customize.Height = (byte)this.Height;
 
 				if (this.Skintone != null)
-					actor.Customize.Skintone = (byte)this.Skintone;
+					drawData.Customize.Skintone = (byte)this.Skintone;
 
 				if (this.EarMuscleTailSize != null)
-					actor.Customize.EarMuscleTailSize = (byte)this.EarMuscleTailSize;
+					drawData.Customize.EarMuscleTailSize = (byte)this.EarMuscleTailSize;
 
 				if (this.TailEarsType != null)
-					actor.Customize.TailEarsType = (byte)this.TailEarsType;
+					drawData.Customize.TailEarsType = (byte)this.TailEarsType;
 
 				if (this.Bust != null)
-					actor.Customize.Bust = (byte)this.Bust;
+					drawData.Customize.Bust = (byte)this.Bust;
+
+				needsRedraw = true;
 			}
 
-			// Setting customize values will reset the extended appearance, which me must read.
+			// Determine if the actor needs to be redrawn based on structural changes
+			isStructuralChange |=
+				drawData.Customize.Race != existingRace ||
+				drawData.Customize.Gender != existingGender ||
+				drawData.Customize.Tribe != existingTribe ||
+				drawData.Customize.Head != existingHead;
+
+			// Resume synchronization and read back from game memory.
+			// This is required so that the ConstantBufferMemory (extended appearance)
+			// pointer is resolved before we attempt to write extended appearance values.
 			actor.PauseSynchronization = false;
-			actor.Synchronize();
-			actor.PauseSynchronization = true;
+			try
+			{
+				actor.Synchronize(exclGroups: TargetService.ExcludeSkeletonGroup);
+			}
+			catch (Exception)
+			{
+				Log.Warning("Failed to synchronize actor after applying appearance values. Extended appearance may not be applied correctly.");
+			}
+
+			if (needsRedraw)
+			{
+				await actor.Refresh();
+
+				// Re-synchronize after redraw to pick up the new draw object state
+				try
+				{
+					actor.Synchronize(exclGroups: TargetService.ExcludeSkeletonGroup);
+				}
+				catch (Exception)
+				{
+					Log.Warning("Failed to synchronize actor after redraw.");
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Failed to apply character file");
+		}
+		finally
+		{
+			actor.AutomaticRefreshEnabled = prevAutoRefresh;
+			actor.PauseSynchronization = false;
 		}
 
-		Log.Verbose("Begin reading Extended Appearance from file");
+		Log.Verbose("Begin applying extended appearance from file");
 
 		if (actor.ModelObject?.ExtendedAppearance != null)
 		{
@@ -496,13 +572,346 @@ public class CharacterFile : JsonFileBase
 			}
 		}
 
-		actor.PauseSynchronization = false;
+		Log.Information("Finished applying appearance from file");
+	}
 
-		Log.Information("Finished reading appearance from file");
+	private static void WriteEquipment(ItemSave? itemSave, ItemMemory? itemMemory)
+	{
+		if (itemSave != null)
+		{
+			itemSave.Write(itemMemory);
+		}
+		else if (itemMemory != null)
+		{
+			itemMemory.Base = ItemUtility.NoneItem.ModelBase;
+			itemMemory.Variant = (byte)ItemUtility.NoneItem.ModelVariant;
+			itemMemory.Dye = (byte)ItemUtility.NoneDye.RowId;
+			itemMemory.Dye2 = (byte)ItemUtility.NoneDye.RowId;
+		}
+	}
+
+	private bool IncludeSection(SaveModes section, SaveModes mode)
+	{
+		return this.SaveMode.HasFlagUnsafe(section) && mode.HasFlagUnsafe(section);
+	}
+
+	/// <summary>
+	/// Represents the set of changes between two <see cref="CharacterFile"/> snapshots.
+	/// Used to determine the optimal redraw strategy.
+	/// </summary>
+	public readonly struct CharFileDiff
+	{
+		[Flags]
+		public enum ChangeType : uint
+		{
+			/// <summary>
+			/// Identical character customization.
+			/// </summary>
+			None = 0,
+
+			/// <summary>
+			/// The base customization options between the character files is different.
+			/// </summary>
+			Base = 1 << 0,
+
+			/// <summary>
+			/// The appearance customization options between the character files is different.
+			/// </summary>
+			Appearance = 1 << 1,
+
+			/// <summary>
+			/// The extended appearance options between the character files is different.
+			/// </summary>
+			Extended = 1 << 2,
+
+			/// <summary>
+			/// The equipment between the character files is different (gear and accessories, excluding weapons).
+			/// </summary>
+			Equipment = 1 << 3,
+
+			/// <summary>
+			/// The weapon customization between the character files is different.
+			/// </summary>
+			Weapon = 1 << 4,
+
+			/// <summary>
+			/// The character's facewear is different between the character files.
+			/// </summary>
+			Facewear = 1 << 5,
+
+			All = Base | Appearance | Extended | Equipment | Weapon | Facewear,
+		}
+
+		/// <summary>
+		/// A flag enum that represents all changed sections between two character files.
+		/// </summary>
+		public ChangeType Changes { get; init; }
+
+		/// <summary>
+		/// Gets whether any changes were detected between the two character files.
+		/// </summary>
+		public bool HasChanges => this.Changes != ChangeType.None;
+
+		/// <summary>
+		/// Computes the differences between two character files.
+		/// </summary>
+		/// <param name="current">The current state (from memory).</param>
+		/// <param name="target">The target state (to apply).</param>
+		/// <param name="mode">Which sections are being applied.</param>
+		public static CharFileDiff Create(
+			CharacterFile current,
+			CharacterFile target,
+			CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)
+		{
+			ArgumentNullException.ThrowIfNull(current);
+			ArgumentNullException.ThrowIfNull(target);
+
+			ChangeType flags = ChangeType.None;
+
+			if (CheckBaseChanges(current, target))
+				flags |= ChangeType.Base;
+
+			if (CheckWeaponsCompatibility(current, target, mode))
+				flags |= ChangeType.Base;
+
+			if (CheckAppearanceChanges(current, target, mode))
+				flags |= ChangeType.Appearance;
+
+			if (CheckExtendedAppearanceChanges(current, target, mode))
+				flags |= ChangeType.Extended;
+
+			if (CheckEquipmentChanges(current, target, mode))
+				flags |= ChangeType.Equipment;
+
+			if (CheckWeaponChanges(current, target, mode))
+				flags |= ChangeType.Weapon;
+
+			if (CheckFacewearChanges(current, target, mode))
+				flags |= ChangeType.Facewear;
+
+			return new CharFileDiff { Changes = flags };
+		}
+
+		public override string ToString()
+		{
+			if (!this.HasChanges)
+				return "No changes";
+
+			var parts = new List<string>();
+			if (this.Changes.HasFlagUnsafe(ChangeType.Base))
+				parts.Add("Base");
+			if (this.Changes.HasFlagUnsafe(ChangeType.Appearance))
+				parts.Add("Appearance");
+			if (this.Changes.HasFlagUnsafe(ChangeType.Extended))
+				parts.Add("Extended");
+			if (this.Changes.HasFlagUnsafe(ChangeType.Equipment))
+				parts.Add("Equipment");
+			if (this.Changes.HasFlagUnsafe(ChangeType.Weapon))
+				parts.Add("Weapon");
+			if (this.Changes.HasFlagUnsafe(ChangeType.Facewear))
+				parts.Add("Facewear");
+
+			return $"Changed: {string.Join(", ", parts)}";
+		}
+
+		private static bool CheckBaseChanges(CharacterFile c, CharacterFile t)
+		{
+			return c.ModelType != t.ModelType ||
+				   c.Race != t.Race ||
+				   c.Gender != t.Gender ||
+				   c.Tribe != t.Tribe ||
+				   c.Head != t.Head;
+		}
+
+		private static bool CheckAppearanceChanges(CharacterFile c, CharacterFile t, CharacterFile.SaveModes mode)
+		{
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.AppearanceHair) &&
+				(c.Hair != t.Hair ||
+				c.EnableHighlights != t.EnableHighlights ||
+				c.HairTone != t.HairTone ||
+				c.Highlights != t.Highlights))
+				return true;
+
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.AppearanceFace) &&
+				(c.REyeColor != t.REyeColor ||
+				c.LEyeColor != t.LEyeColor ||
+				c.FacialFeatures != t.FacialFeatures ||
+				c.LimbalEyes != t.LimbalEyes ||
+				c.Eyebrows != t.Eyebrows ||
+				c.Eyes != t.Eyes ||
+				c.Nose != t.Nose ||
+				c.Jaw != t.Jaw ||
+				c.Mouth != t.Mouth ||
+				c.LipsToneFurPattern != t.LipsToneFurPattern ||
+				c.FacePaint != t.FacePaint ||
+				c.FacePaintColor != t.FacePaintColor))
+				return true;
+
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.AppearanceBody) &&
+				(c.Height != t.Height ||
+				c.Skintone != t.Skintone ||
+				c.EarMuscleTailSize != t.EarMuscleTailSize ||
+				c.TailEarsType != t.TailEarsType ||
+				c.Bust != t.Bust))
+				return true;
+
+			return false;
+		}
+
+		private static bool CheckExtendedAppearanceChanges(CharacterFile c, CharacterFile t, CharacterFile.SaveModes mode)
+		{
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.AppearanceHair) &&
+				(c.HairColor != t.HairColor ||
+				c.HairGloss != t.HairGloss ||
+				c.HairHighlight != t.HairHighlight))
+				return true;
+
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.AppearanceFace) &&
+				(c.LeftEyeColor != t.LeftEyeColor ||
+				c.RightEyeColor != t.RightEyeColor ||
+				c.LimbalRingColor != t.LimbalRingColor ||
+				c.MouthColor != t.MouthColor))
+				return true;
+
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.AppearanceBody) &&
+				(c.SkinColor != t.SkinColor ||
+				c.SkinGloss != t.SkinGloss ||
+				c.MuscleTone != t.MuscleTone ||
+				c.HeightMultiplier != t.HeightMultiplier ||
+				c.BustScale != t.BustScale ||
+				c.Transparency != t.Transparency))
+				return true;
+
+			return false;
+		}
+
+		private static bool CheckEquipmentChanges(CharacterFile c, CharacterFile t, CharacterFile.SaveModes mode)
+		{
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.EquipmentGear) &&
+				(c.HeadGear != t.HeadGear ||
+				c.Body != t.Body ||
+				c.Hands != t.Hands ||
+				c.Legs != t.Legs ||
+				c.Feet != t.Feet))
+				return true;
+
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.EquipmentAccessories) &&
+				(c.Ears != t.Ears ||
+				c.Neck != t.Neck ||
+				c.Wrists != t.Wrists ||
+				c.LeftRing != t.LeftRing ||
+				c.RightRing != t.RightRing))
+				return true;
+
+			return false;
+		}
+
+		private static bool CheckWeaponChanges(CharacterFile c, CharacterFile t, CharacterFile.SaveModes mode)
+		{
+			if (!mode.HasFlagUnsafe(CharacterFile.SaveModes.EquipmentWeapons))
+				return false;
+
+			return c.MainHand != t.MainHand || c.OffHand != t.OffHand;
+		}
+
+		private static bool CheckWeaponsCompatibility(CharacterFile c, CharacterFile t, CharacterFile.SaveModes mode)
+		{
+			if (!mode.HasFlagUnsafe(CharacterFile.SaveModes.EquipmentWeapons))
+				return false;
+
+			if (t.IsWeaponDrawn != true)
+				return false;
+
+			// Treat all crafters and all gatherers as equivalent
+			// since they use the Paladin battle/idle animation.
+			static bool AreBothCraftersOrGatherers(Classes a, Classes b)
+			{
+				return ((a & (Classes.Crafters | Classes.Gatherers)) != 0) &&
+					   ((b & (Classes.Crafters | Classes.Gatherers)) != 0);
+			}
+
+			static bool IsDummyTransition(object curItem, object tgtItem, object dummy)
+			{
+				return (ReferenceEquals(curItem, dummy) && !ReferenceEquals(tgtItem, dummy)) ||
+					   (!ReferenceEquals(curItem, dummy) && ReferenceEquals(tgtItem, dummy));
+			}
+
+			static bool NeedsRedrawForSlotChange(object? curItem, object? tgtItem, ItemSlots slot)
+			{
+				if (curItem is Anamnesis.GameData.Excel.Item curExcel && tgtItem is Anamnesis.GameData.Excel.Item tgtExcel)
+				{
+					bool curFits = curExcel.FitsInSlot(slot);
+					bool tgtFits = tgtExcel.FitsInSlot(slot);
+					return curFits != tgtFits;
+				}
+
+				return false;
+			}
+
+			if (c.MainHand is not null && t.MainHand is not null && !c.MainHand.Equals(t.MainHand))
+			{
+				var curItem = ItemUtility.GetItem(ItemSlots.MainHand, c.MainHand.ModelSet, c.MainHand.ModelBase, c.MainHand.ModelVariant, false);
+				var tgtItem = ItemUtility.GetItem(ItemSlots.MainHand, t.MainHand.ModelSet, t.MainHand.ModelBase, t.MainHand.ModelVariant, false);
+
+				if (IsDummyTransition(curItem, tgtItem, ItemUtility.NoneItem) ||
+					IsDummyTransition(curItem, tgtItem, ItemUtility.EmperorsNewFists))
+					return true;
+
+				if (NeedsRedrawForSlotChange(curItem, tgtItem, ItemSlots.MainHand))
+					return true;
+
+				if (curItem is Anamnesis.GameData.Excel.Item curExcel && tgtItem is Anamnesis.GameData.Excel.Item tgtExcel)
+				{
+					var curFlags = curExcel.ClassJobCategory.Value.ToFlags();
+					var tgtFlags = tgtExcel.ClassJobCategory.Value.ToFlags();
+
+					if (AreBothCraftersOrGatherers(curFlags, tgtFlags))
+						return false;
+
+					if ((curFlags & tgtFlags) == 0)
+						return true;
+				}
+			}
+
+			if (c.OffHand is not null && t.OffHand is not null && !c.OffHand.Equals(t.OffHand))
+			{
+				var curItem = ItemUtility.GetItem(ItemSlots.OffHand, c.OffHand.ModelSet, c.OffHand.ModelBase, c.OffHand.ModelVariant, false);
+				var tgtItem = ItemUtility.GetItem(ItemSlots.OffHand, t.OffHand.ModelSet, t.OffHand.ModelBase, t.OffHand.ModelVariant, false);
+
+				if (IsDummyTransition(curItem, tgtItem, ItemUtility.NoneItem) ||
+					IsDummyTransition(curItem, tgtItem, ItemUtility.EmperorsNewFists))
+					return true;
+
+				if (NeedsRedrawForSlotChange(curItem, tgtItem, ItemSlots.OffHand))
+					return true;
+
+				if (curItem is Anamnesis.GameData.Excel.Item curExcel && tgtItem is Anamnesis.GameData.Excel.Item tgtExcel)
+				{
+					var curFlags = curExcel.ClassJobCategory.Value.ToFlags();
+					var tgtFlags = tgtExcel.ClassJobCategory.Value.ToFlags();
+
+					if (AreBothCraftersOrGatherers(curFlags, tgtFlags))
+						return false;
+
+					if ((curFlags & tgtFlags) == 0)
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		private static bool CheckFacewearChanges(CharacterFile c, CharacterFile t, CharacterFile.SaveModes mode)
+		{
+			if (mode.HasFlagUnsafe(CharacterFile.SaveModes.EquipmentGear) && c.Glasses != t.Glasses)
+				return true;
+
+			return false;
+		}
 	}
 
 	[Serializable]
-	public class WeaponSave
+	public record WeaponSave
 	{
 		public WeaponSave()
 		{
@@ -559,10 +968,30 @@ public class CharacterFile : JsonFileBase
 				vm.Dye2 = ItemUtility.NoneDye.Id;
 			}
 		}
+
+		public virtual bool Equals(WeaponSave? other)
+		{
+			if (other is null)
+				return false;
+
+			if (ReferenceEquals(this, other))
+				return true;
+
+			return this.ModelSet == other.ModelSet &&
+				   this.ModelBase == other.ModelBase &&
+				   this.ModelVariant == other.ModelVariant &&
+				   this.DyeId == other.DyeId &&
+				   this.DyeId2 == other.DyeId2;
+		}
+
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(this.ModelSet, this.ModelBase, this.ModelVariant, this.DyeId, this.DyeId2);
+		}
 	}
 
 	[Serializable]
-	public class ItemSave
+	public record ItemSave
 	{
 		public ItemSave()
 		{
@@ -594,7 +1023,7 @@ public class CharacterFile : JsonFileBase
 	}
 
 	[Serializable]
-	public class GlassesSave
+	public record GlassesSave
 	{
 		public GlassesSave()
 		{
@@ -625,6 +1054,7 @@ public class CharacterFile : JsonFileBase
 		{
 			if (glasses == null)
 				return;
+
 			glasses.GlassesId = this.GlassesId;
 		}
 	}

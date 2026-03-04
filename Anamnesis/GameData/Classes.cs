@@ -60,6 +60,9 @@ public enum Classes : long
 	Viper = 1L << 41,
 	Pictomancer = 1L << 42,
 
+	Crafters = Alchemist | Armorer | Blacksmith | Carpenter | Culinarian | Goldsmith | Leatherworker | Weaver,
+	Gatherers = Botanist | Fisher | Miner,
+
 	All = Alchemist | Arcanist | Archer | Armorer | Astrologian | Bard | BlackMage | Blacksmith | BlueMage | Botanist
 		| Carpenter | Conjurer | Culinarian | Dancer | DarkKnight | Dragoon | Fisher | Gladiator | Goldsmith | Gunbreaker
 		| Lancer | Leatherworker | Machinist | Marauder | Miner | Monk | Ninja | Paladin | Pugilist | RedMage | Rogue
@@ -136,6 +139,8 @@ public static class ClassesExtensions
 		{
 			Classes.None => null,
 			Classes.All => null,
+			Classes.Crafters => null,
+			Classes.Gatherers => null,
 			Classes.Alchemist => Roles.Crafters,
 			Classes.Arcanist => Roles.Damage,
 			Classes.Archer => Roles.Damage,
@@ -298,7 +303,7 @@ public static class ClassesExtensions
 	/// <returns>True if this is a job, false if it is a class.</returns>
 	public static bool IsJob(this Classes self)
 	{
-		if (self == Classes.None || self == Classes.All)
+		if (self == Classes.None || self == Classes.All || self == Classes.Crafters || self == Classes.Gatherers)
 			return false;
 
 		return !self.IsClass();
@@ -315,6 +320,12 @@ public static class ClassesExtensions
 	{
 		if (self == Classes.All)
 			return "All";
+
+		if (self == Classes.Crafters)
+			return "Crafters";
+
+		if (self == Classes.Gatherers)
+			return "Gatherers";
 
 		if (self == Classes.None)
 			return "None";
@@ -361,7 +372,7 @@ public static class ClassesExtensions
 			}
 		}
 
-		// check if there are any extra classes that werent part of the enire role
+		// check if there are any extra classes that werent part of the entire role
 		foreach (Roles? role in Enum.GetValues<Roles>().Select(v => (Roles?)v))
 		{
 			if (role == null)

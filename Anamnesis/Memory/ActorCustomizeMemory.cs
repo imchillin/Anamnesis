@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory;
 
 using PropertyChanged;
+using RemoteController.Interop.Types;
 using System;
 
 public class ActorCustomizeMemory : MemoryBase
@@ -183,5 +184,35 @@ public class ActorCustomizeMemory : MemoryBase
 	{
 		get => (byte)(this.Eyes - (this.SmallIris ? 128 : 0));
 		set => this.Eyes = (byte)(value + (this.SmallIris ? 128 : 0));
+	}
+
+	public void WriteTo(ref HumanDrawData drawData)
+	{
+		drawData.Customize.Race = (byte)this.Race;
+		drawData.Customize.Gender = (byte)this.Gender;
+		drawData.Customize.Age = (byte)this.Age;
+		drawData.Customize.Height = this.Height;
+		drawData.Customize.Tribe = (byte)this.Tribe;
+		drawData.Customize.Head = this.Head;
+		drawData.Customize.Hair = this.Hair;
+		drawData.Customize.HighlightType = this.HighlightType;
+		drawData.Customize.Skintone = this.Skintone;
+		drawData.Customize.REyeColor = this.REyeColor;
+		drawData.Customize.HairTone = this.HairTone;
+		drawData.Customize.Highlights = this.Highlights;
+		drawData.Customize.FacialFeatures = (byte)this.FacialFeatures;
+		drawData.Customize.FacialFeatureColor = this.FacialFeatureColor;
+		drawData.Customize.Eyebrows = this.Eyebrows;
+		drawData.Customize.LEyeColor = this.LEyeColor;
+		drawData.Customize.Eyes = this.Eyes;
+		drawData.Customize.Nose = this.Nose;
+		drawData.Customize.Jaw = this.Jaw;
+		drawData.Customize.Mouth = this.Mouth;
+		drawData.Customize.LipsToneFurPattern = this.LipsToneFurPattern;
+		drawData.Customize.EarMuscleTailSize = this.EarMuscleTailSize;
+		drawData.Customize.TailEarsType = this.TailEarsType;
+		drawData.Customize.Bust = this.Bust;
+		drawData.Customize.FacePaint = this.FacePaint;
+		drawData.Customize.FacePaintColor = this.FacePaintColor;
 	}
 }

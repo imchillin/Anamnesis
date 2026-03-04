@@ -3,6 +3,8 @@
 
 namespace Anamnesis.Views;
 
+using Anamnesis.Actor.Pages;
+using Anamnesis.Actor.Posing;
 using Anamnesis.Brio;
 using Anamnesis.Core;
 using Anamnesis.Files;
@@ -116,7 +118,15 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 			if (!handle.IsValid)
 				continue;
 
-			handle.Do(actor => actor.Synchronize());
+			try
+			{
+				handle.Do(actor => actor.Synchronize());
+			}
+			catch (Exception ex)
+			{
+				Log.Warning(ex, "Failed to synchronize actor during target selector load");
+				continue;
+			}
 		}
 
 		this.AddItems(actorHandles);
@@ -162,28 +172,28 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 			if (!s_includeHidden && actor.IsHidden)
 				return false;
 
-			if (!s_includePlayers && actor.ObjectKind == Memory.ActorTypes.Player)
+			if (!s_includePlayers && actor.ObjectKind == Memory.ObjectTypes.Player)
 				return false;
 
-			if (!s_includeCompanions && actor.ObjectKind == Memory.ActorTypes.Companion)
+			if (!s_includeCompanions && actor.ObjectKind == Memory.ObjectTypes.Companion)
 				return false;
 
-			if (!s_includeMounts && actor.ObjectKind == Memory.ActorTypes.Mount)
+			if (!s_includeMounts && actor.ObjectKind == Memory.ObjectTypes.Mount)
 				return false;
 
-			if (!s_includeOrnaments && actor.ObjectKind == Memory.ActorTypes.Ornament)
+			if (!s_includeOrnaments && actor.ObjectKind == Memory.ObjectTypes.Ornament)
 				return false;
 
-			if (!s_includeNPCs && (actor.ObjectKind == Memory.ActorTypes.BattleNpc || actor.ObjectKind == Memory.ActorTypes.EventNpc))
+			if (!s_includeNPCs && (actor.ObjectKind == Memory.ObjectTypes.BattleNpc || actor.ObjectKind == Memory.ObjectTypes.EventNpc))
 				return false;
 
 			if (!s_includeOther
-				&& actor.ObjectKind != Memory.ActorTypes.Player
-				&& actor.ObjectKind != Memory.ActorTypes.Companion
-				&& actor.ObjectKind != Memory.ActorTypes.BattleNpc
-				&& actor.ObjectKind != Memory.ActorTypes.EventNpc
-				&& actor.ObjectKind != Memory.ActorTypes.Mount
-				&& actor.ObjectKind != Memory.ActorTypes.Ornament)
+				&& actor.ObjectKind != Memory.ObjectTypes.Player
+				&& actor.ObjectKind != Memory.ObjectTypes.Companion
+				&& actor.ObjectKind != Memory.ObjectTypes.BattleNpc
+				&& actor.ObjectKind != Memory.ObjectTypes.EventNpc
+				&& actor.ObjectKind != Memory.ObjectTypes.Mount
+				&& actor.ObjectKind != Memory.ObjectTypes.Ornament)
 			{
 				return false;
 			}
@@ -236,8 +246,8 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 								var upgradedActorHandle = ActorService.Instance.ObjectTable.Get<ActorMemory>(newActorHandle.Address);
 								if (upgradedActorHandle != null)
 								{
-									var skeleton = new Skeleton(upgradedActorHandle);
-									poseFile.Apply(upgradedActorHandle, skeleton, null, PoseFile.Mode.Rotation, true);
+									var skeleton = new SkeletonEntity(upgradedActorHandle);
+									await PosePage.ImportPose(upgradedActorHandle, skeleton, PosePage.PoseImportOptions.Character, PoseMode.All & ~PoseMode.Scale);
 								}
 
 								await Task.CompletedTask;

@@ -165,7 +165,7 @@
 
 				<!-- Head/Hat Visbility and Visor -->
 				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding Actor.CanRefresh}"
-							  Visibility="{Binding IsHead, Converter={StaticResource B2V}, Mode=OneWay}" IsChecked="{Binding Actor.HatHidden}"
+							  Visibility="{Binding IsHead, Converter={StaticResource B2V}, Mode=OneWay}" IsChecked="{Binding Actor.DrawData.HatHidden}"
 							  BorderThickness="1" Padding="0" Margin="0">
 					<ToggleButton.ToolTip>
 						<XivToolsWpf:TextBlock Key="Character_Equipment_HatToggle"/>
@@ -175,7 +175,7 @@
 				</ToggleButton>
 
 				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding Actor.CanRefresh}"
-							  Visibility="{Binding IsHead, Converter={StaticResource B2V}, Mode=OneWay}" IsChecked="{Binding Actor.VisorToggled}"
+							  Visibility="{Binding IsHead, Converter={StaticResource B2V}, Mode=OneWay}" IsChecked="{Binding Actor.DrawData.VisorToggled}"
 							  BorderThickness="1" Padding="0" Margin="0">
 					<ToggleButton.ToolTip>
 						<XivToolsWpf:TextBlock Key="Character_Equipment_VisorToggle"/>
@@ -185,7 +185,7 @@
 				</ToggleButton>
 
 				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding Actor.CanRefresh}"
-						  Visibility="{Binding SupportsEarToggle, Converter={StaticResource B2V}, Mode=OneWay}" IsChecked="{Binding Actor.HeadgearEarsHidden}"
+						  Visibility="{Binding SupportsEarToggle, Converter={StaticResource B2V}, Mode=OneWay}" IsChecked="{Binding Actor.DrawData.HeadgearEarsHidden}"
 						  BorderThickness="1" Padding="0" Margin="0">
 					<ToggleButton.ToolTip>
 						<XivToolsWpf:TextBlock Key="Character_Equipment_HeadgearEarsToggle"/>
@@ -225,6 +225,19 @@
 							</Grid.ToolTip>
 						</Grid>
 					</Grid>
+
+					<Button.ContextMenu>
+						<ContextMenu>
+							<MenuItem Click="OnSwapDyeChannels">
+								<MenuItem.Header>
+									<XivToolsWpf:TextBlock Key="Character_Equipment_SwapDyeChannels"/>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+								</MenuItem.Icon>
+							</MenuItem>
+						</ContextMenu>
+					</Button.ContextMenu>
 				</Button>
 				<Button MouseUp="OnDye2MouseUp" Margin="2, 4, 0, 0" Grid.Column="0" Grid.RowSpan="2" Click="OnDyeClick2" VerticalAlignment="Top"
 						Height="20" Width="20" Style="{DynamicResource TransparentButton}" IsEnabled="{Binding Actor.CanRefresh, Mode=OneWay}">
@@ -247,6 +260,19 @@
 							</Grid.ToolTip>
 						</Grid>
 					</Grid>
+
+					<Button.ContextMenu>
+						<ContextMenu>
+							<MenuItem Click="OnSwapDyeChannels">
+								<MenuItem.Header>
+									<XivToolsWpf:TextBlock Key="Character_Equipment_SwapDyeChannels"/>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+								</MenuItem.Icon>
+							</MenuItem>
+						</ContextMenu>
+					</Button.ContextMenu>
 				</Button>
 			</StackPanel>
 

@@ -6,6 +6,7 @@ namespace Anamnesis.Services;
 using Anamnesis.Core;
 using Anamnesis.Memory;
 using PropertyChanged;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -204,7 +205,14 @@ public class AnimationService : ServiceBase<AnimationService>
 			memory.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody].Value = 0;
 		}
 
-		memory.Synchronize();
+		try
+		{
+			memory.Synchronize();
+		}
+		catch (Exception ex)
+		{
+			Log.Warning($"Failed to synchronize after apply animation override: {ex.Message}");
+		}
 	}
 
 	private async Task CheckThread(CancellationToken cancellationToken)

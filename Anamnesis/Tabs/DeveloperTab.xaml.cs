@@ -5,6 +5,7 @@ namespace Anamnesis.Tabs;
 
 using Anamnesis.Actor.Utilities;
 using Anamnesis.Files;
+using Anamnesis.GUI.Dialogs;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Utils;
@@ -15,6 +16,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using XivToolsWpf;
 
 /// <summary>
 /// Interaction logic for DeveloperTab.xaml.
@@ -90,8 +92,8 @@ public partial class DeveloperTab : UserControl
 			sb.AppendLine("Model: " + (memory.ModelObject?.Address.ToString("X") ?? "0"));
 			sb.AppendLine("Extended Appearance: " + (memory.ModelObject?.ExtendedAppearance?.Address.ToString("X") ?? "0"));
 			sb.AppendLine("Skeleton: " + (memory.ModelObject?.Skeleton?.Address.ToString("X") ?? "0"));
-			sb.AppendLine("Main Hand Model: " + (memory.MainHand?.Model?.Address.ToString("X") ?? "0"));
-			sb.AppendLine("Off Hand Model: " + (memory.OffHand?.Model?.Address.ToString("X") ?? "0"));
+			sb.AppendLine("Main Hand Model: " + (memory.DrawData.MainHand?.Model?.Address.ToString("X") ?? "0"));
+			sb.AppendLine("Off Hand Model: " + (memory.DrawData.OffHand?.Model?.Address.ToString("X") ?? "0"));
 			sb.AppendLine("Mount: " + (memory.Mount?.Address.ToString("X") ?? "0"));
 			sb.AppendLine("Companion: " + (memory.Companion?.Address.ToString("X") ?? "0"));
 			sb.AppendLine("Ornament: " + (memory.Ornament?.Address.ToString("X") ?? "0"));

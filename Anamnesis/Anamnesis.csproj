@@ -25,7 +25,31 @@
     <PublishTrimmed>false</PublishTrimmed>
     <CETCompat>false</CETCompat>
     <NeutralLanguage>en</NeutralLanguage>
+    <TrimmerRootAssembly>Serilog; RemoteController</TrimmerRootAssembly>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
   </PropertyGroup>
+  <ItemGroup>
+    <RemoteControllerSources
+        Include="..\RemoteController\**\*.cs"
+        Exclude="..\RemoteController\obj\**;..\RemoteController\bin\**" />
+  </ItemGroup>
+  <Target Name="PublishRemoteController"
+          BeforeTargets="ResolveProjectReferences"
+          Inputs="$(MSBuildThisFileDirectory)..\RemoteController\RemoteController.csproj;@(RemoteControllerSources)"
+          Outputs="$(MSBuildThisFileDirectory)..\obj\RemotePublish\RemoteController.dll">
+
+    <Message Importance="high" Text="Changes detected in RemoteController. Publishing..." />
+    <MSBuild Projects="$(MSBuildThisFileDirectory)..\RemoteController\RemoteController.csproj"
+             Targets="Publish"
+             Properties="Configuration=$(Configuration);
+                         Platform=$(Platform);
+                         RuntimeIdentifier=win-x64;
+                         PublishDir=$(MSBuildThisFileDirectory)..\obj\RemotePublish\;
+                         SelfContained=true;
+                         BuildProjectReferences=false" />
+  </Target>
   <ItemGroup>
     <PackageReference Include="Fody" Version="6.9.1">
       <PrivateAssets>all</PrivateAssets>
@@ -53,7 +77,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-	<PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
+    <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\*.*" />
@@ -116,6 +140,26 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lib\XivToolsWpf\XivToolsWpf.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lib\SharedMemoryIPC\SharedMemoryIPC\SharedMemoryIPC.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RemoteController\RemoteController.csproj">
+      <GlobalPropertiesToRemove>RuntimeIdentifier</GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(SolutionDir)obj\RemotePublish\RemoteController.dll">
+      <LogicalName>Anamnesis.Memory.RemoteController.dll</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(SolutionDir)obj\RemotePublish\FASMX64.dll">
+      <LogicalName>Anamnesis.Memory.FASMX64.dll</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <TrimmerRootAssembly Include="Serilog" />
+    <TrimmerRootAssembly Include="RemoteController" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Resources.Designer.cs">

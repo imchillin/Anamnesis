@@ -7,23 +7,138 @@ using Anamnesis.Actor.Utilities;
 using Anamnesis.Core.Extensions;
 using Anamnesis.GameData;
 using PropertyChanged;
+using RemoteController.Interop.Types;
 using System;
 using System.Numerics;
+using System.Threading;
 using static Anamnesis.Actor.Utilities.DyeUtility;
 
 public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 {
+	private readonly Lock weaponLock = new();
+	private WeaponModelId weaponModelId;
+
 	[Flags]
 	public enum WeaponFlagDefs : byte
 	{
 		WeaponHidden = 1 << 1,
 	}
 
-	[Bind(0x000, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public ushort Set { get; set; }
-	[Bind(0x002, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public ushort Base { get; set; }
-	[Bind(0x004, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public ushort Variant { get; set; }
-	[Bind(0x006, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public byte Dye { get; set; }
-	[Bind(0x007, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public byte Dye2 { get; set; }
+	[AlsoNotifyFor(nameof(Set), nameof(Base), nameof(Variant), nameof(Dye), nameof(Dye2))]
+	[Bind(0x000, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)]
+	public WeaponModelId WeaponModelId
+	{
+		get
+		{
+			lock (this.weaponLock)
+			{
+				return this.weaponModelId;
+			}
+		}
+		set
+		{
+			lock (this.weaponLock)
+			{
+				this.weaponModelId = value;
+			}
+		}
+	}
+
+	[AlsoNotifyFor(nameof(WeaponModelId))]
+	public ushort Set
+	{
+		get
+		{
+			lock (this.weaponLock)
+			{
+				return this.weaponModelId.Set;
+			}
+		}
+		set
+		{
+			lock (this.weaponLock)
+			{
+				this.weaponModelId.Set = value;
+			}
+		}
+	}
+
+	[AlsoNotifyFor(nameof(WeaponModelId))]
+	public ushort Base
+	{
+		get
+		{
+			lock (this.weaponLock)
+			{
+				return this.weaponModelId.Base;
+			}
+		}
+		set
+		{
+			lock (this.weaponLock)
+			{
+				this.weaponModelId.Base = value;
+			}
+		}
+	}
+
+	[AlsoNotifyFor(nameof(WeaponModelId))]
+	public ushort Variant
+	{
+		get
+		{
+			lock (this.weaponLock)
+			{
+				return this.weaponModelId.Variant;
+			}
+		}
+		set
+		{
+			lock (this.weaponLock)
+			{
+				this.weaponModelId.Variant = value;
+			}
+		}
+	}
+
+	[AlsoNotifyFor(nameof(WeaponModelId))]
+	public byte Dye
+	{
+		get
+		{
+			lock (this.weaponLock)
+			{
+				return this.weaponModelId.Dye;
+			}
+		}
+		set
+		{
+			lock (this.weaponLock)
+			{
+				this.weaponModelId.Dye = value;
+			}
+		}
+	}
+
+	[AlsoNotifyFor(nameof(WeaponModelId))]
+	public byte Dye2
+	{
+		get
+		{
+			lock (this.weaponLock)
+			{
+				return this.weaponModelId.Dye2;
+			}
+		}
+		set
+		{
+			lock (this.weaponLock)
+			{
+				this.weaponModelId.Dye2 = value;
+			}
+		}
+	}
+
 	[Bind(0x018, BindFlags.Pointer)] public WeaponModelMemory? Model { get; set; }
 	[Bind(0x040)] public bool IsSheathed { get; set; }
 	[Bind(0x060)] public WeaponFlagDefs WeaponFlags { get; set; }
@@ -67,9 +182,9 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 
 		if (this.Parent is ActorMemory actor)
 		{
-			if (actor.OffHand == this && actor.MainHand != null)
+			if (actor.DrawData.OffHand == this && actor.DrawData.MainHand != null)
 			{
-				IItem? mainHandItem = ItemUtility.GetItem(ItemSlots.MainHand, actor.MainHand.Set, actor.MainHand.Base, actor.MainHand.Variant, actor.IsChocobo);
+				IItem? mainHandItem = ItemUtility.GetItem(ItemSlots.MainHand, actor.DrawData.MainHand.Set, actor.DrawData.MainHand.Base, actor.DrawData.MainHand.Variant, actor.IsChocobo);
 
 				if (mainHandItem != null &&
 					(mainHandItem.EquipableClasses.HasFlagUnsafe(Classes.Pugilist) ||
@@ -98,5 +213,10 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 
 		if (dyeSlot.HasFlagUnsafe(DyeSlot.Second))
 			this.Dye2 = (dye != null) ? dye.Id : DyeUtility.NoneDye.Id;
+	}
+
+	public void SwapDyeChannels()
+	{
+		(this.Dye2, this.Dye) = (this.Dye, this.Dye2);
 	}
 }

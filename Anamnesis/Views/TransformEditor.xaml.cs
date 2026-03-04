@@ -94,7 +94,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	public IEnumerable<Bone> SelectedBones => this.Skeleton?.SelectedBones ?? Enumerable.Empty<Bone>();
 
 	/// <summary>Gets a value indicating whether translation is allowed.</summary>
-	public bool CanTranslate => this.CanTranslateOverride ?? (this.Skeleton != null && this.Skeleton.SelectedBones != null && this.Skeleton.SelectedBones.All(b => b.CanTranslate) && TargetService.Instance.SelectedActor != null && (TargetService.Instance.SelectedActor.Do(a => a.IsMotionDisabled) == true || PoseService.Instance.FreezeWorldPosition));
+	public bool CanTranslate => this.CanTranslateOverride ?? (this.Skeleton != null && this.Skeleton.SelectedBones != null && this.Skeleton.SelectedBones.All(b => b.CanTranslate) && TargetService.Instance.SelectedActor != null && (TargetService.Instance.SelectedActor.Do(a => a.IsMotionDisabled) == true || PoseService.Instance.FreezeWorldState));
 
 	/// <summary>Gets a value indicating whether rotation is allowed.</summary>
 	public bool CanRotate => this.ActorTransform?.CanRotate ?? (this.Skeleton != null && this.Skeleton.SelectedBones != null && this.Skeleton.SelectedBones.All(b => b.CanRotate));

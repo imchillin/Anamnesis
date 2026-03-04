@@ -82,7 +82,7 @@ public partial class ItemView : UserControl
 	public bool IsHead => this.Slot == ItemSlots.Head;
 
 	public bool SupportsEarToggle => this.Slot == ItemSlots.Head
-		&& this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Viera;
+		&& this.Actor?.DrawData.Customize?.Race == ActorCustomizeMemory.Races.Viera;
 
 	public bool IsValidWeapon
 	{
@@ -290,6 +290,11 @@ public partial class ItemView : UserControl
 		}
 	}
 
+	private void OnSwapDyeChannels(object sender, RoutedEventArgs e)
+	{
+		this.ItemModel?.SwapDyeChannels();
+	}
+
 	private void SetItem(IItem? item, bool autoOffhand = false, bool forceMain = false, bool forceOff = false)
 	{
 		this.lockViewModel = true;
@@ -322,11 +327,11 @@ public partial class ItemView : UserControl
 			{
 				if (ivm.HasSubModel)
 				{
-					SetModel(this.Actor?.OffHand, ivm.SubModelSet, ivm.SubModelBase, ivm.SubModelVariant);
+					SetModel(this.Actor?.DrawData.OffHand, ivm.SubModelSet, ivm.SubModelBase, ivm.SubModelVariant);
 				}
 				else
 				{
-					SetModel(this.Actor?.OffHand, 0, 0, 0);
+					SetModel(this.Actor?.DrawData.OffHand, 0, 0, 0);
 				}
 			}
 
@@ -490,13 +495,13 @@ public partial class ItemView : UserControl
 
 	private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 	{
-		if (this.Actor?.Customize != null)
-			this.Actor.Customize.PropertyChanged -= this.OnActorCustomizePropertyChanged;
+		if (this.Actor?.DrawData.Customize != null)
+			this.Actor.DrawData.Customize.PropertyChanged -= this.OnActorCustomizePropertyChanged;
 
 		this.Actor = this.DataContext as ActorMemory;
 
-		if (this.Actor?.Customize != null)
-			this.Actor.Customize.PropertyChanged += this.OnActorCustomizePropertyChanged;
+		if (this.Actor?.DrawData.Customize != null)
+			this.Actor.DrawData.Customize.PropertyChanged += this.OnActorCustomizePropertyChanged;
 
 		this.OnPropertyChanged(nameof(this.SupportsEarToggle));
 	}

@@ -4,7 +4,6 @@
 namespace Anamnesis.Memory;
 
 using Anamnesis.Core;
-using Anamnesis.Core.Memory;
 #if !DEBUG
 using Anamnesis.GUI.Dialogs;
 #endif
@@ -12,6 +11,7 @@ using Anamnesis.GUI.Windows;
 using Anamnesis.Keyboard;
 using Anamnesis.Services;
 using PropertyChanged;
+using RemoteController.Memory;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,18 +22,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XivToolsWpf;
+using static Anamnesis.Memory.NativeFunctions;
 
 /// <summary>
 /// A service that handles memory operations on the game process.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public partial class MemoryService : ServiceBase<MemoryService>
+public partial class MemoryService : ServiceBase<MemoryService>, IProcessMemoryReader
 {
-	/// <summary>
-	/// The memory protection constant for read, write, and execute permissions.
-	/// </summary>
-	private const uint VIRTUAL_PROTECT_READ_WRITE_EXECUTE = 0x40;
-
 	/// <summary>
 	/// The maximum number of attempts to read from memory before failing.
 	/// </summary>
@@ -120,6 +116,9 @@ public partial class MemoryService : ServiceBase<MemoryService>
 		}
 	}
 
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.IsProcessAlive => IsProcessAlive;
+
 	/// <summary>
 	/// Reads a pointer from the specified memory address.
 	/// </summary>
@@ -148,7 +147,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// <param name="address">The memory address to read the value from.</param>
 	/// <returns>The value read from the specified memory address, or null if the read fails.</returns>
 	/// <exception cref="Exception">Thrown if the specified memory address is invalid.</exception>
-	public static T? Read<T>(UIntPtr address)
+	public static T Read<T>(UIntPtr address)
 				where T : struct
 	{
 		unsafe
@@ -166,7 +165,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// <returns>The value read from the specified memory address.</returns>
 	/// <exception cref="Exception">Thrown if the address is invalid or the read operation fails after multiple attempts.</exception>
 	public static T Read<T>(IntPtr address)
-	where T : struct
+		where T : struct
 	{
 		if (address == IntPtr.Zero)
 			throw new ArgumentException("Invalid address", nameof(address));
@@ -181,7 +180,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 			{
 				fixed (byte* ptr = buffer)
 				{
-					if (NtReadVirtualMemory(Handle, address, (nint)ptr, size, out _) == 0)
+					if (NtReadVirtualMemory(Handle, address, (nint)ptr, size, out _) == (uint)NtStatus.STATUS_SUCCESS)
 					{
 						return MemoryMarshal.Read<T>(buffer);
 					}
@@ -224,7 +223,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 			{
 				fixed (byte* ptr = buffer)
 				{
-					if (NtReadVirtualMemory(Handle, address, (nint)ptr, size, out _) == 0)
+					if (NtReadVirtualMemory(Handle, address, (nint)ptr, size, out _) == (uint)NtStatus.STATUS_SUCCESS)
 					{
 						object? val = Marshal.PtrToStructure((IntPtr)ptr, readType);
 
@@ -262,7 +261,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 		{
 			fixed (byte* ptr = buffer)
 			{
-				return NtReadVirtualMemory(Handle, (nint)address, (nint)ptr, (int)size, out _) == 0;
+				return NtReadVirtualMemory(Handle, (nint)address, (nint)ptr, (int)size, out _) == (uint)NtStatus.STATUS_SUCCESS;
 			}
 		}
 	}
@@ -283,7 +282,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 		{
 			fixed (byte* ptr = buffer)
 			{
-				return NtReadVirtualMemory(Handle, (nint)address, (nint)ptr, size, out _) == 0;
+				return NtReadVirtualMemory(Handle, (nint)address, (nint)ptr, size, out _) == (uint)NtStatus.STATUS_SUCCESS;
 			}
 		}
 	}
@@ -298,7 +297,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	{
 		fixed (byte* ptr = buffer)
 		{
-			return NtReadVirtualMemory(Handle, address, (nint)ptr, buffer.Length, out _) == 0;
+			return NtReadVirtualMemory(Handle, address, (nint)ptr, buffer.Length, out _) == (uint)NtStatus.STATUS_SUCCESS;
 		}
 	}
 
@@ -394,7 +393,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 		{
 			fixed (byte* ptr = buffer)
 			{
-				return NtWriteVirtualMemory(Handle, address, (nint)ptr, buffer.Length, out _) == 0;
+				return NtWriteVirtualMemory(Handle, address, (nint)ptr, buffer.Length, out _) == (uint)NtStatus.STATUS_SUCCESS;
 			}
 		}
 	}
@@ -411,7 +410,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 		{
 			fixed (byte* ptr = buffer)
 			{
-				return NtWriteVirtualMemory(Handle, address, (nint)ptr, buffer.Length, out _) == 0;
+				return NtWriteVirtualMemory(Handle, address, (nint)ptr, buffer.Length, out _) == (uint)NtStatus.STATUS_SUCCESS;
 			}
 		}
 	}
@@ -427,13 +426,13 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// </remarks>
 	public static bool WriteExecutable(IntPtr address, byte[] buffer)
 	{
-		VirtualProtectEx(Handle, address, buffer.Length, VIRTUAL_PROTECT_READ_WRITE_EXECUTE, out _);
+		VirtualProtectEx(Handle, address, buffer.Length, (uint)MemoryProtectionType.PAGE_EXECUTE_READWRITE, out _);
 
 		unsafe
 		{
 			fixed (byte* ptr = buffer)
 			{
-				return NtWriteVirtualMemory(Handle, address, (nint)ptr, buffer.Length, out _) == 0;
+				return NtWriteVirtualMemory(Handle, address, (nint)ptr, buffer.Length, out _) == (uint)NtStatus.STATUS_SUCCESS;
 			}
 		}
 	}
@@ -449,13 +448,13 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// </remarks>
 	public static bool WriteExecutable(IntPtr address, Span<byte> buffer)
 	{
-		VirtualProtectEx(Handle, address, buffer.Length, VIRTUAL_PROTECT_READ_WRITE_EXECUTE, out _);
+		VirtualProtectEx(Handle, address, buffer.Length, (uint)MemoryProtectionType.PAGE_EXECUTE_READWRITE, out _);
 
 		unsafe
 		{
 			fixed (byte* ptr = buffer)
 			{
-				return NtWriteVirtualMemory(Handle, address, (nint)ptr, buffer.Length, out _) == 0;
+				return NtWriteVirtualMemory(Handle, address, (nint)ptr, buffer.Length, out _) == (uint)NtStatus.STATUS_SUCCESS;
 			}
 		}
 	}
@@ -563,6 +562,54 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	}
 
 	/// <inheritdoc/>
+	IntPtr IProcessMemoryReader.ReadPtr(IntPtr address) => ReadPtr(address);
+
+	/// <inheritdoc/>
+	T IProcessMemoryReader.Read<T>(IntPtr address) => Read<T>(address);
+
+	/// <inheritdoc/>
+	T IProcessMemoryReader.Read<T>(UIntPtr address) => Read<T>(address);
+
+	/// <inheritdoc/>
+	object IProcessMemoryReader.Read(IntPtr address, Type type) => Read(address, type);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Read(UIntPtr address, byte[] buffer, UIntPtr size) => Read(address, buffer, size);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Read(IntPtr address, byte[] buffer, int size) => Read(address, buffer, size);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Read(IntPtr address, Span<byte> buffer) => Read(address, buffer);
+
+	/// <inheritdoc/>
+	byte IProcessMemoryReader.ReadByte(nint address, int offset) => ReadByte(address, offset);
+
+	/// <inheritdoc/>
+	short IProcessMemoryReader.ReadInt16(nint address, int offset) => ReadInt16(address, offset);
+
+	/// <inheritdoc/>
+	int IProcessMemoryReader.ReadInt32(nint address, int offset) => ReadInt32(address, offset);
+
+	/// <inheritdoc/>
+	long IProcessMemoryReader.ReadInt64(nint address, int offset) => ReadInt64(address, offset);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Write(IntPtr address, byte[] buffer) => Write(address, buffer);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Write(IntPtr address, Span<byte> buffer) => Write(address, buffer);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Write<T>(IntPtr address, T value) => Write(address, value);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Write(IntPtr address, object value) => Write(address, value);
+
+	/// <inheritdoc/>
+	bool IProcessMemoryReader.Write(IntPtr address, object value, Type type) => Write(address, value, type);
+
+	/// <inheritdoc/>
 	public override async Task Initialize()
 	{
 		await base.Initialize();
@@ -605,7 +652,9 @@ public partial class MemoryService : ServiceBase<MemoryService>
 #endif
 		}
 
-		Handle = OpenProcess(0x001F0FFF, true, process.Id);
+		SetCompatibilityLayer();
+		ClaimSeDebugPrivilege();
+		Handle = NativeFunctions.OpenProcess(0x001F0FFF, true, process.Id);
 		if (Handle == IntPtr.Zero)
 		{
 			int eCode = Marshal.GetLastWin32Error();
@@ -627,7 +676,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 			this.modules.Add(module.ModuleName, module.BaseAddress);
 		}
 
-		Scanner = new SignatureScanner(process.MainModule);
+		Scanner = new SignatureScanner(process.MainModule, this);
 	}
 
 	/// <summary>
@@ -666,36 +715,6 @@ public partial class MemoryService : ServiceBase<MemoryService>
 		MemoryMarshal.Write(buffer, in val);
 		return Write(address, buffer);
 	}
-
-	[LibraryImport("ntdll.dll")]
-	private static partial int NtReadVirtualMemory(nint ProcessHandle, nint BaseAddress, nint Buffer, int BufferSize, out nint NumberOfBytesRead);
-
-	[LibraryImport("ntdll.dll")]
-	private static partial int NtWriteVirtualMemory(nint ProcessHandle, nint BaseAddress, nint Buffer, int BufferSize, out nint NumberOfBytesWritten);
-
-	[LibraryImport("kernel32.dll", SetLastError = true)]
-	private static partial nint OpenProcess(uint dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int processId);
-
-	[LibraryImport("kernel32.dll")]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool VirtualProtectEx(nint hProcess, nint lpAddress, int dwSize, uint flNewProtect, out uint lpflOldProtect);
-
-	[LibraryImport("kernel32.dll", SetLastError = true)]
-	private static partial nint GetCurrentProcess();
-
-	[LibraryImport("advapi32.dll", SetLastError = true)]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool OpenProcessToken(nint processHandle, uint desiredAccess, out nint tokenHandle);
-
-	[LibraryImport("kernel32.dll")]
-	private static partial int CloseHandle(nint hObject);
-
-	[LibraryImport("user32.dll")]
-	private static partial nint GetForegroundWindow();
-
-	[LibraryImport("user32.dll", EntryPoint = "PostMessageW")]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool PostMessage(nint hWnd, uint msg, nint wParam, nint lParam);
 
 	/// <summary>
 	/// Attempts to find and open the game process, setting it as the current process.
@@ -790,7 +809,7 @@ public partial class MemoryService : ServiceBase<MemoryService>
 	/// <summary>
 	/// Special struct for handling 1-byte bool marshaling.
 	/// </summary>
-	private struct OneByteBool
+	public struct OneByteBool
 	{
 #pragma warning disable CS0649
 		[MarshalAs(UnmanagedType.I1)]

@@ -37,6 +37,12 @@ public abstract class BindInfo(MemoryBase memory)
 	/// <summary>Gets the bind flags.</summary>
 	public abstract BindFlags Flags { get; }
 
+	/// <summary>
+	/// Gets the name of the synchronization group
+	/// associated with this bind instance.
+	/// </summary>
+	public abstract string? SyncGroup { get; }
+
 	/// <summary>Gets or sets the freeze value.</summary>
 	public object? FreezeValue { get; set; }
 

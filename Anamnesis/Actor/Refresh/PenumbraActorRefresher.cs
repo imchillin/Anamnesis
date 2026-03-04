@@ -6,44 +6,47 @@ namespace Anamnesis.Actor.Refresh;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using System.Threading.Tasks;
+using XivToolsWpf;
 
 public class PenumbraActorRefresher : IActorRefresher
 {
-	public bool CanRefresh(ActorMemory actor)
+	public RefreshBlockedReason GetRefreshAvailability(ActorMemory actor)
 	{
 		// Only if Penumbra integration is really enabled
 		if (!SettingsService.Current.UseExternalRefresh)
-			return false;
+			return RefreshBlockedReason.IntegrationDisabled;
 
 		if (PoseService.Instance.IsEnabled)
-			return false;
+			return RefreshBlockedReason.PoseEnabled;
 
 		// Penumbra can't refresh world frozen actors
-		if (PoseService.Instance.FreezeWorldPosition)
-			return false;
+		if (PoseService.Instance.FreezeWorldState)
+			return RefreshBlockedReason.WorldFrozen;
 
 		// Penumbra can't refresh overworld actors in gpose
 		if (GposeService.Instance.IsGpose && actor.IsOverworldActor)
-			return false;
+			return RefreshBlockedReason.OverworldInGpose;
 
-		return true;
+		return RefreshBlockedReason.None;
 	}
 
-	public async Task RefreshActor(ActorMemory actor)
+	public async Task RefreshActor(ActorMemory actor, bool forceReload = false)
 	{
-		bool doNpcHack = SettingsService.Current.EnableNpcHack && actor.ObjectKind == ActorTypes.Player;
+		await Dispatch.MainThread();
 
-		if (doNpcHack)
-			actor.ObjectKind = ActorTypes.EventNpc;
+		bool doNpcHack = SettingsService.Current.EnableNpcHack && actor.ObjectKind == ObjectTypes.Player;
 
 		try
 		{
+			if (doNpcHack)
+				actor.ObjectKind = ObjectTypes.EventNpc;
+
 			await Penumbra.Penumbra.Redraw(actor.Name, actor.ObjectIndex);
 		}
 		finally
 		{
 			if (doNpcHack)
-				actor.ObjectKind = ActorTypes.Player;
+				actor.ObjectKind = ObjectTypes.Player;
 		}
 	}
 }

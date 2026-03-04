@@ -10,9 +10,11 @@
 			 MouseEnter="OnMouseEnter"
 			 MouseLeave="OnMouseLeave"
 			 MouseUp="OnMouseUp"
-			 HorizontalAlignment="Left"
+			 HorizontalAlignment="Center"
+			 VerticalAlignment="Center"
 			 Width="18"
 			 Height="18"
+			 SnapsToDevicePixels="False"
 			 Margin="2">
 
 	<Grid x:Name="ContentArea" Cursor="Hand">
@@ -23,10 +25,10 @@
 			</StackPanel>
 		</Grid.ToolTip>
 
-		<Ellipse Stroke="{DynamicResource PrimaryHueMidBrush}" StrokeThickness="1" Fill="{DynamicResource MaterialDesignPaper}" x:Name="BackgroundElipse"/>
-		<Ellipse Fill="{DynamicResource PrimaryHueMidBrush}" Margin="4" x:Name="ForegroundElipse" Visibility="Hidden"/>
+		<Ellipse x:Name="BackgroundElipse" Stroke="{DynamicResource PrimaryHueMidBrush}" Width="18" Height="18" StrokeThickness="1" Fill="{DynamicResource MaterialDesignPaper}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<Ellipse x:Name="ForegroundElipse" Fill="{DynamicResource PrimaryHueMidBrush}" Width="10" Height="10" Visibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 		<Ellipse x:Name="ErrorEllipse" Visibility="Collapsed" Stroke="{DynamicResource MaterialDesignPaper}" StrokeThickness="1" Fill="Transparent" Opacity="0.5"/>
 
-		<TextBlock Style="{StaticResource Label}" Text="{Binding Label}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="8" Margin="3"/>
+		<TextBlock Style="{StaticResource Label}" Text="{Binding Label}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="10" Margin="0"/>
 	</Grid>
 </UserControl>

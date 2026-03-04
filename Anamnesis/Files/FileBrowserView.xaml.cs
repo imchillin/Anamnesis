@@ -244,33 +244,18 @@ public partial class FileBrowserView : FileBrowserDrawer
 
 	protected override int Compare(EntryWrapper itemA, EntryWrapper itemB)
 	{
-		// Directoreis alweays go to the top.
-		if (itemA.Entry is DirectoryInfo && itemB.Entry is FileInfo)
-			return -1;
-
-		if (itemA.Entry is FileInfo && itemB.Entry is DirectoryInfo)
-			return 1;
+		// Directories always go to the top.
+		if (itemA.IsDirectory != itemB.IsDirectory)
+			return itemA.IsDirectory ? -1 : 1;
 
 		if (s_sortMode == Sort.None)
-		{
 			return 0;
-		}
-		else if (s_sortMode == Sort.AlphaNumeric)
-		{
-			if (itemA.Name == null || itemB.Name == null)
-				return 0;
 
-			return itemA.Name.CompareTo(itemB.Name);
-		}
-		else if (s_sortMode == Sort.Date)
-		{
-			if (itemA.DateModified == null || itemB.DateModified == null)
-				return 0;
+		if (s_sortMode == Sort.AlphaNumeric)
+			return string.Compare(itemA.Name, itemB.Name, StringComparison.OrdinalIgnoreCase);
 
-			DateTime dateA = (DateTime)itemA.DateModified;
-			DateTime dateB = (DateTime)itemB.DateModified;
-			return dateA.CompareTo(dateB);
-		}
+		if (s_sortMode == Sort.Date)
+			return Nullable.Compare(itemA.DateModified, itemB.DateModified);
 
 		return 0;
 	}
@@ -315,10 +300,13 @@ public partial class FileBrowserView : FileBrowserDrawer
 		try
 		{
 			while (!this.SelectorLoaded)
-				await Task.Delay(10);
+				await Task.Delay(1);
 
 			while (this.updatingEntries)
-				await Task.Delay(10);
+				await Task.Delay(1);
+
+			var targetDir = this.CurrentDir;
+			List<EntryWrapper> results = new();
 
 			lock (this)
 			{
@@ -327,8 +315,7 @@ public partial class FileBrowserView : FileBrowserDrawer
 
 				try
 				{
-					List<EntryWrapper> results = new();
-					this.GetEntries(this.CurrentDir, ref results);
+					this.GetEntries(targetDir, ref results);
 					this.AddItems(results);
 				}
 				catch (Exception ex)
@@ -349,47 +336,58 @@ public partial class FileBrowserView : FileBrowserDrawer
 		}
 	}
 
-	private void GetEntries(DirectoryInfo dir, ref List<EntryWrapper> results)
+	private void GetEntries(DirectoryInfo rootDir, ref List<EntryWrapper> results)
 	{
-		if (!dir.Exists)
+		if (!rootDir.Exists)
 			return;
 
-		FileInfo[] files = dir.GetFiles();
-		foreach (FileInfo file in files)
+		Stack<DirectoryInfo> directoryStack = new();
+		directoryStack.Push(rootDir);
+
+		while (directoryStack.Count > 0)
 		{
-			// file must pass at least one filter
-			FileFilter? passedfilter = null;
-			foreach (FileFilter filter in this.filters)
+			DirectoryInfo currentDir = directoryStack.Pop();
+
+			try
 			{
-				if (filter.Passes(file))
+				foreach (FileInfo file in currentDir.EnumerateFiles())
 				{
-					passedfilter = filter;
-					break;
+					// File must pass at least one filter
+					FileFilter? passedfilter = null;
+					foreach (FileFilter filter in this.filters)
+					{
+						if (filter.Passes(file))
+						{
+							passedfilter = filter;
+							break;
+						}
+					}
+
+					if (passedfilter == null)
+						continue;
+
+					results.Add(new EntryWrapper(file, this, passedfilter));
+				}
+
+				foreach (DirectoryInfo subDir in currentDir.EnumerateDirectories())
+				{
+					if (!this.IsFlattened)
+					{
+						results.Add(new EntryWrapper(subDir, this, null));
+					}
+					else
+					{
+						directoryStack.Push(subDir);
+					}
 				}
 			}
-
-			if (passedfilter == null)
-				continue;
-
-			results.Add(new EntryWrapper(file, this, passedfilter));
-		}
-
-		DirectoryInfo[] directories = dir.GetDirectories();
-		foreach (DirectoryInfo subDir in directories)
-		{
-			List<EntryWrapper> subResults = new();
-			this.GetEntries(subDir, ref subResults);
-
-			////if (subResults.Count == 0)
-			////	continue;
-
-			if (!this.IsFlattened)
+			catch (UnauthorizedAccessException ex)
 			{
-				results.Add(new EntryWrapper(subDir, this, null));
+				Log.Warning(ex, $"Access denied to directory: {currentDir.FullName}");
 			}
-			else
+			catch (Exception ex)
 			{
-				results.AddRange(subResults);
+				Log.Error(ex, $"Error enumerating directory: {currentDir.FullName}");
 			}
 		}
 	}
@@ -610,18 +608,7 @@ public partial class FileBrowserView : FileBrowserDrawer
 		}
 
 		public DateTime? DateModified => this.Entry.LastWriteTime;
-
-		public bool CanSelect
-		{
-			get
-			{
-				////if (this.View.mode == Modes.Save)
-				////	return this.Entry is IFileSource.IDirectory;
-
-				return true;
-			}
-		}
-
+		public bool CanSelect => true;
 		public bool IsDirectory => this.Entry is DirectoryInfo;
 		public bool IsRenaming { get; set; }
 

@@ -289,12 +289,12 @@ public partial class BoneView : UserControl
 	/// <summary>Gets the center X coordinate of the bone view.</summary>
 	/// <returns>The center X coordinate.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private double GetCenterX() => Canvas.GetLeft(this) + ((this.ActualWidth + this.Margin.Left + this.Margin.Right + this.Padding.Left + this.Padding.Right + this.BorderThickness.Right) / 2);
+	private double GetCenterX() => Canvas.GetLeft(this) + ((this.ActualWidth + this.Margin.Left + this.Margin.Right + this.Padding.Left + this.Padding.Right + this.BorderThickness.Left + this.BorderThickness.Right) / 2);
 
 	/// <summary>Gets the center Y coordinate of the bone view.</summary>
 	/// <returns>The center Y coordinate.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private double GetCenterY() => Canvas.GetTop(this) + ((this.ActualHeight + this.Margin.Top + this.Margin.Bottom + this.Padding.Top + this.Padding.Bottom + this.BorderThickness.Bottom) / 2);
+	private double GetCenterY() => Canvas.GetTop(this) + ((this.ActualHeight + this.Margin.Top + this.Margin.Bottom + this.Padding.Top + this.Padding.Bottom + this.BorderThickness.Top + this.BorderThickness.Bottom) / 2);
 
 	/// <summary>Handles the MouseEnter event.</summary>
 	/// <param name="sender">The sender of the event.</param>

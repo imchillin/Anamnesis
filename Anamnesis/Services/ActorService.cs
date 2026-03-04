@@ -6,8 +6,8 @@ namespace Anamnesis;
 using Anamnesis.Core;
 using Anamnesis.Memory;
 using Anamnesis.Services;
-using Microsoft.Extensions.ObjectPool;
 using PropertyChanged;
+using RemoteController.Drivers;
 using Serilog;
 using System;
 using System.Buffers;
@@ -15,6 +15,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
@@ -27,7 +28,7 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class ObjectTable : INotifyPropertyChanged, IDisposable
 {
-	private const int OBJECT_TABLE_SIZE = 819;
+	private const int OBJECT_TABLE_SIZE = ActorDriver.OBJECT_TABLE_SIZE;
 
 	private static readonly int s_objectTableSizeInBytes = OBJECT_TABLE_SIZE * IntPtr.Size;
 
@@ -35,6 +36,7 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	private readonly byte[] objTableBuffer;
 	private readonly ReaderWriterLockSlim tableLock = new();
 	private HashSet<IntPtr> objSet = [];
+	private int isRefreshing = 0;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ObjectTable"/> class.
@@ -65,38 +67,50 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	/// </exception>
 	public void Refresh()
 	{
-		if (!MemoryService.Read(AddressService.ObjectTable, this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes)))
-			throw new Exception("Failed to read object table from memory.");
+		ObjectDisposedException.ThrowIf(this.tableLock == null, nameof(ObjectTable));
 
-		Span<IntPtr> newSpan = MemoryMarshal.Cast<byte, IntPtr>(this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes));
-		bool hasChanged = false;
+		if (Interlocked.CompareExchange(ref this.isRefreshing, 1, 0) != 0)
+			return; // Prevent re-entrant calls
 
-		this.tableLock.EnterUpgradeableReadLock();
 		try
 		{
-			hasChanged = !this.objTable.AsSpan().SequenceEqual(newSpan);
+			if (!MemoryService.Read(AddressService.ObjectTable, this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes)))
+				throw new Exception("Failed to read object table from memory.");
 
-			if (!hasChanged)
-				return; // No changes detected, exit early.
+			Span<IntPtr> newSpan = MemoryMarshal.Cast<byte, IntPtr>(this.objTableBuffer.AsSpan(0, s_objectTableSizeInBytes));
+			bool hasChanged = false;
 
-			this.tableLock.EnterWriteLock();
+			this.tableLock.EnterUpgradeableReadLock();
 			try
 			{
-				newSpan.CopyTo(this.objTable);
-				this.objSet = this.objTable.ToHashSet();
+				hasChanged = !this.objTable.AsSpan().SequenceEqual(newSpan);
+
+				if (!hasChanged)
+					return; // No changes detected, exit early.
+
+				this.tableLock.EnterWriteLock();
+				try
+				{
+					newSpan.CopyTo(this.objTable);
+					this.objSet = this.objTable.ToHashSet();
+				}
+				finally
+				{
+					this.tableLock.ExitWriteLock();
+				}
 			}
 			finally
 			{
-				this.tableLock.ExitWriteLock();
+				this.tableLock.ExitUpgradeableReadLock();
 			}
+
+			TableChanged?.Invoke();
+			Log.Verbose("Object table updated.");
 		}
 		finally
 		{
-			this.tableLock.ExitUpgradeableReadLock();
+			Interlocked.Exchange(ref this.isRefreshing, 0);
 		}
-
-		TableChanged?.Invoke();
-		Log.Verbose("Object table updated.");
 	}
 
 	/// <summary>
@@ -112,7 +126,14 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 		if (!this.Contains(address))
 			return null;
 
-		return new ObjectHandle<T>(address, this);
+		var handle = new ObjectHandle<T>(address, this);
+		if (!handle.IsValid) // Handle creation succeeded but internal object type does not match requested type
+		{
+			handle.Dispose();
+			return null;
+		}
+
+		return handle;
 	}
 
 	/// <summary>
@@ -165,6 +186,27 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	}
 
 	/// <summary>
+	/// Gets the address of the object at the specified index.
+	/// </summary>
+	/// <param name="index">The index in the object table.</param>
+	/// <returns>The address of the object, or IntPtr.Zero if empty/out of bounds.</returns>
+	public IntPtr GetAddress(int index)
+	{
+		if (index < 0 || index >= OBJECT_TABLE_SIZE)
+			return IntPtr.Zero;
+
+		this.tableLock.EnterReadLock();
+		try
+		{
+			return this.objTable[index];
+		}
+		finally
+		{
+			this.tableLock.ExitReadLock();
+		}
+	}
+
+	/// <summary>
 	/// Checks if the object table contains the provided object pointer.
 	/// </summary>
 	/// <param name="ptr">The object pointer to check for.</param>
@@ -203,7 +245,7 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 /// </typeparam>
 [AddINotifyPropertyChangedInterface]
 public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
-	where T : GameObjectMemory, new()
+	where T : GameObjectMemory
 {
 	private readonly ObjectTable table;
 	private IntPtr ptr;
@@ -227,21 +269,19 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 		if (ptr == IntPtr.Zero || !this.table.Contains(ptr))
 			throw new InvalidOperationException("Cannot create a handle for an object not part of the object table.");
 
-		var cacheKey = (ptr, typeof(T));
 		lock (ObjectHandleCache.Lock)
 		{
-			if (!ObjectHandleCache.Cache.TryGetValue(cacheKey, out var entry))
+			if (!ObjectHandleCache.Cache.TryGetValue(ptr, out var entry))
 			{
 				try
 				{
-					var obj = new T();
-					obj.SetAddress(ptr);
-					ObjectHandleCache.Cache.TryAdd(cacheKey, new ObjectHandleCache.CacheEntry(obj));
-					Log.Information($"Created new memory object of type {typeof(T).Name} at address {ptr} and added to cache.");
+					var obj = MemoryObjectFactory.Create(ptr);
+					entry = new ObjectHandleCache.CacheEntry(obj);
+					ObjectHandleCache.Cache.TryAdd(ptr, entry);
 				}
 				catch (Exception ex)
 				{
-					Log.Warning(ex, $"Failed to create memory object from address: {ptr}");
+					Log.Warning(ex, $"Failed to create memory object from address: 0x{ptr:X}");
 				}
 			}
 			else
@@ -273,7 +313,7 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	/// <summary>
 	/// Gets a value indicating whether this handle is still valid.
 	/// </summary>
-	public bool IsValid => !this.disposed && this.ptr != IntPtr.Zero && this.table.Contains(this.ptr);
+	public bool IsValid => !this.disposed && this.ptr != IntPtr.Zero && this.table.Contains(this.ptr) && this.Unsafe != null;
 
 	/// <summary>
 	/// An unsafe reference to the underlying object.
@@ -281,7 +321,7 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	/// <remarks>
 	/// This is intended only for UI data bindings and should not be used outside of that context.
 	/// </remarks>
-	public T? Unsafe => ObjectHandleCache.Cache.TryGetValue((this.ptr, typeof(T)), out var entry) ? (T)entry.Object : null;
+	public T? Unsafe => ObjectHandleCache.Cache.TryGetValue(this.ptr, out var entry) ? entry.Object as T : null;
 
 	/// <summary>
 	/// Synchronizes all cached objects with the same base address.
@@ -290,31 +330,18 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	/// Use this method instead of <see cref="MemoryBase.Synchronize"/> to avoid
 	/// desynchronizations with handles of derived types pointing to the same address.
 	/// </remarks>
-	public void Synchronize()
+	public void Synchronize(IReadOnlySet<string>? inclGroups = null, IReadOnlySet<string>? exclGroups = null)
 	{
-		var targets = ObjectHandleCache.ListPool.Get();
 		try
 		{
-			lock (ObjectHandleCache.Lock)
-			{
-				foreach (var (key, entry) in ObjectHandleCache.Cache)
-				{
-					if (key.Item1 == this.Address)
-						targets.Add(entry.Object);
-				}
-			}
+			if (!ObjectHandleCache.Cache.TryGetValue(this.Address, out var entry) || entry.Object.IsDisposed)
+				return;
 
-			int count = targets.Count;
-			for (int i = 0; i < count; i++)
-			{
-				var obj = targets[i];
-				if (!obj.IsDisposed)
-					obj.Synchronize();
-			}
+			entry.Object.Synchronize(inclGroups, exclGroups);
 		}
-		finally
+		catch (Exception ex)
 		{
-			ObjectHandleCache.ListPool.Return(targets);
+			Log.Warning(ex, $"Failed to synchronize object handle at address: 0x{this.Address:X}");
 		}
 	}
 
@@ -327,9 +354,9 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 			return;
 
 		this.disposed = true;
-		var cacheKey = (this.ptr, typeof(T));
-		this.ptr = IntPtr.Zero;
 		this.table.TableChanged -= this.OnTableChanged;
+		var cacheKey = this.ptr;
+		this.ptr = IntPtr.Zero;
 
 		lock (ObjectHandleCache.Lock)
 		{
@@ -340,7 +367,6 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 				{
 					if (ObjectHandleCache.Cache.TryRemove(cacheKey, out var removedEntry))
 					{
-						Log.Information($"Disposing cached object of type {typeof(T).Name} at address {this.ptr} as its reference count reached zero.");
 						if (!removedEntry.Object.IsDisposed)
 							removedEntry.Object.Dispose();
 					}
@@ -362,11 +388,8 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void Do(Action<T> action)
 	{
-		if (!this.IsValid)
-			return;
-
-		if (ObjectHandleCache.Cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			action((T)entry.Object);
+		if (this.IsValid && this.Unsafe is T obj)
+			action(obj);
 	}
 
 	/// <summary>
@@ -382,11 +405,8 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	public TResult? Do<TResult>(Func<T, TResult> func)
 		where TResult : struct
 	{
-		if (!this.IsValid)
-			return null;
-
-		if (ObjectHandleCache.Cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			return func((T)entry.Object);
+		if (this.IsValid && this.Unsafe is T obj)
+			return func(obj);
 
 		return null;
 	}
@@ -404,11 +424,8 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	public TResult? DoRef<TResult>(Func<T, TResult> func)
 		where TResult : class?
 	{
-		if (!this.IsValid)
-			return null;
-
-		if (ObjectHandleCache.Cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			return func((T)entry.Object);
+		if (this.IsValid && this.Unsafe is T obj)
+			return func(obj);
 
 		return null;
 	}
@@ -421,11 +438,8 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public async Task DoAsync(Func<T, Task> action)
 	{
-		if (!this.IsValid)
-			return;
-
-		if (ObjectHandleCache.Cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			await action((T)entry.Object);
+		if (this.IsValid && this.Unsafe is T obj)
+			await action(obj);
 	}
 
 	/// <summary>
@@ -441,11 +455,8 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	public async Task<TResult?> DoAsync<TResult>(Func<T, Task<TResult>> func)
 		where TResult : struct
 	{
-		if (!this.IsValid)
-			return null;
-
-		if (ObjectHandleCache.Cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			return await func((T)entry.Object);
+		if (this.IsValid && this.Unsafe is T obj)
+			return await func(obj);
 
 		return null;
 	}
@@ -463,11 +474,8 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	public async Task<TResult?> DoRefAsync<TResult>(Func<T, Task<TResult>> func)
 		where TResult : class
 	{
-		if (!this.IsValid)
-			return null;
-
-		if (ObjectHandleCache.Cache.TryGetValue((this.ptr, typeof(T)), out var entry))
-			return await func((T)entry.Object);
+		if (this.IsValid && this.Unsafe is T obj)
+			return await func(obj);
 
 		return null;
 	}
@@ -479,7 +487,7 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	{
 		if (!this.IsValid)
 		{
-			if (ObjectHandleCache.Cache.TryRemove((this.ptr, typeof(T)), out var entry))
+			if (ObjectHandleCache.Cache.TryRemove(this.ptr, out var entry))
 			{
 				if (!entry.Object.IsDisposed)
 					entry.Object.Dispose();
@@ -500,12 +508,19 @@ public class ActorService : ServiceBase<ActorService>
 	private const int OVERWORLD_PLAYER_INDEX = 0;
 	private const int GPOSE_PLAYER_INDEX = 201;
 
-	private readonly ObjectTable objectTable = new();
+	private ObjectTable? objectTable = new();
 
 	/// <summary>
 	/// Gets the instance of the actor object table.
 	/// </summary>
-	public ObjectTable ObjectTable => this.objectTable;
+	public ObjectTable ObjectTable
+	{
+		get
+		{
+			ObjectDisposedException.ThrowIf(this.objectTable == null, nameof(this.ObjectTable));
+			return this.objectTable;
+		}
+	}
 
 	/// <inheritdoc/>
 	protected override IEnumerable<IService> Dependencies => [AddressService.Instance];
@@ -546,6 +561,9 @@ public class ActorService : ServiceBase<ActorService>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsGPoseActor(IntPtr actorAddress)
 	{
+		if (this.objectTable == null)
+			return false;
+
 		int objectIndex = this.objectTable.GetIndexOf(actorAddress);
 		if (objectIndex == -1)
 			return false;
@@ -565,6 +583,9 @@ public class ActorService : ServiceBase<ActorService>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsLocalOverworldPlayer(IntPtr actorAddress)
 	{
+		if (this.objectTable == null)
+			return false;
+
 		int objectIndex = this.objectTable.GetIndexOf(actorAddress);
 		if (objectIndex == -1)
 			return false;
@@ -578,6 +599,9 @@ public class ActorService : ServiceBase<ActorService>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsLocalGPosePlayer(IntPtr actorAddress)
 	{
+		if (this.objectTable == null)
+			return false;
+
 		int objectIndex = this.objectTable.GetIndexOf(actorAddress);
 		if (objectIndex == -1)
 			return false;
@@ -592,8 +616,43 @@ public class ActorService : ServiceBase<ActorService>
 	public bool IsLocalPlayer(IntPtr actorAddress) => this.IsLocalOverworldPlayer(actorAddress) || this.IsLocalGPosePlayer(actorAddress);
 
 	/// <inheritdoc/>
+	public override async Task Shutdown()
+	{
+		// Trigger a token cancellation first before disposing of the actor table.
+		await base.Shutdown();
+
+		if (App.Current != null)
+		{
+			App.Current.Dispatcher.Invoke(() =>
+			{
+				this.objectTable?.Dispose();
+				this.objectTable = null;
+			});
+		}
+		else
+		{
+			this.objectTable?.Dispose();
+			this.objectTable = null;
+		}
+
+		// Clear all cached handles to prevent stale references
+		lock (ObjectHandleCache.Lock)
+		{
+			foreach (var entry in ObjectHandleCache.Cache.Values)
+			{
+				if (!entry.Object.IsDisposed)
+					entry.Object.Dispose();
+			}
+
+			ObjectHandleCache.Cache.Clear();
+		}
+	}
+
+	/// <inheritdoc/>
 	protected override async Task OnStart()
 	{
+		this.objectTable ??= new ObjectTable();
+
 		this.CancellationTokenSource = new CancellationTokenSource();
 		this.BackgroundTask = Task.Run(() => this.Tick(this.CancellationToken));
 		await base.OnStart();
@@ -609,7 +668,7 @@ public class ActorService : ServiceBase<ActorService>
 			try
 			{
 				if (GameService.Ready)
-					this.objectTable.Refresh();
+					this.objectTable?.Refresh();
 
 				await Task.Delay(TICK_DELAY, cancellationToken);
 			}
@@ -629,8 +688,7 @@ public class ActorService : ServiceBase<ActorService>
 internal static class ObjectHandleCache
 {
 	public static readonly Lock Lock = new();
-	public static readonly ConcurrentDictionary<(IntPtr, Type), CacheEntry> Cache = new();
-	public static readonly ObjectPool<List<GameObjectMemory>> ListPool = ObjectPool.Create<List<GameObjectMemory>>();
+	public static readonly ConcurrentDictionary<IntPtr, CacheEntry> Cache = new();
 
 	public sealed record class CacheEntry
 	{
@@ -643,5 +701,53 @@ internal static class ObjectHandleCache
 		}
 
 		public GameObjectMemory Object { get; init; }
+	}
+}
+
+internal static class MemoryObjectFactory
+{
+	private static readonly int s_objectKindOffset;
+	private static readonly Type s_objectKindType;
+
+	static MemoryObjectFactory()
+	{
+		var property = typeof(GameObjectMemory).GetProperty(nameof(GameObjectMemory.ObjectKind))
+			?? throw new InvalidOperationException($"Property '{nameof(GameObjectMemory.ObjectKind)}' not found in type '{nameof(GameObjectMemory)}'.");
+
+		var attr = property.GetCustomAttribute<BindAttribute>()
+			?? throw new InvalidOperationException($"Property '{property.Name}' does not have a bind attribute.");
+
+		if (attr.Offsets == null || attr.Offsets.Length != 1)
+			throw new InvalidOperationException($"Property '{property.Name}' must have exactly one offset defined in its bind attribute.");
+
+		s_objectKindOffset = attr.Offsets[0];
+		s_objectKindType = Enum.GetUnderlyingType(typeof(ObjectTypes));
+	}
+
+	public static GameObjectMemory Create(IntPtr address)
+	{
+		if (address == IntPtr.Zero)
+			throw new ArgumentException("Invalid address provided for memory object creation.", nameof(address));
+
+		var objKind = (ObjectTypes)MemoryService.Read(address + s_objectKindOffset, s_objectKindType);
+		GameObjectMemory obj = objKind switch
+		{
+			// NOTE(S):
+			// - Object type "Mount" is type "ActorMemory".
+			// - Object types "BattleNpc" and "EventNpc" are derived types of "ActorMemory" but Anamnesis is
+			//   not interested in their fields so we can treat them as a generic "ActorMemory".
+			// - Object types "Treasure", "Aetheryte", "GatheringPoint", "EventObject", "Area", "HousingObject",
+			//   and "ReactionEvent" are all derived types of "GameObjectMemory" but Anamnesis is not interested
+			//   in their fields so we can treat them as a generic "GameObjectMemory".
+			// - Object type "Retainer" shares the same object structure as "ActorMemory" but has a different
+			//   object type value, so we can safely treat it as "ActorMemory".
+			ObjectTypes.Player or ObjectTypes.BattleNpc or ObjectTypes.EventNpc or ObjectTypes.Mount or ObjectTypes.Retainer => new ActorMemory(),
+			ObjectTypes.Companion => new CompanionMemory(),
+			ObjectTypes.Ornament => new OrnamentMemory(),
+			_ => new GameObjectMemory(),
+		};
+
+		obj.SetAddress(address);
+		return obj;
 	}
 }

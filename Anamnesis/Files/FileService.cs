@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static Anamnesis.Memory.NativeFunctions;
 
 public struct OpenResult
 {
@@ -483,6 +484,161 @@ public class FileService : ServiceBase<FileService>
 		{
 			file.Attributes = FileAttributes.Normal;
 		}
+	}
+
+	/// <summary>
+	/// Schedules the target file for deletion on the next OS reboot if not already scheduled.
+	/// </summary>
+	/// <param name="filePath">
+	/// The full path to the file to be deleted. The file must exist at the time of scheduling, but it does not need to exist at the time of reboot for the deletion to occur.
+	/// </param>
+	/// <param name="logActions">
+	/// If true, the method will log its actions.
+	/// </param>
+	public static void ScheduleFileForDeletion(string filePath, bool logActions = false)
+	{
+		const string RegValueName = "PendingFileRenameOperations";
+
+		if (!File.Exists(filePath))
+			return;
+
+		try
+		{
+			string regKeyPath = string.Join("\\", "SYSTEM", "CurrentControlSet", "Control", "Session Manager");
+			string longPath = Path.GetFullPath(filePath);
+			string ntPath = longPath.StartsWith(@"\??\") ? longPath : @"\??\" + longPath;
+
+			using var key = Registry.LocalMachine.OpenSubKey(regKeyPath, writable: false);
+			if (key == null)
+			{
+				if (logActions)
+					Log.Error("Could not open registry key for pending file rename operations.");
+
+				return;
+			}
+
+			var existing = key?.GetValue(RegValueName) as string[] ?? [];
+			bool alreadyScheduled = false;
+			for (int i = 0; i < existing.Length; i += 2)
+			{
+				if (existing[i].EndsWith(ntPath, StringComparison.OrdinalIgnoreCase))
+				{
+					alreadyScheduled = true;
+					break;
+				}
+			}
+
+			if (!alreadyScheduled)
+			{
+				MoveFileEx(longPath, null, (uint)MoveFileFlag.MOVEFILE_DELAY_UNTIL_REBOOT);
+				if (logActions)
+					Log.Information($"Scheduled file for deletion on next OS reboot: {filePath}");
+			}
+			else
+			{
+				if (logActions)
+					Log.Verbose($"File already scheduled for deletion, skipping scheduling: {filePath}");
+			}
+		}
+		catch (UnauthorizedAccessException)
+		{
+			if (logActions)
+				Log.Warning($"Access denied when trying to schedule file for deletion: {filePath}.");
+		}
+		catch (Exception ex)
+		{
+			if (logActions)
+				Log.Warning($"Failed to schedule file for deletion: {filePath} ({ex.GetType().Name})");
+		}
+	}
+
+	/// <summary>
+	/// Attempts to delete the target file.
+	/// </summary>
+	/// <param name="filePath">
+	/// The full path to the file to be deleted.
+	/// </param>
+	/// <param name="scheduleOnFailure">
+	/// If true, the method will attempt to schedule the file for
+	/// deletion on the next OS reboot if the immediate deletion fails.
+	/// </param>
+	/// <param name="logActions">
+	/// If true, the method will log its actions.
+	/// </param>
+	/// <returns>
+	/// True if the file was immediately deleted; false otherwise.
+	/// </returns>
+	public static bool TryDeleteFile(string filePath, bool scheduleOnFailure = false, bool logActions = false)
+	{
+		try
+		{
+			if (File.Exists(filePath))
+			{
+				File.Delete(filePath);
+				if (logActions)
+					Log.Information($"Deleted file: {filePath}");
+
+				return true;
+			}
+		}
+		catch (Exception ex)
+		{
+			if (logActions)
+				Log.Warning($"Failed to delete file: {filePath} ({ex.GetType().Name})");
+
+			if (scheduleOnFailure)
+			{
+				ScheduleFileForDeletion(filePath);
+				if (logActions)
+					Log.Information($"Scheduled file for deletion on next OS reboot: {filePath}");
+			}
+		}
+
+		return false;
+	}
+
+	/// <summary>
+	/// Attempts to delete all immediate files in the specified directory that match the given search pattern.
+	/// </summary>
+	/// <param name="directory">
+	/// The directory search space for file deletion.
+	/// </param>
+	/// <param name="pattern">
+	/// The filename search pattern for file deletion.
+	/// </param>
+	/// <param name="scheduleOnFailure">
+	/// If true, the method will attempt to schedule the file for
+	/// deletion on the next OS reboot if the immediate deletion fails.
+	/// </param>
+	/// <param name="logActions">
+	/// If true, the method will log its actions.
+	/// </param>
+	/// <param name="abortOnFailure">
+	/// If true and a file fails to be deleted, the method will abort the deletion process.
+	/// </param>
+	/// <returns>
+	/// Returns the number of deleted files. Scheduled files are not counted as deleted.
+	/// </returns>
+	public static int TryDeleteFiles(string directory, string pattern, bool scheduleOnFailure = false, bool logActions = false, bool abortOnFailure = true)
+	{
+		int deleted = 0;
+		foreach (var file in Directory.EnumerateFiles(directory, pattern))
+		{
+			try
+			{
+				if (TryDeleteFile(file, scheduleOnFailure, logActions))
+				{
+					deleted++;
+				}
+			}
+			catch (Exception)
+			{
+				if (abortOnFailure)
+					break;
+			}
+		}
+
+		return deleted;
 	}
 
 	public override async Task Initialize()

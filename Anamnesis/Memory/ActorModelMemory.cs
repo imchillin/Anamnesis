@@ -12,8 +12,22 @@ public class ActorModelMemory : DrawObjectMemory
 	/// <summary>
 	/// Gets or sets the main-hand weapon memory object.
 	/// </summary>
-	[Bind(0x030, BindFlags.Pointer)] public new ExtendedWeaponMemory? ChildObject { get; set; }
-	[Bind(0x0A0, BindFlags.Pointer | BindFlags.OnlyInGPose | BindFlags.DontCacheOffsets)] public SkeletonMemory? Skeleton { get; set; }
+	[Bind(0x030, BindFlags.Pointer)]
+	public new ExtendedWeaponMemory? ChildObject
+	{
+		get => base.ChildObject as ExtendedWeaponMemory;
+		set
+		{
+			if (base.ChildObject == value)
+				return;
+
+			base.ChildObject = value;
+			this.OnPropertyChanged(nameof(base.ChildObject));
+			this.OnPropertyChanged(nameof(this.ChildObject));
+		}
+	}
+
+	[Bind(0x0A0, BindFlags.Pointer | BindFlags.OnlyInGPose | BindFlags.DontCacheOffsets, SyncGroup = "Skeleton")] public SkeletonMemory? Skeleton { get; set; }
 	[Bind(0x150, BindFlags.Pointer)] public BustMemory? Bust { get; set; }
 	[Bind(0x290)] public Color Tint { get; set; }
 	[Bind(0x2A4)] public float Height { get; set; }
@@ -21,8 +35,7 @@ public class ActorModelMemory : DrawObjectMemory
 	[Bind(0x2EC)] public float Drenched { get; set; }
 	[Bind(0xAA0)] public short DataPath { get; set; }
 	[Bind(0xAA4)] public byte DataHead { get; set; }
-	[Bind(0xBF0, 0x024)] public int ExtendedAppearanceFlags { get; private set; }
-	[Bind(0xBF0, 0x028, BindFlags.Pointer)] public ExtendedAppearanceMemory? ExtendedAppearanceUnsafePtr { get; private set; }
+	[Bind(0xBF0, BindFlags.Pointer)] public ConstantBufferMemory<ExtendedAppearanceMemory>? CustomizeParameterCBuffer { get; private set; }
 
 	public bool LockWetness
 	{
@@ -51,20 +64,19 @@ public class ActorModelMemory : DrawObjectMemory
 	}
 
 	public ExtendedAppearanceMemory? ExtendedAppearance
-		=> (this.IsHuman && (this.ExtendedAppearanceFlags & 0x4003) == 0) ? this.ExtendedAppearanceUnsafePtr : null;
+		=> this.IsHuman ? this.CustomizeParameterCBuffer?.TryGetSourcePtr() : null;
 
 	protected override bool CanRead(BindInfo bind)
 	{
-		if (bind.Name == nameof(this.ExtendedAppearanceFlags) ||
-			bind.Name == nameof(this.ExtendedAppearanceUnsafePtr))
+		if (bind.Name == nameof(this.CustomizeParameterCBuffer))
 		{
 			// No extended appearance for anything that isn't a player!
 			if (!this.IsHuman)
 			{
-				if (this.ExtendedAppearanceUnsafePtr != null)
+				if (this.CustomizeParameterCBuffer != null)
 				{
-					this.ExtendedAppearanceUnsafePtr?.Dispose();
-					this.ExtendedAppearanceUnsafePtr = null;
+					this.CustomizeParameterCBuffer?.Dispose();
+					this.CustomizeParameterCBuffer = null;
 				}
 
 				return false;

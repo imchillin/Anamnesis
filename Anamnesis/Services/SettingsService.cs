@@ -56,7 +56,11 @@ public class SettingsService : ServiceBase<SettingsService>
 	/// </summary>
 	public static void Save()
 	{
-		string json = SerializerService.Serialize(Instance.Settings!);
+		var settings = InstanceOrNull?.Settings;
+		if (settings == null)
+			return;
+
+		string json = SerializerService.Serialize(settings);
 		File.WriteAllText(s_settingsPath, json);
 	}
 

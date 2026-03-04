@@ -34,7 +34,6 @@
 						Height="32"
 						Style="{StaticResource TransparentButton}"
 						Padding="6,3"/>
-
 			</StackPanel>
 		</GroupBox>
 
@@ -49,7 +48,7 @@
 			<StackPanel>
 				<XivToolsWpf:TextBlock Text="{Binding TargetService.PlayerTargetHandle.Unsafe.Index, StringFormat=Index: {0:D}, Mode=OneWay}"/>
 
-				<ComboBox ItemsSource="{Binding Source={x:Static anaMem:ActorType.AllActorTypes}}" SelectedIndex="{Binding TargetService.PlayerTargetHandle.Unsafe.ObjectKindInt}">
+				<ComboBox ItemsSource="{Binding Source={x:Static anaMem:ObjectType.AllActorTypes}}" SelectedIndex="{Binding TargetService.PlayerTargetHandle.Unsafe.ObjectKindInt}">
 					<ComboBox.ItemContainerStyle>
 						<Style TargetType="{x:Type ComboBoxItem}">
 							<Setter Property="IsEnabled" Value="{Binding IsSupportedType}"/>
