@@ -32,23 +32,17 @@
   </PropertyGroup>
   <ItemGroup>
     <RemoteControllerSources
-        Include="..\RemoteController\**\*.cs"
-        Exclude="..\RemoteController\obj\**;..\RemoteController\bin\**" />
+      Include="..\RemoteController\**\*.cs"
+      Exclude="..\RemoteController\obj\**;..\RemoteController\bin\**" />
   </ItemGroup>
   <Target Name="PublishRemoteController"
-          BeforeTargets="ResolveProjectReferences"
+          BeforeTargets="BeforeBuild"
           Inputs="$(MSBuildThisFileDirectory)..\RemoteController\RemoteController.csproj;@(RemoteControllerSources)"
           Outputs="$(MSBuildThisFileDirectory)..\obj\RemotePublish\RemoteController.dll">
 
     <Message Importance="high" Text="Changes detected in RemoteController. Publishing..." />
-    <MSBuild Projects="$(MSBuildThisFileDirectory)..\RemoteController\RemoteController.csproj"
-             Targets="Publish"
-             Properties="Configuration=$(Configuration);
-                         Platform=$(Platform);
-                         RuntimeIdentifier=win-x64;
-                         PublishDir=$(MSBuildThisFileDirectory)..\obj\RemotePublish\;
-                         SelfContained=true;
-                         BuildProjectReferences=false" />
+    <MakeDir Directories="$(MSBuildThisFileDirectory)..\obj\RemotePublish\" />
+    <Exec Command="dotnet publish &quot;$(MSBuildThisFileDirectory)..\RemoteController\RemoteController.csproj&quot; -c $(Configuration) -r win-x64 -o &quot;$(MSBuildThisFileDirectory)..\obj\RemotePublish&quot; --self-contained true" />
   </Target>
   <ItemGroup>
     <PackageReference Include="Fody" Version="6.9.1">
