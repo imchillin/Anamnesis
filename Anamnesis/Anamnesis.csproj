@@ -144,10 +144,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="$(SolutionDir)obj\RemotePublish\RemoteController.dll">
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)..\obj\RemotePublish\RemoteController.dll">
       <LogicalName>Anamnesis.Memory.RemoteController.dll</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="$(SolutionDir)obj\RemotePublish\FASMX64.dll">
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)..\obj\RemotePublish\FASMX64.dll">
       <LogicalName>Anamnesis.Memory.FASMX64.dll</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

@@ -22,6 +22,7 @@ public class GameService : ServiceBase<GameService>
 	private int isSignedIn = 0;
 	private bool hasInjected = false;
 	private string? injectedDllPath = null;
+	private bool injectionFailed = false;
 
 	/// <summary>
 	/// Gets a value indicating whether the game process is in a ready state.
@@ -94,7 +95,7 @@ public class GameService : ServiceBase<GameService>
 				// Perform the remote controller injection once upon sign-in
 				// NOTE: We do it here instead of on open process detection to avoid collisions
 				// with Dalamud's own injection logic.
-				if (this.IsSignedIn && !this.hasInjected && MemoryService.Process != null)
+				if (this.IsSignedIn && !this.hasInjected && !this.injectionFailed && MemoryService.Process != null)
 				{
 					try
 					{
@@ -106,9 +107,11 @@ public class GameService : ServiceBase<GameService>
 						this.injectedDllPath = injector.RemoteCtrlDllPath;
 						this.hasInjected = true;
 					}
-					catch (Exception)
+					catch (Exception ex)
 					{
 						// Do nothing, the process might have exited before we could inject.
+						this.injectionFailed = true;
+						Log.Warning(ex, "Failed to inject remote controller.");
 					}
 				}
 
@@ -128,6 +131,7 @@ public class GameService : ServiceBase<GameService>
 	{
 		this.hasInjected = false;
 		this.injectedDllPath = null;
+		this.injectionFailed = false;
 		await base.Shutdown();
 	}
 
