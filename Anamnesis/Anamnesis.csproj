@@ -46,7 +46,7 @@
 
     <Message Importance="high" Text="Changes detected in RemoteController. Publishing..." />
     <MakeDir Directories="$(RemotePublishDir)" />
-    <Exec Command="dotnet publish &quot;$(SolutionDir)RemoteController\RemoteController.csproj&quot; -c $(Configuration) -r win-x64 -o &quot;$(RemotePublishDir)/&quot; --self-contained true" WorkingDirectory="$(SolutionDir)" />
+    <Exec Command="dotnet publish &quot;$(SolutionDir)RemoteController\RemoteController.csproj&quot; -c $(Configuration) -r win-x64 -o &quot;$(RemotePublishDir)/&quot; --self-contained true --no-build" WorkingDirectory="$(SolutionDir)" />
   </Target>
   <ItemGroup>
     <PackageReference Include="Fody" Version="6.9.1">
