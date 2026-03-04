@@ -36,13 +36,13 @@
       Exclude="..\RemoteController\obj\**;..\RemoteController\bin\**" />
   </ItemGroup>
   <Target Name="PublishRemoteController"
-          BeforeTargets="BeforeBuild"
+          BeforeTargets="ResolveProjectReferences"
           Inputs="$(MSBuildThisFileDirectory)..\RemoteController\RemoteController.csproj;@(RemoteControllerSources)"
           Outputs="$(MSBuildThisFileDirectory)..\obj\RemotePublish\RemoteController.dll">
 
     <Message Importance="high" Text="Changes detected in RemoteController. Publishing..." />
     <MakeDir Directories="$(MSBuildThisFileDirectory)..\obj\RemotePublish\" />
-    <Exec Command="dotnet publish &quot;$(MSBuildThisFileDirectory)..\RemoteController\RemoteController.csproj&quot; -c $(Configuration) -r win-x64 -o &quot;$(MSBuildThisFileDirectory)..\obj\RemotePublish&quot; --self-contained true" />
+    <Exec Command="dotnet publish &quot;$(MSBuildThisFileDirectory)..\RemoteController\RemoteController.csproj&quot; -c $(Configuration) -r win-x64 -o &quot;$(MSBuildThisFileDirectory)..\obj\RemotePublish&quot; --self-contained true --no-dependencies" />
   </Target>
   <ItemGroup>
     <PackageReference Include="Fody" Version="6.9.1">
