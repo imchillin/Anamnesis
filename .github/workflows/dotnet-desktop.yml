@@ -33,10 +33,10 @@ jobs:
 
       # 3. Publish projects
       - name: Publish Anamnesis
-        run: dotnet publish Anamnesis/Anamnesis.csproj /p:SolutionDir="${{ github.workspace }}/" /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml" /p:DefineConstants="CI_BUILD"
+        run: dotnet publish Anamnesis/Anamnesis.csproj /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml" /p:DefineConstants="CI_BUILD"
 
       - name: Publish UpdateExtractor
-        run: dotnet publish UpdateExtractor/UpdateExtractor.csproj /p:SolutionDir="${{ github.workspace }}/" /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml" /p:DefineConstants="CI_BUILD"
+        run: dotnet publish UpdateExtractor/UpdateExtractor.csproj /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml" /p:DefineConstants="CI_BUILD"
 
       # 4. Attest Build Artifacts
       - name: Generate artifact attestation Ana
