@@ -671,7 +671,7 @@ public class CharacterFile : JsonFileBase
 			if (CheckBaseChanges(current, target))
 				flags |= ChangeType.Base;
 
-			if (CheckWeaponsCompatibility(current, target, mode))
+			if (!IsWeaponChangeCompatible(current, target, mode))
 				flags |= ChangeType.Base;
 
 			if (CheckAppearanceChanges(current, target, mode))
@@ -814,16 +814,8 @@ public class CharacterFile : JsonFileBase
 			return c.MainHand != t.MainHand || c.OffHand != t.OffHand;
 		}
 
-		private static bool CheckWeaponsCompatibility(CharacterFile c, CharacterFile t, CharacterFile.SaveModes mode)
+		private static bool IsWeaponChangeCompatible(CharacterFile c, CharacterFile t, CharacterFile.SaveModes mode)
 		{
-			if (!mode.HasFlagUnsafe(CharacterFile.SaveModes.EquipmentWeapons))
-				return false;
-
-			if (t.IsWeaponDrawn != true)
-				return false;
-
-			// Treat all crafters and all gatherers as equivalent
-			// since they use the Paladin battle/idle animation.
 			static bool AreBothCraftersOrGatherers(Classes a, Classes b)
 			{
 				return ((a & (Classes.Crafters | Classes.Gatherers)) != 0) &&
@@ -836,7 +828,7 @@ public class CharacterFile : JsonFileBase
 					   (!ReferenceEquals(curItem, dummy) && ReferenceEquals(tgtItem, dummy));
 			}
 
-			static bool NeedsRedrawForSlotChange(object? curItem, object? tgtItem, ItemSlots slot)
+			static bool IsChangeSlotIncompatible(object? curItem, object? tgtItem, ItemSlots slot)
 			{
 				if (curItem is Anamnesis.GameData.Excel.Item curExcel && tgtItem is Anamnesis.GameData.Excel.Item tgtExcel)
 				{
@@ -848,57 +840,39 @@ public class CharacterFile : JsonFileBase
 				return false;
 			}
 
-			if (c.MainHand is not null && t.MainHand is not null && !c.MainHand.Equals(t.MainHand))
+			static bool IsSlotCompatible(WeaponSave? curSave, WeaponSave? tgtSave, ItemSlots slot)
 			{
-				var curItem = ItemUtility.GetItem(ItemSlots.MainHand, c.MainHand.ModelSet, c.MainHand.ModelBase, c.MainHand.ModelVariant, false);
-				var tgtItem = ItemUtility.GetItem(ItemSlots.MainHand, t.MainHand.ModelSet, t.MainHand.ModelBase, t.MainHand.ModelVariant, false);
+				if (curSave is null || tgtSave is null || curSave.Equals(tgtSave))
+					return true;
+
+				var curItem = ItemUtility.GetItem(slot, curSave.ModelSet, curSave.ModelBase, curSave.ModelVariant, false);
+				var tgtItem = ItemUtility.GetItem(slot, tgtSave.ModelSet, tgtSave.ModelBase, tgtSave.ModelVariant, false);
 
 				if (IsDummyTransition(curItem, tgtItem, ItemUtility.NoneItem) ||
 					IsDummyTransition(curItem, tgtItem, ItemUtility.EmperorsNewFists))
-					return true;
+					return false;
 
-				if (NeedsRedrawForSlotChange(curItem, tgtItem, ItemSlots.MainHand))
-					return true;
+				if (IsChangeSlotIncompatible(curItem, tgtItem, slot))
+					return false;
 
 				if (curItem is Anamnesis.GameData.Excel.Item curExcel && tgtItem is Anamnesis.GameData.Excel.Item tgtExcel)
 				{
 					var curFlags = curExcel.ClassJobCategory.Value.ToFlags();
 					var tgtFlags = tgtExcel.ClassJobCategory.Value.ToFlags();
 
+					// Treat crafters and gatherers as equivalent as they use the paladin battle/idle animation.
 					if (AreBothCraftersOrGatherers(curFlags, tgtFlags))
-						return false;
+						return true;
 
 					if ((curFlags & tgtFlags) == 0)
-						return true;
-				}
-			}
-
-			if (c.OffHand is not null && t.OffHand is not null && !c.OffHand.Equals(t.OffHand))
-			{
-				var curItem = ItemUtility.GetItem(ItemSlots.OffHand, c.OffHand.ModelSet, c.OffHand.ModelBase, c.OffHand.ModelVariant, false);
-				var tgtItem = ItemUtility.GetItem(ItemSlots.OffHand, t.OffHand.ModelSet, t.OffHand.ModelBase, t.OffHand.ModelVariant, false);
-
-				if (IsDummyTransition(curItem, tgtItem, ItemUtility.NoneItem) ||
-					IsDummyTransition(curItem, tgtItem, ItemUtility.EmperorsNewFists))
-					return true;
-
-				if (NeedsRedrawForSlotChange(curItem, tgtItem, ItemSlots.OffHand))
-					return true;
-
-				if (curItem is Anamnesis.GameData.Excel.Item curExcel && tgtItem is Anamnesis.GameData.Excel.Item tgtExcel)
-				{
-					var curFlags = curExcel.ClassJobCategory.Value.ToFlags();
-					var tgtFlags = tgtExcel.ClassJobCategory.Value.ToFlags();
-
-					if (AreBothCraftersOrGatherers(curFlags, tgtFlags))
 						return false;
-
-					if ((curFlags & tgtFlags) == 0)
-						return true;
 				}
+
+				return true;
 			}
 
-			return false;
+			return IsSlotCompatible(c.MainHand, t.MainHand, ItemSlots.MainHand) &&
+				   IsSlotCompatible(c.OffHand, t.OffHand, ItemSlots.OffHand);
 		}
 
 		private static bool CheckFacewearChanges(CharacterFile c, CharacterFile t, CharacterFile.SaveModes mode)
