@@ -184,7 +184,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private static ILogger Log => Serilog.Log.ForContext<PosePage>();
 
-	public static Task ImportPose(ObjectHandle<ActorMemory> actorHandle, SkeletonEntity skeleton, PoseImportOptions importOption, PoseMode mode)
+	public static Task ImportPose(ObjectHandle<ActorMemory> actorHandle, SkeletonEntity skeleton, PoseImportOptions importOption, PoseMode mode, Action? onAfterApply = null)
 	{
 		return actorHandle.DoAsync(async actor =>
 		{
@@ -379,6 +379,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			{
 				// Update the skeleton after applying the pose
 				skeleton.ReadTransforms();
+				onAfterApply?.Invoke();
 
 				// Re-enable auto-commit and commit changes
 				actor.History.Commit();
@@ -733,7 +734,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		bool isShiftPressed = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
 		PoseMode mode = isShiftPressed ? PoseMode.All : (PoseMode.All & ~PoseMode.Scale);
-		await ImportPose(this.Actor, this.Skeleton, PoseImportOptions.Character, mode);
+		await ImportPose(this.Actor, this.Skeleton, PoseImportOptions.Character, mode, () => this.TransformEditor?.InvalidateInternalState());
 		this.Skeleton?.ClearSelection();
 	}
 
@@ -894,6 +895,8 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			}
 			finally
 			{
+				this.TransformEditor?.InvalidateInternalState();
+
 				// Re-enable auto-commit and commit changes
 				actor.History.Commit();
 				actor.History.AutoCommitEnabled = originalAutoCommitEnabled;
@@ -1066,7 +1069,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		if (importMode == PoseMode.None)
 			return;
 
-		await ImportPose(this.Actor, this.Skeleton, importOption, importMode);
+		await ImportPose(this.Actor, this.Skeleton, importOption, importMode, () => this.TransformEditor?.InvalidateInternalState());
 	}
 
 	private PoseMode GetSecondaryImportOptionMode()
