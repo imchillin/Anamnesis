@@ -458,7 +458,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			SwapLinkedBones(targetBone, targetBone);
 		}
 
-		if (PoseService.Instance.EnableParenting)
+		if (PoseService.Instance.ParentingMode != ParentingMode.None)
 		{
 			foreach (var child in targetBone.Children)
 			{
@@ -543,7 +543,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			{ targetBone, targetBone.Position },
 		};
 
-		if (PoseService.Instance.EnableParenting)
+		if (PoseService.Instance.ParentingMode != ParentingMode.None)
 		{
 			List<Bone> boneChildren = targetBone.GetDescendants();
 			foreach (var childBone in boneChildren)
@@ -919,6 +919,21 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		// If the selected bone has no parent, reselect the root bone.
 		var selectedBonesParents = this.Skeleton.SelectedBones.Select(b => b.Parent ?? b).Distinct().ToList();
 		this.Skeleton.Select(selectedBonesParents);
+	}
+
+	private void OnParentingModeClicked(object sender, RoutedEventArgs e)
+	{
+		var service = PoseService.InstanceOrNull;
+		if (service == null)
+			return;
+
+		var current = service.ParentingMode;
+		PoseService.Instance.ParentingMode = current switch
+		{
+			ParentingMode.Full => ParentingMode.PositionOnly,
+			ParentingMode.PositionOnly => ParentingMode.None,
+			_ => ParentingMode.Full,
+		};
 	}
 
 	private void OnCanvasMouseDown(object sender, MouseButtonEventArgs e)

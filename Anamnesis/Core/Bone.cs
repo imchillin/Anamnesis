@@ -470,11 +470,22 @@ public class Bone : ITransform
 
 						if (writeChildren)
 						{
-							bool parentingEnabled = PoseService.Instance.EnableParenting;
+							ParentingMode mode = PoseService.Instance.ParentingMode;
 							foreach (var child in currentBone.Children)
 							{
-								if (parentingEnabled)
+								if (mode == ParentingMode.Full)
 								{
+									bonesToProcess.Push((child, false, modelTransform));
+								}
+								else if (mode == ParentingMode.PositionOnly)
+								{
+									var childMemory = child.TransformMemory;
+									if (childMemory != null)
+									{
+										Quaternion parentRotInverse = Quaternion.Conjugate(modelTransform.Rotation);
+										child.Rotation = Quaternion.Normalize(parentRotInverse * childMemory.Rotation);
+									}
+
 									bonesToProcess.Push((child, false, modelTransform));
 								}
 								else

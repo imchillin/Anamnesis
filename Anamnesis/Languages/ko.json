@@ -316,7 +316,6 @@
   "Pose_GuiFlip": "정면 바라보기",
   "Pose_GuiNotFlip": "고개 돌리기",
   "Pose_FreezePhysics": "물리연산 얼리기",
-  "Pose_Parenting": "부모-자식관계 설정",
   "Pose_FlipSides": "반대 면",
   "Pose_Rotation": "회전",
   "Pose_Scale": "비율",

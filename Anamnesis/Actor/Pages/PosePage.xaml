@@ -326,10 +326,62 @@
 								<XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldState" Margin="0, 0, 0, 3"/>
 							</CheckBox>
 
-							<CheckBox Margin="3,0,6,0"  VerticalContentAlignment="Center" IsChecked="{Binding PoseService.EnableParenting}"
-									  IsEnabled="{Binding PoseService.IsEnabled}">
-								<XivToolsWpf:TextBlock Key="Pose_Parenting" Margin="0, 0, 0, 3"/>
-							</CheckBox>
+							<Button Margin="0,3,6,3" MinWidth="48"
+									VerticalContentAlignment="Center"
+									Click="OnParentingModeClicked"
+									IsEnabled="{Binding PoseService.IsEnabled}"
+									Style="{StaticResource TransparentButton}">
+								<Button.ToolTip>
+									<XivToolsWpf:TextBlock Key="Pose_Parenting_Tooltip"/>
+								</Button.ToolTip>
+								
+								<Grid Margin="5, 0, 5, 0" Width="115">
+									<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+										<StackPanel.Style>
+											<Style TargetType="StackPanel">
+												<Setter Property="Visibility" Value="Collapsed"/>
+												<Style.Triggers>
+													<DataTrigger Binding="{Binding PoseService.ParentingMode}" Value="Full">
+														<Setter Property="Visibility" Value="Visible"/>
+													</DataTrigger>
+												</Style.Triggers>
+											</Style>
+										</StackPanel.Style>
+										<XivToolsWpf:IconBlock Icon="Link" Margin="0,1,5,0" FontSize="11"/>
+										<XivToolsWpf:TextBlock Key="Pose_Parenting_Full" Margin="0"/>
+									</StackPanel>
+
+									<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+										<StackPanel.Style>
+											<Style TargetType="StackPanel">
+												<Setter Property="Visibility" Value="Collapsed"/>
+												<Style.Triggers>
+													<DataTrigger Binding="{Binding PoseService.ParentingMode}" Value="PositionOnly">
+														<Setter Property="Visibility" Value="Visible"/>
+													</DataTrigger>
+												</Style.Triggers>
+											</Style>
+										</StackPanel.Style>
+										<XivToolsWpf:IconBlock Icon="ArrowsAlt" Margin="0,1,5,0" FontSize="11"/>
+										<XivToolsWpf:TextBlock Key="Pose_Parenting_PositionOnly" Margin="0"/>
+									</StackPanel>
+
+									<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+										<StackPanel.Style>
+											<Style TargetType="StackPanel">
+												<Setter Property="Visibility" Value="Collapsed"/>
+												<Style.Triggers>
+													<DataTrigger Binding="{Binding PoseService.ParentingMode}" Value="None">
+														<Setter Property="Visibility" Value="Visible"/>
+													</DataTrigger>
+												</Style.Triggers>
+											</Style>
+										</StackPanel.Style>
+										<XivToolsWpf:IconBlock Icon="Unlink" Margin="0,1,5,0" FontSize="11"/>
+										<XivToolsWpf:TextBlock Key="Pose_Parenting_Off" Margin="0"/>
+									</StackPanel>
+								</Grid>
+							</Button>
 						</StackPanel>
 
 						<StackPanel Margin="2" Orientation="Horizontal" HorizontalAlignment="Right">
