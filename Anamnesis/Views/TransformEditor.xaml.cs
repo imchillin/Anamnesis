@@ -340,7 +340,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 		{
 			// For any selection, use the first bone as reference point
 			if (this.Skeleton?.SelectedBones?.FirstOrDefault() is Bone bone && this.initialRotations.TryGetValue(bone.Name, out Quaternion initialRotation))
-				return Quaternion.Multiply(bone.Rotation, Quaternion.Inverse(initialRotation));
+				return Quaternion.Multiply(Quaternion.Inverse(initialRotation), bone.Rotation);
 
 			return Quaternion.Identity;
 		}
@@ -357,6 +357,37 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 
 			return Vector3.Zero;
 		}
+	}
+
+	/// <summary>
+	/// Refreshes the cached internal initial bone states.
+	/// </summary>
+	public void InvalidateInternalState()
+	{
+		Application.Current?.Dispatcher.Invoke(() =>
+		{
+			if (this.Skeleton != null && this.Skeleton.SelectedBones != null && this.Skeleton.SelectedBones.Count() > 1)
+			{
+				Vector3 posDev = this.DeviationPosition;
+				Quaternion rotDev = this.DeviationRotation;
+				Vector3 scaleDev = this.DeviationScale;
+
+				Quaternion invRotDev = Quaternion.Inverse(rotDev);
+
+				foreach (Bone bone in this.Skeleton.SelectedBones)
+				{
+					this.initialPositions[bone.Name] = bone.Position - posDev;
+					this.initialRotations[bone.Name] = bone.Rotation * invRotDev;
+					this.initialScales[bone.Name] = bone.Scale - scaleDev;
+				}
+			}
+			else
+			{
+				this.SetInitialValues();
+			}
+
+			this.RaisePropertyChanged(string.Empty);
+		});
 	}
 
 	/// <summary>Handles changes to the skeleton dependency property.</summary>

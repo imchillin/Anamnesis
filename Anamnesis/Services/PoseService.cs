@@ -11,6 +11,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+public enum ParentingMode
+{
+	None,
+	PositionOnly,
+	Full,
+}
+
 [AddINotifyPropertyChangedInterface]
 public class PoseService : ServiceBase<PoseService>
 {
@@ -55,7 +62,7 @@ public class PoseService : ServiceBase<PoseService>
 		}
 	}
 
-	public bool EnableParenting { get; set; } = true;
+	public ParentingMode ParentingMode { get; set; } = ParentingMode.Full;
 
 	public bool CanEdit { get; set; }
 
@@ -89,7 +96,7 @@ public class PoseService : ServiceBase<PoseService>
 
 		// Freeze physics when posing is enabled
 		this.FreezePhysics = enabled;
-		this.EnableParenting = true;
+		this.ParentingMode = ParentingMode.Full;
 
 		EnabledChanged?.Invoke(enabled);
 		this.RaisePropertyChanged(nameof(this.IsEnabled));

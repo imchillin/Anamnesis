@@ -316,7 +316,6 @@
   "Pose_GuiFlip": "面向",
   "Pose_GuiNotFlip": "背向",
   "Pose_FreezePhysics": "冻结物理效果",
-  "Pose_Parenting": "包括子节点",
   "Pose_FlipSides": "左右反转",
   "Pose_Rotation": "旋转",
   "Pose_Scale": "比例",

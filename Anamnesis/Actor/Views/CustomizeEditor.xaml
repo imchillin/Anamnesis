@@ -90,7 +90,7 @@
 				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
 
-			<XivToolsWpf:NumberBox Grid.Column="0" ValueOffset="1" Value="{Binding Customize.EyeShape}" Minimum="0" Maximum="256" Buttons="True" Margin="2, 0, 6, 2"/>
+			<XivToolsWpf:NumberBox Grid.Column="0" ValueOffset="1" Value="{Binding Customize.EyeShape}" Minimum="0" Maximum="255" Buttons="True" Margin="2, 0, 6, 2"/>
 
 			<controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_EyeLeft" Value="{Binding Customize.MainEyeColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
 
