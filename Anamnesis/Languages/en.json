@@ -340,7 +340,7 @@
   "Character_Action_AnimationPause": "Pause",
   "Character_Action_AnimationUnpause": "Unpause",
   "Character_Action_AnimationBlend": "Blend",
-  "Character_Action_AnimationOverrideSpeedBlocked": "Only available within GPose.",
+  "Character_Action_AnimationOverrideGposeBlocked": "Only available in group pose.",
   "Character_Action_AnimationOverrideSpeedControlDisable": "Only available when speed control is enabled.",
   "Character_Action_AnimationOverrideGposeFrozen": "Actor motion is frozen by GPose",
   "Character_Action_GlobalFreezeWorldState": "Freeze World State",
