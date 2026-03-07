@@ -33,33 +33,47 @@ def convert_txt_to_json(txt_file, json_file):
                 log("Existing JSON file is empty or malformed. Starting fresh.")
                 pass  # If the file is empty or malformed, proceed with an empty list
     
-    new_entries_count = 0
+    # Read all URLs from the txt file
+    txt_urls = set()
     with open(txt_file, 'r', encoding='utf-8') as file:
         for line in file:
             url = line.strip()
-            if not url:
-                continue
-            if url in existing_entries:
-                log(f"Skipping duplicate URL: {url}")
-                continue
-            
-            author = extract_author_from_url(url)
-            file_name, file_ext = os.path.splitext(url)
-            thumbnail_url = f"{file_name}.md{file_ext}"
-            
-            entry = {
-                "Url": url,
-                "Author": author,
-                "Thumbnail": thumbnail_url
-            }
-            entries.append(entry)
-            existing_entries.add(url)
-            new_entries_count += 1
-    
+            if url:
+                txt_urls.add(url)
+
+    # Remove entries whose URLs are no longer in the txt file
+    removed_count = 0
+    if entries:
+        before_count = len(entries)
+        entries = [entry for entry in entries if entry['Url'] in txt_urls]
+        removed_count = before_count - len(entries)
+        existing_entries = {entry['Url'] for entry in entries}
+        if removed_count > 0:
+            log(f"Removed {removed_count} entries no longer in {txt_file}")
+
+    # Add new entries from the txt file
+    new_entries_count = 0
+    for url in txt_urls:
+        if url in existing_entries:
+            continue
+
+        author = extract_author_from_url(url)
+        file_name, file_ext = os.path.splitext(url)
+        thumbnail_url = f"{file_name}.md{file_ext}"
+
+        entry = {
+            "Url": url,
+            "Author": author,
+            "Thumbnail": thumbnail_url
+        }
+        entries.append(entry)
+        existing_entries.add(url)
+        new_entries_count += 1
+
     with open(json_file, 'w', encoding='utf-8') as file:
         json.dump(entries, file, indent=4)
-    
-    log(f"Added {new_entries_count} new entries. Total entries: {len(entries)}")
+
+    log(f"Removed {removed_count}, added {new_entries_count} new entries. Total entries: {len(entries)}")
 
 # Grab Absolute Path and start script
 parent_path = Path(__file__).resolve().parent.parent
