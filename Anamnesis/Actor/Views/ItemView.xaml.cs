@@ -75,14 +75,24 @@ public partial class ItemView : UserControl
 		set => WeaponExModelDp.Set(this, value);
 	}
 
+	[DependsOn(nameof(Slot))]
 	public string SlotName => LocalizationService.GetString("Character_Equipment_" + this.Slot);
 
+	[DependsOn(nameof(Slot))]
 	public bool IsWeapon => (this.Slot & ItemSlots.Weapons) != 0;
 
+	[DependsOn(nameof(Slot))]
 	public bool IsHead => this.Slot == ItemSlots.Head;
 
+	[DependsOn(nameof(Slot))]
 	public bool SupportsEarToggle => this.Slot == ItemSlots.Head
 		&& this.Actor?.DrawData.Customize?.Race == ActorCustomizeMemory.Races.Viera;
+
+	[DependsOn(nameof(IsWeapon))]
+	public bool CanEditItem => !this.IsWeapon || GposeService.Instance?.IsGpose == true;
+
+	[DependsOn(nameof(IsWeapon))]
+	public bool ShowWeaponWarning => this.IsWeapon && GposeService.InstanceOrNull?.IsGpose != true;
 
 	public bool IsValidWeapon
 	{
@@ -510,12 +520,25 @@ public partial class ItemView : UserControl
 	{
 		if (LocalizationService.Instance != null)
 			LocalizationService.Instance.LocaleChanged += this.OnLocaleChanged;
+
+		GposeService.GposeStateChanged += this.OnGposeStateChanged;
+		this.OnGposeStateChanged(GposeService.Instance?.IsGpose ?? false);
 	}
 
 	private void OnUnloaded(object sender, RoutedEventArgs e)
 	{
 		if (LocalizationService.Instance != null)
 			LocalizationService.Instance.LocaleChanged -= this.OnLocaleChanged;
+
+		GposeService.GposeStateChanged -= this.OnGposeStateChanged;
+	}
+
+	private async void OnGposeStateChanged(bool state)
+	{
+		await Dispatch.MainThread();
+
+		this.OnPropertyChanged(nameof(this.CanEditItem));
+		this.OnPropertyChanged(nameof(this.ShowWeaponWarning));
 	}
 
 	private void OnLocaleChanged()

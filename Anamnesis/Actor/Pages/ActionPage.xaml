@@ -1,15 +1,15 @@
 ﻿<UserControl x:Class="Anamnesis.Actor.Pages.ActionPage"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:controls="clr-namespace:Anamnesis.Actor.Controls"
+			 xmlns:converters="clr-namespace:Anamnesis.Actor.Converters"
 			 xmlns:views="clr-namespace:Anamnesis.Actor.Views"
-			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 xmlns:anaMem="clr-namespace:Anamnesis.Memory"
 			 xmlns:ana="clr-namespace:Anamnesis.Views"
-			 xmlns:converters="clr-namespace:Anamnesis.Actor.Converters"
-			 xmlns:controls="clr-namespace:Anamnesis.Actor.Controls"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 d:DesignHeight="600"
 			 d:DesignWidth="1024"
 			 DataContextChanged="OnDataContextChanged"
@@ -42,7 +42,7 @@
 											Icon="Swimmer" />
                     </GroupBox.Header>
 
-                    <Grid>
+					<Grid IsEnabled="{Binding GposeService.IsGpose}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition />
@@ -119,8 +119,19 @@
                             </Button>
                         </Grid>
 
-						<XivToolsWpf:InfoControl Visibility="{Binding Actor.Unsafe.CanAnimate, Converter={StaticResource !B2V}}" Grid.RowSpan="4" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideBlocked" />
-                    </Grid>
+						<Grid Grid.RowSpan="4" Grid.ColumnSpan="2">
+							<XivToolsWpf:InfoControl Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}" Key="Character_Action_AnimationOverrideGposeBlocked" />
+
+							<XivToolsWpf:InfoControl Key="Character_Action_AnimationOverrideBlocked">
+								<XivToolsWpf:InfoControl.Visibility>
+									<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
+										<Binding Path="GposeService.IsGpose"/>
+										<Binding Path="Actor.Unsafe.CanAnimate" Converter="{StaticResource !B}"/>
+									</MultiBinding>
+								</XivToolsWpf:InfoControl.Visibility>
+							</XivToolsWpf:InfoControl>
+						</Grid>
+					</Grid>
                 </GroupBox>
             </StackPanel>
 
@@ -217,7 +228,7 @@
 						<views:AnimationSpeedControl Grid.Row="4" Grid.Column="1" Slot="Lips" IsEnabled="{Binding Actor.Unsafe.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Unsafe.Animation.Speeds[7].Value}" />
 
                         <XivToolsWpf:InfoControl Visibility="{Binding AnimationService.SpeedControlEnabled, Converter={StaticResource !B2V}}"  Grid.RowSpan="6" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideSpeedControlDisable" />
-                        <XivToolsWpf:InfoControl Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}"  Grid.RowSpan="6" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideSpeedBlocked" />
+						<XivToolsWpf:InfoControl Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}"  Grid.RowSpan="6" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideGposeBlocked" />
                     </Grid>
                 </GroupBox>
             </StackPanel>

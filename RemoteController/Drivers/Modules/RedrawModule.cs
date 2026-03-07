@@ -190,7 +190,7 @@ public sealed class RedrawModule
 
 		if (success)
 		{
-			if (req.Flags.HasFlag(RedrawFlags.Weapons))
+			if (req.Flags.HasFlag(RedrawFlags.Weapons) && GposeDriver.InstanceOrNull?.IsInGpose == true)
 			{
 				this.loadWeapon.OriginalFunction(drawDataPtr, WeaponSlot.MainHand, req.MainHandId, 1, 0, 1, 0, 0);
 				this.loadWeapon.OriginalFunction(drawDataPtr, WeaponSlot.OffHand, req.OffHandId, 1, 0, 1, 0, 0);
