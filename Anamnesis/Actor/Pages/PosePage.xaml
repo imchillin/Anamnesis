@@ -1,5 +1,6 @@
 ﻿<UserControl
 	x:Class="Anamnesis.Actor.Pages.PosePage"
+	x:Name="RootControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:anaUtils="clr-namespace:Anamnesis"
@@ -191,21 +192,21 @@
 								<ContentControl>
 									<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="Transparent">
 										<CheckBox Margin="3" VerticalContentAlignment="Center"
-												   IsChecked="{Binding ImportPoseRotation, Mode=TwoWay}">
+												   IsChecked="{Binding ImportPoseRotation, ElementName=RootControl, Mode=TwoWay}">
 											<XivToolsWpf:TextBlock Key="Pose_EnableRotation" Margin="0,-2,0,2" />
 											<CheckBox.ToolTip>
 												<XivToolsWpf:TextBlock Key="Pose_ImportRotationImportTooltip" />
 											</CheckBox.ToolTip>
 										</CheckBox>
 										<CheckBox Margin="3" VerticalContentAlignment="Center"
-												  IsChecked="{Binding ImportPosePosition, Mode=TwoWay}">
+												  IsChecked="{Binding ImportPosePosition, ElementName=RootControl, Mode=TwoWay}">
 											<XivToolsWpf:TextBlock Key="Pose_EnablePosition" Margin="0,-2,0,2" />
 											<CheckBox.ToolTip>
 												<XivToolsWpf:TextBlock Key="Pose_ImportPositionImportTooltip" />
 											</CheckBox.ToolTip>
 										</CheckBox>
 										<CheckBox Margin="3" VerticalContentAlignment="Center"
-												  IsChecked="{Binding ImportPoseScale, Mode=TwoWay}">
+												  IsChecked="{Binding ImportPoseScale, ElementName=RootControl, Mode=TwoWay}">
 											<XivToolsWpf:TextBlock Key="Pose_EnableScale" Margin="0,-2,0,2" />
 											<CheckBox.ToolTip>
 												<XivToolsWpf:TextBlock Key="Pose_ImportScaleImportTooltip" />

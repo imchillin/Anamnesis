@@ -148,9 +148,13 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			// Don't disable if it's the only one enabled
 			// We want to have at least one option enabled at all times
 			if (!value && !this.importPosePosition && !this.importPoseScale)
+			{
+				this.RaisePropertyChanged(nameof(this.ImportPoseRotation));
 				return;
+			}
 
 			this.importPoseRotation = value;
+			this.RaisePropertyChanged(nameof(this.ImportPoseRotation));
 		}
 	}
 
@@ -162,9 +166,13 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			// Don't disable if it's the only one enabled
 			// We want to have at least one option enabled at all times
 			if (!value && !this.importPoseRotation && !this.importPoseScale)
+			{
+				this.RaisePropertyChanged(nameof(this.ImportPosePosition));
 				return;
+			}
 
 			this.importPosePosition = value;
+			this.RaisePropertyChanged(nameof(this.ImportPosePosition));
 		}
 	}
 
@@ -176,9 +184,13 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			// Don't disable if it's the only one enabled
 			// We want to have at least one option enabled at all times
 			if (!value && !this.importPoseRotation && !this.importPosePosition)
+			{
+				this.RaisePropertyChanged(nameof(this.ImportPoseScale));
 				return;
+			}
 
 			this.importPoseScale = value;
+			this.RaisePropertyChanged(nameof(this.ImportPoseScale));
 		}
 	}
 
