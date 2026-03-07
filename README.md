@@ -28,8 +28,8 @@ You can check the official Wiki over at [xivmodding.com](https://xivmodding.com/
 
 ### Maintainer
 
+* **[ergoxiv](https://github.com/ergoxiv)** - *Features, QoL, Updates and Maintenance*
 * **[chirpxiv](https://github.com/chirpxiv)** - *Updates and Maintenance*
-* **[ergoxiv](https://github.com/ergoxiv)** - *Features, QoL, etc.*
 
 ### Original Authors
 
