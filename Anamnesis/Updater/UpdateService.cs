@@ -122,6 +122,7 @@ public partial class UpdateService : ServiceBase<UpdateService>
 					Changes = this.currentRelease.Changes,
 				};
 				await ViewService.ShowDialog<UpdateDialog, bool?>("Update", dlg);
+				update = dlg.IsUpdating;
 			}
 
 			SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
