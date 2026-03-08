@@ -46,6 +46,7 @@ public class FileService : ServiceBase<FileService>
 {
 	public static readonly string StoreDirectory = "%AppData%/Anamnesis/";
 	public static readonly string StandardLibDirectory = "%AppData%/Anamnesis/StandardLibrary/";
+	public static readonly string RemoteControllerDirectory = "%AppData%/Anamnesis/Modules/Controller/";
 	public static readonly string LegacyLibDirectory = "%AppData%/Anamnesis/StandardPoses/";
 	public static readonly string CacheDirectory = "%AppData%/Anamnesis/RemoteCache/";
 
