@@ -178,13 +178,26 @@ public sealed class RedrawModule
 		if (drawObjPtr == nint.Zero || drawDataPtr == nint.Zero)
 			return [0];
 
+		DrawDataContainerStruct* drawData = (DrawDataContainerStruct*)drawDataPtr;
+		if (drawData == null)
+			return [0];
+
 		bool success = true;
 
 		if (req.Flags.HasFlag(RedrawFlags.Appearance) && req.DrawData != null)
 		{
+			bool isHeadgearHidden = drawData->IsHeadgearHidden;
+
 			fixed (byte* p = req.DrawData)
 			{
 				success = this.updateDrawData.OriginalFunction(drawObjPtr, p, false);
+			}
+
+			// Re-enforce headgear hidden state after applying new draw data
+			if (success && isHeadgearHidden)
+			{
+				drawData->IsHeadgearHidden = false;
+				this.SetHeadgearHidden(drawDataPtr, 1);
 			}
 		}
 
@@ -198,8 +211,6 @@ public sealed class RedrawModule
 
 			if (req.Flags.HasFlag(RedrawFlags.Facewear))
 			{
-				DrawDataContainerStruct* drawData = (DrawDataContainerStruct*)drawDataPtr;
-
 				if (drawData->FacewearId == req.FacewearId)
 				{
 					Log.Verbose("Facewear ID matches; Manually tripping facewear dirty flag.");
