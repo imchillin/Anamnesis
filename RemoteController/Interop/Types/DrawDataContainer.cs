@@ -10,8 +10,15 @@ public struct DrawDataContainer
 {
 	public const int FACEWEAR_DIRTY_FLAG = 0x248;
 
+	[FieldOffset(0x23E)] public byte DrawFlags;
 	[FieldOffset(0x240)] public ushort FacewearId;
 	[FieldOffset(FACEWEAR_DIRTY_FLAG)] public byte FacewearDirtyFlag;
+
+	public bool IsHeadgearHidden
+	{
+		readonly get => (this.DrawFlags & 0x01) == 0x01;
+		set => this.DrawFlags = (byte)(value ? this.DrawFlags | 0x01 : this.DrawFlags & ~0x01);
+	}
 }
 
 [StructLayout(LayoutKind.Explicit, Size = 8)]
