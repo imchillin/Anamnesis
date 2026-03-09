@@ -6,8 +6,8 @@ namespace Anamnesis.Files;
 using Anamnesis.Actor.Utilities;
 using Anamnesis.Core.Extensions;
 using Anamnesis.GameData;
-using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
+using Anamnesis.Services;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -311,7 +311,7 @@ public class CharacterFile : JsonFileBase
 				isStructuralChange = true;
 			}
 
-			if (this.IncludeSection(SaveModes.EquipmentWeapons, mode))
+			if (this.IncludeSection(SaveModes.EquipmentWeapons, mode) && GposeService.InstanceOrNull?.IsGpose == true)
 			{
 				this.MainHand?.Write(drawData.MainHand, true);
 				this.OffHand?.Write(drawData.OffHand, false);
@@ -350,10 +350,12 @@ public class CharacterFile : JsonFileBase
 				switch (slot)
 				{
 					case ItemSlots.MainHand:
-						this.MainHand?.Write(drawData.MainHand, true);
+						if (GposeService.InstanceOrNull?.IsGpose == true)
+							this.MainHand?.Write(drawData.MainHand, true);
 						break;
 					case ItemSlots.OffHand:
-						this.OffHand?.Write(drawData.OffHand, false);
+						if (GposeService.InstanceOrNull?.IsGpose == true)
+							this.OffHand?.Write(drawData.OffHand, false);
 						break;
 					case ItemSlots.Head:
 						this.HeadGear?.Write(drawData.Equipment?.Head);
