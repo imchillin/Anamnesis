@@ -7,6 +7,7 @@ using Anamnesis.Files;
 using Iced.Intel;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -125,7 +126,16 @@ internal sealed class Injector : IDisposable
 
 		try
 		{
-			string tempDir = Path.GetTempPath();
+			string targetDir = FileService.ParseToFilePath(FileService.RemoteControllerDirectory);
+			if (!Directory.Exists(targetDir))
+				Directory.CreateDirectory(targetDir);
+
+			this.remoteCtrlDllPath = ExtractResourceToDirectory(ANAM_CTRL_RESOURCE, targetDir, ANAM_CTRL_RESOURCE_FILENAME);
+			Log.Information($"[Injector] Extracted remote controller DLL to: {this.remoteCtrlDllPath}");
+
+			this.fasmDllPath = ExtractResourceToDirectory(FASM_RESOURCE, targetDir, FASM_RESOURCE_FILENAME);
+			Log.Information($"[Injector] Extracted FASM DLL to: {this.fasmDllPath}");
+
 			Log.Information($"[Injector] Attempting to clean up old extracted resources...");
 			int deletedFiles = 0;
 #if DEBUG
@@ -134,15 +144,25 @@ internal sealed class Injector : IDisposable
 			bool logFileDeletion = false;
 #endif
 
-			deletedFiles += FileService.TryDeleteFiles(tempDir, s_anamCtrlDllPattern, scheduleOnFailure: true, logActions: logFileDeletion, abortOnFailure: false);
-			deletedFiles += FileService.TryDeleteFiles(tempDir, s_fasmDllPattern, scheduleOnFailure: true, logActions: logFileDeletion, abortOnFailure: false);
+			var activeFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+			{
+				Path.GetFullPath(this.remoteCtrlDllPath),
+				Path.GetFullPath(this.fasmDllPath),
+			};
+
+			foreach (var pattern in new[] { s_anamCtrlDllPattern, s_fasmDllPattern })
+			{
+				foreach (string file in Directory.EnumerateFiles(targetDir, pattern))
+				{
+					if (activeFiles.Contains(Path.GetFullPath(file)))
+						continue;
+
+					if (FileService.TryDeleteFile(file, scheduleOnFailure: true, logActions: logFileDeletion))
+						deletedFiles++;
+				}
+			}
+
 			Log.Information($"[Injector] Cleanup complete. Deleted {deletedFiles} old resource file(s).");
-
-			this.remoteCtrlDllPath = ExtractResourceToDirectory(ANAM_CTRL_RESOURCE, tempDir, ANAM_CTRL_RESOURCE_FILENAME);
-			Log.Information($"[Injector] Extracted remote controller DLL to: {this.remoteCtrlDllPath}");
-
-			this.fasmDllPath = ExtractResourceToDirectory(FASM_RESOURCE, tempDir, FASM_RESOURCE_FILENAME);
-			Log.Information($"[Injector] Extracted FASM DLL to: {this.fasmDllPath}");
 
 			try
 			{
@@ -220,7 +240,7 @@ internal sealed class Injector : IDisposable
 		string ext = Path.GetExtension(fileName);
 
 		// Scan existing Anamnesis resource files for a matching hash
-		var existingFiles = Directory.GetFiles(targetDir, $"{nameNoExt}.*{ext}");
+		var existingFiles = Directory.GetFiles(targetDir, $"{nameNoExt}*{ext}");
 		foreach (var filePath in existingFiles)
 		{
 			if (FileMatchesHash(filePath, currentHash))
@@ -434,7 +454,7 @@ internal sealed class Injector : IDisposable
 		if (this.isDisposed)
 			return;
 
-		// Clean up temp files
+		// Clean up resources
 		if (this.remoteCtrlDllPath != null)
 		{
 			FileService.ScheduleFileForDeletion(this.remoteCtrlDllPath, true);
