@@ -609,22 +609,42 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.Skeleton = null;
 	}
 
-	private void OnPoseServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
+	private async void OnPoseServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
 		// Don't refresh the skeleton if the selected bones text changes to prevent a loop
 		if (e.PropertyName == nameof(PoseService.SelectedBonesText))
 			return;
 
-		this.Skeleton?.Reselect();
-		this.Skeleton?.ReadTransforms();
-
 		if (e.PropertyName == nameof(PoseService.IsEnabled))
 		{
+			await WorkQueue.Value.Enqueue(() =>
+			{
+				this.Skeleton?.Actor?.Do(actor =>
+				{
+					var skeleton = actor.ModelObject?.Skeleton;
+					if (skeleton == null || skeleton.Address == IntPtr.Zero)
+						return;
+
+					try
+					{
+						skeleton.Synchronize();
+					}
+					catch (Exception ex)
+					{
+						Log.Verbose(ex, "Failed to sync skeleton on pose service property change.");
+					}
+				});
+
+				this.Skeleton?.ReadTransforms();
+			});
+
 			if (!PoseService.IsEnabled)
 				this.OnClearClicked(null, null);
 
 			Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, BoneViewManager.Instance.Refresh);
 		}
+
+		this.TransformEditor?.InvalidateInternalState();
 	}
 
 	private void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
