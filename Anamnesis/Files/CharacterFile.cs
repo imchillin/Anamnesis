@@ -721,6 +721,7 @@ public class CharacterFile : JsonFileBase
 			return c.ModelType != t.ModelType ||
 				   c.Race != t.Race ||
 				   c.Gender != t.Gender ||
+				   c.Age != t.Age ||
 				   c.Tribe != t.Tribe ||
 				   c.Head != t.Head;
 		}
