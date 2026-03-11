@@ -5,6 +5,7 @@ namespace Anamnesis.GameData.Excel;
 
 using Anamnesis.GameData.Sheets;
 using Lumina.Excel;
+using Lumina.Excel.Sheets;
 
 /// <summary>Represents player emotes in the game data.</summary>
 [Sheet("Emote", 0xAFF5D14E)]
@@ -46,6 +47,8 @@ public readonly unsafe struct Emote(ExcelPage page, uint offset, uint row)
 	/// Gets the image reference of the emote icon.
 	/// </summary>
 	public ImgRef? Icon => new(page.ReadUInt32(offset + 4));
+
+	public readonly byte EmoteCategoryRowId => (byte)page.ReadUInt8(offset + 38);
 
 	/// <summary>
 	/// Gets the action timelines collection of the emote.

@@ -33,6 +33,8 @@ public partial class DeveloperTab : UserControl
 	public static GposeService GposeService => GposeService.Instance;
 	public SceneOptionsValues SceneOptions { get; init; } = new();
 
+	public bool IsDevelopmentBuild => VersionInfo.IsDevelopmentBuild;
+
 	private void OnNpcNameSearchClicked(object sender, RoutedEventArgs e)
 	{
 		GenericSelectorUtil.Show(GameDataService.BattleNpcNames, (v) =>
@@ -148,6 +150,22 @@ public partial class DeveloperTab : UserControl
 		{
 			Log.Error(ex, "Failed to load scene");
 		}
+	}
+
+	private async void OnGenerateExpressionPoseLibraryClicked(object sender, RoutedEventArgs e)
+	{
+		var handle = TargetService.PlayerTargetHandle;
+		if (handle == null || !handle.IsValid)
+		{
+			Log.Warning("Valid actor target is required to generate expression library.");
+			return;
+		}
+
+		var actorHandle = ActorService.Instance.ObjectTable.Get<ActorMemory>(handle.Address);
+		if (actorHandle == null)
+			return;
+
+		await ExpressionPoseLibraryGenerator.GenerateLibraryAsync(actorHandle);
 	}
 
 	public class SceneOptionsValues
