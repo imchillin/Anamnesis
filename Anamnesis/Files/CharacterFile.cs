@@ -721,6 +721,7 @@ public class CharacterFile : JsonFileBase
 			return c.ModelType != t.ModelType ||
 				   c.Race != t.Race ||
 				   c.Gender != t.Gender ||
+				   c.Age != t.Age ||
 				   c.Tribe != t.Tribe ||
 				   c.Head != t.Head;
 		}
@@ -859,8 +860,8 @@ public class CharacterFile : JsonFileBase
 
 				if (curItem is Anamnesis.GameData.Excel.Item curExcel && tgtItem is Anamnesis.GameData.Excel.Item tgtExcel)
 				{
-					var curFlags = curExcel.ClassJobCategory.Value.ToFlags();
-					var tgtFlags = tgtExcel.ClassJobCategory.Value.ToFlags();
+					var curFlags = curExcel.EquipableClasses;
+					var tgtFlags = tgtExcel.EquipableClasses;
 
 					// Treat crafters and gatherers as equivalent as they use the paladin battle/idle animation.
 					if (AreBothCraftersOrGatherers(curFlags, tgtFlags))

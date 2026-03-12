@@ -8,10 +8,12 @@ using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
-using System.Collections.Concurrent;
+using System.Linq;
 
 public static class ItemUtility
 {
+	public const uint EMPERORS_NEW_FISTS_ROWID = 13775;
+
 	public static readonly DummyNoneItem NoneItem = new();
 	public static readonly DummyNoneDye NoneDye = new();
 	public static readonly NpcBodyItem NpcBodyItem = new();
@@ -20,13 +22,13 @@ public static class ItemUtility
 	public static readonly InvisibleBodyItem InvisibileBodyItem = new();
 	public static readonly InvisibleHeadItem InvisibileHeadItem = new();
 
-	private static readonly ConcurrentDictionary<string, IItem> s_itemLookup = new();
-	private static readonly ConcurrentDictionary<string, IItem> s_chocoboItemLookup = new();
+	private static IItem? s_emperorsNewFists;
+	private static ChocoboSkinItem? s_yellowChocoboSkin;
+	private static ChocoboSkinItem? s_blackChocoboSkin;
 
-	public static IItem EmperorsNewFists => GameDataService.Items.GetRow(13775);
-
-	public static ChocoboSkinItem YellowChocoboSkin => new(GameDataService.Mounts.GetRow(1), 1);
-	public static ChocoboSkinItem BlackChocoboSkin => new(GameDataService.Mounts.GetRow(1), 2);
+	public static IItem EmperorsNewFists => s_emperorsNewFists ??= GameDataService.Items.GetRow(EMPERORS_NEW_FISTS_ROWID);
+	public static ChocoboSkinItem YellowChocoboSkin => s_yellowChocoboSkin ??= new(GameDataService.Mounts.GetRow(1), 1);
+	public static ChocoboSkinItem BlackChocoboSkin => s_blackChocoboSkin ??= new(GameDataService.Mounts.GetRow(1), 2);
 
 	/// <summary>
 	/// Searches the gamedata service item list for an item with the given model attributes.
@@ -39,11 +41,9 @@ public static class ItemUtility
 		if (modelBase == NpcBodyItem.ModelBase)
 			return NpcBodyItem;
 
-		string lookupKey = $"{slot}_{modelSet}_{modelBase}_{modelVariant}";
-
 		return isChocobo
-			? s_chocoboItemLookup.GetOrAdd(lookupKey, _ => ChocoboItemSearch(slot, modelSet, modelBase, modelVariant))
-			: s_itemLookup.GetOrAdd(lookupKey, _ => ItemSearch(slot, modelSet, modelBase, modelVariant));
+			? ChocoboItemSearch(slot, modelSet, modelBase, modelVariant)
+			: ItemSearch(slot, modelSet, modelBase, modelVariant);
 	}
 
 	public static IItem GetDummyItem(ushort modelSet, ushort modelBase, ushort modelVariant)
@@ -99,8 +99,10 @@ public static class ItemUtility
 	{
 		var model = ExcelPageExtensions.ConvertToModel(modelSet, modelBase, modelVariant);
 
-		foreach (IItem tItem in GameDataService.Items)
+		foreach (uint rowId in GameDataService.ItemsByModel[model])
 		{
+			var tItem = GameDataService.Items.GetRow(rowId);
+
 			if (slot == ItemSlots.MainHand || slot == ItemSlots.OffHand)
 			{
 				if (!tItem.IsWeapon)
@@ -116,12 +118,16 @@ public static class ItemUtility
 			if (slot == ItemSlots.Wrists && tItem.Name.StartsWith("Promise of"))
 				continue;
 
-			if (tItem.Model == model)
-				return tItem;
+			return tItem;
+		}
 
-			if (slot == ItemSlots.MainHand || slot == ItemSlots.OffHand)
+		if (slot == ItemSlots.MainHand || slot == ItemSlots.OffHand)
+		{
+			foreach (uint rowId in GameDataService.ItemsBySubModel[model])
 			{
-				if (tItem.HasSubModel && tItem.SubModel == model)
+				var tItem = GameDataService.Items.GetRow(rowId);
+
+				if (tItem.IsWeapon)
 					return tItem;
 			}
 		}

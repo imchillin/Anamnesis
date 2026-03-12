@@ -335,7 +335,6 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 				break;
 
 			var task = this.activeCondTasks[i];
-			bool shouldRemove = false;
 
 			if (currentTick >= task.TargetTick)
 			{
@@ -343,27 +342,27 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 				{
 					if (task.Condition == null || task.Condition())
 					{
+						this.activeCondTasks.RemoveAt(i);
 						task.Action();
-						shouldRemove = true;
+						continue;
 					}
 					else if (task.TimeoutFrames >= 0 && (currentTick - task.EnqueueTick) >= (ulong)task.TimeoutFrames)
 					{
+						this.activeCondTasks.RemoveAt(i);
 						task.Tcs?.TrySetCanceled();
-						shouldRemove = true;
+						continue;
 					}
 				}
 				catch (Exception ex)
 				{
 					Log.Error(ex, "Error in conditional task.");
 					task.Tcs?.TrySetException(ex);
-					shouldRemove = true;
+					this.activeCondTasks.RemoveAt(i);
+					continue;
 				}
 			}
 
-			if (shouldRemove)
-				this.activeCondTasks.RemoveAt(i);
-			else
-				i++;
+			i++;
 		}
 	}
 

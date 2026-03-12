@@ -14,6 +14,7 @@ using Lumina.Excel;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 using LuminaData = global::Lumina.GameData;
@@ -60,6 +61,9 @@ public class GameDataService : ServiceBase<GameDataService>
 	public static ExcelSheet<Glasses> Glasses { get; private set; } = null!;
 
 	public static EquipmentSheet Equipment { get; private set; } = null!;
+
+	public static ILookup<ulong, uint> ItemsByModel { get; private set; } = null!;
+	public static ILookup<ulong, uint> ItemsBySubModel { get; private set; } = null!;
 
 	public static ExcelSheet<T> GetExcelSheet<T>(Language? language = null, string? name = null)
 					where T : struct, IExcelRow<T>
@@ -221,6 +225,9 @@ public class GameDataService : ServiceBase<GameDataService>
 			Ornaments = GetExcelSheet<Ornament>();
 			BuddyEquips = GetExcelSheet<BuddyEquip>();
 			Glasses = GetExcelSheet<Glasses>();
+
+			ItemsByModel = Items.ToLookup(static i => i.Model, static i => i.RowId);
+			ItemsBySubModel = Items.Where(static i => i.HasSubModel).ToLookup(static i => i.SubModel, static i => i.RowId);
 
 			CustomizeOptionsCache.Build();
 		}

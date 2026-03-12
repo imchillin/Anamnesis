@@ -5,6 +5,7 @@ namespace Anamnesis.GameData;
 
 using Anamnesis.GameData.Sheets;
 using Anamnesis.TexTools;
+using Lumina.Text.ReadOnly;
 
 /// <summary>Represents an item in the game data.</summary>
 public interface IItem
@@ -15,8 +16,14 @@ public interface IItem
 	/// <summary>Gets the name of the item.</summary>
 	string Name { get; }
 
+	/// <summary>Gets the raw unallocated SeString payload for the name, if available.</summary>
+	ReadOnlySeString? SeName => null;
+
 	/// <summary>Gets the description of the item.</summary>
 	string? Description { get; }
+
+	/// <summary>Gets the raw unallocated SeString payload for the description, if available.</summary>
+	ReadOnlySeString? SeDescription => null;
 
 	/// <summary>Gets the level required to equip the item.</summary>
 	byte EquipLevel { get; }

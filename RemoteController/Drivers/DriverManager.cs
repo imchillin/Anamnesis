@@ -14,7 +14,7 @@ using System.Diagnostics.CodeAnalysis;
 public sealed class DriverManager : IDisposable
 {
 	private const int FRAMEWORK_TIMEOUT_TICKS = 60;
-	private const int MANAGER_WAIT_TIMEOUT_MS = 1000;
+	private const int MANAGER_WAIT_TIMEOUT_MS = 5000;
 
 	private static readonly Stopwatch s_timer = new();
 	private readonly List<DriverEntry> drivers = [];
@@ -101,6 +101,7 @@ public sealed class DriverManager : IDisposable
 	}
 
 	private static T InitializeOnFramework<T>(Func<T> factory)
+		where T : IDisposable
 	{
 		if (FrameworkDriver.Instance == null || FrameworkDriver.Instance.IsDisposed)
 			throw new InvalidOperationException("FrameworkDriver instance is null. Cannot initialize on framework thread.");
@@ -108,12 +109,22 @@ public sealed class DriverManager : IDisposable
 		T? instance = default;
 		Exception? capturedException = null;
 		using var signal = new ManualResetEventSlim(false);
+		bool isTimedOut = false;
 
 		FrameworkDriver.Instance.RunOnTickUntil(null, 0, FRAMEWORK_TIMEOUT_TICKS, () =>
 		{
 			try
 			{
-				instance = factory();
+				var createdInstance = factory();
+				if (Volatile.Read(ref isTimedOut))
+				{
+					createdInstance?.Dispose();
+					Log.Warning($"Disposed orphaned instance of {typeof(T).Name} due to framework initialization timeout.");
+				}
+				else
+				{
+					instance = createdInstance;
+				}
 			}
 			catch (Exception ex)
 			{
@@ -126,7 +137,10 @@ public sealed class DriverManager : IDisposable
 		});
 
 		if (!signal.Wait(MANAGER_WAIT_TIMEOUT_MS))
+		{
+			Volatile.Write(ref isTimedOut, true);
 			throw new TimeoutException($"Timed out initializing {typeof(T).Name} on framework thread.");
+		}
 
 		if (capturedException != null)
 			throw capturedException;
