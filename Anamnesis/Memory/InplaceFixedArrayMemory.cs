@@ -17,6 +17,14 @@ using System.Runtime.InteropServices;
 /// <typeparam name="TValue">The array element type.</typeparam>
 public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<TValue>, IArrayMemory
 {
+	/// <summary>
+	/// Safety bound to prevent excessive allocation from corrupt memory reads.
+	/// </summary>
+	/// <remarks>
+	/// Values exceeding this are assumed invalid, as no game arrays are this large.
+	/// </remarks>
+	private const int ARRAY_LEN_UPPER_BOUND = 10000;
+
 	private static readonly bool s_isMemoryObject = typeof(MemoryBase).IsAssignableFrom(typeof(TValue));
 	private readonly List<TValue> items = new();
 
@@ -95,13 +103,21 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 	/// </note>
 	public virtual void ReadArrayMemory(List<MemoryBase> locked)
 	{
+		int arrayLength = this.Length;
+
 		// If invalid, dispose stale objects
-		if (this.ArrayAddress == IntPtr.Zero || this.ArrayAddress.ToInt64() < 0 || this.Length <= 0)
+		if (this.ArrayAddress == IntPtr.Zero || this.ArrayAddress.ToInt64() < 0 || arrayLength <= 0 || arrayLength > ARRAY_LEN_UPPER_BOUND)
 		{
 			if (this.items.Count > 0)
 			{
 				lock (this.items)
 				{
+					foreach (var item in this.items)
+					{
+						if (item is IDisposable disposable)
+							disposable.Dispose();
+					}
+
 					this.items.Clear();
 					this.Children.Clear();
 				}
@@ -110,8 +126,8 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 			return;
 		}
 
-		bool structureChanged = this.lastLength != this.Length || this.lastAddress != this.ArrayAddress;
-		this.lastLength = this.Length;
+		bool structureChanged = this.lastLength != arrayLength || this.lastAddress != this.ArrayAddress;
+		this.lastLength = arrayLength;
 		this.lastAddress = this.ArrayAddress;
 
 		lock (this.items)
@@ -119,7 +135,6 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 			try
 			{
 				IntPtr arrayAddress = this.ArrayAddress;
-				int arrayLength = this.Length;
 				int elementSize = this.ElementSize;
 
 				if (s_isMemoryObject)
@@ -129,8 +144,8 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 					{
 						foreach (var item in this.items)
 						{
-							if (item is MemoryBase memory)
-								memory.Dispose();
+							if (item is IDisposable disposable)
+								disposable.Dispose();
 						}
 
 						this.items.Clear();

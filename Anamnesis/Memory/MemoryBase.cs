@@ -296,9 +296,9 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			throw new ArgumentException("Inclusion and exclusion groups cannot overlap.");
 
 		var locked = s_listPool.Get();
-		this.ClaimLocks(locked, inclGroups, exclGroups);
 		try
 		{
+			this.ClaimLocks(locked, inclGroups, exclGroups);
 			this.SynchronizeInternal(locked);
 
 			// Write delayed binds to memory after synchronization.
@@ -325,9 +325,9 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	public virtual void WriteDelayedBinds()
 	{
 		var locked = s_listPool.Get();
-		this.ClaimLocks(locked, null, null);
 		try
 		{
+			this.ClaimLocks(locked, null, null);
 			WriteDelayedBindsInternal(locked);
 		}
 		catch (Exception ex)
@@ -559,9 +559,10 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			if (managedResources)
 			{
 				var locked = s_listPool.Get();
-				this.ClaimLocks(locked, null, null);
 				try
 				{
+					this.ClaimLocks(locked, null, null);
+
 					// If there is a parent, claim its lock before removing self
 					if (this.parent != null)
 					{
@@ -586,7 +587,10 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 						current.delayedBinds.Clear();
 
 						if (current != this)
+						{
+							current.SuppressPropNotifications.Dispose();
 							current.disposed = true;
+						}
 					}
 
 					this.Children.Clear();
@@ -716,9 +720,10 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 		object? oldValue = bind.LastValue;
 		var locked = s_listPool.Get();
-		this.ClaimLocks(locked, null, null);
 		try
 		{
+			this.ClaimLocks(locked, null, null);
+
 			// Make sure that all delayed binds are written before this bind to preserve order
 			WriteDelayedBindsInternal(locked);
 
