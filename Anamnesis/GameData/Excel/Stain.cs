@@ -16,7 +16,7 @@ using MediaColor = System.Windows.Media.Color;
 /// </summary>
 [Sheet("Stain", 0x97C471BD)]
 public readonly struct Stain(ExcelPage page, uint offset, uint row)
-	: IExcelRow<Stain>, IDye
+	: IExcelRow<Stain>, IDye, IEquatable<Stain>
 {
 	/// <summary>Maps dye IDs to item keys.</summary>
 	/// <remarks>
@@ -122,6 +122,9 @@ public readonly struct Stain(ExcelPage page, uint offset, uint row)
 		set => FavoritesService.SetFavorite<IDye>(this, value);
 	}
 
+	public static bool operator ==(Stain left, Stain right) => left.Equals(right);
+	public static bool operator !=(Stain left, Stain right) => !(left == right);
+
 	/// <summary>
 	/// Creates a new instance of the <see cref="Stain"/> struct.
 	/// </summary>
@@ -131,4 +134,8 @@ public readonly struct Stain(ExcelPage page, uint offset, uint row)
 	/// <returns>A new instance of the <see cref="Stain"/> struct.</returns>
 	static Stain IExcelRow<Stain>.Create(ExcelPage page, uint offset, uint row) =>
 		new(page, offset, row);
+
+	public bool Equals(Stain other) => this.RowId == other.RowId;
+	public override bool Equals(object? obj) => obj is Stain other && this.Equals(other);
+	public override int GetHashCode() => this.RowId.GetHashCode();
 }

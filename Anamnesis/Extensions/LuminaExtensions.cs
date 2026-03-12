@@ -5,10 +5,108 @@ namespace Lumina;
 
 using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
+using Anamnesis.Services;
+using System;
 using System.Runtime.CompilerServices;
 
 public static class LuminaExtensions
 {
+	private static readonly Lazy<ItemSlots[]> s_itemSlotsCache = new(() =>
+	{
+		var sheet = GameDataService.GetExcelSheet<Excel.Sheets.EquipSlotCategory>();
+		if (sheet == null)
+			return [];
+
+		uint maxRowId = 0;
+		foreach (var row in sheet)
+		{
+			if (row.RowId > maxRowId)
+				maxRowId = row.RowId;
+		}
+
+		var cache = new ItemSlots[maxRowId + 1];
+		foreach (var row in sheet)
+		{
+			cache[row.RowId] = row.GetItemSlots();
+		}
+
+		return cache;
+	});
+
+	private static readonly Lazy<Classes[]> s_classJobCache = new(() =>
+	{
+		var sheet = GameDataService.GetExcelSheet<Anamnesis.GameData.Excel.ClassJobCategory>();
+		if (sheet == null)
+			return [];
+
+		uint maxRowId = 0;
+		foreach (var row in sheet)
+		{
+			if (row.RowId > maxRowId)
+				maxRowId = row.RowId;
+		}
+
+		var cache = new Classes[maxRowId + 1];
+		foreach (var row in sheet)
+		{
+			cache[row.RowId] = row.ToFlags();
+		}
+
+		return cache;
+	});
+
+	private static readonly Lazy<Anamnesis.GameData.Excel.EquipRaceCategory?[]> s_equipRaceCache = new(() =>
+	{
+		var sheet = GameDataService.GetExcelSheet<Anamnesis.GameData.Excel.EquipRaceCategory>();
+		if (sheet == null)
+			return [];
+
+		uint maxRowId = 0;
+		foreach (var row in sheet)
+		{
+			if (row.RowId > maxRowId)
+				maxRowId = row.RowId;
+		}
+
+		var cache = new Anamnesis.GameData.Excel.EquipRaceCategory?[maxRowId + 1];
+		foreach (var row in sheet)
+		{
+			cache[row.RowId] = row;
+		}
+
+		return cache;
+	});
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ItemSlots GetItemSlots(byte equipSlotCategoryId)
+	{
+		var cache = s_itemSlotsCache.Value;
+		if (equipSlotCategoryId < cache.Length)
+			return cache[equipSlotCategoryId];
+
+		return ItemSlots.None;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Classes GetClassJobs(byte classJobCategoryId)
+	{
+		var cache = s_classJobCache.Value;
+		if (classJobCategoryId < cache.Length)
+			return cache[classJobCategoryId];
+
+		return Classes.None;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Anamnesis.GameData.Excel.EquipRaceCategory? GetEquipRaceCategory(byte equipRaceCategoryId)
+	{
+		var cache = s_equipRaceCache.Value;
+		if (equipRaceCategoryId < cache.Length)
+			return cache[equipRaceCategoryId];
+
+		return null;
+	}
+
 	public static IItem GetWeaponItem(ItemSlots slot, ulong val)
 	{
 		if (val == 0)

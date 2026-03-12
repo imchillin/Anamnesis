@@ -9,7 +9,7 @@ using Anamnesis.Services;
 using Anamnesis.TexTools;
 using Lumina;
 using Lumina.Excel;
-using Lumina.Excel.Sheets;
+using Lumina.Text.ReadOnly;
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -17,16 +17,28 @@ using System.Runtime.CompilerServices;
 /// <summary>Represents an item in the game data.</summary>
 [Sheet("Item", 0xE9A33C9D)]
 public readonly unsafe struct Item(ExcelPage page, uint offset, uint row)
-	: IExcelRow<Item>, IItem
+	: IExcelRow<Item>, IItem, IEquatable<Item>
 {
 	/// <inheritdoc/>
 	public uint RowId => row;
 
 	/// <inheritdoc/>
-	public readonly string Name => page.ReadString(offset + 12, offset).ToString() ?? string.Empty;
+	/// <remarks>
+	/// Use <see cref="SeName"/> whenever possible to avoid unnecessary string allocations.
+	/// </remarks>
+	public readonly string Name => this.SeName?.ToString() ?? string.Empty;
 
 	/// <inheritdoc/>
-	public string Description => page.ReadString(offset + 8, offset).ToString() ?? string.Empty;
+	public readonly ReadOnlySeString? SeName => page.ReadString(offset + 12, offset);
+
+	/// <inheritdoc/>
+	/// <remarks>
+	/// Use <see cref="SeDescription"/> whenever possible to avoid unnecessary string allocations.
+	/// </remarks>
+	public string Description => this.SeDescription?.ToString() ?? string.Empty;
+
+	/// <inheritdoc/>
+	public readonly ReadOnlySeString? SeDescription => page.ReadString(offset + 8, offset);
 
 	/// <inheritdoc/>
 	public ImgRef Icon => new(page.ReadUInt16(offset + 136));
@@ -62,22 +74,22 @@ public readonly unsafe struct Item(ExcelPage page, uint offset, uint row)
 	public ushort SubModelVariant => this.IsWeapon ? page.ReadWeaponVariant(offset + 32) : page.ReadVariant(offset + 32);
 
 	/// <summary>Gets the classes that can equip the item.</summary>
-	public Classes EquipableClasses => this.ClassJobCategory.Value.ToFlags();
+	public Classes EquipableClasses => LuminaExtensions.GetClassJobs(this.ClassJobCategoryId);
 
 	/// <summary>
-	/// Gets the EquipSlotCategory reference object, representing the the equipment slot data associated with the item.
+	/// Gets the EquipSlotCategory identifier, representing the the equipment slot data associated with the item.
 	/// </summary>
-	public readonly RowRef<EquipSlotCategory> EquipSlotCategory => new(page.Module, (uint)page.ReadUInt8(offset + 154), page.Language);
+	public readonly byte EquipSlotCategoryId => page.ReadUInt8(offset + 154);
 
 	/// <summary>
-	/// Gets the EquipRaceCategory reference object, representing the item's equip restrictions.
+	/// Gets the EquipRaceCategory identifier, representing the item's equip restrictions.
 	/// </summary>
-	public RowRef<EquipRaceCategory> EquipRestriction => new(page.Module, (uint)page.ReadUInt8(offset + 80), page.Language);
+	public readonly byte EquipRestrictionId => page.ReadUInt8(offset + 80);
 
 	/// <summary>
-	/// Gets the ClassJobCategory reference object, representing the class job category the item belongs to.
+	/// Gets the ClassJobCategory identifier, representing the class job category the item belongs to.
 	/// </summary>
-	public readonly RowRef<ClassJobCategory> ClassJobCategory => new(page.Module, (uint)page.ReadUInt8(offset + 81), page.Language);
+	public readonly byte ClassJobCategoryId => page.ReadUInt8(offset + 81);
 
 	/// <inheritdoc/>
 	public bool IsWeapon => (this.GetItemSlots() & ItemSlots.Weapons) != 0;
@@ -105,6 +117,9 @@ public readonly unsafe struct Item(ExcelPage page, uint offset, uint row)
 	/// <summary>Gets the item category.</summary>
 	public ItemCategories Category => GameDataService.GetCategory(this);
 
+	public static bool operator ==(Item left, Item right) => left.Equals(right);
+	public static bool operator !=(Item left, Item right) => !(left == right);
+
 	/// <summary>
 	/// Creates a new instance of the <see cref="Item"/> struct.
 	/// </summary>
@@ -121,13 +136,17 @@ public readonly unsafe struct Item(ExcelPage page, uint offset, uint row)
 	/// <param name="slot">The slot to check.</param>
 	/// <returns>True if the item fits in the slot; otherwise, false.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public bool FitsInSlot(ItemSlots slot) => this.EquipSlotCategory.Value.Contains(slot);
+	public bool FitsInSlot(ItemSlots slot) => (this.GetItemSlots() & slot) != 0;
 
 	/// <summary>
 	/// Gets the item slots that the item can be equipped in.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public ItemSlots GetItemSlots() => this.EquipSlotCategory.Value.GetItemSlots();
+	public ItemSlots GetItemSlots() => LuminaExtensions.GetItemSlots(this.EquipSlotCategoryId);
+
+	public bool Equals(Item other) => this.RowId == other.RowId;
+	public override bool Equals(object? obj) => obj is Item other && this.Equals(other);
+	public override int GetHashCode() => this.RowId.GetHashCode();
 
 	/// <summary>
 	/// Converts the class job category to a <see cref="Classes"/> enum.

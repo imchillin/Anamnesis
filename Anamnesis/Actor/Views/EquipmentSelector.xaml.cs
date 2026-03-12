@@ -11,8 +11,9 @@ using Anamnesis.GameData.Sheets;
 using Anamnesis.Keyboard;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
+using Lumina;
+using Lumina.Text.ReadOnly;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using XivToolsWpf;
@@ -191,20 +192,31 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 
 	protected override int Compare(IItem itemA, IItem itemB)
 	{
-		if (itemA.IsFavorite && !itemB.IsFavorite)
+		bool isItemAFavorite = FavoritesService.IsFavorite(itemA);
+		bool isItemBFavorite = FavoritesService.IsFavorite(itemB);
+
+		if (isItemAFavorite && !isItemBFavorite)
 			return -1;
 
-		if (!itemA.IsFavorite && itemB.IsFavorite)
+		if (!isItemAFavorite && isItemBFavorite)
 			return 1;
 
 		// Push the Emperor's New Fists to the top of the list for weapons.
 		if (this.IsWeaponSlot)
 		{
-			if (itemA == ItemUtility.EmperorsNewFists && itemB != ItemUtility.EmperorsNewFists)
+			if (itemA.RowId == ItemUtility.EMPERORS_NEW_FISTS_ROWID && itemB.RowId != ItemUtility.EMPERORS_NEW_FISTS_ROWID)
 				return -1;
 
-			if (itemA != ItemUtility.EmperorsNewFists && itemB == ItemUtility.EmperorsNewFists)
+			if (itemA.RowId != ItemUtility.EMPERORS_NEW_FISTS_ROWID && itemB.RowId == ItemUtility.EMPERORS_NEW_FISTS_ROWID)
 				return 1;
+		}
+
+		if (this.SortMode == SortModes.Name)
+		{
+			if (itemA.SeName is ReadOnlySeString aSeName && itemB.SeName is ReadOnlySeString bSeName)
+				return aSeName.Data.Span.SequenceCompareTo(bSeName.Data.Span);
+
+			return string.Compare(itemA.Name, itemB.Name, StringComparison.Ordinal);
 		}
 
 		return this.SortMode switch
@@ -218,8 +230,8 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 
 	protected override bool Filter(IItem item, string[]? search)
 	{
-		// skip items without names
-		if (string.IsNullOrEmpty(item.Name))
+		bool hasName = item.SeName.HasValue ? !item.SeName.Value.IsEmpty : !string.IsNullOrEmpty(item.Name);
+		if (!hasName)
 			return false;
 
 		if (this.IsWeaponSlot)
@@ -250,45 +262,51 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 
 	private static bool HasClass(Classes a, Classes b)
 	{
-		foreach (Classes? job in Enum.GetValues<Classes>().Select(v => (Classes?)v))
-		{
-			if (job == null || job == Classes.None)
-				continue;
+		if (a == Classes.None)
+			return b == Classes.All;
 
-			if (a.HasFlagUnsafe(job.Value) && b.HasFlagUnsafe(job.Value))
-			{
-				return true;
-			}
-		}
-
-		return false;
+		return (a & b) != Classes.None;
 	}
 
 	private static bool MatchesSearch(IItem item, string[]? search = null)
 	{
-		bool matches = false;
+		if (SearchUtility.Matches(item.Name, search))
+			return true;
 
-		matches |= SearchUtility.Matches(item.Name, search);
-		matches |= SearchUtility.Matches(item.Description, search);
-		matches |= SearchUtility.Matches(item.ModelSet.ToString(), search);
-		matches |= SearchUtility.Matches(item.ModelBase.ToString(), search);
-		matches |= SearchUtility.Matches(item.ModelVariant.ToString(), search);
+		if (SearchUtility.Matches(item.Description, search))
+			return true;
+
+		if (SearchUtility.Matches(item.ModelSet.ToString(), search))
+			return true;
+
+		if (SearchUtility.Matches(item.ModelBase.ToString(), search))
+			return true;
+
+		if (SearchUtility.Matches(item.ModelVariant.ToString(), search))
+			return true;
 
 		if (item.HasSubModel)
 		{
-			matches |= SearchUtility.Matches(item.SubModelSet.ToString(), search);
-			matches |= SearchUtility.Matches(item.SubModelBase.ToString(), search);
-			matches |= SearchUtility.Matches(item.SubModelVariant.ToString(), search);
+			if (SearchUtility.Matches(item.SubModelSet.ToString(), search))
+				return true;
+
+			if (SearchUtility.Matches(item.SubModelBase.ToString(), search))
+				return true;
+
+			if (SearchUtility.Matches(item.SubModelVariant.ToString(), search))
+				return true;
 		}
 
-		matches |= SearchUtility.Matches(item.RowId.ToString(), search);
+		if (SearchUtility.Matches(item.RowId.ToString(), search))
+			return true;
 
 		if (item.Mod != null && item.Mod.ModPack != null)
 		{
-			matches |= SearchUtility.Matches(item.Mod.ModPack.Name, search);
+			if (SearchUtility.Matches(item.Mod.ModPack.Name, search))
+				return true;
 		}
 
-		return matches;
+		return false;
 	}
 
 	private bool ValidCategory(IItem item)
@@ -312,10 +330,11 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 
 	private bool CanEquip(Item item)
 	{
-		if (!item.EquipRestriction.IsValid || this.actor == null || this.actor.DrawData.Customize == null)
+		var restriction = LuminaExtensions.GetEquipRaceCategory(item.EquipRestrictionId);
+		if (restriction == null || this.actor == null || this.actor.DrawData.Customize == null)
 			return true;
 
-		return item.EquipRestriction.Value.CanEquip(this.actor.DrawData.Customize.Race, this.actor.DrawData.Customize.Gender);
+		return restriction.Value.CanEquip(this.actor.DrawData.Customize.Race, this.actor.DrawData.Customize.Gender);
 	}
 
 	private void ClearSlot()
