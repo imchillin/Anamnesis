@@ -331,9 +331,7 @@ public partial class ItemView : UserControl
 
 			SetModel(this.ItemModel, modelSet, modelBase, modelVariant);
 
-			if (autoOffhand && this.Slot == ItemSlots.MainHand
-				&& item is Item ivm
-				&& ivm.EquipSlotCategory.Value.OffHand == -1)
+			if (autoOffhand && this.Slot == ItemSlots.MainHand && item is Item ivm)
 			{
 				if (ivm.HasSubModel)
 				{
