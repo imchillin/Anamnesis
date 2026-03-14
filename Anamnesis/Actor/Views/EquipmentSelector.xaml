@@ -19,7 +19,7 @@
 		</Style>
 	</UserControl.Resources>
 
-	<Grid x:Name="ContentArea">
+	<Grid x:Name="ContentArea" IsEnabled="{Binding CanEditItem, Mode=OneWay}">
 
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>

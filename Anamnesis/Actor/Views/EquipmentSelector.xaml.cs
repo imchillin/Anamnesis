@@ -13,6 +13,7 @@ using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
 using Lumina;
 using Lumina.Text.ReadOnly;
+using PropertyChanged;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,6 +26,7 @@ public abstract class EquipmentSelectorDrawer : SelectorDrawer<IItem>
 /// <summary>
 /// Interaction logic for EquipmentSelector.xaml.
 /// </summary>
+[AddINotifyPropertyChangedInterface]
 public partial class EquipmentSelector : EquipmentSelectorDrawer
 {
 	private static Classes s_classFilter = Classes.All;
@@ -49,6 +51,9 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		this.JobFilterText.Text = s_classFilter.Describe();
 
 		HotkeyService.RegisterHotkeyHandler("AppearancePage.ClearEquipment", this.ClearSlot);
+
+		GposeService.GposeStateChanged += this.OnGposeStateChanged;
+		this.OnGposeStateChanged(GposeService.InstanceOrNull?.IsGpose ?? false);
 	}
 
 	public enum SortModes
@@ -73,11 +78,16 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 	}
 #pragma warning restore CA1822
 
+	public bool IsGpose { get; set; }
+
 	public ItemSlots Slot { get; set; }
 	public bool IsMainHandSlot => this.Slot == ItemSlots.MainHand;
 	public bool IsOffHandSlot => this.Slot == ItemSlots.OffHand;
 	public bool IsWeaponSlot => (this.Slot & ItemSlots.Weapons) != 0;
 	public bool IsSmallclothesSlot => (this.Slot & (~ItemSlots.Head) & ItemSlots.Armor) != 0;
+
+	[DependsOn(nameof(IsWeaponSlot), nameof(IsGpose))]
+	public bool CanEditItem => !this.IsWeaponSlot || this.IsGpose;
 
 	public SortModes SortMode
 	{
@@ -151,6 +161,7 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		base.OnClosed();
 
 		HotkeyService.ClearHotkeyHandler("AppearancePage.ClearEquipment", this);
+		GposeService.GposeStateChanged -= this.OnGposeStateChanged;
 	}
 
 	protected override Task LoadItems()
@@ -368,5 +379,10 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		}
 
 		this.RaiseSelectionChanged();
+	}
+
+	private void OnGposeStateChanged(bool state)
+	{
+		this.IsGpose = state;
 	}
 }

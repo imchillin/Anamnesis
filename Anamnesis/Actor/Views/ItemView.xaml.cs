@@ -307,6 +307,9 @@ public partial class ItemView : UserControl
 
 	private void SetItem(IItem? item, bool autoOffhand = false, bool forceMain = false, bool forceOff = false)
 	{
+		if (this.IsWeapon && GposeService.InstanceOrNull?.IsGpose != true)
+			return;
+
 		this.lockViewModel = true;
 
 		if (item != null)
