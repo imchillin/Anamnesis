@@ -199,6 +199,8 @@ public sealed class RedrawModule
 				drawData->IsHeadgearHidden = false;
 				this.SetHeadgearHidden(drawDataPtr, 1);
 			}
+
+			drawData->FacewearDirtyFlag |= 1;
 		}
 
 		if (success)
