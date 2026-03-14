@@ -15,8 +15,11 @@ using System.Diagnostics.CodeAnalysis;
 [RequiresDynamicCode("This class requires dynamic code due to hook reflection")]
 public sealed class GposeDriver : DriverBase<GposeDriver>
 {
+	public const string TARGET_SYSTEM_INSTANCE_SIGNATURE = "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 3B C6 0F 95 C0";
+
 	private readonly FrameworkDriver frameworkDriver;
 	private readonly FunctionWrapper<GameMain.IsInGPose> isInGposeWrapper;
+	private readonly nint targetSystemPtr;
 
 	private bool isInGpose;
 
@@ -43,13 +46,17 @@ public sealed class GposeDriver : DriverBase<GposeDriver>
 			?? throw new InvalidOperationException("Failed to create gpose function wrapper.");
 		this.isInGposeWrapper = wrapper;
 
+		this.targetSystemPtr = Controller.Scanner?.GetStaticAddressFromSig(TARGET_SYSTEM_INSTANCE_SIGNATURE) ?? nint.Zero;
+		if (this.targetSystemPtr == nint.Zero)
+			throw new InvalidOperationException("Failed to resolve target system signature.");
+
 		this.frameworkDriver = frameworkDriver;
 		this.frameworkDriver.GameTick += this.Update;
 		this.StateChanged += this.OnGposeStateChanged;
 		this.RegisterInstance();
 
 		// Get initial reading
-		this.isInGpose = this.isInGposeWrapper.OriginalFunction();
+		this.isInGpose = this.GetGposeState();
 	}
 
 	/// <summary>
@@ -65,12 +72,27 @@ public sealed class GposeDriver : DriverBase<GposeDriver>
 		this.StateChanged = null;
 	}
 
+	private unsafe bool GetGposeState()
+	{
+		bool state = this.isInGposeWrapper.OriginalFunction();
+		if (state && this.targetSystemPtr != nint.Zero)
+		{
+			var targetSystem = (Interop.Types.TargetSystem*)this.targetSystemPtr;
+			if (targetSystem == null)
+				return false;
+
+			state = targetSystem->GPoseTarget != nint.Zero;
+		}
+
+		return state;
+	}
+
 	private void Update()
 	{
 		if (this.DisposedValue)
 			return;
 
-		bool newState = this.isInGposeWrapper.OriginalFunction();
+		bool newState = this.GetGposeState();
 		if (newState != this.isInGpose)
 		{
 			this.isInGpose = newState;

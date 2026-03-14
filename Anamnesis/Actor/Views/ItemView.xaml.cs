@@ -89,7 +89,7 @@ public partial class ItemView : UserControl
 		&& this.Actor?.DrawData.Customize?.Race == ActorCustomizeMemory.Races.Viera;
 
 	[DependsOn(nameof(IsWeapon))]
-	public bool CanEditItem => !this.IsWeapon || GposeService.Instance?.IsGpose == true;
+	public bool CanEditItem => !this.IsWeapon || GposeService.InstanceOrNull?.IsGpose == true;
 
 	[DependsOn(nameof(IsWeapon))]
 	public bool ShowWeaponWarning => this.IsWeapon && GposeService.InstanceOrNull?.IsGpose != true;
