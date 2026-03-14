@@ -115,7 +115,7 @@ public class AddressService : ServiceBase<AddressService>
 			GetAddressFromSignature("Territory", "8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }),
 			GetAddressFromSignature("WeatherManager", "48 8D 0D ?? ?? ?? ?? 44 0F B7 45", 3, (p) => { ServerWeather = p + 0x48; }), // Get the ServerWeather struct from the WeatherManager Instance.
 			GetAddressFromSignature("GPoseFilters", "48 85 D2 4C 8B 05 ?? ?? ?? ??", 0, (p) => { GPoseFilters = p; }),
-			GetAddressFromSignature("TargetSystem", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 3B C6 0F 95 C0", 3, (p) => { TargetSystem = p; }),
+			GetAddressFromSignature("TargetSystem", GposeDriver.TARGET_SYSTEM_INSTANCE_SIGNATURE, 0, (p) => { TargetSystem = p; }),
 			GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { s_cameraManager = p; }),
 			GetAddressFromTextSignature("TimeAsm", "48 89 87 ?? ?? ?? ?? 48 69 C0", (p) => TimeAsm = p),
 			GetAddressFromSignature("Framework", FrameworkDriver.FRAMEWORK_INSTANCE_SIGNATURE, 0, (p) => Framework = MemoryService.ReadPtr(p)),

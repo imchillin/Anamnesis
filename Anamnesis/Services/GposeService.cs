@@ -70,6 +70,10 @@ public class GposeService : ServiceBase<GposeService>
 			{
 				Log.Warning("GPose driver command did not return a result.");
 			}
+			else if (result == true)
+			{
+				result = (IntPtr)AddressService.GPosePlayerTarget != IntPtr.Zero;
+			}
 		}
 		catch
 		{
