@@ -17,6 +17,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using XivToolsWpf.Math3D.Extensions;
 
 [AddINotifyPropertyChangedInterface]
 public partial class ActionPage : UserControl
@@ -189,7 +190,14 @@ public partial class ActionPage : UserControl
 				continue;
 
 			target.Memory?.Do(a => a.Animation!.LinkSpeeds = true);
-			target.Memory?.Do(a => a.Animation!.Speeds![0].Value = 1.0f);
+			target.Memory?.Do(a =>
+			{
+				float animationSpeed = a.Animation!.Speeds![0].Value;
+				if (animationSpeed.IsApproximately(0.0f, 0.001f))
+					a.Animation!.Speeds![0].Value = 1.0f;
+				else
+					a.Animation!.Speeds![0].Value = animationSpeed;
+			});
 		}
 	}
 
