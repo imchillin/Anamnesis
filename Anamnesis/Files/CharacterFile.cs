@@ -12,6 +12,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using XivToolsWpf.Math3D.Extensions;
 
@@ -111,6 +112,8 @@ public class CharacterFile : JsonFileBase
 	public float? HeightMultiplier { get; set; }
 
 	// unrelated, used for char diff redraw logic
+
+	[JsonIgnore]
 	public bool? IsWeaponDrawn { get; set; }
 
 	public void WriteToFile(ObjectHandle<ActorMemory> handle, SaveModes mode)

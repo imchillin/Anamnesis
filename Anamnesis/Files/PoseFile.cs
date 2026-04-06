@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 [Flags]
@@ -395,6 +396,7 @@ public class PoseFile : JsonFileBase
 			this.BoneDepth = Core.Bone.GetBoneDepth(bone);
 		}
 
+		[JsonIgnore]
 		public int BoneDepth { get; }
 		public Vector3? Position { get; set; }
 		public Quaternion? Rotation { get; set; }
