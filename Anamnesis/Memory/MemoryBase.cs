@@ -222,6 +222,9 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// </remarks>
 	public void OnPropertyChanged([CallerMemberName] string propertyName = "")
 	{
+		if (this.IsDisposed)
+			return;
+
 		if (!this.Binds.TryGetValue(propertyName, out PropertyBindInfo? bind))
 		{
 			// If the bind is not found, assume it is not bound to a memory address.
@@ -556,6 +559,8 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	{
 		if (!this.disposed)
 		{
+			this.disposed = true;
+
 			if (managedResources)
 			{
 				var locked = s_listPool.Get();
@@ -605,8 +610,6 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			}
 
 			/* Dispose unmanaged resources here if any */
-
-			this.disposed = true;
 		}
 	}
 
@@ -654,7 +657,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		MemoryBase? current = this;
 		while (current != null)
 		{
-			if (Interlocked.CompareExchange(ref current.enableReading, 0, 0) != 1)
+			if (current.IsDisposed || Interlocked.CompareExchange(ref current.enableReading, 0, 0) != 1)
 				return false;
 
 			current = current.parent;
@@ -672,7 +675,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		MemoryBase? current = this;
 		while (current != null)
 		{
-			if (Interlocked.CompareExchange(ref current.enableWriting, 0, 0) != 1)
+			if (current.IsDisposed || Interlocked.CompareExchange(ref current.enableWriting, 0, 0) != 1)
 				return false;
 
 			current = current.parent;
@@ -688,7 +691,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <param name="e">The event arguments.</param>
 	protected virtual void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		if (string.IsNullOrEmpty(e.PropertyName))
+		if (this.IsDisposed || string.IsNullOrEmpty(e.PropertyName))
 			return;
 
 		if (!this.Binds.TryGetValue(e.PropertyName, out PropertyBindInfo? bind))
