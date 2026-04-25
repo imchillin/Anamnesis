@@ -15,8 +15,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Formats.Tar;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -767,63 +769,40 @@ public class FileService : ServiceBase<FileService>
 			SetAttributesNormal(libDir);
 			await File.WriteAllTextAsync(verFile, VersionInfo.ApplicationVersion.ToString());
 
-			// Copy the embedded "DO NOT PUT ANYTHING HERE.txt" file
-			using (Stream embedded = EmbeddedFileUtility.Load("Data\\StandardLibrary\\DO NOT PUT ANYTHING HERE.txt"))
-			using (var fileStream = new FileStream(Path.Combine(libDir.FullName, "DO NOT PUT ANYTHING HERE.txt"), FileMode.Create, FileAccess.Write))
+			// Load the embedded archive and extract it
 			{
-				await embedded.CopyToAsync(fileStream);
+				using Stream embedded = EmbeddedFileUtility.Load("Data\\StandardLibrary.tar.gz");
+				using var gzipStream = new GZipStream(embedded, CompressionMode.Decompress);
+				using var reader = new TarReader(gzipStream);
+
+				while (reader.GetNextEntry() is TarEntry entry)
+				{
+					if (entry.EntryType == TarEntryType.Directory)
+						continue;
+
+					string entryName = entry.Name;
+
+					int slashIndex = entryName.IndexOf('/');
+					if (slashIndex >= 0)
+						entryName = entryName[(slashIndex + 1)..];
+
+					if (string.IsNullOrEmpty(entryName))
+						continue;
+
+					string destPath = Path.Combine(libDir.FullName, entryName);
+					string? destDir = Path.GetDirectoryName(destPath);
+					if (destDir != null && !Directory.Exists(destDir))
+						Directory.CreateDirectory(destDir);
+
+					entry.ExtractToFile(destPath, overwrite: true);
+				}
 			}
-
-			// Extract sub-libraries
-			await ExtractStandardSubLibrary(
-				StandardPoseDirectory.Directory,
-				"Data\\StandardLibrary\\Poses\\",
-				new Dictionary<string, string> { { "\\pose", ".pose" }, { "\\txt", ".txt" } });
-
-			// Extract appearances
-			await ExtractStandardSubLibrary(
-				StandardAppearancesDirectory.Directory,
-				"Data\\StandardLibrary\\Appearances\\",
-				new Dictionary<string, string> { { "\\chara", ".chara" }, { "\\txt", ".txt" } });
 
 			Log.Information($"Extracted standard library");
 		}
 		catch (Exception ex)
 		{
 			Log.Error(ex, "Failed to extract standard library");
-		}
-	}
-
-	private static async Task ExtractStandardSubLibrary(
-		DirectoryInfo targetDir,
-		string embeddedDir,
-		Dictionary<string, string> extMap)
-	{
-		if (!targetDir.Exists)
-			targetDir.Create();
-
-		string[] files = EmbeddedFileUtility.GetAllFilesInDirectory(embeddedDir);
-		foreach (string filePath in files)
-		{
-			string destPath = filePath.Replace('.', '\\').Replace('_', ' ');
-			destPath = destPath.Replace(embeddedDir.TrimStart('\\'), string.Empty);
-
-			// Restore file extensions
-			foreach (var kvp in extMap)
-				destPath = destPath.Replace(kvp.Key, kvp.Value);
-
-			destPath = Path.Combine(targetDir.FullName, destPath);
-
-			string? destDir = Path.GetDirectoryName(destPath)
-				?? throw new Exception($"Failed to get directory name from path: {destPath}");
-
-			// Ensure any nested directories exist
-			if (!Directory.Exists(destDir))
-				Directory.CreateDirectory(destDir);
-
-			using Stream contents = EmbeddedFileUtility.Load(filePath);
-			using var fileStream = new FileStream(destPath, FileMode.Create);
-			await contents.CopyToAsync(fileStream);
 		}
 	}
 }
