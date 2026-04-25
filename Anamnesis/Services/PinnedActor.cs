@@ -225,6 +225,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	{
 		if (this.Memory != null)
 		{
+			Log.Warning($"Lost actor: {this}");
 			this.Memory.Do(a => a.Pinned = null);
 			this.Memory.Dispose();
 			this.Memory = null;
@@ -358,13 +359,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 				return;
 			}
 
-			if (this.Memory?.IsValid == true)
-			{
-				Log.Warning($"Lost actor: {this}");
-				this.SetInvalid();
-			}
-
-			this.IsValid = false;
+			this.SetInvalid();
 			this.IsRetargeting = false;
 		}
 	}
