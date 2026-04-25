@@ -19,6 +19,7 @@ using PropertyChanged;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ using static Anamnesis.Actor.Utilities.DyeUtility;
 /// Interaction logic for AppearancePage.xaml.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public partial class CharacterPage : UserControl
+public partial class CharacterPage : UserControl, INotifyPropertyChanged
 {
 	private static DirectoryInfo? s_lastLoadDir;
 	private static DirectoryInfo? s_lastSaveDir;
@@ -51,6 +52,8 @@ public partial class CharacterPage : UserControl
 		stopwatch.Stop();
 		Log.Verbose($"Voice list generation time: {stopwatch.ElapsedMilliseconds} ms");
 	}
+
+	public event PropertyChangedEventHandler? PropertyChanged;
 
 	public static PoseService PoseService => PoseService.Instance;
 
@@ -693,13 +696,49 @@ public partial class CharacterPage : UserControl
 
 	private void OnActorChanged(ObjectHandle<ActorMemory>? actorHandle)
 	{
+		if (this.Actor != null)
+		{
+			this.Actor.PropertyChanged -= this.OnActorHandlePropertyChanged;
+		}
+
 		this.Actor = actorHandle;
 
-		Application.Current.Dispatcher.InvokeAsync(() =>
+		if (this.Actor != null)
 		{
-			bool hasValidSelection = actorHandle != null && actorHandle.Do(a => a.ObjectKind.IsSupportedType()) == true;
+			this.Actor.PropertyChanged += this.OnActorHandlePropertyChanged;
+		}
+
+		this.UpdateEligibility();
+	}
+
+	private void OnActorHandlePropertyChanged(object? sender, PropertyChangedEventArgs e)
+	{
+		if (e.PropertyName == nameof(ObjectHandle<ActorMemory>.IsValid) || e.PropertyName == nameof(ObjectHandle<ActorMemory>.Unsafe))
+		{
+			this.UpdateEligibility();
+		}
+	}
+
+	private void UpdateEligibility()
+	{
+		if (Application.Current?.Dispatcher == null)
+			return;
+
+		System.Action updateAction = () =>
+		{
+			bool hasValidSelection = this.Actor != null && this.Actor.IsValid && this.Actor.Do(a => a.ObjectKind.IsSupportedType()) == true;
 			this.IsEnabled = hasValidSelection;
-		});
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
+		};
+
+		if (Application.Current.Dispatcher.CheckAccess())
+		{
+			updateAction();
+		}
+		else
+		{
+			Application.Current.Dispatcher.InvokeAsync(updateAction);
+		}
 	}
 
 	private void OnNavigate(object sender, RequestNavigateEventArgs e)

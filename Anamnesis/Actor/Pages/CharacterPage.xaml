@@ -34,7 +34,7 @@
 		<Grid
 			Grid.RowSpan="2"
 			Grid.Column="0"
-			IsEnabled="{Binding Actor.Unsafe.CanRefresh}">
+			IsEnabled="{Binding Actor.Unsafe.CanRefresh, FallbackValue=False}">
 
 			<GroupBox
 				Padding="3,0,3,0"
@@ -309,8 +309,8 @@
 
 		<!-- Warning messages indicating that the actor's appearance cannot be edited. -->
 		<XivToolsWpf:InfoControl Grid.Column="0" Grid.ColumnSpan="2" Margin="12"
-								 Key="{Binding Actor.Unsafe.RefreshBlockReason, Converter={StaticResource RefreshReasonToKeyConv}}"
-								 Visibility="{Binding Actor.Unsafe.CanRefresh, Converter={StaticResource !B2V}}"/>
+								 Key="{Binding Actor.Unsafe.RefreshBlockReason, Converter={StaticResource RefreshReasonToKeyConv}, FallbackValue=Character_WarningGenericUnavailable, TargetNullValue=Character_WarningGenericUnavailable}"
+								 Visibility="{Binding Actor.Unsafe.CanRefresh, Converter={StaticResource !B2V}, FallbackValue=Visible, TargetNullValue=Visible}"/>
 
 		<!-- Other Actor Settings - Incl Subactor (Mount/Minion/FashAcc), Facewear, Extended Appearance -->
 		<Grid Grid.Column="2">
