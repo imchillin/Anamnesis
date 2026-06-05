@@ -96,7 +96,6 @@ public class Controller
 	private static Endpoint? s_outgoingEndpoint = null;
 	private static Endpoint? s_incomingEndpoint = null;
 	private static volatile bool s_running = true;
-	private static bool s_dllImportResolverSet = false;
 	private static IntPtr s_mainProcessHandle = IntPtr.Zero;
 	private static Thread? s_processMonitorThread = null;
 	private static CancellationTokenSource s_shutdownCts = new();
@@ -269,29 +268,17 @@ public class Controller
 			Logger.Initialize();
 			Log.Information($"Starting remote controller on native thread ID {NativeFunctions.GetCurrentThreadId()}...");
 
-			// Set assembler path so that Reloaded.Assembler can find the FASM DLL
-			if (!SetupAssemblerPath())
+			// The FASM DLL shares directory with the controller assembly, so
+			// we can use its path as the base directory path for FASM linking.
+			string? assemblyDir = GetAssemblyDirectory();
+			if (assemblyDir == null)
 			{
-				Log.Error("Failed to set up assembler path.");
+				Log.Error("Failed to resolve the module path of the executing controller assembly.");
 				return;
 			}
 
-			// Locate the last copied library to avoid linking Reloaded.Hooks to a mismatched resource
-			string? fasmPath = FindFasmDll(Directory.GetCurrentDirectory());
-			if (fasmPath == null)
-				return;
-
-			if (!s_dllImportResolverSet)
-			{
-				NativeLibrary.SetDllImportResolver(typeof(Reloaded.Hooks.ReloadedHooks).Assembly, (libName, asm, searchPath) =>
-				{
-					if (libName.Equals(FASM_RESOURCE_FILENAME, StringComparison.OrdinalIgnoreCase) || libName.Equals(FASM_RESOURCE_NAME, StringComparison.OrdinalIgnoreCase))
-						return NativeLibrary.Load(fasmPath);
-
-					return IntPtr.Zero;
-				});
-				s_dllImportResolverSet = true;
-			}
+			// IMPORTANT: Driver initialization and follow-up operations require Reloaded.Hooks to be fully initialized
+			Reloaded.Hooks.Tools.Utilities.Initialize(assemblyDir);
 
 			if (!NativeFunctions.GetModuleHandleEx(
 				(uint)NativeFunctions.GetModuleFlag.GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
@@ -302,27 +289,7 @@ public class Controller
 				return;
 			}
 
-			string? mainModulePath = null;
-			unsafe
-			{
-				char[] buffer = ArrayPool<char>.Shared.Rent(MAX_PATH_LENGTH);
-				try
-				{
-					fixed (char* pBuffer = buffer)
-					{
-						uint length = NativeFunctions.GetModuleFileName(hMainModule, pBuffer, (uint)MAX_PATH_LENGTH);
-						if (length > 0)
-						{
-							mainModulePath = new string(buffer.AsSpan(0, (int)length));
-						}
-					}
-				}
-				finally
-				{
-					ArrayPool<char>.Shared.Return(buffer);
-				}
-			}
-
+			string? mainModulePath = GetModulePath(hMainModule);
 			if (string.IsNullOrEmpty(mainModulePath))
 			{
 				Log.Error("Failed to get main module path.");
@@ -401,68 +368,52 @@ public class Controller
 		}
 	}
 
-	/// <summary>
-	/// Sets up the FASM assembler path for Reloaded.Hooks.
-	/// Required when running in an injected context where assembly location is unavailable.
-	/// </summary>
-	[RequiresDynamicCode("Uses GetModulePath, which requires dynamic code")]
-	private static bool SetupAssemblerPath()
+	private static IntPtr GetSelfModuleHandle()
 	{
-		string? modulePath = GetModulePath();
-		if (string.IsNullOrEmpty(modulePath))
+		unsafe
 		{
-			Log.Warning("Could not determine module path for FASM setup.");
-			return false;
+			if (NativeFunctions.GetModuleHandleEx(
+				(uint)NativeFunctions.GetModuleFlag.GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+				(uint)NativeFunctions.GetModuleFlag.GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+				(IntPtr)NativePtr(),
+				out IntPtr hModule))
+			{
+				return hModule;
+			}
 		}
 
-		string? fasmDir = Path.GetDirectoryName(modulePath);
-		if (string.IsNullOrEmpty(fasmDir))
-		{
-			Log.Warning("Could not determine FASM directory.");
-			return false;
-		}
-
-		// Set current directory so Reloaded.Assembler finds FASM DLLs
-		Directory.SetCurrentDirectory(fasmDir);
-		Log.Debug($"Set assembler path to: {fasmDir}");
-		return true;
+		return IntPtr.Zero;
 	}
 
 	[RequiresDynamicCode("Uses NativePtr, which requires dynamic code")]
-	private static unsafe string? GetModulePath()
+	private static unsafe string? GetModulePath(IntPtr hModule)
 	{
-		if (!NativeFunctions.GetModuleHandleEx(
-			(uint)NativeFunctions.GetModuleFlag.GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
-			(uint)NativeFunctions.GetModuleFlag.GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-			(IntPtr)NativePtr(),
-			out IntPtr hModule))
-		{
+		if (hModule == IntPtr.Zero)
 			return null;
-		}
 
-		Span<char> buffer = stackalloc char[260];
-		fixed (char* pBuffer = buffer)
+		char[] buffer = ArrayPool<char>.Shared.Rent(MAX_PATH_LENGTH);
+		try
 		{
-			uint length = NativeFunctions.GetModuleFileName(hModule, pBuffer, (uint)buffer.Length);
-			return length > 0 ? new string(buffer[..(int)length]) : null;
+			unsafe
+			{
+				fixed (char* pBuffer = buffer)
+				{
+					uint length = NativeFunctions.GetModuleFileName(hModule, pBuffer, (uint)MAX_PATH_LENGTH);
+					return length > 0 ? new string(buffer.AsSpan(0, (int)length)) : null;
+				}
+			}
+		}
+		finally
+		{
+			ArrayPool<char>.Shared.Return(buffer);
 		}
 	}
 
-	private static string? FindFasmDll(string directory)
+	private static string? GetAssemblyDirectory()
 	{
-		var dirInfo = new DirectoryInfo(directory);
-		var latestFasmDll = dirInfo.GetFiles(FASM_RESOURCE_SEARCH_PATTERN, SearchOption.TopDirectoryOnly)
-			.OrderByDescending(f => f.LastWriteTimeUtc)
-			.FirstOrDefault();
-
-		if (latestFasmDll == null)
-		{
-			Log.Error($"Failed to locate FASMX64 library in {directory}");
-			return null;
-		}
-
-		Log.Debug($"Discovered FASM DLL: {latestFasmDll.FullName}");
-		return latestFasmDll.FullName;
+		IntPtr hSelf = GetSelfModuleHandle();
+		string? modulePath = GetModulePath(hSelf);
+		return string.IsNullOrEmpty(modulePath) ? null : Path.GetDirectoryName(modulePath);
 	}
 
 	private static void MonitorMainAppProcess()

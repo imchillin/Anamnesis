@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Iced" Version="1.21.0" />
-    <PackageReference Include="Reloaded.Hooks" Version="4.3.3" />
+    <PackageReference Include="AetherTools.Anamnesis.Reloaded.Hooks" Version="4.3.3-anamv4" />
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
   </ItemGroup>
@@ -25,8 +25,8 @@
     <TrimmerRootAssembly Include="Iced" />
     <TrimmerRootAssembly Include="Serilog" />
     <TrimmerRootAssembly Include="Serilog.Sinks.File" />
-    <TrimmerRootAssembly Include="Reloaded.Assembler" />
-    <TrimmerRootAssembly Include="Reloaded.Hooks" />
+    <TrimmerRootAssembly Include="AetherTools.Anamnesis.Reloaded.Assembler" />
+    <TrimmerRootAssembly Include="AetherTools.Anamnesis.Reloaded.Hooks" />
     <TrimmerRootAssembly Include="Reloaded.Hooks.Definitions" />
     <TrimmerRootAssembly Include="Reloaded.Memory" />
     <TrimmerRootAssembly Include="Reloaded.Memory.Buffers" />
