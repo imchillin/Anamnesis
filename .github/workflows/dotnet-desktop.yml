@@ -53,7 +53,7 @@ jobs:
       - name: Delete pdb and xml
         run: |
           Get-ChildItem -Path './publish/*' -Recurse -Include *.pdb,*.xml -File | Remove-Item -Force
-          Get-ChildItem -Path './publish/*' -Recurse -Include FASM*,Reloaded.* -File | Remove-Item -Force
+          Get-ChildItem -Path './publish/*' -Recurse -Include FASM*,Reloaded.*,AetherTools.Anamnesis.Reloaded.* -File | Remove-Item -Force
 
       # 6. Zip up the entire publish folder
       - name: Create ZIP
