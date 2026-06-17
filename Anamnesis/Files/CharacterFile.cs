@@ -289,7 +289,6 @@ public class CharacterFile : JsonFileBase
 		var existingHead = drawData.Customize.Head;
 
 		bool needsRedraw = false;
-		bool isStructuralChange = false;
 		bool prevAutoRefresh = actor.AutomaticRefreshEnabled;
 
 		try
@@ -304,11 +303,7 @@ public class CharacterFile : JsonFileBase
 
 			// Model type change always requires a full redraw
 			actor.ModelType = (int)this.ModelType;
-			if (actor.ModelType != existingModelType)
-			{
-				needsRedraw = true;
-				isStructuralChange = true;
-			}
+			needsRedraw |= actor.ModelType != existingModelType;
 
 			if (this.IncludeSection(SaveModes.EquipmentWeapons, mode) && GposeService.InstanceOrNull?.IsGpose == true)
 			{
@@ -491,13 +486,6 @@ public class CharacterFile : JsonFileBase
 
 				needsRedraw = true;
 			}
-
-			// Determine if the actor needs to be redrawn based on structural changes
-			isStructuralChange |=
-				drawData.Customize.Race != existingRace ||
-				drawData.Customize.Gender != existingGender ||
-				drawData.Customize.Tribe != existingTribe ||
-				drawData.Customize.Head != existingHead;
 
 			// Resume synchronization and read back from game memory.
 			// This is required so that the ConstantBufferMemory (extended appearance)
