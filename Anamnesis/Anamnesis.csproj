@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <UseWPF>true</UseWPF>
     <AppendTargetFramework>False</AppendTargetFramework>
@@ -96,7 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Remove="App.xaml" />
-    <Page Include="App.xaml"/>
+    <Page Include="App.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(AppData)\Anamnesis\Settings.json" Link="Settings.json" />

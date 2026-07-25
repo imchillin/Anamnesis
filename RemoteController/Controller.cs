@@ -245,8 +245,6 @@ public class Controller
 	/// This function is invoked remotely via unmanaged code.
 	/// </remarks>
 	[UnmanagedCallersOnly(EntryPoint = "RemoteControllerEntry")]
-	[RequiresUnreferencedCode("This code snippet is not trimming-safe.")]
-	[RequiresDynamicCode("HookRegistry requires dynamic code")]
 	public static void RemoteControllerEntry(IntPtr mainProcessHandle)
 	{
 		Cleanup();
@@ -259,8 +257,6 @@ public class Controller
 		workerThread.Start();
 	}
 
-	[RequiresUnreferencedCode("This code snippet is not trimming-safe as it uses the hook manager.")]
-	[RequiresDynamicCode("HookRegistry requires dynamic code")]
 	private static void Main()
 	{
 		try
