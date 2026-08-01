@@ -12,6 +12,12 @@ public readonly struct CharaMakeCustomize(ExcelPage page, uint offset, uint row)
 	: IExcelRow<CharaMakeCustomize>
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public uint RowId => row;
 
 	/// <summary>Gets the name of the customization option.</summary>

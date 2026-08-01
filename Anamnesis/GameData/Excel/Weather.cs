@@ -12,6 +12,12 @@ public readonly struct Weather(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Weather>
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public readonly uint RowId => row;
 
 	/// <summary>Gets the name of the weather.</summary>

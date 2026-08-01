@@ -20,6 +20,12 @@ public readonly unsafe struct Item(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Item>, IItem, IEquatable<Item>
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public uint RowId => row;
 
 	/// <inheritdoc/>

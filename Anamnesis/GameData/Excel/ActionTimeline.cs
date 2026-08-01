@@ -14,6 +14,12 @@ public readonly struct ActionTimeline(ExcelPage page, uint offset, uint row)
 	: IExcelRow<ActionTimeline>, IAnimation
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public readonly uint RowId => row;
 
 	/// <summary>

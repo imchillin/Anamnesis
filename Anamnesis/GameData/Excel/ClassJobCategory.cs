@@ -16,6 +16,12 @@ public readonly struct ClassJobCategory(ExcelPage page, uint offset, uint row)
 	: IExcelRow<ClassJobCategory>
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public uint RowId => row;
 
 	/// <summary>
