@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Utilities;
+
 using Anamnesis.Dialogs;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
