@@ -5559,17 +5559,17 @@
   "14839": "Limited",
   // Crag Mask
   "14840": "Limited",
-  // Eastern Lord's Togi
+  // Far Eastern Lord's Robe
   "14854": "Premium",
-  // Eastern Lord's Trousers
+  // Far Eastern Lord's Trousers
   "14855": "Premium",
-  // Eastern Lord's Crakows
+  // Far Eastern Lord's Crakows
   "14856": "Premium",
-  // Eastern Lady's Togi
+  // Far Eastern Lady's Dress
   "14857": "Premium",
-  // Eastern Lady's Loincloth
+  // Far Eastern Lady's Loincloth
   "14858": "Premium",
-  // Eastern Lady's Crakows
+  // Far Eastern Lady's Crakows
   "14859": "Premium",
   // Head Engineer's Goggles
   "14861": "Premium",
@@ -5605,7 +5605,7 @@
   "14980": "Premium",
   // Butler's Gaiters
   "14981": "Premium",
-  // Eastern Journey Battle Staff
+  // Far Eastern Journey Battle Staff
   "14983": "Limited",
   // Whisker of the Brave Cat
   "15208": "Limited",
@@ -5681,15 +5681,15 @@
   "15485": "Premium",
   // Far Eastern Noble's Sandals
   "15486": "Premium",
-  // Eastern Journey Circlet
+  // Far Eastern Journey Circlet
   "15487": "Limited",
-  // Eastern Journey Jacket
+  // Far Eastern Journey Jacket
   "15488": "Limited",
-  // Eastern Journey Armlets
+  // Far Eastern Journey Armlets
   "15489": "Limited",
-  // Eastern Journey Bottoms
+  // Far Eastern Journey Bottoms
   "15490": "Limited",
-  // Eastern Journey Shoes
+  // Far Eastern Journey Shoes
   "15491": "Limited",
   // Far Eastern Patriarch's Hat
   "15639": "Premium",
@@ -6099,7 +6099,7 @@
   "16588": "Premium",
   // Far Eastern Gentleman's Robe
   "16589": "Premium",
-  // Far Eastern Gentleman's Haidate
+  // Far Eastern Gentleman's Trousers
   "16590": "Premium",
   // Far Eastern Gentleman's Boots
   "16591": "Premium",
@@ -6107,7 +6107,7 @@
   "16592": "Premium",
   // Far Eastern Beauty's Robe
   "16593": "Premium",
-  // Far Eastern Beauty's Koshita
+  // Far Eastern Beauty's Skirt
   "16594": "Premium",
   // Far Eastern Beauty's Boots
   "16595": "Premium",
@@ -6643,15 +6643,15 @@
   "17715": "Premium",
   // Shattered Heart
   "17716": "Premium",
-  // Exclusive Eastern Journey Circlet
+  // Exclusive Far Eastern Journey Circlet
   "17718": "Premium",
-  // Exclusive Eastern Journey Jacket
+  // Exclusive Far Eastern Journey Jacket
   "17719": "Premium",
-  // Exclusive Eastern Journey Armlets
+  // Exclusive Far Eastern Journey Armlets
   "17720": "Premium",
-  // Exclusive Eastern Journey Bottoms
+  // Exclusive Far Eastern Journey Bottoms
   "17721": "Premium",
-  // Exclusive Eastern Journey Shoes
+  // Exclusive Far Eastern Journey Shoes
   "17722": "Premium",
   // Lost Allagan Saber
   "19203": "Deprecated",
@@ -6949,7 +6949,7 @@
   "20455": "Deprecated",
   // Star of the Nezha Lord
   "20479": "Premium",
-  // Nezha Lord's Togi
+  // Nezha Lord's Jacket
   "20480": "Premium",
   // Nezha Lord's Gloves
   "20481": "Premium",
@@ -6959,7 +6959,7 @@
   "20483": "Premium",
   // Star of the Nezha Lady
   "20484": "Premium",
-  // Nezha Lady's Togi
+  // Nezha Lady's Jacket
   "20485": "Premium",
   // Nezha Lady's Gloves
   "20486": "Premium",
@@ -7255,25 +7255,25 @@
   "22458": "Premium, Limited",
   // Topaz Carbuncle Slippers
   "22499": "Premium",
-  // Mun'gaek Hat
+  // Far Eastern Enforcer's Hat
   "23003": "Premium",
-  // Mun'gaek Uibok
+  // Far Eastern Enforcer's Robe
   "23004": "Premium",
-  // Mun'gaek Cuffs
+  // Far Eastern Enforcer's Cuffs
   "23005": "Premium",
-  // Mun'gaek Trousers
+  // Far Eastern Enforcer's Trousers
   "23006": "Premium",
-  // Mun'gaek Boots
+  // Far Eastern Enforcer's Boots
   "23007": "Premium",
-  // Eastern Socialite's Hat
+  // Far Eastern Socialite's Hat
   "23008": "Premium",
-  // Eastern Socialite's Cheongsam
+  // Far Eastern Socialite's Dress
   "23009": "Premium",
-  // Eastern Socialite's Gloves
+  // Far Eastern Socialite's Gloves
   "23010": "Premium",
-  // Eastern Socialite's Skirt
+  // Far Eastern Socialite's Skirt
   "23011": "Premium",
-  // Eastern Socialite's Boots
+  // Far Eastern Socialite's Boots
   "23012": "Premium",
   // Doman Liege's Dogi
   "23013": "Premium",
@@ -7557,7 +7557,7 @@
   "24999": "Premium",
   // Skirt of Light
   "25000": "Premium",
-  // Exclusive Eastern Journey Battle Staff
+  // Exclusive Far Eastern Journey Battle Staff
   "25055": "Premium",
   // Deepshadow Sword
   "25468": "Deprecated",
@@ -7845,25 +7845,25 @@
   "28598": "Premium",
   // Peacock Shoes
   "28599": "Premium",
-  // Eastern Lord Errant's Hat
+  // Far Eastern Lord Errant's Hat
   "28600": "Premium",
-  // Eastern Lord Errant's Jacket
+  // Far Eastern Lord Errant's Jacket
   "28601": "Premium",
-  // Eastern Lord Errant's Wristbands
+  // Far Eastern Lord Errant's Wristbands
   "28602": "Premium",
-  // Eastern Lord Errant's Trousers
+  // Far Eastern Lord Errant's Trousers
   "28603": "Premium",
-  // Eastern Lord Errant's Shoes
+  // Far Eastern Lord Errant's Shoes
   "28604": "Premium",
-  // Eastern Lady Errant's Hat
+  // Far Eastern Lady Errant's Hat
   "28605": "Premium",
-  // Eastern Lady Errant's Coat
+  // Far Eastern Lady Errant's Coat
   "28606": "Premium",
-  // Eastern Lady Errant's Gloves
+  // Far Eastern Lady Errant's Gloves
   "28607": "Premium",
-  // Eastern Lady Errant's Skirt
+  // Far Eastern Lady Errant's Skirt
   "28608": "Premium",
-  // Eastern Lady Errant's Boots
+  // Far Eastern Lady Errant's Boots
   "28609": "Premium",
   // Crystarium Sword
   "29179": "Deprecated",
@@ -8297,6 +8297,8 @@
   "33752": "Premium",
   // Oracle Leggings
   "33753": "Premium",
+  // Radiant's Bastard Sword
+  "35095": "Deprecated",
   // Radiant's Baghnakhs
   "35096": "Deprecated",
   // Radiant's Battleaxe
@@ -8819,6 +8821,8 @@
   "39306": "Premium",
   // Magitek Shoes
   "39307": "Premium",
+  // Loporrit Earrings
+  "39327": "Limited",
   // Porxie Earrings
   "39328": "Limited",
   // False Monarchy Mask
@@ -8849,6 +8853,8 @@
   "40015": "Deprecated",
   // Dragon's Beard Fists
   "40016": "Deprecated",
+  // Wrathgrinder
+  "40017": "Deprecated",
   // Night's Wolf
   "40018": "Deprecated",
   // Bluebird's Nest
@@ -9021,10 +9027,24 @@
   "40450": "Premium",
   // Iceheart Thighboots
   "40451": "Premium",
+  // Far Eastern Performer's Mask
+  "40452": "Premium",
+  // Far Eastern Performer's Halfrobe
+  "40453": "Premium",
+  // Far Eastern Performer's Trousers
+  "40454": "Premium",
+  // Far Eastern Performer's Shoes
+  "40455": "Premium",
   // Azeyma's Earrings
   "41081": "Premium",
   // Donut Earring
   "41503": "Limited",
+  // Cookie Earring
+  "41504": "Limited",
+  // Buuz Earring
+  "41505": "Limited",
+  // Coffee Cup Earring
+  "41506": "Limited",
   // Fierce Tyrant's Helm
   "41518": "Limited",
   // Fierce Tyrant's Cuirass
@@ -9119,6 +9139,22 @@
   "44665": "Premium",
   // Leisurewear High-cut Knit Top
   "44666": "Premium",
+  // Belt-leather Beret
+  "44668": "Premium",
+  // Belt-leather Harness Top
+  "44669": "Premium",
+  // Belt-leather Fingerstalls
+  "44670": "Premium",
+  // Belt-leather Trousers
+  "44671": "Premium",
+  // Belt-leather Boots
+  "44672": "Premium",
+  // Open-back Belt-leather Harness Top
+  "44673": "Premium",
+  // Cropped Belt-leather Slops
+  "44674": "Premium",
+  // Belt-leather Loafers
+  "44675": "Premium",
   // Ex-arch's Jacket
   "44676": "Premium",
   // Ex-arch's Bracers
@@ -9155,4 +9191,232 @@
   "44974": "Premium",
   // Zero's Order Death Scythe
   "44975": "Premium",
+  // Air Cell Hood
+  "47202": "Limited",
+  // Air Cell Jacket
+  "47203": "Limited",
+  // Air Cell Armlets
+  "47204": "Limited",
+  // Air Cell Halfslops
+  "47205": "Limited",
+  // Air Cell Shoes
+  "47206": "Limited",
+  // Cozy Valentione Beret
+  "47263": "Limited",
+  // Cozy Valentione Cardigan
+  "47264": "Limited",
+  // Cozy Valentione Slacks
+  "47265": "Limited",
+  // Cozy Valentione Shoes
+  "47266": "Limited",
+  // Comfy Valentione Beret
+  "47267": "Limited",
+  // Comfy Valentione Cardigan
+  "47268": "Limited",
+  // Comfy Valentione Skirt
+  "47269": "Limited",
+  // Alternative Cap
+  "47270": "Premium",
+  // Alternative Shirt
+  "47271": "Premium",
+  // Alternative Leather Bracelets
+  "47272": "Premium",
+  // Alternative Trousers
+  "47273": "Premium",
+  // Alternative Spiked Shoes
+  "47274": "Premium",
+  // Galatea Crown
+  "47275": "Premium",
+  // Galatea Bustier
+  "47276": "Premium",
+  // Galatea Tights
+  "47277": "Premium",
+  // Galatea Heels
+  "47278": "Premium",
+  // Ramza's Coat
+  "47301": "Premium",
+  // Ramza's Gloves
+  "47302": "Premium",
+  // Ramza's Thighboots
+  "47303": "Premium",
+  // Ovelia's Dress
+  "47304": "Premium",
+  // Ovelia's Drawers
+  "47305": "Premium",
+  // Ovelia's Boots
+  "47306": "Premium",
+  // Gaffgarion's Burgeonet
+  "47307": "Premium",
+  // Gaffgarion's Mail
+  "47308": "Premium",
+  // Gaffgarion's Vambraces
+  "47309": "Premium",
+  // Gaffgarion's Gaskins
+  "47310": "Premium",
+  // Gaffgarion's Boots
+  "47311": "Premium",
+  // The Warden's Wreath
+  "47906": "Premium",
+  // The Warden's Dress
+  "47907": "Premium",
+  // The Warden's Vambraces
+  "47908": "Premium",
+  // The Warden's Tanga
+  "47909": "Premium",
+  // The Warden's Thighboots
+  "47910": "Premium",
+  // Crystarium Rebel's Top
+  "47911": "Premium",
+  // Crystarium Rebel's Wrist Torque
+  "47912": "Premium",
+  // Crystarium Rebel's Halftights
+  "47913": "Premium",
+  // Crystarium Rebel's Thighboots
+  "47914": "Premium",
+  // Maritime Mirrored Sunglasses
+  "47924": "Limited",
+  // Maritime Top
+  "47925": "Limited",
+  // Maritime Shorts
+  "47926": "Limited",
+  // Maritime Sandals
+  "47927": "Limited",
+  // Miner's Earring
+  "47938": "Limited",
+  // Botanist's Earrings
+  "47939": "Limited",
+  // Fisher's Earrings
+  "47940": "Limited",
+  // The Warden's Earring
+  "48727": "Premium",
+  // Realm-roamer's Jacket
+  "50257": "Premium",
+  // Realm-roamer's Gauntlets
+  "50258": "Premium",
+  // Realm-roamer's Slops
+  "50259": "Premium",
+  // Realm-roamer's Greaves
+  "50260": "Premium",
+  // Realm-roamer's Earrings
+  "50261": "Premium",
+  // En Fortune-teller's Top
+  "50262": "Premium",
+  // En Fortune-teller's Wrist Torque
+  "50263": "Premium",
+  // En Fortune-teller's Skirt
+  "50264": "Premium",
+  // En Fortune-teller's Boots
+  "50265": "Premium",
+  // En Fortune-teller's Earrings
+  "50266": "Premium",
+  // Vibran Princess's Tiara
+  "50267": "Premium",
+  // Vibran Princess's Dress
+  "50268": "Premium",
+  // Vibran Princess's Dress Gloves
+  "50269": "Premium",
+  // Vibran Princess's Bottoms
+  "50270": "Premium",
+  // Vibran Princess's Bootlets
+  "50271": "Premium",
+  // Eastern Technomask
+  "50272": "Premium",
+  // Eastern Technojacket
+  "50273": "Premium",
+  // Eastern Technogloves
+  "50274": "Premium",
+  // Eastern Technogaskins
+  "50275": "Premium",
+  // Eastern Technoshoes
+  "50276": "Premium",
+  // Humble Overalls
+  "50277": "Premium",
+  // Humble Gloves
+  "50278": "Premium",
+  // Humble Boots
+  "50279": "Premium",
+  // Battlefield Rose's Eyeguard
+  "50280": "Premium",
+  // Battlefield Rose's Coat
+  "50281": "Premium",
+  // Battlefield Rose's Manicae
+  "50282": "Premium",
+  // Battlefield Rose's Tights
+  "50283": "Premium",
+  // Battlefield Rose's Sollerets
+  "50284": "Premium",
+  // Painted Eggy Eyeglasses
+  "50285": "Limited",
+  // Party Eggy Eyeglasses
+  "50286": "Limited",
+  // Slim Frame Eggy Eyeglasses
+  "50287": "Limited",
+  // Spriggan Eyeglasses
+  "50288": "Limited",
+  // Chicken Eyeglasses
+  "50289": "Limited",
+  // Blooming Eyeglasses
+  "50290": "Limited",
+  // Aunt Tii's Neotunic
+  "50451": "Premium",
+  // Oversized Aunt Tii's Neotunic
+  "50452": "Premium",
+  // Form-fitting Aunt Tii's Neotunic
+  "50453": "Premium",
+  // Oversized Ulala Neotunic
+  "50848": "Limited",
+  // Oversized Masha Neotunic
+  "50849": "Limited",
+  // Oversized Narumi Neotunic
+  "50850": "Limited",
+  // Oversized Picot Neotunic
+  "50851": "Limited",
+  // Rule-breaker's Visor
+  "52397": "Limited",
+  // Rule-breaker's Vest
+  "52398": "Limited",
+  // Rule-breaker's Gloves
+  "52399": "Limited",
+  // Rule-breaker's Bottoms
+  "52400": "Limited",
+  // Rule-breaker's Boots
+  "52401": "Limited",
+  // Grisly Bear Head
+  "52402": "Limited",
+  // Grisly Bear Suit
+  "52403": "Limited",
+  // Neo Queen's Tiara
+  "52404": "Premium",
+  // Neo Queen's Dress
+  "52405": "Premium",
+  // Neo Citizen's Hooded Tunic
+  "52406": "Premium",
+  // Neo Citizen's Shorts
+  "52407": "Premium",
+  // Neo Citizen's Shoes
+  "52408": "Premium",
+  // Yozakura's Joi
+  "52409": "Premium",
+  // Yozakura's Gloves
+  "52410": "Premium",
+  // Yozakura's Kyakui
+  "52411": "Premium",
+  // Yozakura's Zori
+  "52412": "Premium",
+  // Alternative Leather Ribbon
+  "52413": "Premium",
+  // Alternative Ruffled Dress
+  "52414": "Premium",
+  // Alternative False Nails
+  "52415": "Premium",
+  // Alternative Bloomers
+  "52416": "Premium",
+  // Alternative Boots
+  "52417": "Premium",
+  // Graffiti Neotunic
+  "52433": "Premium",
+  // Oversized Graffiti Neotunic
+  "52434": "Premium",
+  // Form-fitting Graffiti Neotunic
+  "52435": "Premium",
 }
