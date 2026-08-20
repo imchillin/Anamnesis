@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory;
@@ -22,7 +22,7 @@ public class DrawObjectMemory : SceneObjectMemory
 	[DependsOn(nameof(Flags))]
 	public bool IsVisible
 	{
-		get => (this.Flags & 0x09) == 0x09;
-		set => this.Flags = (byte)(value ? this.Flags | 0x09 : this.Flags & ~0x09);
+		get => (this.Flags & (byte)DrawObjectFlags.ActiveRenderState) == (byte)DrawObjectFlags.ActiveRenderState;
+		set => this.Flags = (byte)(value ? this.Flags | (byte)DrawObjectFlags.ActiveRenderState : this.Flags & ~(byte)DrawObjectFlags.ActiveRenderState);
 	}
 }

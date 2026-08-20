@@ -40,7 +40,8 @@ public class IItemConverter : JsonConverter<IItem>
 		if (str.Contains(','))
 		{
 			(ushort modelSet, ushort modelBase, ushort modelVariant) = SplitString(str);
-			return ItemUtility.GetDummyItem(modelSet, modelBase, modelVariant);
+			ItemSlots slot = modelSet != 0 ? ItemSlots.Weapons : ItemSlots.All;
+			return ItemUtility.GetItem(slot, modelSet, modelBase, modelVariant);
 		}
 		else
 		{

@@ -98,26 +98,5 @@ public class Equipment : IItem, IRow
 
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public bool FitsInSlot(ItemSlots slot)
-	{
-		return slot switch
-		{
-			ItemSlots.MainHand => this.Slot.HasFlagUnsafe(ItemSlots.MainHand),
-			ItemSlots.OffHand => this.Slot.HasFlagUnsafe(ItemSlots.OffHand),
-			ItemSlots.Head => this.Slot.HasFlagUnsafe(ItemSlots.Head),
-			ItemSlots.Body => this.Slot.HasFlagUnsafe(ItemSlots.Body),
-			ItemSlots.Hands => this.Slot.HasFlagUnsafe(ItemSlots.Hands),
-			ItemSlots.Waist => this.Slot.HasFlagUnsafe(ItemSlots.Waist),
-			ItemSlots.Legs => this.Slot.HasFlagUnsafe(ItemSlots.Legs),
-			ItemSlots.Feet => this.Slot.HasFlagUnsafe(ItemSlots.Feet),
-			ItemSlots.Ears => this.Slot.HasFlagUnsafe(ItemSlots.Ears),
-			ItemSlots.Neck => this.Slot.HasFlagUnsafe(ItemSlots.Neck),
-			ItemSlots.Wrists => this.Slot.HasFlagUnsafe(ItemSlots.Wrists),
-			ItemSlots.RightRing => this.Slot.HasFlagUnsafe(ItemSlots.RightRing),
-			ItemSlots.LeftRing => this.Slot.HasFlagUnsafe(ItemSlots.LeftRing),
-			ItemSlots.Glasses => this.Slot.HasFlagUnsafe(ItemSlots.Glasses),
-			ItemSlots.SoulCrystal => this.Slot.HasFlagUnsafe(ItemSlots.SoulCrystal),
-			_ => false,
-		};
-	}
+	public bool FitsInSlot(ItemSlots slot) => (this.Slot & slot) != 0;
 }

@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace RemoteController.Drivers;
@@ -205,10 +205,34 @@ public sealed class RedrawModule
 
 		if (success)
 		{
-			if (req.Flags.HasFlag(RedrawFlags.Weapons) && GposeDriver.InstanceOrNull?.IsInGpose == true)
+			if ((req.Flags.HasFlag(RedrawFlags.Weapons) || req.Flags.HasFlag(RedrawFlags.Appearance)) && GposeDriver.InstanceOrNull?.IsInGpose == true)
 			{
-				this.loadWeapon.OriginalFunction(drawDataPtr, WeaponSlot.MainHand, req.MainHandId, 1, 0, 1, 0, 0);
-				this.loadWeapon.OriginalFunction(drawDataPtr, WeaponSlot.OffHand, req.OffHandId, 1, 0, 1, 0, 0);
+				bool isMainHandHidden = drawData->MainHand.IsHidden;
+				bool isOffHandHidden = drawData->OffHand.IsHidden;
+
+				this.loadWeapon.OriginalFunction(drawDataPtr, WeaponSlot.MainHand, req.MainHandId, 1, 0, 0, 0, 0);
+				this.loadWeapon.OriginalFunction(drawDataPtr, WeaponSlot.OffHand, req.OffHandId, 1, 0, 0, 0, 0);
+
+				// Re-apply the weapon visibility flags after loading weapons
+				drawData->MainHand.IsHidden = isMainHandHidden;
+				if (drawData->MainHand.WeaponPtr != nint.Zero)
+				{
+					DrawObject* mainHandDrawObj = (DrawObject*)drawData->MainHand.WeaponPtr;
+					if (isMainHandHidden)
+						mainHandDrawObj->Flags &= (byte)~DrawObjectFlags.Visible;
+					else
+						mainHandDrawObj->Flags |= (byte)DrawObjectFlags.Visible;
+				}
+
+				drawData->OffHand.IsHidden = isOffHandHidden;
+				if (drawData->OffHand.WeaponPtr != nint.Zero)
+				{
+					DrawObject* offHandDrawObj = (DrawObject*)drawData->OffHand.WeaponPtr;
+					if (isOffHandHidden)
+						offHandDrawObj->Flags &= (byte)~DrawObjectFlags.Visible;
+					else
+						offHandDrawObj->Flags |= (byte)DrawObjectFlags.Visible;
+				}
 			}
 
 			if (req.Flags.HasFlag(RedrawFlags.Facewear))
@@ -232,10 +256,46 @@ public sealed class RedrawModule
 		return success ? [1] : [0];
 	}
 
-	private byte[] ExecuteFullRedraw(nint gameObjPtr)
+	private unsafe byte[] ExecuteFullRedraw(nint gameObjPtr)
 	{
+		nint drawDataPtr = gameObjPtr + Actor.DRAW_DATA_OFFSET;
+		DrawDataContainerStruct* drawData = (DrawDataContainerStruct*)drawDataPtr;
+		if (drawData == null)
+			return [0];
+
+		bool isMainHandHidden = drawData->MainHand.IsHidden;
+		bool isOffHandHidden = drawData->OffHand.IsHidden;
+
 		this.charDisableDraw.OriginalFunction(gameObjPtr);
+
+		// Clear the game object's render mode flag to allow it to be drawn.
+		// Otherwise, the subsequent EnableDraw call will re-hide the object.
+		RenderModes* renderMode = (RenderModes*)(gameObjPtr + GameObjectStruct.RENDER_FLAGS_OFFSET);
+		*renderMode &= ~RenderModes.DisableDraw;
+
 		this.charEnableDraw.OriginalFunction(gameObjPtr);
+
+		// Re-apply the hide/show flags after the redraw
+		drawData->MainHand.IsHidden = isMainHandHidden;
+		if (drawData->MainHand.WeaponPtr != nint.Zero)
+		{
+			DrawObject* mainHandDrawObj = (DrawObject*)drawData->MainHand.WeaponPtr;
+			if (isMainHandHidden)
+				mainHandDrawObj->Flags &= (byte)~DrawObjectFlags.Visible;
+			else
+				mainHandDrawObj->Flags |= (byte)DrawObjectFlags.Visible;
+		}
+
+		drawData->OffHand.IsHidden = isOffHandHidden;
+		if (drawData->OffHand.WeaponPtr != nint.Zero)
+		{
+			DrawObject* offHandDrawObj = (DrawObject*)drawData->OffHand.WeaponPtr;
+			if (isOffHandHidden)
+				offHandDrawObj->Flags &= (byte)~DrawObjectFlags.Visible;
+			else
+				offHandDrawObj->Flags |= (byte)DrawObjectFlags.Visible;
+		}
+
 		return [1];
 	}
 

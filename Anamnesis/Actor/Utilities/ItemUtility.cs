@@ -4,10 +4,12 @@
 namespace Anamnesis.Actor.Utilities;
 
 using Anamnesis.Actor.Items;
+using Anamnesis.Core.Extensions;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
+using System;
 using System.Linq;
 
 public static class ItemUtility
@@ -33,42 +35,30 @@ public static class ItemUtility
 	/// <summary>
 	/// Searches the gamedata service item list for an item with the given model attributes.
 	/// </summary>
-	public static IItem GetItem(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant, bool isChocobo)
+	public static IItem GetItem(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant, bool isChocobo = false)
 	{
-		if ((modelBase == 0 || modelBase == 1) && modelVariant == 0)
+		bool isWeaponSlot = (slot & ItemSlots.Weapons) != 0;
+		if ((isWeaponSlot && modelSet == 0) || modelBase == 0)
 			return NoneItem;
 
-		if (modelBase == NpcBodyItem.ModelBase)
+		ulong model = ExcelPageExtensions.ConvertToModel(modelSet, modelBase, modelVariant);
+
+		if (model == NpcBodyItem.Model)
 			return NpcBodyItem;
 
-		return isChocobo
-			? ChocoboItemSearch(slot, modelSet, modelBase, modelVariant)
-			: ItemSearch(slot, modelSet, modelBase, modelVariant);
-	}
-
-	public static IItem GetDummyItem(ushort modelSet, ushort modelBase, ushort modelVariant)
-	{
-		var model = ExcelPageExtensions.ConvertToModel(modelSet, modelBase, modelVariant);
-
-		if (NoneItem.Model == model)
-			return NoneItem;
-
-		if (NpcBodyItem.Model == model)
-			return NpcBodyItem;
-
-		if (InvisibileBodyItem.Model == model)
+		if (model == InvisibileBodyItem.Model)
 			return InvisibileBodyItem;
 
-		if (InvisibileHeadItem.Model == model)
+		if (model == InvisibileHeadItem.Model)
 			return InvisibileHeadItem;
 
-		return new DummyItem(modelSet, modelBase, modelVariant);
+		return isChocobo
+			? ChocoboItemSearch(slot, model)
+			: ItemSearch(slot, model, isWeaponSlot);
 	}
 
-	private static IItem ChocoboItemSearch(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant)
+	private static IItem ChocoboItemSearch(ItemSlots slot, ulong model)
 	{
-		var model = ExcelPageExtensions.ConvertToModel(modelSet, modelBase, modelVariant);
-
 		if (slot == ItemSlots.Legs)
 		{
 			if (YellowChocoboSkin.Model == model)
@@ -81,52 +71,43 @@ public static class ItemUtility
 		{
 			foreach (BuddyEquip equip in GameDataService.BuddyEquips)
 			{
-				if (equip.Head != null && equip.Head.Slot == slot && equip.Head.Model == model)
-					return equip.Head;
+				BuddyEquip.BuddyItem? item = slot switch
+				{
+					ItemSlots.Head => equip.Head,
+					ItemSlots.Body => equip.Body,
+					ItemSlots.Legs => equip.Feet,
+					_ => null,
+				};
 
-				if (equip.Body != null && equip.Body.Slot == slot && equip.Body.Model == model)
-					return equip.Body;
-
-				if (equip.Feet != null && equip.Feet.Slot == slot && equip.Feet.Model == model)
-					return equip.Feet;
+				if (item != null && item.Model == model)
+					return item;
 			}
 		}
 
-		return new DummyItem(modelSet, modelBase, modelVariant);
+		return new DummyItem(model, isWeapon: false);
 	}
 
-	private static IItem ItemSearch(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant)
+	private static IItem ItemSearch(ItemSlots slot, ulong model, bool isWeaponSlot)
 	{
-		var model = ExcelPageExtensions.ConvertToModel(modelSet, modelBase, modelVariant);
-
 		foreach (uint rowId in GameDataService.ItemsByModel[model])
 		{
 			var tItem = GameDataService.Items.GetRow(rowId);
 
-			if (slot == ItemSlots.MainHand || slot == ItemSlots.OffHand)
-			{
-				if (!tItem.IsWeapon)
-					continue;
-			}
-			else
-			{
-				if (!tItem.FitsInSlot(slot))
-					continue;
-			}
+			if (isWeaponSlot ? !tItem.IsWeapon : !tItem.FitsInSlot(slot))
+				continue;
 
 			// Big old hack, but we prefer the emperors bracelets to the promise bracelets (even though they are the same model)
-			if (slot == ItemSlots.Wrists && tItem.Name.StartsWith("Promise of"))
+			if (slot == ItemSlots.Wrists && tItem.Name.StartsWith("Promise of", StringComparison.Ordinal))
 				continue;
 
 			return tItem;
 		}
 
-		if (slot == ItemSlots.MainHand || slot == ItemSlots.OffHand)
+		if (isWeaponSlot)
 		{
 			foreach (uint rowId in GameDataService.ItemsBySubModel[model])
 			{
 				var tItem = GameDataService.Items.GetRow(rowId);
-
 				if (tItem.IsWeapon)
 					return tItem;
 			}
@@ -144,6 +125,6 @@ public static class ItemUtility
 				return tItem;
 		}
 
-		return new DummyItem(modelSet, modelBase, modelVariant);
+		return new DummyItem(model, isWeapon: isWeaponSlot);
 	}
 }

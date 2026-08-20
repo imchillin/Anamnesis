@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Anamnesis.Actor.Views.ItemView"
+<UserControl x:Class="Anamnesis.Actor.Views.ItemView"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -151,16 +151,25 @@
 			<StackPanel Grid.Row="0" Grid.Column="1" Margin="3,0,0,0" Orientation="Horizontal" IsEnabled="{Binding Actor.CanRefresh, Mode=OneWay}">
 				<StackPanel Orientation="Horizontal" IsEnabled="{Binding CanEditItem, Mode=OneWay}">
 					<XivToolsWpf:NumberBox Width="28" Value="{Binding ItemModel.Set}" FontSize="12" FontWeight="Light"
-								ToolTip="Character_Equipment_ItemSet"
-								Visibility="{Binding IsWeapon, Converter={StaticResource B2V}, Mode=OneWay}"/>
+										   Visibility="{Binding IsWeapon, Converter={StaticResource B2V}, Mode=OneWay}">
+						<XivToolsWpf:NumberBox.ToolTip>
+							<XivToolsWpf:TextBlock Key="Character_Equipment_ItemSet"/>
+						</XivToolsWpf:NumberBox.ToolTip>
+					</XivToolsWpf:NumberBox>
 
 					<TextBlock Text="," Style="{StaticResource Label}" Margin="2, 2, 4, 0" Visibility="{Binding IsWeapon, Converter={StaticResource B2V}, Mode=OneWay}"/>
-					<XivToolsWpf:NumberBox Width="28" Value="{Binding ItemModel.Base}" FontSize="12" FontWeight="Light" 
-									   ToolTip="Character_Equipment_ItemBase"/>
+					<XivToolsWpf:NumberBox Width="28" Value="{Binding ItemModel.Base}" FontSize="12" FontWeight="Light">
+						<XivToolsWpf:NumberBox.ToolTip>
+							<XivToolsWpf:TextBlock Key="Character_Equipment_ItemBase"/>
+						</XivToolsWpf:NumberBox.ToolTip>
+					</XivToolsWpf:NumberBox>
 
 					<TextBlock Text="," Style="{StaticResource Label}" Margin="2, 2, 4, 0" />
-					<XivToolsWpf:NumberBox Width="28" Value="{Binding ItemModel.Variant}" FontSize="12" FontWeight="Light" 
-									   ToolTip="Character_Equipment_ItemVariant"/>
+					<XivToolsWpf:NumberBox Width="28" Value="{Binding ItemModel.Variant}" FontSize="12" FontWeight="Light">
+						<XivToolsWpf:NumberBox.ToolTip>
+							<XivToolsWpf:TextBlock Key="Character_Equipment_ItemVariant"/>
+						</XivToolsWpf:NumberBox.ToolTip>
+					</XivToolsWpf:NumberBox>
 				</StackPanel>
 			</StackPanel>
 
@@ -249,6 +258,20 @@
 									<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 								</MenuItem.Icon>
 							</MenuItem>
+							<MenuItem Click="OnToggleLinkDyes" Visibility="{Binding IsWeapon, Converter={StaticResource B2V}, Mode=OneWay}">
+								<MenuItem.Header>
+									<Grid>
+										<XivToolsWpf:TextBlock Key="EquipmentSelector_UnlinkDyes" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource B2V}}"/>
+										<XivToolsWpf:TextBlock Key="EquipmentSelector_LinkDyes" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource !B2V}}"/>
+									</Grid>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<Grid>
+										<fa:IconImage Icon="Unlink" Foreground="{StaticResource PrimaryHueMidBrush}" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource B2V}}"/>
+										<fa:IconImage Icon="Link" Foreground="{StaticResource PrimaryHueMidBrush}" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource !B2V}}"/>
+									</Grid>
+								</MenuItem.Icon>
+							</MenuItem>
 						</ContextMenu>
 					</Button.ContextMenu>
 				</Button>
@@ -282,6 +305,20 @@
 								</MenuItem.Header>
 								<MenuItem.Icon>
 									<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+								</MenuItem.Icon>
+							</MenuItem>
+							<MenuItem Click="OnToggleLinkDyes" Visibility="{Binding IsWeapon, Converter={StaticResource B2V}, Mode=OneWay}">
+								<MenuItem.Header>
+									<Grid>
+										<XivToolsWpf:TextBlock Key="EquipmentSelector_UnlinkDyes" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource B2V}}"/>
+										<XivToolsWpf:TextBlock Key="EquipmentSelector_LinkDyes" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource !B2V}}"/>
+									</Grid>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<Grid>
+										<fa:IconImage Icon="Unlink" Foreground="{StaticResource PrimaryHueMidBrush}" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource B2V}}"/>
+										<fa:IconImage Icon="Link" Foreground="{StaticResource PrimaryHueMidBrush}" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource !B2V}}"/>
+									</Grid>
 								</MenuItem.Icon>
 							</MenuItem>
 						</ContextMenu>

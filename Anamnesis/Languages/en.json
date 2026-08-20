@@ -82,8 +82,12 @@
   "EquipmentSelector_AutoOffhandTip": "Automatically equip paired weapons in the off-hand slot, and unequip the off-hand when equipping two-handed weapons",
   "EquipmentSelector_ForceMainModel": "Force main hand model",
   "EquipmentSelector_ForceMainModelTooltip": "Use the main hand model instead of the off-hand model.",
-  "EquipmentSelector_ForceOffModel": "Force off hand model",
+  "EquipmentSelector_ForceOffModel": "Force off-hand model",
   "EquipmentSelector_ForceOffModelTooltip": "Use the off-hand model instead of the main hand model.",
+  "EquipmentSelector_LinkDyes": "Link main & off-hand dye channels",
+  "EquipmentSelector_LinkDyesTip": "Synchronize dye changes between main hand and off-hand",
+  "EquipmentSelector_UnlinkDyes": "Unlink main & off-hand dye channels",
+  "EquipmentSelector_UnlinkDyesTip": "Stop synchronizing dye changes between main hand and off-hand",
 
   "EquipmentSelector_FilterOther": "Other",
   "EquipmentSelector_Categories": "Categories",
