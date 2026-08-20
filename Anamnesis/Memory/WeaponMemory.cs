@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory;
@@ -19,14 +19,8 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 	private readonly Lock weaponLock = new();
 	private WeaponModelId weaponModelId;
 
-	[Flags]
-	public enum WeaponFlagDefs : byte
-	{
-		WeaponHidden = 1 << 1,
-	}
-
 	[AlsoNotifyFor(nameof(Set), nameof(Base), nameof(Variant), nameof(Dye), nameof(Dye2))]
-	[Bind(0x000, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)]
+	[Bind(WeaponData.MODEL_ID_OFFSET, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)]
 	public WeaponModelId WeaponModelId
 	{
 		get
@@ -140,39 +134,41 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 		}
 	}
 
-	[Bind(0x018, BindFlags.Pointer)] public WeaponModelMemory? Model { get; set; }
-	[Bind(0x040)] public bool IsSheathed { get; set; }
-	[Bind(0x060)] public WeaponFlagDefs WeaponFlags { get; set; }
+	[Bind(WeaponData.DRAW_OBJECT_OFFSET, BindFlags.Pointer)] public WeaponModelMemory? Model { get; set; }
+	[Bind(WeaponData.STATE_OFFSET)] public WeaponStateFlags State { get; set; }
 
-	[DependsOn(nameof(WeaponFlags), nameof(IsSheathed))]
+	public IItem? EquippedItem { get; set; }
+
+	[DependsOn(nameof(State))]
 	public bool WeaponHidden
 	{
-		get => (this.IsSheathed && this.WeaponFlags.HasFlagUnsafe(WeaponFlagDefs.WeaponHidden)) || (!this.IsSheathed && this.Model?.Transform?.Scale == Vector3.Zero);
+		get => this.State.HasFlagUnsafe(WeaponStateFlags.Hidden);
 		set
 		{
 			if (value)
 			{
-				this.WeaponFlags |= WeaponFlagDefs.WeaponHidden;
+				this.State |= WeaponStateFlags.Hidden;
 			}
 			else
 			{
-				this.WeaponFlags &= ~WeaponFlagDefs.WeaponHidden;
+				this.State &= ~WeaponStateFlags.Hidden;
 			}
 
-			if (this.Model?.Transform == null)
-				return;
-
-			// If the weapon is unsheathed (in hands) the visibility flag won't work,
-			// so fall back to setting the weapons scale to 0.
-			if (!this.IsSheathed)
+			if (this.Model != null)
 			{
-				this.Model.Transform.Scale = value ? Vector3.Zero : Vector3.One;
-			}
-
-			// Special handling for a weapon with 0 scale that has been sheathed attempting to un-hide
-			else if (!value && this.Model.Transform.Scale == Vector3.Zero)
-			{
-				this.Model.Transform.Scale = Vector3.One;
+				if (value)
+				{
+					this.Model.Flags = (byte)(this.Model.Flags & ~(byte)DrawObjectFlags.Visible);
+				}
+				else
+				{
+					// When unhiding, if weapon scale is set to 0 by the user, reset it to 1 so that the weapon is visible again.
+					this.Model.Flags |= (byte)DrawObjectFlags.Visible;
+					if (this.Model.Transform != null && this.Model.Transform.Scale == Vector3.Zero)
+					{
+						this.Model.Transform.Scale = Vector3.One;
+					}
+				}
 			}
 		}
 	}

@@ -398,7 +398,7 @@ public static class INpcBaseExtensions
 		{
 			save.ModelSet = item.SubModelSet;
 			save.ModelBase = item.SubModelBase;
-			save.ModelVariant = item.SubModelBase;
+			save.ModelVariant = item.SubModelVariant;
 		}
 
 		return save;

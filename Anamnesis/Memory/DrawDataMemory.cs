@@ -5,8 +5,9 @@ namespace Anamnesis.Memory;
 
 using Anamnesis.Core.Extensions;
 using PropertyChanged;
-using RemoteController.IPC;
 using System;
+using RemoteController.Interop.Types;
+using RemoteController.IPC;
 
 public class DrawDataMemory : MemoryBase
 {
@@ -24,8 +25,8 @@ public class DrawDataMemory : MemoryBase
 		HeadgearEarsHidden = 1 << 5,
 	}
 
-	[Bind(0x010)] public WeaponMemory? MainHand { get; set; }
-	[Bind(0x080)] public WeaponMemory? OffHand { get; set; }
+	[Bind(DrawDataContainer.MAIN_HAND_OFFSET)] public WeaponMemory? MainHand { get; set; }
+	[Bind(DrawDataContainer.OFF_HAND_OFFSET)] public WeaponMemory? OffHand { get; set; }
 	[Bind(0x01D0)] public ActorEquipmentMemory? Equipment { get; set; }
 	[Bind(0x0220)] public ActorCustomizeMemory? Customize { get; set; }
 

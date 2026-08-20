@@ -287,7 +287,7 @@ public readonly unsafe struct EventNpc(ExcelPage page, uint offset, uint row)
 	/// <param name="baseVal">The model base value of the item.</param>
 	/// <param name="equipVal">The equipment model value of the item.</param>
 	/// <returns>
-	/// The weapon item from game data, or <see cref="ItemUtility.EmperorsNewFists"/>
+	/// The weapon item from game data, or <see cref="ItemUtility.NoneItem"/>
 	/// if none is found.
 	/// </returns>
 	private static IItem GetWeaponItem(ItemSlots slot, ulong baseVal, ulong? equipVal)
@@ -298,7 +298,7 @@ public readonly unsafe struct EventNpc(ExcelPage page, uint offset, uint row)
 		if (equipVal != null && equipVal != 0 && equipVal != uint.MaxValue && equipVal != long.MaxValue)
 			return LuminaExtensions.GetWeaponItem(slot, (ulong)equipVal);
 
-		return ItemUtility.EmperorsNewFists;
+		return ItemUtility.NoneItem;
 	}
 
 	/// <summary>

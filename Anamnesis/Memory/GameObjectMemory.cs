@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory;
@@ -12,13 +12,6 @@ using System;
 
 public class GameObjectMemory : MemoryBase
 {
-	public enum RenderModes : uint
-	{
-		Draw = 0,
-		Unload = 2,
-		Load = 4,
-	}
-
 	[Bind(0x030)] public Utf8String NameBytes { get; set; }
 	[Bind(0x078)] public uint ObjectId { get; set; }
 	[Bind(0x084)] public uint DataId { get; set; }
@@ -30,7 +23,7 @@ public class GameObjectMemory : MemoryBase
 	[Bind(0x096)] public byte DistanceFromPlayerY { get; set; }
 	[Bind(0x00C4)] public float Scale { get; set; }
 	[Bind(GameObject.DRAW_OBJECT_OFFSET, BindFlags.Pointer)] public DrawObjectMemory? ModelObject { get; set; }
-	[Bind(0x0118)] public RenderModes RenderMode { get; set; }
+	[Bind(GameObject.RENDER_FLAGS_OFFSET)] public RenderModes RenderMode { get; set; }
 
 	public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.Address}";
 	public string IdNoAddress => $"n{this.NameHash}_d{this.DataId}"; ////_k{this.ObjectKind}";

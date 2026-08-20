@@ -910,19 +910,9 @@ public class CharacterFile : JsonFileBase
 			}
 			else
 			{
-				if (isMainHand)
-				{
-					vm.Set = ItemUtility.EmperorsNewFists.ModelSet;
-					vm.Base = ItemUtility.EmperorsNewFists.ModelBase;
-					vm.Variant = ItemUtility.EmperorsNewFists.ModelVariant;
-				}
-				else
-				{
-					vm.Set = 0;
-					vm.Base = 0;
-					vm.Variant = 0;
-				}
-
+				vm.Set = 0;
+				vm.Base = 0;
+				vm.Variant = 0;
 				vm.Dye = ItemUtility.NoneDye.Id;
 				vm.Dye2 = ItemUtility.NoneDye.Id;
 			}

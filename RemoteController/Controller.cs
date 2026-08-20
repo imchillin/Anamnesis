@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace RemoteController;
@@ -1048,7 +1048,7 @@ public class Controller
 			RedrawFlags flags = (RedrawFlags)args[offset++];
 			request.Flags = flags;
 
-			if (flags.HasFlag(RedrawFlags.Weapons))
+			if (flags.HasFlag(RedrawFlags.Weapons) || flags.HasFlag(RedrawFlags.Appearance))
 			{
 				request.MainHandId = MemoryMarshal.Read<WeaponModelId>(args[offset..]);
 				offset += Unsafe.SizeOf<WeaponModelId>();
@@ -1059,7 +1059,7 @@ public class Controller
 			if (flags.HasFlag(RedrawFlags.Facewear))
 			{
 				request.FacewearId = MemoryMarshal.Read<ushort>(args[offset..]);
-				offset += sizeof(uint);
+				offset += sizeof(ushort);
 			}
 
 			if (flags.HasFlag(RedrawFlags.Appearance))

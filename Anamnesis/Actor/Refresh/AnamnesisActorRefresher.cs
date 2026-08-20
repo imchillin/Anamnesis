@@ -154,7 +154,7 @@ public class AnamnesisActorRefresher : IActorRefresher
 
 			writer.WriteByte((byte)flags);
 
-			if (flags.HasFlag(RedrawFlags.Weapons))
+			if (flags.HasFlag(RedrawFlags.Weapons) || flags.HasFlag(RedrawFlags.Appearance))
 			{
 				writer.Write(actor.DrawData.MainHand?.WeaponModelId ?? default);
 				writer.Write(actor.DrawData.OffHand?.WeaponModelId ?? default);

@@ -36,6 +36,9 @@ public class ItemMemory : MemoryBase, IEquipmentItemMemory
 		}
 	}
 
+	// Items dont have a 'Set' but the UI wants to bind to something, so...
+	public ushort Set { get; set; } = 0;
+
 	[AlsoNotifyFor(nameof(ItemId))]
 	public ushort Base
 	{
@@ -112,8 +115,8 @@ public class ItemMemory : MemoryBase, IEquipmentItemMemory
 		}
 	}
 
-	// Items dont have a 'Set' but the UI wants to bind to something, so...
-	public ushort Set { get; set; } = 0;
+	public IItem? EquippedItem { get; set; }
+
 	public bool WeaponHidden { get; set; } = false;
 
 	public void Clear(bool isPlayer)
