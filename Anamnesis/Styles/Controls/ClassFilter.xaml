@@ -72,6 +72,7 @@
 			<local:ClassFilterItem Class="Reaper" Value="{Binding Value}"/>
             <local:ClassFilterItem Class="Viper" Value="{Binding Value}"/>
             <local:ClassFilterItem Class="Pictomancer" Value="{Binding Value}"/>
+			<local:ClassFilterItem Class="Beastmaster" Value="{Binding Value}"/>
         </WrapPanel>
 
 		<!-- Gatherers -->
