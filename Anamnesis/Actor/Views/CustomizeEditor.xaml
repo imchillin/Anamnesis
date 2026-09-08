@@ -201,8 +201,8 @@
 							   Gender="{Binding Customize.Gender}" Age="{Binding Customize.Age}"/>
 
 		<!-- Bust Size -->
-		<XivToolsWpf:TextBlock Grid.Row="9" Grid.Column="0" Key="Character_Appearance_BustSize" Style="{StaticResource Label}"/>
-		<XivToolsWpf:NumberBox Grid.Row="9" Grid.Column="1" Value="{Binding Customize.Bust}" Slider="Absolute" Minimum="0" Maximum="100" Margin="0, 0, 0, 2"/>
+		<XivToolsWpf:TextBlock Grid.Row="9" Grid.Column="0" Key="Character_Appearance_BustSize" Style="{StaticResource Label}" Visibility="{Binding HasBust, Converter={StaticResource B2V}, Mode=OneWay}"/>
+		<XivToolsWpf:NumberBox Grid.Row="9" Grid.Column="1" Value="{Binding Customize.Bust}" Visibility="{Binding HasBust, Converter={StaticResource B2V}, Mode=OneWay}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 0, 0, 2"/>
 
 		<!-- Muscle / Ears / Tail Size -->
 		<XivToolsWpf:TextBlock Grid.Row="10" Grid.Column="0" Key="Character_Appearance_Muscle" Style="{StaticResource Label}" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}, Mode=OneWay}"/>

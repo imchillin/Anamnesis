@@ -75,6 +75,7 @@ public partial class CustomizeEditor : UserControl
 	[DependsOn(nameof(Customize), nameof(HasEars), nameof(HasTail))]
 	public bool HasSeparateTailEarsModel => this.Customize?.Race != Races.Elezen && this.Customize?.Race != Races.Lalafel;
 	public bool HasMuscles { get; set; }
+	public bool HasBust { get; set; }
 	public bool CanAge { get; set; }
 	public CharaMakeCustomize? Hair { get; set; }
 	public CharaMakeCustomize? FacePaint { get; set; }
@@ -284,6 +285,7 @@ public partial class CustomizeEditor : UserControl
 		this.HasFur = this.Customize.Race == Races.Hrothgar;
 		this.HasEarsTail = this.HasTail || this.HasEars;
 		this.HasMuscles = !this.HasEars && !this.HasTail;
+		this.HasBust = this.Customize.Gender == Genders.Feminine;
 		this.HasGender = true;
 
 		this.OnPropertyChanged(nameof(this.HasSeparateTailEarsModel));
