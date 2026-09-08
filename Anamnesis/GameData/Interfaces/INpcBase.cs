@@ -334,38 +334,26 @@ public static class INpcBaseExtensions
 			Jaw = npc.Jaw,
 			Mouth = npc.Mouth,
 			LipsToneFurPattern = npc.LipColor,
+			EarMuscleTailSize = npc.BustOrTone1,
+			TailEarsType = npc.ExtraFeature1,
+			Bust = npc.ExtraFeature2OrBust,
+			FacePaint = npc.FacePaint,
+			FacePaintColor = npc.FacePaintColor,
+
+			MainHand = WeaponFromItem(npc.MainHand, npc.DyeMainHand, npc.Dye2MainHand),
+			OffHand = WeaponFromItem(npc.OffHand, npc.DyeOffHand, npc.Dye2OffHand, true),
+
+			HeadGear = GearFromItem(npc.Head, npc.DyeHead, npc.Dye2Head),
+			Body = GearFromItem(npc.Body, npc.DyeBody, npc.Dye2Body),
+			Hands = GearFromItem(npc.Hands, npc.DyeHands, npc.Dye2Hands),
+			Legs = GearFromItem(npc.Legs, npc.DyeLegs, npc.Dye2Legs),
+			Feet = GearFromItem(npc.Feet, npc.DyeFeet, npc.Dye2Feet),
+			Ears = GearFromItem(npc.Ears, npc.DyeEars, npc.Dye2Ears),
+			Neck = GearFromItem(npc.Neck, npc.DyeNeck, npc.Dye2Neck),
+			Wrists = GearFromItem(npc.Wrists, npc.DyeWrists, npc.Dye2Wrists),
+			LeftRing = GearFromItem(npc.LeftRing, npc.DyeLeftRing, npc.Dye2LeftRing),
+			RightRing = GearFromItem(npc.RightRing, npc.DyeRightRing, npc.Dye2RightRing),
 		};
-
-		// Hyurs and Roegadyn get muscle sliders, while everyone else
-		// Gets custom tails or ears.
-		if (race is ActorCustomizeMemory.Races.Hyur or ActorCustomizeMemory.Races.Roegadyn)
-		{
-			file.Bust = npc.ExtraFeature1;
-			file.EarMuscleTailSize = npc.BustOrTone1;
-		}
-		else
-		{
-			file.EarMuscleTailSize = npc.ExtraFeature2OrBust;
-			file.TailEarsType = npc.ExtraFeature1;
-			file.Bust = npc.BustOrTone1;
-		}
-
-		file.FacePaint = npc.FacePaint;
-		file.FacePaintColor = npc.FacePaintColor;
-
-		file.MainHand = WeaponFromItem(npc.MainHand, npc.DyeMainHand, npc.Dye2MainHand);
-		file.OffHand = WeaponFromItem(npc.OffHand, npc.DyeOffHand, npc.Dye2OffHand, true);
-
-		file.HeadGear = GearFromItem(npc.Head, npc.DyeHead, npc.Dye2Head);
-		file.Body = GearFromItem(npc.Body, npc.DyeBody, npc.Dye2Body);
-		file.Hands = GearFromItem(npc.Hands, npc.DyeHands, npc.Dye2Hands);
-		file.Legs = GearFromItem(npc.Legs, npc.DyeLegs, npc.Dye2Legs);
-		file.Feet = GearFromItem(npc.Feet, npc.DyeFeet, npc.Dye2Feet);
-		file.Ears = GearFromItem(npc.Ears, npc.DyeEars, npc.Dye2Ears);
-		file.Neck = GearFromItem(npc.Neck, npc.DyeNeck, npc.Dye2Neck);
-		file.Wrists = GearFromItem(npc.Wrists, npc.DyeWrists, npc.Dye2Wrists);
-		file.LeftRing = GearFromItem(npc.LeftRing, npc.DyeLeftRing, npc.Dye2LeftRing);
-		file.RightRing = GearFromItem(npc.RightRing, npc.DyeRightRing, npc.Dye2RightRing);
 
 		return file;
 	}

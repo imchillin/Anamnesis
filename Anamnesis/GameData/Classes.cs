@@ -59,6 +59,7 @@ public enum Classes : long
 	Sage = 1L << 40,
 	Viper = 1L << 41,
 	Pictomancer = 1L << 42,
+	Beastmaster = 1L << 43,
 
 	Crafters = Alchemist | Armorer | Blacksmith | Carpenter | Culinarian | Goldsmith | Leatherworker | Weaver,
 	Gatherers = Botanist | Fisher | Miner,
@@ -66,7 +67,8 @@ public enum Classes : long
 	All = Alchemist | Arcanist | Archer | Armorer | Astrologian | Bard | BlackMage | Blacksmith | BlueMage | Botanist
 		| Carpenter | Conjurer | Culinarian | Dancer | DarkKnight | Dragoon | Fisher | Gladiator | Goldsmith | Gunbreaker
 		| Lancer | Leatherworker | Machinist | Marauder | Miner | Monk | Ninja | Paladin | Pugilist | RedMage | Rogue
-		| Samurai | Scholar | Summoner | Thaumaturge | Warrior | Weaver | WhiteMage | Reaper | Sage | Viper | Pictomancer,
+		| Samurai | Scholar | Summoner | Thaumaturge | Warrior | Weaver | WhiteMage | Reaper | Sage | Viper | Pictomancer
+		| Beastmaster,
 }
 
 public static class ClassesExtensions
@@ -87,6 +89,7 @@ public static class ClassesExtensions
 			Classes.Armorer => "Armorer",
 			Classes.Astrologian => "Astrologian",
 			Classes.Bard => "Bard",
+			Classes.Beastmaster => "Beastmaster",
 			Classes.BlackMage => "Black Mage",
 			Classes.Blacksmith => "Blacksmith",
 			Classes.BlueMage => "Blue Mage",
@@ -147,6 +150,7 @@ public static class ClassesExtensions
 			Classes.Armorer => Roles.Crafters,
 			Classes.Astrologian => Roles.Healers,
 			Classes.Bard => Roles.Damage,
+			Classes.Beastmaster => Roles.Damage,
 			Classes.BlackMage => Roles.Damage,
 			Classes.Blacksmith => Roles.Crafters,
 			Classes.BlueMage => Roles.Damage,
@@ -210,6 +214,7 @@ public static class ClassesExtensions
 			Classes.Armorer => 062010,
 			Classes.Astrologian => 062033,
 			Classes.Bard => 062023,
+			Classes.Beastmaster => 062043,
 			Classes.BlackMage => 062025,
 			Classes.Blacksmith => 062009,
 			Classes.BlueMage => 062036,
