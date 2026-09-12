@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <UseWPF>true</UseWPF>
     <AppendTargetFramework>False</AppendTargetFramework>
@@ -15,9 +15,7 @@
     <Nullable>enable</Nullable>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <TrimMode>CopyUsed</TrimMode>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <Version>1.0.1.0</Version>
-    <FileVersion>1.0.1.0</FileVersion>
+    <Version>0.0.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <PlatformTarget>x64</PlatformTarget>
@@ -29,31 +27,26 @@
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
     <ServerGarbageCollection>true</ServerGarbageCollection>
     <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+    <StartupObject>Anamnesis.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <RemoteControllerSources
-      Include="..\RemoteController\**\*.cs"
-      Exclude="..\RemoteController\obj\**;..\RemoteController\bin\**" />
+    <RemoteControllerSources Include="..\RemoteController\**\*.cs" Exclude="..\RemoteController\obj\**;..\RemoteController\bin\**" />
   </ItemGroup>
-  <Target Name="PublishRemoteController"
-          BeforeTargets="ResolveProjectReferences"
-          Inputs="$(MSBuildThisFileDirectory)..\RemoteController\RemoteController.csproj;@(RemoteControllerSources)"
-          Outputs="$(MSBuildThisFileDirectory)..\obj\RemotePublish\RemoteController.dll">
-
+  <Target Name="PublishRemoteController" BeforeTargets="ResolveProjectReferences" Inputs="$(MSBuildThisFileDirectory)..\RemoteController\RemoteController.csproj;@(RemoteControllerSources)" Outputs="$(MSBuildThisFileDirectory)..\obj\RemotePublish\RemoteController.dll">
     <Message Importance="high" Text="Changes detected in RemoteController. Publishing..." />
     <MakeDir Directories="$(MSBuildThisFileDirectory)..\obj\RemotePublish\" />
     <Exec Command="dotnet publish &quot;$(MSBuildThisFileDirectory)..\RemoteController\RemoteController.csproj&quot; -c $(Configuration) -r win-x64 -o &quot;$(MSBuildThisFileDirectory)..\obj\RemotePublish&quot; --self-contained true --no-dependencies" />
   </Target>
   <ItemGroup>
-    <PackageReference Include="Fody" Version="6.9.1">
+    <PackageReference Include="Fody" Version="6.9.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
     <PackageReference Include="Iced" Version="1.21.0" />
-    <PackageReference Include="Lumina" Version="6.5.1" />
-    <PackageReference Include="Lumina.Excel" Version="7.3.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
+    <PackageReference Include="Lumina" Version="7.6.1" />
+    <PackageReference Include="Lumina.Excel" Version="7.5.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.302">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -64,13 +57,14 @@
       <ExcludeAssets>
       </ExcludeAssets>
     </PackageReference>
-    <PackageReference Include="Serilog" Version="4.2.0" />
+    <PackageReference Include="Serilog" Version="4.4.0" />
     <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Velopack" Version="1.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\*.*" />
@@ -101,31 +95,11 @@
     <EmbeddedResource Include="Data\**\*.*" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Assets\Pose\CharFBodyBackground.png" />
-    <None Remove="Assets\Pose\CharFClothesBackground.png" />
-    <None Remove="Assets\Pose\CharFHyurFaceBackground.png" />
-    <None Remove="Assets\Pose\CharFHyurFaceExBackground.png" />
-    <None Remove="Assets\Pose\CharFMiqoFaceBackground.png" />
-    <None Remove="Assets\Pose\CharFMiqoFaceExBackground.png" />
-    <None Remove="Assets\Pose\CharFMiqoMouthBackground.png" />
-    <None Remove="Assets\Pose\CharFVieraFaceBackground.png" />
-    <None Remove="Assets\Pose\CharFVieraFaceExBackground.png" />
-    <None Remove="Assets\Pose\CharFVieraFloppyFaceBackground.png" />
-    <None Remove="Assets\Pose\CharFVieraFloppyFaceExBackground.png" />
-    <None Remove="Assets\Pose\CharHandBackground.png" />
-    <None Remove="Assets\Pose\CharMHrothFaceBackground.png" />
-    <None Remove="Assets\Pose\CharMHrothFaceExBackground.png" />
-    <None Remove="Assets\Pose\CharTailBackground.png" />
-    <None Remove="Assets\Pose\CharTongueBackground.png" />
+    <ApplicationDefinition Remove="App.xaml" />
+    <Page Include="App.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(AppData)\Anamnesis\Settings.json" Link="Settings.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <ApplicationDefinition Update="App.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Actor\Posing\Templates\" />
@@ -167,17 +141,4 @@
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <None Update="Download dotNet desktop runtime.URL">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Install .NET Desktop Runtime.bat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties languages_4en_1json__JsonSchema="Warning_MinionGposeTitle" />
-    </VisualStudio>
-  </ProjectExtensions>
 </Project>

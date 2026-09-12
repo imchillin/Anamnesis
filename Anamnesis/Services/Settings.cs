@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -20,6 +21,9 @@ using System.Windows.Media;
 [AddINotifyPropertyChangedInterface]
 public class Settings : INotifyPropertyChanged
 {
+	[JsonIgnore]
+	public const string DEFAULT_UPDATE_CHANNEL = "stable";
+
 	private const int MIN_AUTOSAVE_INTERVAL_MINS = 1;
 	private int autoSaveIntervalMinutes = 5;
 	private bool enableAutoSave = true;
@@ -186,6 +190,8 @@ public class Settings : INotifyPropertyChanged
 			}
 		}
 	}
+
+	public string UpdateChannel { get; set; } = DEFAULT_UPDATE_CHANNEL;
 
 	[Serializable]
 	public class Binds

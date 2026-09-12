@@ -12,6 +12,12 @@ public readonly struct Tribe(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Tribe>
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public readonly uint RowId => row;
 
 	/// <summary>Gets the full tribe name.</summary>

@@ -13,6 +13,12 @@ public readonly struct Glasses(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Glasses>
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public readonly uint RowId => row;
 
 	/// <summary>Gets the name of the glasses.</summary>

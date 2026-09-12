@@ -7,8 +7,8 @@
 		xmlns:gif="http://wpfanimatedgif.codeplex.com"
 		xmlns:cm3="clr-namespace:Anamnesis.Styles.Controls;assembly=Styles"
 		mc:Ignorable="d"
-		Height="120"
-		Width="120"
+		Height="128"
+		Width="128"
 		ResizeMode="NoResize"
 		WindowStyle="None"
 		Background="Transparent"
@@ -19,7 +19,7 @@
 		Icon="/Assets/Anamnesis.ico">
 
 
-	<Grid Width="100" Height="100" Margin="10">
+	<Grid Width="128" Height="128">
 
 		<Ellipse Fill="#262626">
 			<Ellipse.Effect>
@@ -27,7 +27,7 @@
 			</Ellipse.Effect>
 		</Ellipse>
 
-		<ProgressBar Style="{DynamicResource MaterialDesignCircularProgressBar}" Foreground="AliceBlue" IsIndeterminate="True" Width="100" Height="100"/>
-		<Image Grid.Row="0" Source="Assets/Anamnesis.png" Width="100" Height="100" Margin="0,0,0,0"/>
+		<ProgressBar Style="{DynamicResource MaterialDesignCircularProgressBar}" Foreground="White" IsIndeterminate="True" Width="128" Height="128"/>
+		<Image Grid.Row="0" Source="Assets/Anamnesis.png" Width="128" Height="128" Margin="0,0,0,0" RenderOptions.BitmapScalingMode="HighQuality" RenderOptions.EdgeMode="Aliased"/>
 	</Grid>
 </Window>

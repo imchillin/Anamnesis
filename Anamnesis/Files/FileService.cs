@@ -21,6 +21,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -728,37 +729,35 @@ public class FileService : ServiceBase<FileService>
 				legacyLibDir.Delete(true);
 			}
 
-			// Check version file
 			DirectoryInfo libDir = new(ParseToFilePath(StandardLibDirectory));
-			string verFile = Path.Combine(libDir.FullName, "ver.txt");
-			if (libDir.Exists && File.Exists(verFile))
+			string checksumFile = Path.Combine(libDir.FullName, "checksum.txt");
+
+			// Determine whether to replace the library contents based on checksum comparison
+			string currentArchiveChecksum;
+			using (Stream embedded = EmbeddedFileUtility.Load("Data\\StandardLibrary.tar.gz"))
+			{
+				byte[] hashBytes = await SHA256.HashDataAsync(embedded);
+				currentArchiveChecksum = Convert.ToHexStringLower(hashBytes);
+			}
+
+			// Check existing checksum file
+			if (libDir.Exists && File.Exists(checksumFile))
 			{
 				try
 				{
-					string verText = await File.ReadAllTextAsync(verFile);
+					string existingChecksum = (await File.ReadAllTextAsync(checksumFile)).Trim();
 
-					if (string.IsNullOrEmpty(verText))
+					if (string.Equals(existingChecksum, currentArchiveChecksum, StringComparison.OrdinalIgnoreCase))
 					{
-						Log.Warning("Standard library version file missing or empty. Replacing library contents...");
+						Log.Debug("Standard pose library is up to date.");
+						return;
 					}
-					else if (!DateTime.TryParse(verText, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime _))
-					{
-						if (!Version.TryParse(verText, out Version? stdLibVer))
-						{
-							Log.Error($"Failed to parse standard pose library version: {verText}");
-							return;
-						}
 
-						if (stdLibVer == VersionInfo.ApplicationVersion)
-						{
-							Log.Information($"Standard pose library up to date");
-							return;
-						}
-					}
+					Log.Information("Standard pose library checksum mismatch or archive updated. Re-extracting...");
 				}
 				catch (Exception ex)
 				{
-					Log.Warning(ex, "Failed to read standard library version file");
+					Log.Warning(ex, "Failed to read standard library checksum file. Proceeding with re-extraction...");
 				}
 
 				SetAttributesNormal(libDir);
@@ -767,7 +766,6 @@ public class FileService : ServiceBase<FileService>
 
 			libDir.Create();
 			SetAttributesNormal(libDir);
-			await File.WriteAllTextAsync(verFile, VersionInfo.ApplicationVersion.ToString());
 
 			// Load the embedded archive and extract it
 			{
@@ -797,6 +795,8 @@ public class FileService : ServiceBase<FileService>
 					entry.ExtractToFile(destPath, overwrite: true);
 				}
 			}
+
+			await File.WriteAllTextAsync(checksumFile, currentArchiveChecksum);
 
 			Log.Information($"Extracted standard library");
 		}

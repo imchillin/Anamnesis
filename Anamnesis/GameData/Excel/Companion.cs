@@ -16,6 +16,12 @@ public readonly struct Companion(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Companion>, INpcBase
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public uint RowId => row;
 
 	/// <summary>Gets the singular name of the companion.</summary>

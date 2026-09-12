@@ -7,6 +7,20 @@ permissions:
 
 on:
   workflow_dispatch:
+    inputs:
+      channel:
+        type: string
+        description: 'Release channel (e.g., "stable")'
+        required: true
+        default: 'stable'
+      version:
+        type: string
+        description: 'Semantic version (e.g., "1.1.0")'
+        required: true
+
+concurrency:
+  group: publish-${{ github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
   publish:
@@ -17,76 +31,177 @@ jobs:
         shell: pwsh
 
     steps:
-      # 1. Checkout repo + all submodules
       - name: Checkout repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           submodules: recursive
           persist-credentials: true
 
-      # 2. Install .NET SDK
-      - name: Setup .NET 9.0
-        uses: actions/setup-dotnet@v3.4.2
-        with:
-          dotnet-version: '9.0.x'
+      - name: Resolve channel input settings
+        id: resolve_channel
+        run: |
+         # Process channel input
+          $channelId = "${{ github.event.inputs.channel }}".Trim()
+          if (-not (Test-Path "./channels.json")) {
+            Write-Error "Error: channels.json manifest file not found in root directory."
+            exit 1
+          }
 
-      # 3. Publish projects
+          $manifest = Get-Content ./channels.json | ConvertFrom-Json
+          if (-not $manifest.channels.PSObject.Properties[$channelId]) {
+            Write-Error "Error: Channel '$channelId' is not defined in the channels manifest file (channels.json). Add the channel to the manifest before running this job."
+            exit 1
+          }
+
+          $channelData = $manifest.channels.$channelId
+
+          # Process input version
+          $inputVer = "${{ github.event.inputs.version }}".Trim()
+          if ([string]::IsNullOrWhiteSpace($inputVer)) {
+            Write-Error "Error: Version parameter is required."
+            exit 1
+          }
+          $targetVer = $inputVer -replace '^v', ''
+
+          # Construct tag name according to channel
+          if ($channelId -eq "stable") {
+            $tag = "v$targetVer"
+            $isPreRelease = "false"
+          } else {
+            $tag = "v$targetVer-$channelId"
+            $isPreRelease = "true"
+          }
+
+          # Process VPK channel name
+          $vpkChannel = if ($channelId.StartsWith("win-")) { $channelId } else { "win-$channelId" }
+
+          # Export values as environment variables for later steps
+          echo "RELEASE_VERSION=$targetVer" >> $env:GITHUB_ENV
+          echo "RELEASE_TAG=$tag" >> $env:GITHUB_ENV
+          echo "IS_PRERELEASE=$isPreRelease" >> $env:GITHUB_ENV
+          echo "VPK_CHANNEL=$vpkChannel" >> $env:GITHUB_ENV
+
+          Write-Host "Target Version: $targetVer"
+          Write-Host "Release Tag: $tag"
+          Write-Host "Is Pre-release: $isPreRelease"
+
+      - name: Fetch framework version from local global file
+        id: fetch_framework_version
+        run: |
+          $globalJson = Get-Content ./global.json | ConvertFrom-Json
+          $cleanVersion = $globalJson.sdk.version -replace '-.*$', ''
+          $parsedVersion = [version]$cleanVersion
+          $framework = "net$($parsedVersion.Major).$($parsedVersion.Minor)-x64-desktop"
+          
+          echo "DESKTOP_FRAMEWORK=$framework" >> $env:GITHUB_ENV
+          Write-Host "Framework Target: $framework"
+
+      - name: Check if tag already exists
+        run: |
+          git fetch --tags
+          if (git tag -l "${{ env.RELEASE_TAG }}") {
+            Write-Error "Tag ${{ env.RELEASE_TAG }} already exists. Aborting release."
+            exit 1
+          }
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: ./global.json
+
       - name: Publish Anamnesis
-        run: dotnet publish Anamnesis/Anamnesis.csproj /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml" /p:DefineConstants="CI_BUILD"
+        run: dotnet publish Anamnesis/Anamnesis.csproj `
+          /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml" `
+          /p:DefineConstants="CI_BUILD" `
+          /p:Version="${{ env.RELEASE_VERSION }}"
 
       - name: Publish UpdateExtractor
-        run: dotnet publish UpdateExtractor/UpdateExtractor.csproj /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml" /p:DefineConstants="CI_BUILD"
+        run: dotnet publish UpdateExtractor/UpdateExtractor.csproj `
+          /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml" `
+          /p:DefineConstants="CI_BUILD"
 
-      # 4. Attest Build Artifacts
-      - name: Generate artifact attestation Ana
-        uses: actions/attest-build-provenance@v2
+      - name: Generate artifact attestation Anamnesis
+        uses: actions/attest@v4
         with:
           subject-path: './publish/Anamnesis.exe'
 
       - name: Generate artifact attestation Updater
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest@v4
         with:
           subject-path: './publish/Updater/UpdateExtractor.exe'
 
-      # 5. Delete redundant files
       - name: Delete pdb and xml
         run: |
           Get-ChildItem -Path './publish/*' -Recurse -Include *.pdb,*.xml -File | Remove-Item -Force
           Get-ChildItem -Path './publish/*' -Recurse -Include FASM*,Reloaded.*,AetherTools.Anamnesis.Reloaded.* -File | Remove-Item -Force
 
-      # 6. Zip up the entire publish folder
-      - name: Create ZIP
-        run: Compress-Archive -Path './publish/*' -DestinationPath './Anamnesis.zip'
-
-      # 7. Extract version from VersionInfo.cs
-      - name: Extract version from application files
+      - name: Copy updater and clean up publish directory
+        id: copy_updater
         run: |
-          $content = Get-Content ./Anamnesis/VersionInfo.cs -Raw
-          if ($content -match 'new\s*\(\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)\s*\)') {
-            $version = "v$($matches[1]).$($matches[2]).$($matches[3]).$($matches[4])"
-            echo "VERSION_TAG=$version" >> $env:GITHUB_ENV
-          } else {
-            Write-Error "Could not extract version from VersionInfo.cs"
+          New-Item -ItemType Directory -Path "./Migration/Updater" -Force
+          Copy-Item "./publish/Updater/UpdateExtractor.exe" -Destination "./Migration/Updater/"
+
+          # Removed to avoid including unused files in the release package.
+          Remove-Item -Path "./publish/Updater" -Recurse -Force
+
+      - name: Install Velopack CLI & Build Package
+        run: |
+          dotnet tool install -g vpk
+          
+          # Download previous release metadata for delta package generation
+          vpk download github --repoUrl "https://github.com/${{ github.repository }}" --channel "${{ env.VPK_CHANNEL }}"
+
+          # Create Velopack release & MSI installer
+          vpk pack `
+            -u Anamnesis `
+            -v "${{ env.RELEASE_VERSION }}" `
+            -p "./publish" `
+            -e "Anamnesis.exe" `
+            -c "${{ env.VPK_CHANNEL }}" `
+            --framework "${{ env.DESKTOP_FRAMEWORK }}" `
+            --noPortable `
+            --msi `
+            --msiBanner "./Anamnesis/Assets/MsiBackground.bmp" `
+            --msiLogo "./Anamnesis/Assets/MsiTopBanner.bmp" `
+            --instLicense "./LICENSE.md" `
+            -o "./Releases"
+
+      - name: Create migration archive
+        id: create_migration_archive
+        run: |
+          $msiFile = Get-ChildItem -Path "./Releases/*.msi" | Select-Object -First 1
+          if (-not $msiFile) {
+            Write-Error "Velopack MSI output was not found in ./Releases"
             exit 1
           }
+          Copy-Item $msiFile.FullName -Destination "./Migration/Updater/"
 
-      # 8. Check if tag already exists
-      - name: Check if tag already exists
+          Compress-Archive -Path "./Migration/*" -DestinationPath "./Migration.zip" -Force
+
+      - name: Create draft release & upload Velopack artifacts
+        id: upload_vpk
         run: |
-          git fetch --tags
-          if (git tag -l "${{ env.VERSION_TAG }}") {
-            Write-Error "Tag ${{ env.VERSION_TAG }} already exists. Aborting release."
-            exit 1
+          $vpkArgs = @(
+            "upload", "github",
+            "--repoUrl", "https://github.com/${{ github.repository }}",
+            "--releaseName", "${{ env.RELEASE_TAG }}",
+            "--tag", "${{ env.RELEASE_TAG }}",
+            "--channel", "${{ env.VPK_CHANNEL }}",
+            "--token", "${{ secrets.GITHUB_TOKEN }}",
+            "--targetCommitish", "${{ github.sha }}",
+            "--outputDir", "./Releases"
+          )
+
+          if ("${{ env.IS_PRERELEASE }}" -eq "true") {
+            $vpkArgs += "--pre"
           }
 
-      # 9. Draft a GitHub release
-      - name: Create draft release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ env.VERSION_TAG }}
-          name: ${{ env.VERSION_TAG }}
-          draft: true
-          artifacts: "Anamnesis.zip"
+          vpk @vpkArgs
+
+      - name: Append migration archive to draft release
+        id: upload_migration
+        run: |
+          gh release upload "${{ env.RELEASE_TAG }}" "./Migration.zip" --clobber
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

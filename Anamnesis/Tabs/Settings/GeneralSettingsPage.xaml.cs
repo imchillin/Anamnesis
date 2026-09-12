@@ -4,7 +4,9 @@
 namespace Anamnesis.Tabs.Settings;
 
 using Anamnesis.Files;
+using Anamnesis.GUI.Dialogs;
 using Anamnesis.Services;
+using Anamnesis.Updater;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
@@ -32,6 +34,7 @@ public partial class GeneralSettingsPage : System.Windows.Controls.UserControl, 
 			{ "Interface", new SettingCategory("Interface", this.InterfaceGroupBox) },
 			{ "Files", new SettingCategory("Files", this.FilesGroupBox) },
 			{ "Directories", new SettingCategory("Directories", this.DirectoriesGroupBox) },
+			{ "Updates", new SettingCategory("Updates", this.UpdatesGroupBox) },
 		};
 
 		// Set up interface category settings
@@ -55,6 +58,9 @@ public partial class GeneralSettingsPage : System.Windows.Controls.UserControl, 
 		this.SettingCategories["Directories"].Settings.Add(new Setting("Settings_Dir_CameraShots", this.General_Directories_CamShots));
 		/* this.SettingCategories["Directories"].Settings.Add(new Setting("Settings_Dir_Scenes", this.General_Directories_Scenes)); */
 
+		// Set up updates category settings
+		this.SettingCategories["Updates"].Settings.Add(new Setting("Settings_ReleaseChannel", this.General_Updates_ReleaseChannel));
+
 		// Set up window size options
 		this.SizeSelector.ItemsSource = new List<double>() { 0.75, 1.0, 1.25, 1.5, 1.75, 2.0 };
 
@@ -68,12 +74,31 @@ public partial class GeneralSettingsPage : System.Windows.Controls.UserControl, 
 		this.Languages = LocalizationService.GetAvailableLocales()
 			.Select(locale => new LanguageOption(locale.Key, locale.Value))
 			.ToList();
+
+		if (UpdateService.GlobalManifest?.Channels != null)
+		{
+			this.ReleaseChannels = UpdateService.GlobalManifest.Channels
+				.Select(channel =>
+				{
+					string display = channel.Key == Settings.DEFAULT_UPDATE_CHANNEL
+						? $"{channel.Value.Name} ({LocalizationService.GetString("Common_Default")})"
+						: channel.Value.Name;
+
+					return new ReleaseChannelOption(channel.Key, display);
+				})
+				.ToList();
+		}
+		else
+		{
+			this.ReleaseChannels = new List<ReleaseChannelOption>();
+		}
 	}
 
 	public static SettingsService SettingsService => SettingsService.Instance;
 	public static int LabelColumnWidth => 150;
 	public static bool IsWindows11 => Win32.IsWindows11();
 	public Dictionary<string, SettingCategory> SettingCategories { get; }
+
 	public IEnumerable<FontOption> Fonts { get; }
 
 	[DependsOn(nameof(Fonts))]
@@ -93,6 +118,24 @@ public partial class GeneralSettingsPage : System.Windows.Controls.UserControl, 
 		{
 			SettingsService.Current.Language = value.Key;
 			LocalizationService.SetLocale(value.Key);
+		}
+	}
+
+	public IEnumerable<ReleaseChannelOption> ReleaseChannels { get; }
+
+	[DependsOn(nameof(ReleaseChannels))]
+	public bool HasReleaseChannels => this.ReleaseChannels.Any();
+
+	[DependsOn(nameof(ReleaseChannels))]
+	public ReleaseChannelOption? SelectedReleaseChannel
+	{
+		get => this.ReleaseChannels.FirstOrDefault(channel => channel.Key.Equals(SettingsService.Current.UpdateChannel, StringComparison.CurrentCultureIgnoreCase));
+		set
+		{
+			if (value == null)
+				return;
+
+			SettingsService.Current.UpdateChannel = value.Key;
 		}
 	}
 
@@ -152,6 +195,16 @@ public partial class GeneralSettingsPage : System.Windows.Controls.UserControl, 
 		SettingsService.Current.DefaultSceneDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
 	}
 
+	private async void OnCheckForUpdates(object sender, RoutedEventArgs e)
+	{
+		bool didUpdate = await UpdateService.Instance.CheckForUpdates();
+
+		if (!didUpdate)
+		{
+			await GenericDialog.ShowLocalizedAsync("Update_NoUpdate", "Update_Title", MessageBoxButton.OK);
+		}
+	}
+
 	private void HyperlinkRequestNavigate(object sender, RequestNavigateEventArgs e)
 	{
 		Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
@@ -165,6 +218,12 @@ public partial class GeneralSettingsPage : System.Windows.Controls.UserControl, 
 	}
 
 	public class LanguageOption(string key, string display)
+	{
+		public string Key { get; } = key;
+		public string Display { get; } = display;
+	}
+
+	public class ReleaseChannelOption(string key, string display)
 	{
 		public string Key { get; } = key;
 		public string Display { get; } = display;

@@ -17,6 +17,7 @@
   "Common_Confirm": "Confirm",
   "Common_Attention": "Attention",
   "Common_Filters": "Filters",
+  "Common_Default": "Default",
 
   "ProcessSelector_AllWarning": "Selecting a process other than the DirectX 11 Final Fantasy XIV process can cause the selected process and Anamnesis to crash",
   "ProcessSelector_NotFound": "Final Fantasy XIV process (ffxiv_dx11) not found.",
@@ -879,6 +880,11 @@
   "Settings_OverrideFpsLimiter": "Override FPS limiter",
   "Settings_OverrideFpsLimiter_Tooltip": "When toggled on, Anamnesis will override the in-game FPS limiter setting to improve performance.",
   "Settings_OverrideFpsLimiterWarning": "For best posing performance, allow Anamnesis to override the game's inactive FPS limiter. This prevents slowdowns when the game window is not focused.",
+  "Settings_UpdatesHeader": "Updates",
+  "Settings_ReleaseChannel": "Version release channel",
+  "Settings_ReleaseChannelTooltip": "This setting controls how quickly you get new features. The default branch offers stable updates, while experimental or preview channels give early access to upcoming changes.",
+  "Settings_UpdatesRateLimitWarning": "Checking for updates too often can temporarily block your access to the update server. If you are experiencing issues, please try again later.",
+
   "About_Title": "About Anamnesis",
   "About_Version_Header": "Version",
   "About_OpenSource_Header": "Proudly Open Source",
@@ -893,6 +899,9 @@
   "Update_NoUpdate": "No updates found",
   "Update_Check_Fail_Title": "Failed to check for updates",
   "Update_RateLimit": "Unable to check for updates at this time. Please try again later.",
+  "Update_NoChangelog": "No release notes found for this version. Visit the release page for details.",
+  "Update_ChannelSwitch_Title": "Switch Update Channel?",
+  "Update_ChannelSwitch_FallbackAvailable_Body": "Your current update channel '{0}' is not validated against the latest game version. A validated application version is available on the fallback channel '{1}'.\n\nWould you like to switch to the channel with the newer version?",
 
   "DevBuild_Title": "Development Build",
   "DevBuild_Body": "This is an experimental development build of Anamnesis and is not officially supported. These builds are likely to contain serious issues and should be avoided unless you know what you are doing.\n\nWould you like to continue using this build?\nSelecting no will offer you an update to the latest supported build.",

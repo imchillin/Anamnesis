@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Items;
+
 using Anamnesis.GameData;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;

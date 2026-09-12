@@ -15,6 +15,12 @@ public readonly struct Ornament(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Ornament>, INpcBase
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public readonly uint RowId => row;
 
 	/// <summary>Gets the singular name of the ornament.</summary>

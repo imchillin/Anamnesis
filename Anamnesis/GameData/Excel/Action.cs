@@ -14,6 +14,12 @@ public readonly struct Action(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Action>, IAnimation
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public readonly uint RowId => row;
 
 	/// <inheritdoc/>

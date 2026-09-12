@@ -16,6 +16,12 @@ public readonly struct ResidentNpc(ExcelPage page, uint offset, uint row)
 	: IExcelRow<ResidentNpc>, INpcBase
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public readonly uint RowId => row;
 
 	/// <summary>Gets a reference to the associated Event NPC.</summary>

@@ -15,6 +15,12 @@ public readonly struct Perform(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Perform>, IItem
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public readonly uint RowId => row;
 
 	/// <inheritdoc/>
