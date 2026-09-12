@@ -76,6 +76,7 @@ public readonly struct ClassJobCategory(ExcelPage page, uint offset, uint row)
 		{ Classes.Sage, page.ReadBool(offset + 44) },
 		{ Classes.Viper, page.ReadBool(offset + 45) },
 		{ Classes.Pictomancer, page.ReadBool(offset + 46) },
+		{ Classes.Beastmaster, page.ReadBool(offset + 47) },
 	};
 
 	/// <summary>
