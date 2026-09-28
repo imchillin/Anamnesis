@@ -205,9 +205,9 @@ public class Bone : ITransform
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Transform LocalToModelSpace(Transform localTransform, Transform parentTransform)
 	{
-		// Apply the parent's character-relative rotation to the local position
-		Vector3 modelPosition = Vector3.Transform(localTransform.Position, parentTransform.Rotation);
-		modelPosition += parentTransform.Position;
+		// Apply the parent's scale, then character-relative rotation to the local position
+		Vector3 scaledLocalPos = localTransform.Position * parentTransform.Scale;
+		Vector3 modelPosition = Vector3.Transform(scaledLocalPos, parentTransform.Rotation) + parentTransform.Position;
 
 		// Apply the parent's character-relative rotation to the local rotation
 		Quaternion modelRotation = Quaternion.Normalize(parentTransform.Rotation * localTransform.Rotation);
@@ -232,9 +232,23 @@ public class Bone : ITransform
 		// Subtract the parent's character-relative position from the model position
 		Vector3 localPosition = modelTransform.Position - parentTransform.Position;
 
-		// Apply the inverse of the parent's character-relative rotation to the local position
+		// Apply the inverse of the parent's character-relative rotation and scale to the local position
 		Quaternion parentRotInverse = Quaternion.Conjugate(parentTransform.Rotation);
 		localPosition = Vector3.Transform(localPosition, parentRotInverse);
+		if (parentTransform.Scale.X != 0)
+		{
+			localPosition.X /= parentTransform.Scale.X;
+		}
+
+		if (parentTransform.Scale.Y != 0)
+		{
+			localPosition.Y /= parentTransform.Scale.Y;
+		}
+
+		if (parentTransform.Scale.Z != 0)
+		{
+			localPosition.Z /= parentTransform.Scale.Z;
+		}
 
 		// Apply the inverse of the parent's character-relative rotation to the model rotation
 		Quaternion localRotation = Quaternion.Normalize(parentRotInverse * modelTransform.Rotation);
@@ -367,6 +381,25 @@ public class Bone : ITransform
 					currentBone.ReadTransform();
 				}
 
+				Transform? parentTransform = precalcParent;
+				if (parentTransform == null && currentBone.Parent != null)
+				{
+					if (currentBone.Parent.TransformMemories.Count > 0)
+					{
+						var pts = currentBone.Parent.TransformMemories[0].Transform;
+						parentTransform = new Transform
+						{
+							Position = pts.Position,
+							Rotation = pts.Rotation,
+							Scale = pts.Scale,
+						};
+					}
+					else
+					{
+						parentTransform = default;
+					}
+				}
+
 				// Calculate deltas for linked Bones
 				Quaternion rotDelta = Quaternion.Identity;
 				Vector3 scaleDelta = Vector3.One;
@@ -384,7 +417,7 @@ public class Bone : ITransform
 					};
 
 					Transform memLocal = currentBone.Parent != null
-						? ModelToLocalSpace(memModel, precalcParent ?? ComputeModelSpaceTransform(currentBone.Parent))
+						? ModelToLocalSpace(memModel, parentTransform!.Value)
 						: memModel;
 
 					rotDelta = currentBone.Rotation * Quaternion.Inverse(memLocal.Rotation);
@@ -404,8 +437,7 @@ public class Bone : ITransform
 
 				if (currentBone.Parent != null)
 				{
-					Transform parentTransform = precalcParent ?? ComputeModelSpaceTransform(currentBone.Parent);
-					modelTransform = LocalToModelSpace(modelTransform, parentTransform);
+					modelTransform = LocalToModelSpace(modelTransform, parentTransform!.Value);
 				}
 
 				currentBone.TransformLock.EnterWriteLock();
@@ -551,55 +583,5 @@ public class Bone : ITransform
 		this.Parent?.Children.Remove(this);
 		this.Parent = newParent;
 		newParent?.Children.Add(this);
-	}
-
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Transform ComputeModelSpaceTransform(Bone bone)
-	{
-		int depth = 0;
-		Bone? current = bone;
-		while (current != null)
-		{
-			depth++;
-			current = current.Parent;
-		}
-
-		Bone[] ancestors = System.Buffers.ArrayPool<Bone>.Shared.Rent(depth);
-		try
-		{
-			current = bone;
-			int index = 0;
-			while (current != null && index < depth)
-			{
-				ancestors[index++] = current;
-				current = current.Parent;
-			}
-
-			Transform modelTransform = new()
-			{
-				Position = Vector3.Zero,
-				Rotation = Quaternion.Identity,
-				Scale = Vector3.One,
-			};
-
-			for (int i = depth - 1; i >= 0; i--)
-			{
-				Bone ancestor = ancestors[i];
-				Transform localTransform = new()
-				{
-					Position = ancestor.Position,
-					Rotation = ancestor.Rotation,
-					Scale = ancestor.Scale,
-				};
-
-				modelTransform = LocalToModelSpace(localTransform, modelTransform);
-			}
-
-			return modelTransform;
-		}
-		finally
-		{
-			System.Buffers.ArrayPool<Bone>.Shared.Return(ancestors);
-		}
 	}
 }

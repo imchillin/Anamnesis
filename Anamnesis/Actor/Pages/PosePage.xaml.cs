@@ -76,6 +76,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	private string? selectedBoneTextCache;
 
 	private int pendingSkeletonRetryAttempts = 0;
+	private SkeletonEntity? skeleton;
 
 	public PosePage()
 	{
@@ -112,10 +113,20 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	public static GposeService GposeService => GposeService.Instance;
 	public static PoseService PoseService => PoseService.Instance;
 	public static TargetService TargetService => TargetService.Instance;
+	public static SkeletonEntity? CurrentSkeleton { get; private set; }
 
 	public bool IsFlipping { get; private set; }
 	public ObjectHandle<ActorMemory>? Actor { get; private set; }
-	public SkeletonEntity? Skeleton { get; private set; }
+
+	public SkeletonEntity? Skeleton
+	{
+		get => this.skeleton;
+		private set
+		{
+			this.skeleton = value;
+			CurrentSkeleton = value;
+		}
+	}
 
 	public bool IsSingleBoneSelected => this.Skeleton?.SelectedBones.Count() == 1;
 	public bool IsMultipleBonesSelected => this.Skeleton?.SelectedBones.Count() > 1;
