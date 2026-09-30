@@ -28,9 +28,10 @@ public class GameDataService : ServiceBase<GameDataService>
 
 	public enum ClientRegion
 	{
-		Global,
-		Korean,
-		Chinese,
+		Global,  // EN, DE, FR, JP
+		Korean,  // KO
+		Chinese, // CHS
+		Taiwan,  // CHT, TC
 	}
 
 	public static ClientRegion Region { get; private set; }
@@ -161,21 +162,7 @@ public class GameDataService : ServiceBase<GameDataService>
 
 	public override Task Initialize()
 	{
-		Language defaultLuminaLaunguage = Language.English;
 		Region = ClientRegion.Global;
-
-		if (File.Exists(Path.Combine(MemoryService.GamePath, "FFXIVBoot.exe")) || File.Exists(Path.Combine(MemoryService.GamePath, "FFXIVBootV3.exe")) || File.Exists(Path.Combine(MemoryService.GamePath, "rail_files", "rail_game_identify.json")))
-		{
-			Region = ClientRegion.Chinese;
-			defaultLuminaLaunguage = Language.ChineseSimplified;
-		}
-		else if (File.Exists(Path.Combine(MemoryService.GamePath, "boot", "FFXIV_Boot.exe")))
-		{
-			Region = ClientRegion.Korean;
-			defaultLuminaLaunguage = Language.Korean;
-		}
-
-		Log.Information($"Found game client region: {Region}");
 
 		// These are JSON files that we write by hand
 		try
@@ -193,13 +180,51 @@ public class GameDataService : ServiceBase<GameDataService>
 		{
 			Lumina.LuminaOptions options = new()
 			{
-				DefaultExcelLanguage = defaultLuminaLaunguage,
+				DefaultExcelLanguage = Language.English, // Default language
 				LoadMultithreaded = true,
 				CacheFileResources = true,
 				PanicOnSheetChecksumMismatch = true,
 			};
 
 			s_luminaData = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\", options);
+
+			// NOTE: The selection of excel header file is not that important
+			// What IS important is that we target a lightweight (i.e., fewer columns) localized sheet
+			var itemHeader = s_luminaData.GetFile<Lumina.Data.Files.Excel.ExcelHeaderFile>("exd/Achievement.exh");
+			if (itemHeader != null && itemHeader.Languages != null && itemHeader.Languages.Length > 0)
+			{
+				// IMPORTANT: Global client is checked first as it contains languages for all other regions
+				if (itemHeader.Languages.Contains(Language.English))
+				{
+					// Global (Square Enix / Steam / XIVLauncher)
+					Region = ClientRegion.Global;
+					s_luminaData.Options.DefaultExcelLanguage = Language.English;
+				}
+				else if (itemHeader.Languages.Contains(Language.ChineseSimplified))
+				{
+					// Mainland China (Shengqu / XIVLauncher-CN)
+					Region = ClientRegion.Chinese;
+					s_luminaData.Options.DefaultExcelLanguage = Language.ChineseSimplified;
+				}
+				else if (itemHeader.Languages.Contains(Language.Korean))
+				{
+					// Korean (Actoz)
+					Region = ClientRegion.Korean;
+					s_luminaData.Options.DefaultExcelLanguage = Language.Korean;
+				}
+				else if (itemHeader.Languages.Contains(Language.TraditionalChinese) || itemHeader.Languages.Contains(Language.ChineseTraditional))
+				{
+					// Taiwan (UserJoy)
+					// NOTE: ChineseTraditional (0x06) appears to be unused
+					Region = ClientRegion.Taiwan;
+					s_luminaData.Options.DefaultExcelLanguage =
+						itemHeader.Languages.Contains(Language.TraditionalChinese)
+							? Language.TraditionalChinese
+							: Language.ChineseTraditional;
+				}
+			}
+
+			Log.Information($"Found game client region: {Region} (Language: {s_luminaData.Options.DefaultExcelLanguage})");
 
 			Races = GetExcelSheet<Race>();
 			Tribes = GetExcelSheet<Tribe>();
