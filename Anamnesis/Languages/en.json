@@ -806,7 +806,7 @@
   "Settings_FilesHeader": "Files",
   "Settings_KeysHeader": "Hotkeys",
   "Settings_Language": "Language",
-  "Settings_CrowdinTooltip": "Anamnesis is translated by the community via Crowdin. If you'd like to help, please visit the project page.",
+  "Settings_CrowdinTooltip": "An application restart is required for in-game data (items, territories, etc.) to update to the selected language.\nIf the language is not officially supported by the game, then Anamnesis will fall back to English for game assets.\n\nAnamnesis is translated by the community via Crowdin. If you'd like to help, please visit the project page.",
   "Settings_AlwaysOnTop": "Always on top",
   "Settings_Overlay": "Mini mode",
   "Settings_Translucency": "Window translucency",

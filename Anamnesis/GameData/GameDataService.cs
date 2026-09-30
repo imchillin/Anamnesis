@@ -13,6 +13,7 @@ using Lumina.Data;
 using Lumina.Excel;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -65,6 +66,36 @@ public class GameDataService : ServiceBase<GameDataService>
 
 	public static ILookup<ulong, uint> ItemsByModel { get; private set; } = null!;
 	public static ILookup<ulong, uint> ItemsBySubModel { get; private set; } = null!;
+
+	protected override IEnumerable<IService> Dependencies => [MemoryService.Instance, SettingsService.Instance, LocalizationService.Instance];
+
+	/// <summary>
+	/// Converts a <see cref="CultureInfo"/> to a supported Lumina <see cref="Language"/>.
+	/// </summary>
+	public static Language ConvertToLuminaLanguage(CultureInfo culture, Lumina.Data.Files.Excel.ExcelHeaderFile? header = null)
+	{
+		try
+		{
+			string languageName = CultureInfo.GetCultureInfo(culture.TwoLetterISOLanguageName).EnglishName;
+			if (Enum.TryParse<Language>(languageName, ignoreCase: true, out var preferredLanguage))
+			{
+				if (header == null || header.Languages.Contains(preferredLanguage))
+					return preferredLanguage;
+			}
+		}
+		catch (CultureNotFoundException)
+		{
+			// Exit gracefully
+		}
+
+		return Language.English;
+	}
+
+	/// <summary>
+	/// Resolves the Lumina <see cref="Language"/> for the currently active <see cref="LocalizationService"/> locale.
+	/// </summary>
+	public static Language GetLanguageForLocale(Lumina.Data.Files.Excel.ExcelHeaderFile header)
+		=> ConvertToLuminaLanguage(LocalizationService.CurrentCultureInfo, header);
 
 	public static ExcelSheet<T> GetExcelSheet<T>(Language? language = null, string? name = null)
 					where T : struct, IExcelRow<T>
@@ -198,7 +229,7 @@ public class GameDataService : ServiceBase<GameDataService>
 				{
 					// Global (Square Enix / Steam / XIVLauncher)
 					Region = ClientRegion.Global;
-					s_luminaData.Options.DefaultExcelLanguage = Language.English;
+					s_luminaData.Options.DefaultExcelLanguage = GetLanguageForLocale(itemHeader);
 				}
 				else if (itemHeader.Languages.Contains(Language.ChineseSimplified))
 				{
