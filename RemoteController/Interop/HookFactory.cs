@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace RemoteController.Interop;
@@ -104,6 +104,8 @@ public static class HookFactory
 [RequiresDynamicCode("This class requires dynamic code due to hook reflection")]
 public static class DetourBuilder
 {
+	private const int STACKALLOC_THRESHOLD = 256;
+
 	private static readonly ArrayPool<byte> s_pool = ArrayPool<byte>.Shared;
 
 	/// <summary>
@@ -154,8 +156,10 @@ public static class DetourBuilder
 				int size = MarshalUtils.ComputeArgsSize(args);
 				if (size > 0)
 				{
-					rentedBuffer = s_pool.Rent(size);
-					Span<byte> buffer = rentedBuffer.AsSpan(0, size);
+					Span<byte> buffer = size <= STACKALLOC_THRESHOLD
+						? stackalloc byte[size]
+						: (rentedBuffer = s_pool.Rent(size)).AsSpan(0, size);
+
 					MarshalUtils.SerializeArgs(buffer, args);
 					Controller.SendInterceptRequest(hookId, buffer);
 				}
@@ -192,8 +196,10 @@ public static class DetourBuilder
 				int resultSize = returnType != typeof(void) ? MarshalUtils.GetSerializedSize(result!) : 0;
 				int totalSize = sizeof(int) + argsSize + resultSize; // Payload: [Int32 ArgsLength] [Args Data] [Result Data]
 
-				rentedBuffer = s_pool.Rent(totalSize);
-				Span<byte> buffer = rentedBuffer.AsSpan(0, totalSize);
+				Span<byte> buffer = totalSize <= STACKALLOC_THRESHOLD
+					? stackalloc byte[totalSize]
+					: (rentedBuffer = s_pool.Rent(totalSize)).AsSpan(0, totalSize);
+
 				MemoryMarshal.Write(buffer, in argsSize);
 
 				if (argsSize > 0)
@@ -233,8 +239,10 @@ public static class DetourBuilder
 
 				if (size > 0)
 				{
-					rentedBuffer = s_pool.Rent(size);
-					Span<byte> buffer = rentedBuffer.AsSpan(0, size);
+					Span<byte> buffer = size <= STACKALLOC_THRESHOLD
+						? stackalloc byte[size]
+						: (rentedBuffer = s_pool.Rent(size)).AsSpan(0, size);
+
 					MarshalUtils.SerializeArgs(buffer, args);
 
 					byte[] responseArray = Controller.SendInterceptRequest(hookId, buffer);

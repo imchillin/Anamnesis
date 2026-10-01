@@ -53,18 +53,8 @@ public class Skeleton : INotifyPropertyChanged
 	/// </summary>
 	private static readonly ObjectPool<Stack<Bone>> s_boneStackPool = ObjectPool.Create<Stack<Bone>>();
 
-	/// <summary>
-	/// A snapshot of the transforms of all bones in the skeleton.
-	/// </summary>
-	/// <remarks>
-	/// The object is defined as a field to avoid the memory (de)allocation every time a snapshot is taken.
-	/// </remarks>
-	private readonly Dictionary<string, Transform> snapshot = [];
-
-	/// <summary>
-	/// A lock object used to synchronize access to the snapshot dictionary.
-	/// </summary>
-	private readonly Lock snapshotLock = new();
+	/// <summary>Cached list of root bones in the skeleton hierarchy.</summary>
+	private readonly List<Bone> rootBones = [];
 
 	/// <summary>Initializes a new instance of the <see cref="Skeleton"/> class.</summary>
 	/// <param name="actor">The actor memory associated with this skeleton.</param>
@@ -170,6 +160,7 @@ public class Skeleton : INotifyPropertyChanged
 	public virtual void Clear()
 	{
 		this.Bones.Clear();
+		this.rootBones.Clear();
 	}
 
 	/// <summary>Gets a bone from the skeleton by its name.</summary>
@@ -208,21 +199,9 @@ public class Skeleton : INotifyPropertyChanged
 		// If history is restoring, wait until it's done.
 		lock (HistoryService.Instance.LockObject)
 		{
-			// Take a snapshot of the current transforms and update bone transforms.
-			var snapshot = this.TakeSnapshot();
-			var rootBones = new List<Bone>();
-			foreach (var bone in this.Bones.Values)
+			for (int i = 0; i < this.rootBones.Count; i++)
 			{
-				if (bone.Parent == null)
-					rootBones.Add(bone);
-			}
-
-			foreach (var rootBone in rootBones)
-			{
-				if (IsBoneOrDescendantDirty(rootBone))
-				{
-					rootBone.ReadTransform(true, snapshot);
-				}
+				this.rootBones[i].ReadTransform(true);
 			}
 		}
 	}
@@ -235,75 +214,6 @@ public class Skeleton : INotifyPropertyChanged
 	/// <returns>The converted bone name.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static string ConvertBoneName(string? prefix, string name) => prefix != null ? prefix + name : name;
-
-	/// <summary>
-	/// Checks if the given bone or any of its descendants are dirty
-	/// (i.e., have been modified) but not yet written back to game memory.
-	/// </summary>
-	/// <param name="root">The root bone to check.</param>
-	/// <returns>
-	/// True if the bone or any of its descendants are dirty; otherwise, false.
-	/// </returns>
-	protected static bool IsBoneOrDescendantDirty(Bone root)
-	{
-		var stack = s_boneStackPool.Get();
-		try
-		{
-			stack.Push(root);
-
-			while (stack.Count > 0)
-			{
-				var current = stack.Pop();
-				if (current.IsDirty)
-					return true;
-
-				foreach (var child in current.Children)
-					stack.Push(child);
-			}
-
-			return false;
-		}
-		finally
-		{
-			stack.Clear();
-			s_boneStackPool.Return(stack);
-		}
-	}
-
-	/// <summary>Takes a snapshot of the current transforms of all bones.</summary>
-	/// <remarks>
-	/// The intended use of this method is to speed up memory reads by reading all bone transforms at once.
-	/// </remarks>
-	/// <returns>A dictionary containing the transforms of all bones.</returns>
-	protected Dictionary<string, Transform> TakeSnapshot()
-	{
-		lock (this.snapshotLock)
-		{
-			this.snapshot.Clear();
-
-			return this.Actor?.DoRef(a =>
-			{
-				if (a.ModelObject == null || a.ModelObject?.Skeleton == null)
-					return this.snapshot;
-
-				foreach (var (name, bone) in this.Bones)
-				{
-					var transform = bone.TransformMemory;
-					if (transform == null)
-						continue;
-
-					this.snapshot[name] = new Transform
-					{
-						Position = transform.Position,
-						Rotation = transform.Rotation,
-						Scale = transform.Scale,
-					};
-				}
-
-				return this.snapshot;
-			}) ?? [];
-		}
-	}
 
 	/// <summary>Sets the actor memory for the skeleton and initializes all bones.</summary>
 	/// <param name="actor">The actor memory to set.</param>
@@ -320,6 +230,10 @@ public class Skeleton : INotifyPropertyChanged
 		{
 			if (!GposeService.Instance.IsGpose || a.ModelObject?.Skeleton == null)
 				return;
+
+			a.ModelObject.Skeleton.Synchronize();
+			a.DrawData.MainHand?.Model?.Skeleton?.Synchronize();
+			a.DrawData.OffHand?.Model?.Skeleton?.Synchronize();
 
 			// Get all bones
 			this.AddBones(a.ModelObject.Skeleton);
@@ -360,17 +274,16 @@ public class Skeleton : INotifyPropertyChanged
 			}
 		});
 
-		var snapshot = this.TakeSnapshot();
-		var rootBones = new List<Bone>();
+		this.rootBones.Clear();
 		foreach (var bone in this.Bones.Values)
 		{
 			if (bone.Parent == null)
-				rootBones.Add(bone);
+				this.rootBones.Add(bone);
 		}
 
-		foreach (var rootBone in rootBones)
+		foreach (var rootBone in this.rootBones)
 		{
-			rootBone.ReadTransform(true, snapshot);
+			rootBone.ReadTransform(true);
 		}
 
 		// Check for IVCS bones

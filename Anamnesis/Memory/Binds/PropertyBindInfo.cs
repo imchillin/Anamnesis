@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory;
@@ -70,6 +70,9 @@ public class PropertyBindInfo : BindInfo
 
 	/// <summary>Gets the bind flags.</summary>
 	public override BindFlags Flags => this.flags;
+
+	/// <summary>Gets the cached offsets for the property.</summary>
+	public int[] Offsets => this.cachedOffsets;
 
 	/// <summary>
 	/// Gets the address of the bind.
