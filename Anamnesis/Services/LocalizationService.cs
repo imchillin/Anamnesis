@@ -7,6 +7,7 @@ using Anamnesis.Core;
 using Anamnesis.Files;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using XivToolsWpf.DependencyInjection;
@@ -25,6 +26,29 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 
 	/// <inheritdoc/>
 	public event LocalizationEvent? LocaleChanged;
+
+	/// <summary>
+	/// Gets the two-letter culture code of the active locale (e.g., "EN", "FR", "DE").
+	/// </summary>
+	public static string CurrentCulture => s_currentLocale?.Culture ?? FALLBACK_CULTURE;
+
+	/// <summary>
+	/// Gets the <see cref="CultureInfo"/> associated with the active locale.
+	/// </summary>
+	public static CultureInfo CurrentCultureInfo
+	{
+		get
+		{
+			try
+			{
+				return CultureInfo.GetCultureInfo(CurrentCulture);
+			}
+			catch (CultureNotFoundException)
+			{
+				return CultureInfo.GetCultureInfo(FALLBACK_CULTURE);
+			}
+		}
+	}
 
 	/// <summary>
 	/// Gets a value indicating whether the locale provider is loaded.
