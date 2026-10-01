@@ -243,14 +243,14 @@ public class GameDataService : ServiceBase<GameDataService>
 					Region = ClientRegion.Korean;
 					s_luminaData.Options.DefaultExcelLanguage = Language.Korean;
 				}
-				else if (itemHeader.Languages.Contains(Language.TraditionalChinese) || itemHeader.Languages.Contains(Language.ChineseTraditional))
+				else if (itemHeader.Languages.Contains(Language.ChineseTraditional2) || itemHeader.Languages.Contains(Language.ChineseTraditional))
 				{
 					// Taiwan (UserJoy)
 					// NOTE: ChineseTraditional (0x06) appears to be unused
 					Region = ClientRegion.Taiwan;
 					s_luminaData.Options.DefaultExcelLanguage =
-						itemHeader.Languages.Contains(Language.TraditionalChinese)
-							? Language.TraditionalChinese
+						itemHeader.Languages.Contains(Language.ChineseTraditional2)
+							? Language.ChineseTraditional2
 							: Language.ChineseTraditional;
 				}
 			}
