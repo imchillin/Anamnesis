@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis;
@@ -132,7 +132,9 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 					if (actorHandle == null || actorHandle.Do(a => a.ModelObject == null || a.ModelObject!.Skeleton == null) != false)
 						continue;
 
-					var skeleton = new Skeleton(actorHandle);
+					Skeleton skeleton = (PosePage.CurrentSkeleton != null && PosePage.CurrentSkeleton.Actor?.Address == actorHandle.Address)
+						? PosePage.CurrentSkeleton
+						: new Skeleton(actorHandle);
 
 					PoseFile file = new();
 					string fullFilePath = Path.Combine(posesDir, $"{actorHandle.DoRef(a => a.Name) ?? $"Unknown - {index}"}{file.FileExtension}");

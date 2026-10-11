@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Pages;
@@ -41,7 +41,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	public static readonly Lazy<WorkQueue> WorkQueue = new(() => new WorkQueue());
 
-	private const int MAX_SKELETON_CREATION_ATTEMPTS = 3;
+	private const int MAX_SKELETON_CREATION_ATTEMPTS = 10;
 
 	private static readonly Type[] s_poseFileTypes =
 	[
@@ -57,6 +57,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	];
 
 	private static readonly Lock s_hookLock = new();
+	private static readonly HashSet<string> s_transformSyncGroups = ["Transforms"];
 	private static HookHandle? s_renderSkeletonHook = null;
 
 	private static DirectoryInfo? s_lastLoadDir;
@@ -75,6 +76,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	private string? selectedBoneTextCache;
 
 	private int pendingSkeletonRetryAttempts = 0;
+	private SkeletonEntity? skeleton;
 
 	public PosePage()
 	{
@@ -111,10 +113,20 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	public static GposeService GposeService => GposeService.Instance;
 	public static PoseService PoseService => PoseService.Instance;
 	public static TargetService TargetService => TargetService.Instance;
+	public static SkeletonEntity? CurrentSkeleton { get; private set; }
 
 	public bool IsFlipping { get; private set; }
 	public ObjectHandle<ActorMemory>? Actor { get; private set; }
-	public SkeletonEntity? Skeleton { get; private set; }
+
+	public SkeletonEntity? Skeleton
+	{
+		get => this.skeleton;
+		private set
+		{
+			this.skeleton = value;
+			CurrentSkeleton = value;
+		}
+	}
 
 	public bool IsSingleBoneSelected => this.Skeleton?.SelectedBones.Count() == 1;
 	public bool IsMultipleBonesSelected => this.Skeleton?.SelectedBones.Count() > 1;
@@ -1181,6 +1193,10 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		// IMPORTANT: Do not throw in the hook detour!
 		// Sync the skeleton first, then process pending pose-related work
 
+		// Do not attempt to sync the skeleton if the actor is currently refreshing, otherwise it will time out
+		if (this.Actor != null && this.Actor.Do(actor => actor.IsRefreshing) == true)
+			return [];
+
 		// Retry skeleton creation if pending
 		if (this.pendingSkeletonRetryAttempts > 0 && this.Actor != null && (this.Skeleton == null || this.Skeleton.Bones.IsEmpty))
 		{
@@ -1219,7 +1235,9 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 				try
 				{
-					skeleton.Synchronize();
+					skeleton.Synchronize(s_transformSyncGroups);
+					actor.DrawData.MainHand?.Model?.Skeleton?.Synchronize(s_transformSyncGroups);
+					actor.DrawData.OffHand?.Model?.Skeleton?.Synchronize(s_transformSyncGroups);
 				}
 				catch (Exception ex)
 				{

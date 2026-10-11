@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory;
@@ -24,6 +24,7 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 	/// Values exceeding this are assumed invalid, as no game arrays are this large.
 	/// </remarks>
 	private const int ARRAY_LEN_UPPER_BOUND = 10000;
+	private const int STACKALLOC_THRESHOLD = 256;
 
 	private static readonly bool s_isMemoryObject = typeof(MemoryBase).IsAssignableFrom(typeof(TValue));
 	private readonly List<TValue> items = new();
@@ -137,30 +138,27 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 				IntPtr arrayAddress = this.ArrayAddress;
 				int elementSize = this.ElementSize;
 
-				if (s_isMemoryObject)
+				if (structureChanged)
 				{
-					// Re-initialize the array if the structure changed
-					if (structureChanged)
+					if (s_isMemoryObject)
 					{
 						foreach (var item in this.items)
 						{
 							if (item is IDisposable disposable)
 								disposable.Dispose();
 						}
-
-						this.items.Clear();
-						this.Children.Clear();
-						this.items.Capacity = arrayLength;
 					}
 
-					IntPtr currentAddress = arrayAddress;
-					for (int i = 0; i < arrayLength; ++i)
-					{
-						TValue instance;
+					this.items.Clear();
+					this.Children.Clear();
+					this.items.Capacity = arrayLength;
 
-						if (structureChanged)
+					if (s_isMemoryObject)
+					{
+						IntPtr currentAddress = arrayAddress;
+						for (int i = 0; i < arrayLength; ++i)
 						{
-							instance = Activator.CreateInstance<TValue>();
+							TValue instance = Activator.CreateInstance<TValue>();
 							if (instance is not MemoryBase memory)
 								throw new Exception($"Failed to create instance of type: {typeof(TValue)}");
 
@@ -172,59 +170,63 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 							this.items.Add(instance);
 							this.Children.Add(memory);
 							locked.Add(memory);
-						}
-						else
-						{
-							instance = this.items[i];
-						}
 
-						currentAddress += elementSize;
+							currentAddress += elementSize;
+						}
 					}
 				}
-				else // Handle primitive types
+
+				if (arrayLength == 0)
+					return;
+
+				int totalByteSize;
+				try
 				{
-					if (structureChanged)
+					checked
 					{
-						this.items.Clear();
-						this.Children.Clear();
-						this.items.Capacity = arrayLength;
+						totalByteSize = arrayLength * elementSize;
 					}
+				}
+				catch (OverflowException)
+				{
+					Log.Warning($"Failed to bulk read array at address: 0x{arrayAddress:X}: Byte size overflow.");
+					return;
+				}
 
-					int totalByteSize;
-					try
+				byte[]? rentedBuffer = null;
+				Span<byte> bufferSpan = totalByteSize <= STACKALLOC_THRESHOLD
+					? stackalloc byte[totalByteSize]
+					: (rentedBuffer = ArrayPool<byte>.Shared.Rent(totalByteSize)).AsSpan(0, totalByteSize);
+
+				try
+				{
+					if (MemoryService.Read(arrayAddress, bufferSpan))
 					{
-						checked
+						unsafe
 						{
-							totalByteSize = arrayLength * elementSize;
-						}
-					}
-					catch (OverflowException)
-					{
-						Log.Warning($"Failed to bulk read array at address: 0x{arrayAddress:X}: Byte size overflow.");
-						return;
-					}
-
-					byte[] buffer = ArrayPool<byte>.Shared.Rent(totalByteSize);
-					try
-					{
-						if (buffer.Length < totalByteSize)
-						{
-							Log.Warning($"Rented buffer smaller than requested size. Requested: {totalByteSize}, Actual: {buffer.Length}");
-						}
-						else if (MemoryService.Read(arrayAddress, buffer, totalByteSize))
-						{
-							Type type = typeof(TValue);
-							Type readType = type;
-
-							if (type.IsEnum)
-								readType = type.GetEnumUnderlyingType();
-							else if (type == typeof(bool))
-								readType = typeof(MemoryService.OneByteBool);
-
-							unsafe
+							fixed (byte* bufferPtr = bufferSpan)
 							{
-								fixed (byte* bufferPtr = buffer)
+								if (s_isMemoryObject)
 								{
+									for (int i = 0; i < arrayLength; ++i)
+									{
+										byte* elementPtr = bufferPtr + (i * elementSize);
+										if (this.items[i] is MemoryBase memory)
+										{
+											memory.ReadFromBuffer(locked, elementPtr, elementSize);
+										}
+									}
+								}
+								else
+								{
+									Type type = typeof(TValue);
+									Type readType = type;
+
+									if (type.IsEnum)
+										readType = type.GetEnumUnderlyingType();
+									else if (type == typeof(bool))
+										readType = typeof(MemoryService.OneByteBool);
+
 									for (int i = 0; i < arrayLength; ++i)
 									{
 										IntPtr elementPtr = (IntPtr)(bufferPtr + (i * elementSize));
@@ -249,15 +251,16 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 								}
 							}
 						}
-						else
-						{
-							Log.Warning($"Failed to bulk read array at address: 0x{arrayAddress:X}");
-						}
 					}
-					finally
+					else
 					{
-						ArrayPool<byte>.Shared.Return(buffer);
+						Log.Warning($"Failed to bulk read array at address: 0x{arrayAddress:X}");
 					}
+				}
+				finally
+				{
+					if (rentedBuffer != null)
+						ArrayPool<byte>.Shared.Return(rentedBuffer);
 				}
 			}
 			catch (Exception ex)

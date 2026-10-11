@@ -474,9 +474,12 @@ public partial class ItemView : UserControl
 		if (this.lockViewModel)
 			return;
 
-		// Ignore changes from the Transform property
+		// Ignore changes not related to the item model
 		// This is because weapon model transforms are constantly updating, which causes constant the item view refreshes
-		if (e?.PropertyName == nameof(TransformMemory.Position) || e?.PropertyName == nameof(TransformMemory.Rotation) || e?.PropertyName == nameof(TransformMemory.Scale) || e?.PropertyName == nameof(WeaponModelMemory.Transform))
+		if (e is MemObjPropertyChangedEventArgs memArgs && memArgs.Context.OriginBind.Memory is not IEquipmentItemMemory)
+			return;
+
+		if (e?.PropertyName == nameof(WeaponMemory.WeaponHidden) || e?.PropertyName == nameof(WeaponMemory.State))
 			return;
 
 		Task.Run(async () =>

@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory;
@@ -9,10 +9,10 @@ namespace Anamnesis.Memory;
 public class HkaPoseMemory : MemoryBase
 {
 	/// <summary>Gets or sets the skeleton memory of the Havok pose.</summary>
-	[Bind(0x000, BindFlags.Pointer | BindFlags.DontCacheOffsets)] public HkaSkeletonMemory? Skeleton { get; set; }
+	[Bind(0x000, BindFlags.Pointer | BindFlags.DontCacheOffsets, SyncGroup = "SkeletonMetadata")] public HkaSkeletonMemory? Skeleton { get; set; }
 
 	/// <summary>Gets or sets the transform array memory of the Havok pose.</summary>
-	[Bind(0x018, BindFlags.DontCacheOffsets)] public TransformArrayMemory? Transforms { get; set; }
+	[Bind(0x018, BindFlags.DontCacheOffsets, SyncGroup = "Transforms")] public TransformArrayMemory? Transforms { get; set; }
 }
 
 /// <summary>Represents an array of transform memories.</summary>

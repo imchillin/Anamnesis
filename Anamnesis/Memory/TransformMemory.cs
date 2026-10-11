@@ -4,12 +4,13 @@
 namespace Anamnesis.Memory;
 
 using PropertyChanged;
+using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
 
 [StructLayout(LayoutKind.Explicit, Size = 0x30)]
-public struct TransformStruct
+public struct TransformStruct : IEquatable<TransformStruct>
 {
 	[FieldOffset(0x000)]
 	public Vector3 Position;
@@ -19,6 +20,19 @@ public struct TransformStruct
 
 	[FieldOffset(0x020)]
 	public Vector3 Scale;
+
+	public static bool operator ==(TransformStruct left, TransformStruct right) => left.Equals(right);
+
+	public static bool operator !=(TransformStruct left, TransformStruct right) => !left.Equals(right);
+
+	public readonly bool Equals(TransformStruct other)
+		=> this.Position == other.Position
+		&& this.Rotation == other.Rotation
+		&& this.Scale == other.Scale;
+
+	public override readonly bool Equals(object? obj) => obj is TransformStruct other && this.Equals(other);
+
+	public override readonly int GetHashCode() => HashCode.Combine(this.Position, this.Rotation, this.Scale);
 }
 
 public class TransformMemory : MemoryBase, ITransform

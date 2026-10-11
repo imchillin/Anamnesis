@@ -544,7 +544,12 @@ public class Controller
 							if (hookId == MessageId.FRAMEWORK_SYNC_COMMAND_ID)
 								HandleFrameworkSyncRequest();
 							else
-								HandleWrapperInvoke(header.Id, payload);
+							{
+								unsafe
+								{
+									EnqueueWorkItem(header.Id, payload, &ProcessInvokeInternal);
+								}
+							}
 						}
 						break;
 
@@ -557,7 +562,12 @@ public class Controller
 						break;
 
 					case PayloadType.Command:
-						HandleDriverCommand(header.Id, payload);
+						{
+							unsafe
+							{
+								EnqueueWorkItem(header.Id, payload, &ProcessDriverCommandInternal);
+							}
+						}
 						break;
 
 					case PayloadType.Bye:
@@ -795,19 +805,23 @@ public class Controller
 		}
 	}
 
-	[RequiresDynamicCode("HookRegistry requires dynamic code")]
-	private static void HandleWrapperInvoke(uint msgId, ReadOnlySpan<byte> argsPayload)
+	/// <summary>
+	/// Enqueues a work item to be processed by the work pipeline.
+	/// </summary>
+	/// <remarks>
+	/// Handlers passed as <paramref name="handler"/> must return the
+	/// rented argument buffer to the pool at the end of their execution.
+	/// </remarks>
+	[RequiresDynamicCode("Function invokes handles that require dynamic code")]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static unsafe void EnqueueWorkItem(uint msgId, ReadOnlySpan<byte> argsPayload, delegate* managed<(uint MsgId, byte[] Data, int Length), void> handler)
 	{
 		int payloadLength = argsPayload.Length;
 		byte[] rentedBuffer = s_bufferPool.Rent(payloadLength);
 		argsPayload.CopyTo(rentedBuffer);
 
 		var workItem = s_workItemPool.Get();
-		unsafe
-		{
-			workItem.Initialize(s_workItemPool, &ProcessInvokeInternal, (msgId, rentedBuffer, payloadLength));
-		}
-
+		workItem.Initialize(s_workItemPool, handler, (msgId, rentedBuffer, payloadLength));
 		s_workPipeline.Enqueue(workItem);
 	}
 
@@ -874,33 +888,39 @@ public class Controller
 		FrameworkDriver.Instance.IsSyncEnabled = true;
 	}
 
-	private static void HandleDriverCommand(uint msgId, ReadOnlySpan<byte> payload)
+	[RequiresDynamicCode("MarshalUtils requires dynamic code")]
+	private static void ProcessDriverCommandInternal((uint MsgId, byte[] Data, int Length) state)
 	{
-		if (payload.Length < sizeof(DriverCommand))
-		{
-			SendResponse(msgId, PayloadType.NAck);
-			return;
-		}
-
-		DriverCommand commandId = MarshalUtils.Read<DriverCommand>(payload);
-		ReadOnlySpan<byte> args = payload[sizeof(DriverCommand)..];
-
-		if (!s_commandHandlers.TryGetValue(commandId, out var handler))
-		{
-			SendResponse(msgId, PayloadType.NAck);
-			Log.Warning($"Unknown driver command: 0x{(int)commandId:X4}");
-			return;
-		}
-
 		try
 		{
+			var payload = new ReadOnlySpan<byte>(state.Data, 0, state.Length);
+			if (payload.Length < sizeof(DriverCommand))
+			{
+				SendResponse(state.MsgId, PayloadType.NAck);
+				return;
+			}
+
+			DriverCommand commandId = MarshalUtils.Read<DriverCommand>(payload);
+			ReadOnlySpan<byte> args = payload[sizeof(DriverCommand)..];
+
+			if (!s_commandHandlers.TryGetValue(commandId, out var handler))
+			{
+				SendResponse(state.MsgId, PayloadType.NAck);
+				Log.Warning($"Unknown driver command: 0x{(int)commandId:X4}");
+				return;
+			}
+
 			byte[] response = handler(args);
-			SendResponse(msgId, response, PayloadType.Ack);
+			SendResponse(state.MsgId, response, PayloadType.Ack);
 		}
 		catch (Exception ex)
 		{
-			SendResponse(msgId, PayloadType.NAck);
-			Log.Error(ex, $"Error executing driver command: 0x{(int)commandId:X4}");
+			SendResponse(state.MsgId, PayloadType.NAck);
+			Log.Error(ex, $"Error executing driver command for MsgId: {state.MsgId}");
+		}
+		finally
+		{
+			s_bufferPool.Return(state.Data);
 		}
 	}
 
