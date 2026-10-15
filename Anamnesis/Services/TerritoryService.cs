@@ -103,7 +103,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 						continue;
 
 					// Update territory
-					int newTerritoryId = MemoryService.Read<int>(AddressService.Territory);
+					int newTerritoryId = MemoryService.Read<int>(IntPtr.Add(AddressService.GameMain, AddressService.CURRENT_TERRITORY_ID_OFFSET));
 
 					if (newTerritoryId == -1)
 					{
@@ -153,9 +153,9 @@ public class TerritoryService : ServiceBase<TerritoryService>
 					// Task was canceled, exit the loop.
 					break;
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
-					Log.Information("Failed to update territory");
+					Log.Warning(ex, "Failed to update territory");
 					this.currentWeatherId = 0;
 					this.CurrentTerritoryId = 0;
 					this.CurrentTerritory = null;
