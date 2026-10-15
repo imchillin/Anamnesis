@@ -113,7 +113,7 @@ public class AddressService : ServiceBase<AddressService>
 			GetAddressFromSignature("ObjectTable", ActorDriver.OBJECT_TABLE_SIGNATURE, 0, (p) => { ObjectTable = p; }),
 			GetAddressFromTextSignature("AnimationSpeedPatch", "F3 0F 11 94 ?? ?? ?? ?? ?? 80 89 ?? ?? ?? ?? 01", (p) => { AnimationSpeedPatch = p; }),
 			GetAddressFromSignature("Territory", "8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }),
-			GetAddressFromSignature("WeatherManager", "48 8D 0D ?? ?? ?? ?? 44 0F B7 45", 3, (p) => { ServerWeather = p + 0x48; }), // Get the ServerWeather struct from the WeatherManager Instance.
+			GetAddressFromSignature("WeatherManager", "48 8D 0D ?? ?? ?? ?? 44 0F B7 45", 0, (p) => { ServerWeather = p + 0x48; }), // Get the ServerWeather struct from the WeatherManager Instance.
 			GetAddressFromSignature("GPoseFilters", "48 85 D2 4C 8B 05 ?? ?? ?? ??", 0, (p) => { GPoseFilters = p; }),
 			GetAddressFromSignature("TargetSystem", GposeDriver.TARGET_SYSTEM_INSTANCE_SIGNATURE, 0, (p) => { TargetSystem = p; }),
 			GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { s_cameraManager = p; }),
