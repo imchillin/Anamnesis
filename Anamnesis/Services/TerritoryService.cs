@@ -103,7 +103,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 						continue;
 
 					// Update territory
-					int newTerritoryId = MemoryService.Read<int>(AddressService.Territory);
+					int newTerritoryId = MemoryService.Read<int>(IntPtr.Add(AddressService.GameMain, AddressService.CURRENT_TERRITORY_ID_OFFSET));
 
 					if (newTerritoryId == -1)
 					{

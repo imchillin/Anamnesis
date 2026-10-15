@@ -62,7 +62,7 @@ public class GameService : ServiceBase<GameService>
 			if (GameDataService.Territories == null)
 				return false;
 
-			int territoryID = MemoryService.Read<int>(AddressService.Territory);
+			int territoryID = MemoryService.Read<int>(IntPtr.Add(AddressService.GameMain, AddressService.CURRENT_TERRITORY_ID_OFFSET));
 
 			if (territoryID == -1)
 				return false;

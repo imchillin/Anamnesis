@@ -18,12 +18,13 @@ public class AddressService : ServiceBase<AddressService>
 {
 	public const int OVERWORLD_PLAYER_TARGET_OFFSET = 0x80;
 	public const int GPOSE_PLAYER_TARGET_OFFSET = 0x98;
+	public const int CURRENT_TERRITORY_ID_OFFSET = 0x4108;
 
 	private static IntPtr s_cameraManager;
 
 	public static IntPtr ObjectTable { get; private set; }
 	public static IntPtr GPoseFilters { get; private set; }
-	public static IntPtr Territory { get; private set; }
+	public static IntPtr GameMain { get; private set; }
 	public static IntPtr OverworldPlayerTarget => MemoryService.Read<IntPtr>(IntPtr.Add(TargetSystem, OVERWORLD_PLAYER_TARGET_OFFSET));
 	public static IntPtr GPosePlayerTarget => MemoryService.Read<IntPtr>(IntPtr.Add(TargetSystem, GPOSE_PLAYER_TARGET_OFFSET));
 	public static IntPtr TimeAsm { get; private set; }
@@ -80,7 +81,7 @@ public class AddressService : ServiceBase<AddressService>
 	{
 		ObjectTable = IntPtr.Zero;
 		GPoseFilters = IntPtr.Zero;
-		Territory = IntPtr.Zero;
+		GameMain = IntPtr.Zero;
 		TimeAsm = IntPtr.Zero;
 		Framework = IntPtr.Zero;
 		TargetSystem = IntPtr.Zero;
@@ -112,7 +113,7 @@ public class AddressService : ServiceBase<AddressService>
 		{
 			GetAddressFromSignature("ObjectTable", ActorDriver.OBJECT_TABLE_SIGNATURE, 0, (p) => { ObjectTable = p; }),
 			GetAddressFromTextSignature("AnimationSpeedPatch", "F3 0F 11 94 ?? ?? ?? ?? ?? 80 89 ?? ?? ?? ?? 01", (p) => { AnimationSpeedPatch = p; }),
-			GetAddressFromSignature("Territory", "8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }),
+			GetAddressFromSignature("GameMain", "48 8D 0D ?? ?? ?? ?? 0F 28 F2 48 89 44 24 ??", 3, (p) => { GameMain = p; }),
 			GetAddressFromSignature("WeatherManager", "48 8D 0D ?? ?? ?? ?? 44 0F B7 45", 0, (p) => { ServerWeather = p + 0x48; }), // Get the ServerWeather struct from the WeatherManager Instance.
 			GetAddressFromSignature("GPoseFilters", "48 85 D2 4C 8B 05 ?? ?? ?? ??", 0, (p) => { GPoseFilters = p; }),
 			GetAddressFromSignature("TargetSystem", GposeDriver.TARGET_SYSTEM_INSTANCE_SIGNATURE, 0, (p) => { TargetSystem = p; }),
