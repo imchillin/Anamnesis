@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Pages;
@@ -687,6 +687,9 @@ public partial class CharacterPage : UserControl, INotifyPropertyChanged
 
 		var file = new DatCharacterFile();
 		file.WriteToFile(this.Actor);
+
+		if (file.Data == null)
+			return;
 
 		using var stream = new FileStream(result.Path.FullName, FileMode.Create);
 		file.Serialize(stream);
