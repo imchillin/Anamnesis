@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis;
@@ -105,12 +105,9 @@ public class TerritoryService : ServiceBase<TerritoryService>
 					// Update territory
 					int newTerritoryId = MemoryService.Read<int>(IntPtr.Add(AddressService.GameMain, AddressService.CURRENT_TERRITORY_ID_OFFSET));
 
-					if (newTerritoryId == -1)
+					if (newTerritoryId <= 0)
 					{
-						this.currentWeatherId = 0;
-						this.CurrentTerritoryId = 0;
-						this.CurrentTerritory = null;
-						this.CurrentTerritoryName = "Menu";
+						this.Reset(GameService.Instance.IsSignedIn ? "Unknown" : "Menu");
 					}
 					else
 					{
@@ -124,7 +121,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 							}
 							else
 							{
-								this.CurrentTerritory = GameDataService.Territories.GetRow(this.CurrentTerritoryId);
+								this.CurrentTerritory = GameDataService.Territories.GetRowOrDefault(this.CurrentTerritoryId);
 								this.CurrentTerritoryName = this.CurrentTerritory?.Place.Value.Name.ToString() + " (" + this.CurrentTerritory?.Region.Value.Name.ToString() + ")";
 							}
 
@@ -156,10 +153,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 				catch (Exception ex)
 				{
 					Log.Warning(ex, "Failed to update territory");
-					this.currentWeatherId = 0;
-					this.CurrentTerritoryId = 0;
-					this.CurrentTerritory = null;
-					this.CurrentTerritoryName = "Unknown";
+					this.Reset();
 
 					await Task.Delay(TASK_FAILURE_DELAY, cancellationToken);
 				}
@@ -170,6 +164,15 @@ public class TerritoryService : ServiceBase<TerritoryService>
 				break;
 			}
 		}
+	}
+
+	private void Reset(string territoryName = "Unknown")
+	{
+		this.currentWeatherId = 0;
+		this.CurrentWeather = null;
+		this.CurrentTerritoryId = 0;
+		this.CurrentTerritory = null;
+		this.CurrentTerritoryName = territoryName;
 	}
 
 	private void OnThisPropertyChanged(object? sender, PropertyChangedEventArgs e)

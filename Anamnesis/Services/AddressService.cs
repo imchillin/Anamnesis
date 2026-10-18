@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Services;
@@ -19,6 +19,10 @@ public class AddressService : ServiceBase<AddressService>
 	public const int OVERWORLD_PLAYER_TARGET_OFFSET = 0x80;
 	public const int GPOSE_PLAYER_TARGET_OFFSET = 0x98;
 	public const int CURRENT_TERRITORY_ID_OFFSET = 0x4108;
+	public const int TRANSITION_TERRITORY_ID_OFFSET = 0x4118;
+	public const int FRAMEWORK_UIMODULE_OFFSET = 0x2B68;
+	public const int UIMODULE_AGENT_LOBBY_OFFSET = 0xE4AE8;
+	public const int AGENT_LOBBY_IS_LOGGED_IN_OFFSET = 0x12D8;
 
 	private static IntPtr s_cameraManager;
 
@@ -31,6 +35,26 @@ public class AddressService : ServiceBase<AddressService>
 	public static IntPtr Framework { get; set; }
 	public static IntPtr TargetSystem { get; set; }
 	public static IntPtr AnimationSpeedPatch { get; set; }
+
+	/// <summary>
+	/// Gets the address pointer to the UIModule struct from Framework.
+	/// </summary>
+	public static IntPtr UIModule => Framework == IntPtr.Zero ? IntPtr.Zero : MemoryService.Read<IntPtr>(IntPtr.Add(Framework, FRAMEWORK_UIMODULE_OFFSET));
+
+	/// <summary>
+	/// Gets the address pointer to the AgentLobby struct from UIModule.
+	/// </summary>
+	public static IntPtr AgentLobby
+	{
+		get
+		{
+			IntPtr uiModule = UIModule;
+			if (uiModule == IntPtr.Zero)
+				return IntPtr.Zero;
+
+			return MemoryService.Read<IntPtr>(IntPtr.Add(uiModule, UIMODULE_AGENT_LOBBY_OFFSET));
+		}
+	}
 
 	/// <summary>
 	/// Gets the camera address from the game process.
