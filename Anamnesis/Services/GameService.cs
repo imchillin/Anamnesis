@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Services;
@@ -59,18 +59,11 @@ public class GameService : ServiceBase<GameService>
 
 		try
 		{
-			if (GameDataService.Territories == null)
+			IntPtr agentLobby = AddressService.AgentLobby;
+			if (agentLobby == IntPtr.Zero)
 				return false;
 
-			int territoryID = MemoryService.Read<int>(IntPtr.Add(AddressService.GameMain, AddressService.CURRENT_TERRITORY_ID_OFFSET));
-
-			if (territoryID == -1)
-				return false;
-
-			if (GameDataService.Territories.GetRowOrDefault((uint)territoryID) == null)
-				return false;
-
-			return true;
+			return MemoryService.Read<byte>(IntPtr.Add(agentLobby, AddressService.AGENT_LOBBY_IS_LOGGED_IN_OFFSET)) != 0;
 		}
 		catch (Exception ex)
 		{
