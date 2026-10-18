@@ -1,8 +1,8 @@
 ﻿<UserControl x:Class="Anamnesis.Actor.Views.CustomizeEditor"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:converters="clr-namespace:Anamnesis.Actor.Converters"
 			 xmlns:controls="clr-namespace:Anamnesis.Actor.Views"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
@@ -144,7 +144,7 @@
 				</Border>
 			</Button>
 
-			<controls:ColorControl Grid.Column="1" Value="{Binding Customize.FacePaintColor}" Type="FacePaint" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}"/>
+			<controls:ColorControl Grid.Column="1" Value="{Binding Customize.FacePaintColor}" Type="FacePaint" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" ToolTipKey="Character_Appearance_FacePaintColor"/>
 		</Grid>
 
 		<!-- Hair -->
@@ -164,11 +164,15 @@
 				</Border>
 			</Button>
 
-			<controls:ColorControl Grid.Column="1" Value="{Binding Customize.HairTone}" Type="Hair" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" ToolTip="Hair Color"/>
+			<controls:ColorControl Grid.Column="1" Value="{Binding Customize.HairTone}" Type="Hair" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" ToolTipKey="Character_Appearance_HairColor"/>
 
 			<TextBlock Grid.Column="2" Text="Highlight:" Margin="2" VerticalAlignment="Center" TextAlignment="Right" Style="{StaticResource Label}"/>
-			<CheckBox Grid.Column="3" IsChecked="{Binding Customize.EnableHighlights}" ToolTip="Enable Highlights" HorizontalAlignment="Center"/>
-			<controls:ColorControl Grid.Column="4" Value="{Binding Customize.Highlights}" Type="HairHighlights" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" IsEnabled="{Binding Customize.EnableHighlights}" ToolTip="Highlight Color"/>
+			<CheckBox Grid.Column="3" IsChecked="{Binding Customize.EnableHighlights}" HorizontalAlignment="Center">
+				<CheckBox.ToolTip>
+					<XivToolsWpf:TextBlock Key="Character_Appearance_EnableHighlights"/>
+				</CheckBox.ToolTip>
+			</CheckBox>
+			<controls:ColorControl Grid.Column="4" Value="{Binding Customize.Highlights}" Type="HairHighlights" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" IsEnabled="{Binding Customize.EnableHighlights}" ToolTipKey="Character_Appearance_HighlightsColor"/>
 
 		</Grid>
 
@@ -186,8 +190,12 @@
 
 			<!-- Lip Color -->
 			<TextBlock Text="Color:" Grid.Column="1" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}, Mode=OneWay}"/>
-			<CheckBox Grid.Column="2" IsChecked="{Binding Customize.EnableLipColor}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}, Mode=OneWay}"/>
-			<controls:ColorControl Grid.Column="3" Value="{Binding Customize.LipsToneFurPattern}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}, Mode=OneWay}" IsEnabled="{Binding Customize.EnableLipColor, Mode=OneWay}" Type="Lips" Gender="{Binding Customize.Gender, Mode=OneWay}" Tribe="{Binding Customize.Tribe, Mode=OneWay}"/>
+			<CheckBox Grid.Column="2" IsChecked="{Binding Customize.EnableLipColor}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}, Mode=OneWay}">
+				<CheckBox.ToolTip>
+					<XivToolsWpf:TextBlock Key="Character_Appearance_EnableLipColor"/>
+				</CheckBox.ToolTip>
+			</CheckBox>
+			<controls:ColorControl Grid.Column="3" Value="{Binding Customize.LipsToneFurPattern}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}, Mode=OneWay}" IsEnabled="{Binding Customize.EnableLipColor, Mode=OneWay}" Type="Lips" Gender="{Binding Customize.Gender, Mode=OneWay}" Tribe="{Binding Customize.Tribe, Mode=OneWay}"  ToolTipKey="Character_Appearance_LipColor"/>
 
 			<!-- Fur pattern -->
 			<XivToolsWpf:TextBlock Grid.Column="1" Key="Character_Appearance_Fur" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource B2V}, Mode=OneWay}" TextAlignment="Center"/>
