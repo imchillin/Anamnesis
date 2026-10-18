@@ -232,7 +232,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		return file;
 	}
 
-	public void WriteToFile(ActorMemory actor, string? description = null)
+	private void WriteToFile(ActorMemory actor, string? description = null)
 	{
 		if (actor.DrawData.Customize == null)
 			return;
@@ -252,14 +252,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		bool useDefaultFacePaint = false;
 
 		CharaMakeCustomize? hair = GameDataService.CharacterMakeCustomize.GetFeature(CustomizeSheet.Features.Hair, customize.Tribe, customize.Gender, customize.Hair);
-		if (hair != null)
-		{
-			useDefaultHair = hair.Value.IsPurchasable;
-		}
-		else
-		{
-			useDefaultHair = true;
-		}
+		useDefaultHair = hair == null || hair.Value.IsPurchasable;
 
 		byte facePaintId = (byte)(customize.FacePaint & ~FACE_PAINT_REVERSED_FLAG);
 		if (facePaintId != 0)
