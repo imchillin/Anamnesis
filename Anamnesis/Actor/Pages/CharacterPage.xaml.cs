@@ -680,13 +680,33 @@ public partial class CharacterPage : UserControl, INotifyPropertyChanged
 		if (this.Actor == null)
 			return;
 
-		SaveResult result = await FileService.Save<DatCharacterFile>(s_lastSaveDir, FileService.DefaultCharacterDirectory);
+		ActorCustomizeMemory? customize = this.Actor.DoRef(a => a.DrawData.Customize);
+		if (customize == null)
+			return;
 
+		// Validate options first before prompting for file location
+		if (!DatCharacterFile.ValidateAllowedOptions(customize, out string? validationError))
+		{
+			GenericDialog.Show(validationError ?? $"{LocalizationService.GetString("Character_Export_DAT_FailCustomCustomize")}.", LocalizationService.GetString("Character_Export_DAT_FailDialogTitle"));
+			return;
+		}
+
+		SaveResult result = await FileService.Save<DatCharacterFile>(s_lastSaveDir, FileService.DefaultCharacterDirectory);
 		if (result.Path == null)
 			return;
 
+		string? description = await GenericInputDialog.ShowAsync(
+			LocalizationService.GetString("Character_Export_DAT_DescriptionPrompt"),
+			$"{LocalizationService.GetString("Character_Export_DAT_DialogTitle")} ({result.Path.Name})",
+			string.Empty,
+			maxLength: DatCharacterFile.MAX_DESCRIPTION_LENGTH);
+
+		// If user cancelled the dialog, cancel the export
+		if (description == null)
+			return;
+
 		var file = new DatCharacterFile();
-		file.WriteToFile(this.Actor);
+		file.WriteToFile(this.Actor, description);
 
 		if (file.Data == null)
 			return;

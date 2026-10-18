@@ -17,6 +17,8 @@ using System.Text.Unicode;
 
 public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 {
+	public const int MAX_DESCRIPTION_LENGTH = 163;
+
 	public byte[]? Data;
 
 	private const uint FILE_SIGNATURE = 0x2013FF14;
@@ -85,33 +87,80 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		return fileName;
 	}
 
-	public static bool ValidateAllowedOptions(CharaMakeType makeType, ActorCustomizeMemory customize)
+	public static bool ValidateAllowedOptions(ActorCustomizeMemory customize, out string? errorMessage, CharaMakeType? makeType = null)
 	{
-		if (makeType.CustomizeRanges == null || makeType.CustomizeRanges.Count == 0)
-			return false;
+		errorMessage = null;
 
-		// Keys correspond to the customization byte offsets in ActorCustomizeMemory / CharaMakeType
-		var validate = new Dictionary<int, int>()
+		makeType ??= GameDataService.CharacterMakeTypes.GetCharacterMakeType(customize);
+		if (!makeType.HasValue || makeType.Value.Voices.Count == 0 || makeType.Value.CustomizeRanges == null || makeType.Value.CustomizeRanges.Count == 0)
 		{
-			{ 5, customize.Head },
-			{ 14, customize.Eyebrows },
-			{ 16, customize.Eyes & ~EYES_SMALL_IRIS_FLAG },
-			{ 17, customize.Nose },
-			{ 18, customize.Jaw },
-			{ 19, customize.Lips },
+			errorMessage = LocalizationService.GetString("Character_Export_DAT_FailNoCustomizeParam");
+			return false;
+		}
+
+		var errors = new List<string>();
+
+		// Check hairstyle compatibility (e.g. for Hrothgar)
+		CharaMakeCustomize? hair = GameDataService.CharacterMakeCustomize.GetFeature(CustomizeSheet.Features.Hair, customize.Tribe, customize.Gender, customize.Hair);
+		if (hair != null && hair.Value.FaceType != 0 && hair.Value.FaceType != customize.Head)
+		{
+			errors.Add(LocalizationService.GetStringFormatted("Character_Export_DAT_FailErrorFaceHairIncompat", hair.Value.FeatureId.ToString(), customize.Head.ToString()));
+		}
+
+		// NOTE: Keys correspond to the customization byte offsets in ActorCustomizeMemory / CharaMakeType.
+		bool hasTail = customize.Race is ActorCustomizeMemory.Races.Hrothgar or ActorCustomizeMemory.Races.Miqote or ActorCustomizeMemory.Races.AuRa;
+		string tailLabelKey = hasTail ? "Character_Appearance_Tail" : "Character_Appearance_Ears";
+		string tailDefaultLabel = hasTail ? "Tail Type" : "Ear Type";
+
+		var options = new (int Key, string LabelKey, string DefaultLabel, int Value, int DisplayOffset, bool IsType)[]
+		{
+			(5, "Character_Appearance_Face", "Face Type", customize.Head, 0, false),
+			(14, "Character_Appearance_Eyebrows", "Eyebrows", customize.Eyebrows, 1, true),
+			(16, "Character_Appearance_Eyes", "Eye Shape", customize.Eyes & ~EYES_SMALL_IRIS_FLAG, 1, true),
+			(17, "Character_Appearance_Nose", "Nose", customize.Nose, 1, true),
+			(18, "Character_Appearance_Jaw", "Jaw", customize.Jaw, 1, true),
+			(19, "Character_Appearance_Lips", "Mouth", customize.Lips, 1, true),
+			(22, tailLabelKey, tailDefaultLabel, customize.TailEarsType, 0, false),
 		};
 
-		if (makeType.CustomizeRanges.ContainsKey(22))
-			validate.Add(22, customize.TailEarsType);
-
-		foreach (var option in validate)
+		foreach (var opt in options)
 		{
-			if (!makeType.CustomizeRanges.TryGetValue(option.Key, out var range))
+			if (!makeType.Value.CustomizeRanges.TryGetValue(opt.Key, out var range))
 				continue;
 
-			bool valid = range.InRange(option.Value);
-			if (!valid)
-				return false;
+			if (!range.InRange(opt.Value))
+			{
+				string label = LocalizationService.GetString(opt.LabelKey, true);
+				if (string.IsNullOrWhiteSpace(label))
+					label = opt.DefaultLabel;
+
+				int displayVal = opt.Value + opt.DisplayOffset;
+				int min = range.Min + opt.DisplayOffset;
+				int max = range.Max + opt.DisplayOffset;
+
+				if (opt.IsType)
+				{
+					errors.Add(LocalizationService.GetStringFormatted("Character_Export_DAT_FailErrorFieldType", label, displayVal.ToString(), min.ToString(), max.ToString()));
+				}
+				else
+				{
+					errors.Add(LocalizationService.GetStringFormatted("Character_Export_DAT_FailErrorField", label, displayVal.ToString(), min.ToString(), max.ToString()));
+				}
+			}
+		}
+
+		if (errors.Count > 0)
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine($"{LocalizationService.GetString("Character_Export_DAT_FailCustomCustomize")}:");
+			foreach (string err in errors)
+			{
+				sb.AppendLine($"• {err}");
+			}
+
+			sb.AppendLine($"\n{LocalizationService.GetString("Character_Export_DAT_FailGuidePrompt")}");
+			errorMessage = sb.ToString();
+			return false;
 		}
 
 		return true;
@@ -162,7 +211,8 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		return file;
 	}
 
-	public void WriteToFile(ObjectHandle<ActorMemory> handle) => handle.Do(this.WriteToFile);
+	public void WriteToFile(ObjectHandle<ActorMemory> handle, string? description = null) =>
+		handle.Do(a => this.WriteToFile(a, description));
 
 	public override void Serialize(Stream stream)
 	{
@@ -182,58 +232,29 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		return file;
 	}
 
-	private void WriteToFile(ActorMemory actor)
+	public void WriteToFile(ActorMemory actor, string? description = null)
 	{
 		if (actor.DrawData.Customize == null)
 			return;
 
 		ActorCustomizeMemory customize = actor.DrawData.Customize;
 
-		CharaMakeType? makeType = null;
-		if (GameDataService.CharacterMakeTypes != null)
+		CharaMakeType? makeType = GameDataService.CharacterMakeTypes.GetCharacterMakeType(customize);
+		if (!ValidateAllowedOptions(customize, out string? validationError, makeType))
 		{
-			foreach (CharaMakeType set in GameDataService.CharacterMakeTypes)
-			{
-				if (set.CustomizeTribe != customize.Tribe || set.Gender != customize.Gender)
-					continue;
-
-				makeType = set;
-				break;
-			}
-		}
-
-		if (!makeType.HasValue || makeType.Value.Voices.Count == 0)
-		{
-			GenericDialog.Show("Could not find character creation parameters for this race/tribe/gender.", "Failed to save appearance");
+			GenericDialog.Show(validationError ?? $"{LocalizationService.GetString("Character_Export_DAT_FailCustomCustomize")}.", LocalizationService.GetString("Character_Export_DAT_FailDialogTitle"));
 			return;
 		}
 
-		// Validate options
-		bool validate = ValidateAllowedOptions(makeType.Value, customize);
-		if (!validate)
-		{
-			GenericDialog.Show("This character uses custom features that are not available in the character creator.", "Failed to save appearance");
-			return;
-		}
+		CharaMakeType resolvedMakeType = makeType!.Value;
 
 		bool useDefaultHair = false;
 		bool useDefaultFacePaint = false;
 
 		CharaMakeCustomize? hair = GameDataService.CharacterMakeCustomize.GetFeature(CustomizeSheet.Features.Hair, customize.Tribe, customize.Gender, customize.Hair);
-
 		if (hair != null)
 		{
-			// Check hairstyle is compatible with their face type (for hrothgars)
-			bool isIncompatible = hair.Value.FaceType != 0 && hair.Value.FaceType != customize.Head;
-			if (isIncompatible)
-			{
-				GenericDialog.Show("This character uses a hairstyle that is not compatible with their face type.", "Failed to save appearance");
-				return;
-			}
-			else
-			{
-				useDefaultHair = hair.Value.IsPurchasable;
-			}
+			useDefaultHair = hair.Value.IsPurchasable;
 		}
 		else
 		{
@@ -249,7 +270,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 
 		if (useDefaultHair || useDefaultFacePaint)
 		{
-			GenericDialog.Show("Aesthetician-exclusive hairstyle or face paint has been reverted to its default value.", "Notice");
+			GenericDialog.ShowLocalized("Character_Export_DAT_FailAestheticianHair", "Common_Notice");
 		}
 
 		// Appearance Data
@@ -281,7 +302,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 			customize.Bust,
 			useDefaultFacePaint ? DEFAULT_FACE_PAINT : customize.FacePaint,
 			customize.FacePaintColor,
-			makeType.Value.Voices.Contains(actor.Voice) ? actor.Voice : makeType.Value.Voices[0],
+			resolvedMakeType.Voices.Contains(actor.Voice) ? actor.Voice : resolvedMakeType.Voices[0],
 			0x00,
 
 			// Timestamp
@@ -305,8 +326,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 			writer.Seek(PAYLOAD_OFFSET, SeekOrigin.Begin);
 			writer.Write(saveData);
 
-			// Populate description if available
-			string description = actor.DisplayName;
+			// Populate description if provided
 			if (!string.IsNullOrWhiteSpace(description))
 			{
 				// Handle multi-byte UTF-8

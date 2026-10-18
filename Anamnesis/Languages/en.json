@@ -18,6 +18,7 @@
   "Common_Attention": "Attention",
   "Common_Filters": "Filters",
   "Common_Default": "Default",
+  "Common_Notice": "Notice",
 
   "ProcessSelector_AllWarning": "Selecting a process other than the DirectX 11 Final Fantasy XIV process can cause the selected process and Anamnesis to crash",
   "ProcessSelector_NotFound": "Final Fantasy XIV process (ffxiv_dx11) not found.",
@@ -314,6 +315,17 @@
   "Character_WarningOverworldInGpose": "Overworld actors cannot be refreshed while in Group Pose. Use a GPose actor instead.",
   "Character_WarningPoseEnabled": "Appearance and Equipment cannot be changed while posing mode is enabled.",
   "Character_WarningGenericUnavailable": "You can't change this actor's appearance or equipment right now.",
+
+  "Character_Export_DAT_DialogTitle": "Export appearance data",
+  "Character_Export_DAT_DescriptionPrompt": "Enter an optional description for this character appearance save.\nLeave the field empty if you do not want a description:",
+  "Character_Export_DAT_FailDialogTitle": "Failed to export appearance",
+  "Character_Export_DAT_FailCustomCustomize": "This character uses custom features that are not available in the character creator",
+  "Character_Export_DAT_FailAestheticianHair": "Aesthetician-exclusive hairstyle or face paint has been reverted to its default value.",
+  "Character_Export_DAT_FailNoCustomizeParam": "Could not find customization parameters for this race, tribe, and gender combination.",
+  "Character_Export_DAT_FailGuidePrompt": "Please adjust these options in the appearance editor before exporting to a DAT file.",
+  "Character_Export_DAT_FailErrorField": "{0}: {1} (Valid options: {2} – {3})",
+  "Character_Export_DAT_FailErrorFieldType": "{0}: Type {1} (Valid options: Type {2} – {3})",
+  "Character_Export_DAT_FailErrorFaceHairIncompat": "Hairstyle {0}: Incompatible with face type {1}",
 
   "Character_Action_AnimationData": "Actor Data",
   "Character_Action_AnimationStatus": "Animation Status",
