@@ -166,10 +166,22 @@
 
 			<controls:ColorControl Grid.Column="1" Value="{Binding Customize.HairTone}" Type="Hair" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" ToolTipKey="Character_Appearance_HairColor"/>
 
-			<TextBlock Grid.Column="2" Text="Highlight:" Margin="2" VerticalAlignment="Center" TextAlignment="Right" Style="{StaticResource Label}"/>
+			<XivToolsWpf:TextBlock Key="Character_Customize_Highlights_Header" Grid.Column="2" Margin="2" VerticalAlignment="Center" TextAlignment="Right" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}, Mode=OneWay}"/>
+			<XivToolsWpf:TextBlock Key="Character_Customize_Pattern_Header" Grid.Column="2" Margin="2" VerticalAlignment="Center" TextAlignment="Right" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource B2V}, Mode=OneWay}"/>
 			<CheckBox Grid.Column="3" IsChecked="{Binding Customize.EnableHighlights}" HorizontalAlignment="Center">
 				<CheckBox.ToolTip>
-					<XivToolsWpf:TextBlock Key="Character_Appearance_EnableHighlights"/>
+					<XivToolsWpf:TextBlock>
+						<XivToolsWpf:TextBlock.Style>
+							<Style TargetType="XivToolsWpf:TextBlock">
+								<Setter Property="Key" Value="Character_Appearance_EnableHighlights"/>
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding HasFur}" Value="True">
+										<Setter Property="Key" Value="Character_Appearance_EnableFurPattern"/>
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</XivToolsWpf:TextBlock.Style>
+					</XivToolsWpf:TextBlock>
 				</CheckBox.ToolTip>
 			</CheckBox>
 			<controls:ColorControl Grid.Column="4" Value="{Binding Customize.Highlights}" Type="HairHighlights" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" IsEnabled="{Binding Customize.EnableHighlights}" ToolTipKey="Character_Appearance_HighlightsColor"/>
@@ -177,7 +189,8 @@
 		</Grid>
 
 		<!-- Mouth / Lips  -->
-		<XivToolsWpf:TextBlock Grid.Row="7" Grid.Column="0" Key="Character_Appearance_Lips" Style="{StaticResource Label}"/>
+		<XivToolsWpf:TextBlock Grid.Row="7" Grid.Column="0" Key="Character_Appearance_Lips" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}, Mode=OneWay}"/>
+		<XivToolsWpf:TextBlock Grid.Row="7" Grid.Column="0" Key="Character_Appearance_FangLength" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource B2V}, Mode=OneWay}"/>
 		<Grid Grid.Row="7" Grid.Column="1">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition/>
@@ -189,7 +202,7 @@
 			<XivToolsWpf:NumberBox Grid.Column="0" Value="{Binding Customize.Lips}" Minimum="0" Maximum="4" Buttons="True" Margin="0, 0, 12, 0"  ValueOffset="1"/>
 
 			<!-- Lip Color -->
-			<TextBlock Text="Color:" Grid.Column="1" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}, Mode=OneWay}"/>
+			<XivToolsWpf:TextBlock Key="Character_Customize_LipColor_Header" Grid.Column="1" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}, Mode=OneWay}"/>
 			<CheckBox Grid.Column="2" IsChecked="{Binding Customize.EnableLipColor}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}, Mode=OneWay}">
 				<CheckBox.ToolTip>
 					<XivToolsWpf:TextBlock Key="Character_Appearance_EnableLipColor"/>
