@@ -108,6 +108,8 @@ public class ActorCustomizeMemory : MemoryBase
 	[Bind(0x004, BindFlags.ActorRefresh)] public Tribes Tribe { get; set; }
 	[Bind(0x005, BindFlags.ActorRefresh)] public byte Head { get; set; }
 	[Bind(0x006, BindFlags.ActorRefresh)] public byte Hair { get; set; }
+
+	[AlsoNotifyFor(nameof(EnableHighlights))]
 	[Bind(0x007, BindFlags.ActorRefresh)] public byte HighlightType { get; set; }
 	[Bind(0x008, BindFlags.ActorRefresh)] public byte Skintone { get; set; }
 	[Bind(0x009, BindFlags.ActorRefresh)] public byte REyeColor { get; set; }
@@ -117,9 +119,13 @@ public class ActorCustomizeMemory : MemoryBase
 	[Bind(0x00D, BindFlags.ActorRefresh)] public byte FacialFeatureColor { get; set; }
 	[Bind(0x00E, BindFlags.ActorRefresh)] public byte Eyebrows { get; set; }
 	[Bind(0x00F, BindFlags.ActorRefresh)] public byte LEyeColor { get; set; }
+
+	[AlsoNotifyFor(nameof(EyeShape), nameof(SmallIris))]
 	[Bind(0x010, BindFlags.ActorRefresh)] public byte Eyes { get; set; }
 	[Bind(0x011, BindFlags.ActorRefresh)] public byte Nose { get; set; }
 	[Bind(0x012, BindFlags.ActorRefresh)] public byte Jaw { get; set; }
+
+	[AlsoNotifyFor(nameof(Lips), nameof(EnableLipColor))]
 	[Bind(0x013, BindFlags.ActorRefresh)] public byte Mouth { get; set; }
 	[Bind(0x014, BindFlags.ActorRefresh)] public byte LipsToneFurPattern { get; set; }
 	[Bind(0x015, BindFlags.ActorRefresh)] public byte EarMuscleTailSize { get; set; }
@@ -128,22 +134,25 @@ public class ActorCustomizeMemory : MemoryBase
 	[Bind(0x018, BindFlags.ActorRefresh)] public byte FacePaint { get; set; }
 	[Bind(0x019, BindFlags.ActorRefresh)] public byte FacePaintColor { get; set; }
 
+	[AlsoNotifyFor(nameof(HighlightType))]
 	public bool EnableHighlights
 	{
-		get => this.HighlightType != 0;
-		set => this.HighlightType = value ? (byte)128 : (byte)0;
+		get => (this.HighlightType & 0x80) != 0;
+		set => this.HighlightType = (byte)(value ? 0x80 : 0x00);
 	}
 
+	[AlsoNotifyFor(nameof(Mouth))]
 	public byte Lips
 	{
-		get => (byte)(this.EnableLipColor ? this.Mouth - 128 : this.Mouth);
-		set => this.Mouth = (byte)(this.EnableLipColor ? value - 128 : value);
+		get => (byte)(this.Mouth & ~0x80);
+		set => this.Mouth = (byte)((value & ~0x80) | (this.EnableLipColor ? 0x80 : 0x00));
 	}
 
+	[AlsoNotifyFor(nameof(Mouth))]
 	public bool EnableLipColor
 	{
-		get => this.Mouth >= 128;
-		set => this.Mouth = (byte)(this.Lips + (value ? 128 : 0));
+		get => (this.Mouth & 0x80) != 0;
+		set => this.Mouth = (byte)((this.Mouth & ~0x80) | (value ? 0x80 : 0x00));
 	}
 
 	[AlsoNotifyFor(nameof(LEyeColor), nameof(REyeColor))]
@@ -173,17 +182,18 @@ public class ActorCustomizeMemory : MemoryBase
 		}
 	}
 
+	[AlsoNotifyFor(nameof(Eyes))]
 	public bool SmallIris
 	{
-		get => this.Eyes > 128;
-		set => this.Eyes = (byte)(this.EyeShape + (value ? 128 : 0));
+		get => (this.Eyes & 0x80) != 0;
+		set => this.Eyes = (byte)((this.Eyes & ~0x80) | (value ? 0x80 : 0x00));
 	}
 
 	[AlsoNotifyFor(nameof(Eyes))]
 	public byte EyeShape
 	{
-		get => (byte)(this.Eyes - (this.SmallIris ? 128 : 0));
-		set => this.Eyes = (byte)(value + (this.SmallIris ? 128 : 0));
+		get => (byte)(this.Eyes & ~0x80);
+		set => this.Eyes = (byte)((value & ~0x80) | (this.SmallIris ? 0x80 : 0x00));
 	}
 
 	public void WriteTo(ref HumanDrawData drawData)
