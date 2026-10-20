@@ -312,7 +312,7 @@ public partial class CustomizeEditor : UserControl
 			return;
 
 		// Do not change to masculine gender when a young miqo or aura as it will crash the game
-		if (this.Customize.Age == Ages.Young && (this.Customize.Race == Races.Miqote))
+		if (this.Customize.Age != Ages.Normal && (this.Customize.Race == Races.Miqote))
 		{
 			this.Customize.Age = Ages.Normal;
 		}
