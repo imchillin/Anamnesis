@@ -39,6 +39,8 @@ public class PoseApplyOptions
 
 public class PoseFile : JsonFileBase
 {
+	public const int POSE_FILE_SCHEMA_VERSION = 3;
+
 	public enum BoneProcessingModes
 	{
 		Ignore,
@@ -46,14 +48,39 @@ public class PoseFile : JsonFileBase
 		FullLoad,
 	}
 
+	public int FileVersion => POSE_FILE_SCHEMA_VERSION;
 	public override string FileExtension => ".pose";
 	public override string TypeName => "Anamnesis Pose";
+
+	public string? GameVersion { get; set; }
 
 	public Vector3? Position { get; set; }
 	public Quaternion? Rotation { get; set; }
 	public Vector3? Scale { get; set; }
 
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public int? ModelId { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? RaceSexId { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public int? FaceId { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public Dictionary<string, Bone?>? Bones { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public Dictionary<string, Bone?>? MainHand { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public Dictionary<string, Bone?>? OffHand { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public Dictionary<string, Bone?>? Ornament { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public Dictionary<string, Bone?>? Prop { get; set; }
 
 	public static BoneProcessingModes GetBoneMode(string boneName)
 	{
@@ -126,9 +153,17 @@ public class PoseFile : JsonFileBase
 		if (skeleton == null || skeleton.Bones == null)
 			throw new Exception("No skeleton in actor");
 
+		this.GameVersion = MemoryService.GameVersion;
 		this.Rotation = actor.ModelObject.Transform.Rotation;
 		this.Position = actor.ModelObject.Transform.Position;
 		this.Scale = actor.ModelObject.Transform.Scale;
+		this.ModelId = actor.ModelType;
+
+		if (actor.ModelObject.IsHuman)
+		{
+			this.RaceSexId = actor.ModelObject.DataPath.ToString();
+			this.FaceId = actor.ModelObject.DataHead;
+		}
 
 		this.Bones = new Dictionary<string, Bone?>(skeleton.Bones.Count, StringComparer.Ordinal);
 

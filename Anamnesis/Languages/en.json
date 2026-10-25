@@ -47,6 +47,8 @@
 
   "FileMeta_Author": "Author:",
   "FileMeta_Version": "Version:",
+  "FileMeta_Tags": "Tags:",
+  "FileMeta_Tags_Tooltip": "A comma-delimited list of zero or more tags.",
   "FileMeta_Description": "Description:",
   "FileMeta_ImageFromClip": "Paste an image from the clipboard",
 
