@@ -172,14 +172,17 @@
 
 						<Grid.ToolTip>
 							<StackPanel Orientation="Horizontal">
-
-								<Image MaxWidth="100" MaxHeight="200" Margin="0, 0, 6, 0" Source="{Binding File.ImageSource}"/>
+								<Image MaxWidth="100"
+									   MaxHeight="200"
+									   Margin="0, 0, 6, 0"
+									   Source="{Binding File.ImageSource}"
+									   Visibility="{Binding File.ImageSource, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 
 								<StackPanel Orientation="Vertical" Visibility="{Binding IsDirectory, Converter={StaticResource !B2V}}">
 									<XivToolsWpf:TextBlock Text="{Binding Name}" FontWeight="Bold" Visibility="{Binding IsNameCustom, Converter={StaticResource !B2V}}"/>
 									<XivToolsWpf:TextBlock Text="{Binding FileName}" FontWeight="Bold"/>
 
-									<XivToolsWpf:TextBlock Width="200" TextWrapping="Wrap" Text="{Binding File.Description}" Visibility="{Binding File.Description, Converter={StaticResource NotNullToVisibilityConverter}}" Margin="0, 6"/>
+									<XivToolsWpf:TextBlock MaxWidth="250" TextWrapping="Wrap" Text="{Binding File.Description}" Visibility="{Binding File.Description, Converter={StaticResource NotNullToVisibilityConverter}}" Margin="0, 6"/>
 
 									<StackPanel Orientation="Horizontal" Visibility="{Binding File.Author, Converter={StaticResource NotNullToVisibilityConverter}}">
 										<XivToolsWpf:TextBlock Key="FileMeta_Author" Margin="0, 0, 6, 0" FontWeight="Bold"/>
