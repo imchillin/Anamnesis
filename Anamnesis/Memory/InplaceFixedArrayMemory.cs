@@ -15,7 +15,7 @@ using System.Runtime.InteropServices;
 /// Represents an inplace fixed-length array in memory.
 /// </summary>
 /// <typeparam name="TValue">The array element type.</typeparam>
-public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<TValue>, IArrayMemory
+public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<TValue>, IArrayMemory, IReadOnlyList<TValue>
 {
 	/// <summary>
 	/// Safety bound to prevent excessive allocation from corrupt memory reads.
@@ -44,6 +44,9 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 
 	/// <summary> Gets the array's length.</summary>
 	public abstract int Length { get; }
+
+	/// <summary> Gets the number of elements loaded in the array.</summary>
+	public int Count => this.items.Count;
 
 	/// <inheritdoc/>
 	[DoNotNotify]
@@ -124,10 +127,12 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 				}
 			}
 
+			this.lastLength = -1;
+			this.lastAddress = IntPtr.Zero;
 			return;
 		}
 
-		bool structureChanged = this.lastLength != arrayLength || this.lastAddress != this.ArrayAddress;
+		bool structureChanged = this.lastLength != arrayLength || this.lastAddress != this.ArrayAddress || this.items.Count != arrayLength;
 		this.lastLength = arrayLength;
 		this.lastAddress = this.ArrayAddress;
 
@@ -208,7 +213,7 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 							{
 								if (s_isMemoryObject)
 								{
-									for (int i = 0; i < arrayLength; ++i)
+									for (int i = 0; i < arrayLength && i < this.items.Count; ++i)
 									{
 										byte* elementPtr = bufferPtr + (i * elementSize);
 										if (this.items[i] is MemoryBase memory)
@@ -244,7 +249,7 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 
 											if (structureChanged)
 												this.items.Add(item);
-											else
+											else if (i < this.items.Count)
 												this.items[i] = item;
 										}
 									}
