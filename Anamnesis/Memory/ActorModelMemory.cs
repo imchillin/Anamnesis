@@ -28,6 +28,7 @@ public class ActorModelMemory : DrawObjectMemory
 	}
 
 	[Bind(0x0A0, BindFlags.Pointer | BindFlags.OnlyInGPose | BindFlags.DontCacheOffsets, SyncGroup = "Skeleton")] public SkeletonMemory? Skeleton { get; set; }
+	[Bind(0x0D8, BindFlags.DontCacheOffsets)] public AttachMemory? Attach { get; set; }
 	[Bind(0x150, BindFlags.Pointer)] public BustMemory? Bust { get; set; }
 	[Bind(0x290)] public Color Tint { get; set; }
 	[Bind(0x2A4)] public float Height { get; set; }

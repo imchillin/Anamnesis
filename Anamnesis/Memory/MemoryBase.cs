@@ -1086,7 +1086,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				var current = locked[i];
 
 				// If an array element, direct property binds were already processed by the parent array's sync pass, so skip.
-				if (current.Parent is IArrayMemory && locked.Contains(current.Parent))
+				if (current.parentBind is not PropertyBindInfo && current.Parent is IArrayMemory && locked.Contains(current.Parent))
 				{
 					if (current is IArrayMemory nestedArray)
 					{

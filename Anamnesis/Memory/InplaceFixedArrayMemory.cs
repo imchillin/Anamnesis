@@ -123,7 +123,6 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 					}
 
 					this.items.Clear();
-					this.Children.Clear();
 				}
 			}
 
@@ -155,7 +154,6 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 					}
 
 					this.items.Clear();
-					this.Children.Clear();
 					this.items.Capacity = arrayLength;
 
 					if (s_isMemoryObject)

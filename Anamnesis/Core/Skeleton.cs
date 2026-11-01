@@ -234,6 +234,7 @@ public class Skeleton : INotifyPropertyChanged
 			a.ModelObject.Skeleton.Synchronize();
 			a.DrawData.MainHand?.Model?.Skeleton?.Synchronize();
 			a.DrawData.OffHand?.Model?.Skeleton?.Synchronize();
+			a.Ornament?.ModelObject?.Skeleton?.Synchronize();
 
 			// Get all bones
 			this.AddBones(a.ModelObject.Skeleton);
@@ -243,6 +244,9 @@ public class Skeleton : INotifyPropertyChanged
 
 			if (a.DrawData.OffHand?.Model?.Skeleton != null)
 				this.AddBones(a.DrawData.OffHand.Model.Skeleton, "oh_");
+
+			if (a.Ornament?.ModelObject?.Skeleton != null)
+				this.AddBones(a.Ornament.ModelObject.Skeleton, "orn_");
 
 			// Create Bone links from the link database
 			foreach ((string name, Bone bone) in this.Bones)

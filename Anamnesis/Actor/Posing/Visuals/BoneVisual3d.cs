@@ -163,7 +163,7 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 					Rotation = currentRotation,
 					Scale = this.Bone.Scale,
 				},
-				this.Attachment.ChildTransform);
+				this.Attachment.GetTransform());
 
 			currentPosition = combined.Position;
 			currentRotation = combined.Rotation;

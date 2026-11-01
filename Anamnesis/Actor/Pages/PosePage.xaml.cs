@@ -640,6 +640,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 						skeleton.Synchronize();
 						actor.DrawData.MainHand?.Model?.Skeleton?.Synchronize();
 						actor.DrawData.OffHand?.Model?.Skeleton?.Synchronize();
+						actor.Ornament?.ModelObject?.Skeleton?.Synchronize();
 					}
 					catch (Exception ex)
 					{
@@ -696,6 +697,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		var originBind = memArgs.Context.OriginBind;
 		if (originBind.Name == nameof(ActorMemory.ModelObject) ||
+			originBind.Name == nameof(ActorMemory.Ornament) ||
 			(originBind.Name == nameof(ActorModelMemory.Skeleton) && originBind.Type == typeof(SkeletonMemory)))
 		{
 			if (this.Actor?.Do(a => a.IsRefreshing) == true)
@@ -1238,6 +1240,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 							skeleton.Synchronize(s_transformSyncGroups);
 							actor.DrawData.MainHand?.Model?.Skeleton?.Synchronize(s_transformSyncGroups);
 							actor.DrawData.OffHand?.Model?.Skeleton?.Synchronize(s_transformSyncGroups);
+							actor.Ornament?.ModelObject?.Skeleton?.Synchronize(s_transformSyncGroups);
 						}
 						catch (Exception ex)
 						{

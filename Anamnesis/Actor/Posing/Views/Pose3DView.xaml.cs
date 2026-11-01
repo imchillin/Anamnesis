@@ -147,6 +147,7 @@ public partial class Pose3DView : UserControl
 		{
 			this.Visual.Attach("mh_n_root", a.DrawData.MainHand?.Model?.Attach);
 			this.Visual.Attach("oh_n_root", a.DrawData.OffHand?.Model?.Attach);
+			this.Visual.Attach("orn_n_root", a.Ornament?.ModelObject?.Attach);
 		});
 
 		// Add the new visual to the SkeletonRoot

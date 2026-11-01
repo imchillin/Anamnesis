@@ -20,6 +20,7 @@ public enum BoneCategory
 	Top,
 	MainHand,
 	OffHand,
+	Ornament,
 }
 
 /// <summary>
@@ -43,6 +44,7 @@ public class BoneEntity(SkeletonEntity skeleton, List<TransformMemory> transform
 	{
 		_ when this.Name.StartsWith("mh_", StringComparison.Ordinal) => BoneCategory.MainHand,
 		_ when this.Name.StartsWith("oh_", StringComparison.Ordinal) => BoneCategory.OffHand,
+		_ when this.Name.StartsWith("orn_", StringComparison.Ordinal) => BoneCategory.Ornament,
 		_ when this.Name.Equals("j_ago", StringComparison.Ordinal) || this.Name.Equals("j_kao", StringComparison.Ordinal) => BoneCategory.Body,
 		_ => this.PartialSkeletonIndex switch
 		{
