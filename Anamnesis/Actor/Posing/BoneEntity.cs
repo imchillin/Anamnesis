@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Posing;
@@ -21,6 +21,7 @@ public enum BoneCategory
 	MainHand,
 	OffHand,
 	Ornament,
+	Prop,
 }
 
 /// <summary>
@@ -45,6 +46,7 @@ public class BoneEntity(SkeletonEntity skeleton, List<TransformMemory> transform
 		_ when this.Name.StartsWith("mh_", StringComparison.Ordinal) => BoneCategory.MainHand,
 		_ when this.Name.StartsWith("oh_", StringComparison.Ordinal) => BoneCategory.OffHand,
 		_ when this.Name.StartsWith("orn_", StringComparison.Ordinal) => BoneCategory.Ornament,
+		_ when this.Name.StartsWith("pr1_", StringComparison.Ordinal) || this.Name.StartsWith("pr2_", StringComparison.Ordinal) => BoneCategory.Prop,
 		_ when this.Name.Equals("j_ago", StringComparison.Ordinal) || this.Name.Equals("j_kao", StringComparison.Ordinal) => BoneCategory.Body,
 		_ => this.PartialSkeletonIndex switch
 		{
