@@ -283,6 +283,8 @@ public class ActorMemory : GameObjectMemory, IDisposable
 				this.forceReloadOnRefresh = false;
 			}
 			while (this.needsRefresh);
+
+			base.Synchronize(exclGroups: TargetService.ExcludeSkeletonGroup);
 		}
 		catch (Exception ex)
 		{

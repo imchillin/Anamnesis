@@ -605,12 +605,10 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		this.Actor?.Do(actor =>
 		{
-			if (actor.ModelObject == null)
-				return;
-
 			actor.Refreshed -= this.OnActorRefreshed;
-			actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
+			actor.PropertyChanged -= this.OnActorPropertyChanged;
 		});
+		this.Actor = null;
 
 		if (this.Skeleton != null)
 		{
@@ -640,6 +638,8 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 					try
 					{
 						skeleton.Synchronize();
+						actor.DrawData.MainHand?.Model?.Skeleton?.Synchronize();
+						actor.DrawData.OffHand?.Model?.Skeleton?.Synchronize();
 					}
 					catch (Exception ex)
 					{
@@ -669,20 +669,14 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		this.Actor?.Do(actor =>
 		{
-			if (actor.ModelObject == null)
-				return;
-
 			actor.Refreshed -= this.OnActorRefreshed;
-			actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
+			actor.PropertyChanged -= this.OnActorPropertyChanged;
 		});
 
 		newActorHandle?.Do(actor =>
 		{
-			if (actor.ModelObject == null)
-				return;
-
 			actor.Refreshed += this.OnActorRefreshed;
-			actor.ModelObject.PropertyChanged += this.OnModelObjectChanged;
+			actor.PropertyChanged += this.OnActorPropertyChanged;
 		});
 
 		this.Actor = newActorHandle;
@@ -695,67 +689,47 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		_ = this.Refresh();
 	}
 
-	private void OnModelObjectChanged(object? sender, PropertyChangedEventArgs e)
+	private void OnActorPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		if (e.PropertyName == nameof(ActorModelMemory.Skeleton))
+		if (e is not MemObjPropertyChangedEventArgs memArgs)
+			return;
+
+		var originBind = memArgs.Context.OriginBind;
+		if (originBind.Name == nameof(ActorMemory.ModelObject) ||
+			(originBind.Name == nameof(ActorModelMemory.Skeleton) && originBind.Type == typeof(SkeletonMemory)))
 		{
+			if (this.Actor?.Do(a => a.IsRefreshing) == true)
+				return;
+
 			this.OnActorRefreshed(null, default);
 		}
 	}
 
-	private Task Refresh()
+	private async Task Refresh()
 	{
-		return WorkQueue.Value.Enqueue(async () =>
-		{
-			await Dispatch.MainThread();
+		await Dispatch.MainThread();
 
-			this.ThreeDView.DataContext = null;
-			this.BodyGuiView.DataContext = null;
-			this.FaceGuiView.DataContext = null;
-			this.MatrixView.DataContext = null;
+		this.ThreeDView.DataContext = null;
+		this.BodyGuiView.DataContext = null;
+		this.FaceGuiView.DataContext = null;
+		this.MatrixView.DataContext = null;
+
+		_ = WorkQueue.Value.Enqueue(() =>
+		{
+			if (this.Skeleton != null)
+			{
+				this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+				this.Skeleton.Clear();
+				this.Skeleton = null;
+			}
 
 			if (this.Actor == null || this.Actor.Do(a => a.ModelObject == null) != false)
 			{
-				this.Skeleton?.Clear();
-				this.Skeleton = null;
+				this.pendingSkeletonRetryAttempts = 0;
 				return;
 			}
 
-			try
-			{
-				if (this.Skeleton != null)
-				{
-					this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
-				}
-
-				try
-				{
-					this.Skeleton = new SkeletonEntity(this.Actor);
-				}
-				catch (ArgumentOutOfRangeException)
-				{
-					this.pendingSkeletonRetryAttempts = MAX_SKELETON_CREATION_ATTEMPTS;
-					this.Skeleton = null;
-					Log.Warning("Skeleton creation failed, will retry in detour.");
-					return;
-				}
-
-				if (this.Skeleton != null)
-				{
-					if (Application.Current.Dispatcher.CheckAccess())
-					{
-						this.BindSkeleton(this.Skeleton);
-					}
-					else
-					{
-						Application.Current.Dispatcher.Invoke(() => this.BindSkeleton(this.Skeleton));
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, "Failed to bind skeleton to view");
-			}
+			this.pendingSkeletonRetryAttempts = MAX_SKELETON_CREATION_ATTEMPTS;
 		});
 	}
 
@@ -1191,66 +1165,60 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	private byte[] RenderSkeletonDetour(ReadOnlySpan<byte> args)
 	{
 		// IMPORTANT: Do not throw in the hook detour!
-		// Sync the skeleton first, then process pending pose-related work
-
 		// Do not attempt to sync the skeleton if the actor is currently refreshing, otherwise it will time out
 		if (this.Actor != null && this.Actor.Do(actor => actor.IsRefreshing) == true)
 			return [];
 
-		// Retry skeleton creation if pending
+		try
+		{
+			WorkQueue.Value.ProcessPending();
+		}
+		catch (Exception ex)
+		{
+			Log.Warning(ex, "Encountered error while processing pending pose work.");
+		}
+
+		// Create or retry skeleton creation if pending
 		if (this.pendingSkeletonRetryAttempts > 0 && this.Actor != null && (this.Skeleton == null || this.Skeleton.Bones.IsEmpty))
 		{
 			try
 			{
-				this.Skeleton = new SkeletonEntity(this.Actor);
-				if (this.Skeleton != null)
+				if (this.pendingSkeletonRetryAttempts < MAX_SKELETON_CREATION_ATTEMPTS)
 				{
-					Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => this.BindSkeleton(this.Skeleton)));
-					this.pendingSkeletonRetryAttempts = 0;
-					Log.Verbose("Skeleton successfully recreated in detour.");
+					this.Actor.Do(a => a.Synchronize(exclGroups: TargetService.ExcludeSkeletonGroup));
 				}
-			}
-			catch (ArgumentOutOfRangeException)
-			{
-				this.pendingSkeletonRetryAttempts--;
-				if (this.pendingSkeletonRetryAttempts == 0)
+
+				var skeleton = new SkeletonEntity(this.Actor);
+				if (!skeleton.Bones.IsEmpty || !GposeService.IsGpose)
 				{
-					Log.Error("Failed to create skeleton for actor after maximum retry attempts.");
+					this.Skeleton = skeleton;
+					this.pendingSkeletonRetryAttempts = 0;
+					Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => this.BindSkeleton(skeleton)));
+					Log.Verbose("Skeleton successfully created in detour.");
+				}
+				else
+				{
+					this.pendingSkeletonRetryAttempts--;
+					if (this.pendingSkeletonRetryAttempts == 0)
+					{
+						Log.Error("Failed to create skeleton for actor after maximum retry attempts.");
+					}
 				}
 			}
 			catch (Exception ex)
 			{
-				this.pendingSkeletonRetryAttempts = 0;
-				Log.Error(ex, "Failed to bind skeleton during detour retry.");
+				this.pendingSkeletonRetryAttempts--;
+				if (this.pendingSkeletonRetryAttempts == 0)
+				{
+					Log.Error(ex, "Failed to create skeleton during detour retry.");
+				}
 			}
-		}
 
-		if (!PoseService.Instance.IsEnabled && GposeService.IsGpose)
-		{
-			this.Skeleton?.Actor?.Do(actor =>
-			{
-				var skeleton = actor.ModelObject?.Skeleton;
-				if (skeleton == null || skeleton.Address == IntPtr.Zero)
-					return;
-
-				try
-				{
-					skeleton.Synchronize(s_transformSyncGroups);
-					actor.DrawData.MainHand?.Model?.Skeleton?.Synchronize(s_transformSyncGroups);
-					actor.DrawData.OffHand?.Model?.Skeleton?.Synchronize(s_transformSyncGroups);
-				}
-				catch (Exception ex)
-				{
-					Log.Verbose(ex, "Failed to sync skeleton during skeleton finalization.");
-				}
-			});
+			return [];
 		}
 
 		try
 		{
-			WorkQueue.Value.ProcessPending();
-
-			// Read transforms after processing to ensure we have the latest data
 			if (GposeService.IsGpose)
 			{
 				if (PoseService.Instance.IsEnabled)
@@ -1259,6 +1227,24 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 				}
 				else
 				{
+					this.Skeleton?.Actor?.Do(actor =>
+					{
+						var skeleton = actor.ModelObject?.Skeleton;
+						if (skeleton == null || skeleton.Address == IntPtr.Zero)
+							return;
+
+						try
+						{
+							skeleton.Synchronize(s_transformSyncGroups);
+							actor.DrawData.MainHand?.Model?.Skeleton?.Synchronize(s_transformSyncGroups);
+							actor.DrawData.OffHand?.Model?.Skeleton?.Synchronize(s_transformSyncGroups);
+						}
+						catch (Exception ex)
+						{
+							Log.Verbose(ex, "Failed to sync skeleton during skeleton finalization.");
+						}
+					});
+
 					this.Skeleton?.ReadTransforms();
 				}
 			}

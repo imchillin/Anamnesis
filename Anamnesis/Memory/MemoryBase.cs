@@ -505,15 +505,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 					if (node.Address != actualAddress)
 					{
-						node.Address = actualAddress;
-						node.delayedBinds = new ConcurrentQueue<BindInfo>();
-
-						// Invalidate the last known value of all binds on this node
-						foreach (var bind in node.Binds.Values)
-						{
-							bind.LastValue = null;
-							bind.LastFailureAddress = IntPtr.Zero;
-						}
+						node.OnAddressChanged(actualAddress);
 					}
 				}
 
@@ -896,7 +888,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 					}
 					else
 					{
-						memory.Address = childAddress;
+						memory.OnAddressChanged(childAddress, !isNew);
 						this.SetValueWithoutNotification(bind, memory);
 						bind.LastValue = memory;
 
@@ -1198,6 +1190,21 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 			context.AddPath(current.parentBind!);
 			current = current.parent;
+		}
+	}
+
+	private void OnAddressChanged(IntPtr newAddress, bool invalidateBinds = true)
+	{
+		this.Address = newAddress;
+		if (!invalidateBinds)
+			return;
+
+		// Invalidate the last known value of all binds on this node
+		this.delayedBinds = new ConcurrentQueue<BindInfo>();
+		foreach (var bind in this.Binds.Values)
+		{
+			bind.LastValue = null;
+			bind.LastFailureAddress = IntPtr.Zero;
 		}
 	}
 }

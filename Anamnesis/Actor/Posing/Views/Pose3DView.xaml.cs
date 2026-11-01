@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Views;
@@ -110,6 +110,11 @@ public partial class Pose3DView : UserControl
 
 	private void OnLoaded(object sender, RoutedEventArgs e)
 	{
+		if (this.SkeletonRoot.Children.Count == 0 && this.DataContext is SkeletonEntity)
+		{
+			this.OnDataContextChanged(null, default);
+		}
+
 		Task.Run(this.UpdateCamera);
 	}
 
@@ -121,15 +126,18 @@ public partial class Pose3DView : UserControl
 
 	private void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 	{
-		if (this.DataContext is not SkeletonEntity skeleton)
-			return;
-
 		// Clear the existing children and dispose of the current visual
 		this.SkeletonRoot.Children.Clear();
 		if (this.Visual != null)
 		{
 			this.Visual.Dispose();
 			this.Visual = null;
+		}
+
+		if (this.DataContext is not SkeletonEntity skeleton)
+		{
+			this.Skeleton = null;
+			return;
 		}
 
 		// Set the new skeleton and create a new visual
