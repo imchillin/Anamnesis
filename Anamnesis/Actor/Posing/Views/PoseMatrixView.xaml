@@ -539,9 +539,6 @@
 						<XivToolsWpf:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_Lumbar" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<local:BoneView Grid.Column="7" Grid.Row="0" BoneName="SpineA"/>
 
-						<!--<cm3:TextBlock Grid.Column="8" Grid.Row="0" Key="Pose_OtherAbdomen" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-							<local:BoneView Grid.Column="9" Grid.Row="0" BoneName="Abdomen"/>-->
-
 						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_Scabbards" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
 							<local:BoneView BoneName="ScabbardLeft" Label="L"/>
@@ -1106,7 +1103,6 @@
 						</Grid>
 					</Grid>
 				</GroupBox>
-
 				<GroupBox Visibility="{Binding HasWeaponBones, Converter={StaticResource B2V}}">
 					<GroupBox.Header>
 						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
@@ -1241,11 +1237,66 @@
 							<local:BoneView BoneName="iv_shiri_l" Label="L"/>
 							<local:BoneView BoneName="iv_shiri_r" Label="R"/>
 						</StackPanel>
-
 					</Grid>
-
 				</GroupBox>
+				<GroupBox Visibility="{Binding HasMiscellaneousBones, Converter={StaticResource B2V}}">
+					<GroupBox.Header>
+						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
+							<XivToolsWpf:TextBlock Key="Pose_Matrix_OtherCategory"/>
+						</Button>
+					</GroupBox.Header>
 
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<Grid Grid.Row="0" Visibility="{Binding OrnamentBones, RelativeSource={RelativeSource AncestorType={x:Type local:PoseMatrixView}}, Converter={StaticResource NotEmptyToVisibilityConverter}}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition />
+							</Grid.ColumnDefinitions>
+							<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_Matrix_Ornament" Style="{DynamicResource Label}" Margin="16, 0, 3, 0" />
+
+							<ItemsControl Grid.Column="1" Grid.Row="0" ItemsSource="{Binding OrnamentBones, RelativeSource={RelativeSource AncestorType={x:Type local:PoseMatrixView}}}">
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<WrapPanel Width="500"/>
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
+
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<local:BoneView />
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</Grid>
+
+						<Grid Grid.Row="1" Visibility="{Binding PropBones, RelativeSource={RelativeSource AncestorType={x:Type local:PoseMatrixView}}, Converter={StaticResource NotEmptyToVisibilityConverter}}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition />
+							</Grid.ColumnDefinitions>
+							<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_Matrix_Prop" Style="{DynamicResource Label}" Margin="16, 0, 3, 0" />
+
+							<ItemsControl Grid.Column="1" Grid.Row="0" ItemsSource="{Binding PropBones, RelativeSource={RelativeSource AncestorType={x:Type local:PoseMatrixView}}}">
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<WrapPanel Width="500"/>
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
+
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<local:BoneView />
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</Grid>
+					</Grid>
+				</GroupBox>
 			</StackPanel>
 		</Grid>
 	</ScrollViewer>
