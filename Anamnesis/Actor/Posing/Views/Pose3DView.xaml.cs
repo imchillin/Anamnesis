@@ -135,6 +135,11 @@ public partial class Pose3DView : UserControl
 		// Set the new skeleton and create a new visual
 		this.Skeleton = skeleton;
 		this.Visual = new SkeletonVisual3D(this.Skeleton);
+		this.Skeleton.Actor?.Do(a =>
+		{
+			this.Visual.Attach("mh_n_root", a.DrawData.MainHand?.Model?.Attach);
+			this.Visual.Attach("oh_n_root", a.DrawData.OffHand?.Model?.Attach);
+		});
 
 		// Add the new visual to the SkeletonRoot
 		this.SkeletonRoot.Children.Add(this.Visual);

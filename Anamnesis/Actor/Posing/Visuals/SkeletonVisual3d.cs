@@ -6,6 +6,7 @@ namespace Anamnesis.Actor.Posing.Visuals;
 using Anamnesis.Actor.Views;
 using Anamnesis.Memory;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Media.Media3D;
@@ -20,6 +21,7 @@ public class SkeletonVisual3D : ModelVisual3D, IDisposable
 {
 	/// <summary>The root rotation of the skeleton.</summary>
 	private readonly RotateTransform3D rotateTransform;
+	private readonly List<BoneAttachment> attachments = new();
 	private bool disposed = false;
 
 	/// <summary>
@@ -42,11 +44,29 @@ public class SkeletonVisual3D : ModelVisual3D, IDisposable
 		}
 	}
 
+	/// <summary>Gets a dictionary of all bone visuals in the skeleton, indexed by bone name.</summary>
+	public Dictionary<string, BoneVisual3D> Bones { get; } = new();
+
 	/// <summary>Gets the root rotation of the skeleton.</summary>
 	public QuaternionRotation3D RootRotation { get; private set; }
 
 	/// <summary>Gets the skeleton entity being visualized.</summary>
 	public SkeletonEntity Skeleton { get; private set; }
+
+	/// <summary>
+	/// Attaches a bone in this skeleton visual to a dynamic parent bone defined by an <see cref="AttachMemory"/> instance.
+	/// </summary>
+	/// <param name="boneName">The name of the child root bone to attach.</param>
+	/// <param name="attachMemory">The attachment memory defining the parent bone and relative transform.</param>
+	public void Attach(string boneName, AttachMemory? attachMemory)
+	{
+		if (attachMemory == null || !this.Bones.TryGetValue(boneName, out var boneVisual))
+			return;
+
+		var entry = new BoneAttachment(boneVisual, attachMemory);
+		this.attachments.Add(entry);
+		this.UpdateAttachment(entry);
+	}
 
 	/// <summary>
 	/// Disposes the resources used by the <see cref="SkeletonVisual3D"/> class.
@@ -64,6 +84,11 @@ public class SkeletonVisual3D : ModelVisual3D, IDisposable
 	/// </remarks>
 	public void Update()
 	{
+		for (int i = 0; i < this.attachments.Count; i++)
+		{
+			this.UpdateAttachment(this.attachments[i]);
+		}
+
 		foreach (BoneVisual3D bone in this.Children.OfType<BoneVisual3D>())
 		{
 			bone.Update();
@@ -106,6 +131,8 @@ public class SkeletonVisual3D : ModelVisual3D, IDisposable
 				}
 
 				this.Children.Clear();
+				this.Bones.Clear();
+				this.attachments.Clear();
 			}
 
 			/* Dispose unmanaged resources here if any */
@@ -119,6 +146,8 @@ public class SkeletonVisual3D : ModelVisual3D, IDisposable
 	private void Initialize(SkeletonEntity skeleton)
 	{
 		this.Children.Clear();
+		this.Bones.Clear();
+		this.attachments.Clear();
 
 		// Add root bones to visual tree
 		foreach (var bone in skeleton.Bones.Values.OfType<BoneEntity>().Where(b => b.Parent == null))
@@ -126,6 +155,32 @@ public class SkeletonVisual3D : ModelVisual3D, IDisposable
 			var boneVisual = new BoneVisual3D(this, bone);
 			this.Children.Add(boneVisual);
 		}
+	}
+
+	/// <summary>Updates a single dynamic bone attachment.</summary>
+	/// <param name="entry">The bone attachment entry to update.</param>
+	private void UpdateAttachment(BoneAttachment entry)
+	{
+		var attachment = entry.Attach.GetAttachment();
+		ushort currentMask = attachment?.BoneIndexMask ?? ushort.MaxValue;
+		if (currentMask == entry.LastBoneIndexMask && entry.Bone.Attachment == attachment)
+			return;
+
+		BoneVisual3D? parentVisual = null;
+		string? parentName = attachment?.GetBoneName();
+		if (!string.IsNullOrEmpty(parentName))
+		{
+			this.Bones.TryGetValue(parentName, out parentVisual);
+		}
+
+		if (attachment == null || parentVisual != null)
+		{
+			entry.LastBoneIndexMask = currentMask;
+		}
+
+		entry.Bone.Attachment = parentVisual != null ? attachment : null;
+		entry.Bone.Parent = parentVisual;
+		entry.Bone.Update();
 	}
 
 	/// <summary>Handles property changes in the skeleton entity.</summary>
@@ -156,5 +211,12 @@ public class SkeletonVisual3D : ModelVisual3D, IDisposable
 			this.RootRotation.Quaternion = this.Skeleton.RootRotation.ToMedia3DQuaternion();
 			this.rotateTransform.Rotation = this.RootRotation;
 		}
+	}
+
+	private sealed class BoneAttachment(BoneVisual3D bone, AttachMemory attach)
+	{
+		public BoneVisual3D Bone { get; } = bone;
+		public AttachMemory Attach { get; } = attach;
+		public ushort LastBoneIndexMask { get; set; } = ushort.MaxValue;
 	}
 }

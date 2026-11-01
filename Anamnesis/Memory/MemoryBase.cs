@@ -213,6 +213,26 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		set => Interlocked.Exchange(ref this.isSynchronizing, value ? 1 : 0);
 	}
 
+	/// <summary>
+	/// Gets the first ancestor of the specified type in the memory hierarchy.
+	/// </summary>
+	/// <typeparam name="T">The type of ancestor to find.</typeparam>
+	/// <returns>The ancestor memory object, or null if not found.</returns>
+	public T? GetParent<T>()
+		where T : MemoryBase
+	{
+		MemoryBase? current = this.parent;
+		while (current != null)
+		{
+			if (current is T match)
+				return match;
+
+			current = current.parent;
+		}
+
+		return null;
+	}
+
 	/// <summary>Raises the property changed event.</summary>
 	/// <param name="propertyName">The name of the property.</param>
 	/// <remarks>

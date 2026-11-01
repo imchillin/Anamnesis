@@ -4,6 +4,7 @@
 namespace Anamnesis.Actor.Posing.Visuals;
 
 using Anamnesis.Actor.Views;
+using Anamnesis.Memory;
 using MaterialDesignThemes.Wpf;
 using System;
 using System.Linq;
@@ -13,6 +14,8 @@ using System.Windows.Media.Media3D;
 using XivToolsWpf;
 using XivToolsWpf.Math3D;
 using XivToolsWpf.Math3D.Extensions;
+using Color = System.Windows.Media.Color;
+using Transform = Anamnesis.Memory.Transform;
 
 /// <summary>
 /// Represents a 3D visual representation of a bone.
@@ -59,6 +62,7 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 		PaletteHelper ph = new();
 		ITheme t = ph.GetTheme();
 
+		this.Skeleton.Bones[bone.Name] = this;
 		this.Initialize(bone);
 
 		this.sphere = new Sphere(s_precomputedSphere)
@@ -83,6 +87,9 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 	/// <summary>Gets the bone entity being visualized.</summary>
 	public BoneEntity Bone { get; private set; }
 
+	/// <summary>Gets or sets the attachment memory for this bone.</summary>
+	public AttachmentMemory? Attachment { get; set; }
+
 	/// <summary>Gets or sets the parent bone visual.</summary>
 	public BoneVisual3D? Parent
 	{
@@ -90,10 +97,17 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 
 		set
 		{
+			if (this.parent == value)
+				return;
+
 			if (this.parent != null)
 			{
 				this.parent.Children.Remove(this);
 				this.parent.Children.Remove(this.lineToParent);
+			}
+			else
+			{
+				this.Skeleton.Children.Remove(this);
 			}
 
 			this.parent = value;
@@ -112,6 +126,11 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 
 				this.parent.Children.Add(this);
 				this.parent.Children.Add(this.lineToParent);
+				this.RedrawLineToParent();
+			}
+			else
+			{
+				this.Skeleton.Children.Add(this);
 			}
 		}
 	}
@@ -134,6 +153,22 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 
 		var currentPosition = this.Bone.Position;
 		var currentRotation = this.Bone.Rotation;
+
+		if (this.Attachment != null)
+		{
+			var combined = Core.Bone.LocalToModelSpace(
+				new Transform
+				{
+					Position = currentPosition,
+					Rotation = currentRotation,
+					Scale = this.Bone.Scale,
+				},
+				this.Attachment.ChildTransform);
+
+			currentPosition = combined.Position;
+			currentRotation = combined.Rotation;
+		}
+
 		bool positionChanged = !(this.lastPosition?.IsApproximately(currentPosition, Core.Bone.EQUALITY_TOLERANCE) ?? false);
 		bool rotationChanged = !(this.lastRotation?.IsApproximately(currentRotation, Core.Bone.EQUALITY_TOLERANCE) ?? false);
 
@@ -204,6 +239,8 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 	{
 		if (disposing)
 		{
+			this.Skeleton.Bones.Remove(this.Bone.Name);
+
 			foreach (BoneVisual3D child in this.Children.OfType<BoneVisual3D>().ToList())
 			{
 				child.Dispose();
