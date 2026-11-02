@@ -44,7 +44,8 @@ public class PoseFile : JsonFileBase
 	public const string MAIN_HAND_PREFIX = "mh_";
 	public const string OFF_HAND_PREFIX = "oh_";
 	public const string ORNAMENT_PREFIX = "orn_";
-	public const string PROP_PREFIX = "prop_";
+	public const string PROP1_PREFIX = "pr1_";
+	public const string PROP2_PREFIX = "pr2_";
 
 	public enum BoneProcessingModes
 	{
@@ -182,7 +183,7 @@ public class PoseFile : JsonFileBase
 		Merge(this.MainHand, MAIN_HAND_PREFIX);
 		Merge(this.OffHand, OFF_HAND_PREFIX);
 		Merge(this.Ornament, ORNAMENT_PREFIX);
-		Merge(this.Prop, PROP_PREFIX);
+		Merge(this.Prop, PROP1_PREFIX);
 
 		return allBones;
 	}
@@ -234,9 +235,9 @@ public class PoseFile : JsonFileBase
 				string strippedName = boneName[ORNAMENT_PREFIX.Length..];
 				this.Ornament[strippedName] = new Bone(bone);
 			}
-			else if (boneName.StartsWith(PROP_PREFIX, StringComparison.Ordinal))
+			else if (boneName.StartsWith(PROP1_PREFIX, StringComparison.Ordinal))
 			{
-				string strippedName = boneName[PROP_PREFIX.Length..];
+				string strippedName = boneName[PROP1_PREFIX.Length..];
 				this.Prop[strippedName] = new Bone(bone);
 			}
 			else
@@ -246,6 +247,9 @@ public class PoseFile : JsonFileBase
 		}
 
 		// Clean up empty collections so they are omitted by the JSON serializer
+		if (this.Bones.Count == 0)
+			this.Bones = null;
+
 		if (this.MainHand.Count == 0)
 			this.MainHand = null;
 
@@ -257,9 +261,6 @@ public class PoseFile : JsonFileBase
 
 		if (this.Prop.Count == 0)
 			this.Prop = null;
-
-		if (this.Bones.Count == 0)
-			this.Bones = null;
 	}
 
 	private void Apply(ActorMemory actor, Skeleton skeleton, HashSet<string>? bones, PoseApplyOptions options)

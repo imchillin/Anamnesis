@@ -243,13 +243,13 @@ public class Skeleton : INotifyPropertyChanged
 				this.AddBones(a.DrawData.OffHand.Model.Skeleton, PoseFile.OFF_HAND_PREFIX);
 
 			if (a.Ornament?.ModelObject?.Skeleton != null)
-				this.AddBones(a.Ornament.ModelObject.Skeleton, "orn_");
+				this.AddBones(a.Ornament.ModelObject.Skeleton, PoseFile.ORNAMENT_PREFIX);
 
 			if (a.DrawData.Prop1?.Model?.Skeleton != null)
-				this.AddBones(a.DrawData.Prop1.Model.Skeleton, "pr1_");
+				this.AddBones(a.DrawData.Prop1.Model.Skeleton, PoseFile.PROP1_PREFIX);
 
 			if (a.DrawData.Prop2?.Model?.Skeleton != null)
-				this.AddBones(a.DrawData.Prop2.Model.Skeleton, "pr2_");
+				this.AddBones(a.DrawData.Prop2.Model.Skeleton, PoseFile.PROP2_PREFIX);
 
 			// Create Bone links from the link database
 			foreach ((string name, Bone bone) in this.Bones)
