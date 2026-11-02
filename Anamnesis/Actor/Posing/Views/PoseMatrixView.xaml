@@ -1127,7 +1127,7 @@
 							</Grid.ColumnDefinitions>
 							<XivToolsWpf:TextBlock Grid.Column="0"
 												   Grid.Row="0"
-												   Key="Pose_WeaponMainHand"
+												   Key="Pose_mh_n_hara"
 												   Style="{DynamicResource Label}"
 												   Margin="16, 0, 3, 0" />
 
@@ -1154,7 +1154,7 @@
 								<ColumnDefinition />
 							</Grid.ColumnDefinitions>
 
-							<XivToolsWpf:TextBlock Grid.Column="0" Key="Pose_WeaponOffHand" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+							<XivToolsWpf:TextBlock Grid.Column="0" Key="Pose_oh_n_hara" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 							<ItemsControl Grid.Column="1" ItemsSource="{Binding OffHandBones, RelativeSource={RelativeSource AncestorType={x:Type local:PoseMatrixView}}}">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
