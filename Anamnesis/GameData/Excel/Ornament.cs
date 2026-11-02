@@ -49,7 +49,7 @@ public readonly struct Ornament(ExcelPage page, uint offset, uint row)
 	/// <summary>
 	/// Gets the attachment point of the ornament to the character.
 	/// </summary>
-	public readonly byte AttachPoint => page.ReadUInt8(offset + 26);
+	public readonly byte CustomizeGroupId => page.ReadUInt8(offset + 26);
 
 	/// <inheritdoc/>
 	public readonly ImgRef? Icon => new(page.ReadUInt16(offset + 20));
