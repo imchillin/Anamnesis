@@ -39,6 +39,13 @@ public class PoseApplyOptions
 
 public class PoseFile : JsonFileBase
 {
+	public const int POSE_FILE_SCHEMA_VERSION = 3;
+
+	public const string MAIN_HAND_PREFIX = "mh_";
+	public const string OFF_HAND_PREFIX = "oh_";
+	public const string ORNAMENT_PREFIX = "orn_";
+	public const string PROP_PREFIX = "prop_";
+
 	public enum BoneProcessingModes
 	{
 		Ignore,
@@ -46,14 +53,39 @@ public class PoseFile : JsonFileBase
 		FullLoad,
 	}
 
+	public int FileVersion => POSE_FILE_SCHEMA_VERSION;
 	public override string FileExtension => ".pose";
 	public override string TypeName => "Anamnesis Pose";
+
+	public string? GameVersion { get; set; }
 
 	public Vector3? Position { get; set; }
 	public Quaternion? Rotation { get; set; }
 	public Vector3? Scale { get; set; }
 
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public int? ModelId { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? RaceSexId { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public int? FaceId { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public Dictionary<string, Bone?>? Bones { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public Dictionary<string, Bone?>? MainHand { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public Dictionary<string, Bone?>? OffHand { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public Dictionary<string, Bone?>? Ornament { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public Dictionary<string, Bone?>? Prop { get; set; }
 
 	public static BoneProcessingModes GetBoneMode(string boneName)
 	{
@@ -118,6 +150,43 @@ public class PoseFile : JsonFileBase
 		return false;
 	}
 
+	/// <summary>
+	/// Aggregates all bones from all categories into a single dictionary, mapping them
+	/// to their internal skeleton bone names, adding category prefixes where needed.
+	/// </summary>
+	/// <returns>
+	/// A dictionary of internal bone names to their saved bone transforms.
+	/// </returns>
+	public Dictionary<string, Bone?> GetAllBones()
+	{
+		Dictionary<string, Bone?> allBones = new(StringComparer.Ordinal);
+
+		void Merge(Dictionary<string, Bone?>? source, string? prefix)
+		{
+			if (source == null)
+				return;
+
+			foreach ((string name, Bone? bone) in source)
+			{
+				// If a prefix is required and the bone name doesn't already have it, prepend it.
+				// NOTE: Necessary for backwards compatibility
+				string internalName = prefix != null && !name.StartsWith(prefix, StringComparison.Ordinal)
+					? prefix + name
+					: name;
+
+				allBones[internalName] = bone;
+			}
+		}
+
+		Merge(this.Bones, null);
+		Merge(this.MainHand, MAIN_HAND_PREFIX);
+		Merge(this.OffHand, OFF_HAND_PREFIX);
+		Merge(this.Ornament, ORNAMENT_PREFIX);
+		Merge(this.Prop, PROP_PREFIX);
+
+		return allBones;
+	}
+
 	private void WriteToFile(ActorMemory actor, Skeleton skeleton, HashSet<string>? bones)
 	{
 		if (actor.ModelObject == null || actor.ModelObject.Transform == null)
@@ -126,19 +195,71 @@ public class PoseFile : JsonFileBase
 		if (skeleton == null || skeleton.Bones == null)
 			throw new Exception("No skeleton in actor");
 
+		this.GameVersion = MemoryService.GameVersion;
 		this.Rotation = actor.ModelObject.Transform.Rotation;
 		this.Position = actor.ModelObject.Transform.Position;
 		this.Scale = actor.ModelObject.Transform.Scale;
+		this.ModelId = actor.ModelType;
+
+		if (actor.ModelObject.IsHuman)
+		{
+			this.RaceSexId = actor.ModelObject.DataPath.ToString();
+			this.FaceId = actor.ModelObject.DataHead;
+		}
 
 		this.Bones = new Dictionary<string, Bone?>(skeleton.Bones.Count, StringComparer.Ordinal);
+		this.MainHand = new Dictionary<string, Bone?>(StringComparer.Ordinal);
+		this.OffHand = new Dictionary<string, Bone?>(StringComparer.Ordinal);
+		this.Ornament = new Dictionary<string, Bone?>(StringComparer.Ordinal);
+		this.Prop = new Dictionary<string, Bone?>(StringComparer.Ordinal);
 
 		foreach (Core.Bone bone in skeleton.Bones.Values)
 		{
-			if (bones != null && !bones.Contains(bone.Name))
+			string boneName = bone.Name;
+			if (bones != null && !bones.Contains(boneName))
 				continue;
 
-			this.Bones[bone.Name] = new Bone(bone);
+			if (boneName.StartsWith(MAIN_HAND_PREFIX, StringComparison.Ordinal))
+			{
+				string strippedName = boneName[MAIN_HAND_PREFIX.Length..];
+				this.MainHand[strippedName] = new Bone(bone);
+			}
+			else if (boneName.StartsWith(OFF_HAND_PREFIX, StringComparison.Ordinal))
+			{
+				string strippedName = boneName[OFF_HAND_PREFIX.Length..];
+				this.OffHand[strippedName] = new Bone(bone);
+			}
+			else if (boneName.StartsWith(ORNAMENT_PREFIX, StringComparison.Ordinal))
+			{
+				string strippedName = boneName[ORNAMENT_PREFIX.Length..];
+				this.Ornament[strippedName] = new Bone(bone);
+			}
+			else if (boneName.StartsWith(PROP_PREFIX, StringComparison.Ordinal))
+			{
+				string strippedName = boneName[PROP_PREFIX.Length..];
+				this.Prop[strippedName] = new Bone(bone);
+			}
+			else
+			{
+				this.Bones[boneName] = new Bone(bone);
+			}
 		}
+
+		// Clean up empty collections so they are omitted by the JSON serializer
+		if (this.MainHand.Count == 0)
+			this.MainHand = null;
+
+		if (this.OffHand.Count == 0)
+			this.OffHand = null;
+
+		if (this.Ornament.Count == 0)
+			this.Ornament = null;
+
+		if (this.Prop.Count == 0)
+			this.Prop = null;
+
+		if (this.Bones.Count == 0)
+			this.Bones = null;
 	}
 
 	private void Apply(ActorMemory actor, Skeleton skeleton, HashSet<string>? bones, PoseApplyOptions options)
@@ -151,7 +272,8 @@ public class PoseFile : JsonFileBase
 		if (actor.ModelObject.Skeleton == null)
 			throw new Exception("Actor model has no skeleton. Are you trying to load a pose outside of GPose?");
 
-		if (this.Bones == null)
+		Dictionary<string, Bone?> allBones = this.GetAllBones();
+		if (allBones.Count == 0)
 			return;
 
 		/*
@@ -210,7 +332,7 @@ public class PoseFile : JsonFileBase
 		}
 
 		// Collect the parent-relative positions of all posed bones
-		foreach ((string name, Bone? savedBone) in this.Bones)
+		foreach ((string name, Bone? savedBone) in allBones)
 		{
 			if (savedBone == null)
 				continue;
@@ -267,7 +389,7 @@ public class PoseFile : JsonFileBase
 
 		var applyTransforms = () =>
 		{
-			var sortedBones = this.Bones!
+			var sortedBones = allBones
 				.Where(kv => kv.Value != null)
 				.OrderBy(kv => kv.Value!.BoneDepth)
 				.ThenBy(kv => kv.Key, StringComparer.Ordinal)

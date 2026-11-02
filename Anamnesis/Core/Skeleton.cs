@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Core;
 
+using Anamnesis.Files;
 using Anamnesis.Memory;
 using Anamnesis.Posing;
 using Anamnesis.Services;
@@ -17,7 +18,6 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 /// <summary>
 /// Represents a skeleton of hierarchically-parented bones of an actor that can be posed.
@@ -237,10 +237,10 @@ public class Skeleton : INotifyPropertyChanged
 			this.AddBones(a.ModelObject.Skeleton);
 
 			if (a.DrawData.MainHand?.Model?.Skeleton != null)
-				this.AddBones(a.DrawData.MainHand.Model.Skeleton, "mh_");
+				this.AddBones(a.DrawData.MainHand.Model.Skeleton, PoseFile.MAIN_HAND_PREFIX);
 
 			if (a.DrawData.OffHand?.Model?.Skeleton != null)
-				this.AddBones(a.DrawData.OffHand.Model.Skeleton, "oh_");
+				this.AddBones(a.DrawData.OffHand.Model.Skeleton, PoseFile.OFF_HAND_PREFIX);
 
 			if (a.Ornament?.ModelObject?.Skeleton != null)
 				this.AddBones(a.Ornament.ModelObject.Skeleton, "orn_");

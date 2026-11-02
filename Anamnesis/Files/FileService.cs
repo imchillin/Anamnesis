@@ -244,7 +244,7 @@ public class FileService : ServiceBase<FileService>
 			if (Activator.CreateInstance(fileType) is not FileBase file)
 				throw new Exception($"Failed to create instance of file type: {fileType}");
 
-			using var stream = new FileStream(info.FullName, FileMode.Open);
+			using var stream = new FileStream(info.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 			return file.Deserialize(stream);
 		}
 		catch (Exception ex)
@@ -270,7 +270,7 @@ public class FileService : ServiceBase<FileService>
 					if (Activator.CreateInstance(fileType) is not FileBase file)
 						throw new Exception($"Failed to create instance of file type: {fileType}");
 
-					using var stream = new FileStream(info.FullName, FileMode.Open);
+					using var stream = new FileStream(info.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 					return file.Deserialize(stream);
 				}
 				catch (Exception ex)

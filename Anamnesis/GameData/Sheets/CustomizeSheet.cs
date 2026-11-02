@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Sheets;
@@ -173,6 +173,43 @@ public static class CustomizeSheet
 		var lookup = GetOrBuildFeatureLookup(self, featureType, tribe, gender);
 		return lookup.TryGetValue(featureId, out var feature) ? feature : null;
 	}
+
+	/// <summary>
+	/// Gets the character make type definition matching the specified tribe and gender.
+	/// </summary>
+	/// <param name="self">The character make type Excel sheet.</param>
+	/// <param name="tribe">The tribe.</param>
+	/// <param name="gender">The gender.</param>
+	/// <returns>The character make type if found; otherwise, <c>null</c>.</returns>
+	public static CharaMakeType? GetCharacterMakeType(
+		this ExcelSheet<CharaMakeType>? self,
+		ActorCustomizeMemory.Tribes tribe,
+		ActorCustomizeMemory.Genders gender)
+	{
+		if (self == null)
+			return null;
+
+		foreach (CharaMakeType set in self)
+		{
+			if (set.CustomizeTribe != tribe || set.Gender != gender)
+				continue;
+
+			return set;
+		}
+
+		return null;
+	}
+
+	/// <summary>
+	/// Gets the character make type definition matching the character's tribe and gender.
+	/// </summary>
+	/// <param name="self">The character make type Excel sheet.</param>
+	/// <param name="customize">The character customization memory.</param>
+	/// <returns>The character make type if found; otherwise, <c>null</c>.</returns>
+	public static CharaMakeType? GetCharacterMakeType(
+		this ExcelSheet<CharaMakeType>? self,
+		ActorCustomizeMemory customize) =>
+		self.GetCharacterMakeType(customize.Tribe, customize.Gender);
 
 	/// <summary>
 	/// Retrieves the row length of a feature type.

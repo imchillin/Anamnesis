@@ -10,6 +10,7 @@ using Microsoft.Win32;
 using PropertyChanged;
 using System;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -35,6 +36,14 @@ public partial class FileMetaEditor : UserControl
 
 	public FileSystemInfo Info { get; private set; }
 	public FileBase File { get; private set; }
+
+	public string? Tags
+	{
+		get => this.File.Tags != null ? string.Join(", ", this.File.Tags) : null;
+		set => this.File.Tags = string.IsNullOrWhiteSpace(value)
+			? null
+			: value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+	}
 
 	public BitmapImage? ImageSource
 	{

@@ -50,7 +50,8 @@ public class SubActorUtility
 		if (memory.IsUsingOrnament == true && memory.Ornament != null)
 		{
 			memory.OrnamentId = (ushort)ornament.RowId;
-			memory.Ornament.AttachmentPoint = (byte)ornament.AttachPoint;
+			memory.Ornament.OrnamentId = (ushort)ornament.RowId;
+			memory.Ornament.CustomizeGroupId = (byte)ornament.CustomizeGroupId;
 			Apply(ornament, memory.Ornament);
 		}
 		else

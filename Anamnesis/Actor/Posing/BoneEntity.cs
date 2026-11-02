@@ -4,6 +4,7 @@
 namespace Anamnesis.Actor.Posing;
 
 using Anamnesis.Core;
+using Anamnesis.Files;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
@@ -43,8 +44,8 @@ public class BoneEntity(SkeletonEntity skeleton, List<TransformMemory> transform
 	/// </remarks>
 	public BoneCategory Category => this.Name switch
 	{
-		_ when this.Name.StartsWith("mh_", StringComparison.Ordinal) => BoneCategory.MainHand,
-		_ when this.Name.StartsWith("oh_", StringComparison.Ordinal) => BoneCategory.OffHand,
+		_ when this.Name.StartsWith(PoseFile.MAIN_HAND_PREFIX, StringComparison.Ordinal) => BoneCategory.MainHand,
+		_ when this.Name.StartsWith(PoseFile.OFF_HAND_PREFIX, StringComparison.Ordinal) => BoneCategory.OffHand,
 		_ when this.Name.StartsWith("orn_", StringComparison.Ordinal) => BoneCategory.Ornament,
 		_ when this.Name.StartsWith("pr1_", StringComparison.Ordinal) || this.Name.StartsWith("pr2_", StringComparison.Ordinal) => BoneCategory.Prop,
 		_ when this.Name.Equals("j_ago", StringComparison.Ordinal) || this.Name.Equals("j_kao", StringComparison.Ordinal) => BoneCategory.Body,
@@ -75,7 +76,24 @@ public class BoneEntity(SkeletonEntity skeleton, List<TransformMemory> transform
 	public bool IsHovered { get; internal set; }
 
 	/// <summary>Gets the tooltip key for the bone.</summary>
-	public virtual string TooltipKey => "Pose_" + this.Name;
+	public virtual string TooltipKey
+	{
+		get
+		{
+			string key = "Pose_" + this.Name;
+			if (!string.IsNullOrEmpty(LocalizationService.GetString(key, true)))
+				return key;
+
+			if (this.Name.StartsWith(PoseFile.MAIN_HAND_PREFIX, StringComparison.Ordinal) || this.Name.StartsWith(PoseFile.OFF_HAND_PREFIX, StringComparison.Ordinal))
+			{
+				string fallbackKey = string.Concat("Pose_", this.Name.AsSpan(3));
+				if (!string.IsNullOrEmpty(LocalizationService.GetString(fallbackKey, true)))
+					return fallbackKey;
+			}
+
+			return key;
+		}
+	}
 
 	/// <summary>Gets or sets the tooltip for the bone.</summary>
 	public string Tooltip
