@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace RemoteController.Drivers;
@@ -86,11 +86,11 @@ public sealed class DriverManager : IDisposable
 				}
 
 				s_timer.Stop();
-				Log.Information($"Disposed driver: {this.drivers[i].GetType().Name} in {s_timer.ElapsedMilliseconds}ms");
+				Log.Information($"Disposed driver: {entry.Driver.GetType().Name} in {s_timer.ElapsedMilliseconds}ms");
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex, $"Failed to dispose driver: {this.drivers[i].GetType().Name}");
+				Log.Error(ex, $"Failed to dispose driver: {entry.Driver.GetType().Name}");
 			}
 		}
 
