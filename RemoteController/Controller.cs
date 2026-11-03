@@ -84,6 +84,11 @@ public class Controller
 		[DriverCommand.ActorSetVisor] = DriverCommandHandler.Invoke<SetVisorCommandPayload, bool>(p => ActorDriver.Instance.SetVisor(p.Ptr, p.State)),
 		[DriverCommand.ActorHideHeadgear] = DriverCommandHandler.Invoke<HideHeadgearCommandPayload, bool>(p => ActorDriver.Instance.SetHeadgearHidden(p.Ptr, p.Hide)),
 		[DriverCommand.ActorHideVieraEars] = DriverCommandHandler.Invoke<HideVieraEarsCommandPayload, bool>(p => ActorDriver.Instance.SetVieraEarsHidden(p.Ptr, p.Hide)),
+
+		// Text input driver commands
+		[DriverCommand.GetIsTextInputActive] = DriverCommandHandler.ConditionalGetter(
+			() => TextInputDriver.IsInitialized,
+			() => TextInputDriver.Instance.IsTextInputActive),
 	};
 
 #pragma warning disable CA2211

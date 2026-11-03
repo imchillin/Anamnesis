@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace RemoteController.Drivers;
@@ -12,6 +12,9 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+
+using AtkModuleStruct = RemoteController.Interop.Types.AtkModule;
+using FrameworkStruct = RemoteController.Interop.Types.Framework;
 
 /// <summary>
 /// A wrapper of framework object from the target process
@@ -266,6 +269,21 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 		{
 			Log.Error(ex, $"{prefix}Failed to {(enabled ? "enable" : "disable")} FPS limiter.");
 		}
+	}
+
+	/// <summary>
+	/// Gets a pointer to the client's <see cref="AtkModuleStruct"/> instance.
+	/// </summary>
+	/// <returns>
+	/// A pointer to the <see cref="AtkModuleStruct"/>, or null if unavailable.
+	/// </returns>
+	public unsafe AtkModuleStruct* GetAtkModule()
+	{
+		if (this.frameworkInstancePtr == nint.Zero)
+			return null;
+
+		var framework = (FrameworkStruct*)this.frameworkInstancePtr;
+		return framework->UIModule != null ? &framework->UIModule->RaptureAtkModule : null;
 	}
 
 	/// <inheritdoc/>

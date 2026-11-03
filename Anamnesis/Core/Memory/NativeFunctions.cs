@@ -32,6 +32,7 @@ internal static partial class NativeFunctions
 	public const string ENV_COMPAT_LAYER_VARNAME = "__COMPAT_LAYER";
 	public const string ENV_COMPAT_RUN_AS_ENVOKER = "RunAsInvoker";
 	public const int TIMERR_NOERROR = 0;
+	public const uint MAPVK_VK_TO_VSC = 0;
 
 	public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
@@ -1435,6 +1436,12 @@ internal static partial class NativeFunctions
 	[LibraryImport("user32.dll", EntryPoint = "PostMessageW")]
 	[return: MarshalAs(UnmanagedType.Bool)]
 	public static partial bool PostMessage(nint hWnd, uint msg, nint wParam, nint lParam);
+
+	/// <summary>
+	/// Translates a virtual-key code into a scan code.
+	/// </summary>
+	[LibraryImport("user32.dll", EntryPoint = "MapVirtualKeyW")]
+	public static partial uint MapVirtualKey(uint uCode, uint uMapType);
 
 	/// <summary>
 	/// Installs an application-defined hook procedure into a hook chain.
