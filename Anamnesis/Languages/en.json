@@ -870,7 +870,7 @@
   "Settings_UseExternalRefreshWarning": "Requires HTTP API to be enabled in Penumbra/Brio. This option can be found under the Advanced/Integrations section of the plugins' settings.",
   "Settings_EnableNpcHack": "Enable NPC faces on PC",
   "Settings_EnableNpcHackWarning": "This will break Penumbra Collections.",
-  "Settings_GameHotkeysTooltip": "Enable the use of hotkeys even when FFXIV has focus while in GPose.\nThis will prevent FFXIV from recieving the used keys.",
+  "Settings_GameHotkeysTooltip": "Enable the use of hotkeys even when FFXIV has focus while in GPose.\nThis will prevent FFXIV from receiving the used keys.",
   "Settings_EnableHotkeys": "Enable hotkeys",
   "Settings_EnableHotkeys_Tooltip": "Enable listening for keys and performing actions",
   "Settings_EnableGameHotkeys": "Enable in-game hotkeys",
