@@ -51,6 +51,26 @@ public abstract class DriverBase<T> : IDisposable
 		s_instance = (T)this;
 	}
 
+	/// <summary>
+	/// Registers this instance as the singleton.
+	/// </summary>
+	/// <remarks>
+	/// Provides error handling with instance disposal on unhandled exception.
+	/// </remarks>
+	protected void RegisterInstance(Action init)
+	{
+		this.RegisterInstance();
+		try
+		{
+			init();
+		}
+		catch
+		{
+			this.Dispose();
+			throw;
+		}
+	}
+
 	/// <inheritdoc/>
 	public void Dispose()
 	{

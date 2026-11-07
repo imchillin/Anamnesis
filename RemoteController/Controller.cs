@@ -25,6 +25,7 @@ public class Controller
 
 	private const int PROCESS_MONITOR_JOIN_TIMEOUT_MS = 500;
 	private const int ACTIVE_WRITERS_DRAIN_TIMEOUT_MS = 500;
+	private const int INIT_CLEANUP_TIMEOUT_MS = 5000;
 	private const int IPC_TIMEOUT_MS = 100;
 	private const int IPC_FAST_FAIL_TIMEOUT_MS = 16;
 	private const int BATCH_INVOKE_BUFFER_STARTSIZE = 1024;
@@ -103,6 +104,9 @@ public class Controller
 	private static volatile bool s_running = true;
 	private static IntPtr s_mainProcessHandle = IntPtr.Zero;
 	private static Thread? s_processMonitorThread = null;
+	private static Thread? s_workerThread = null;
+	private static readonly Lock s_entryLock = new();
+	private static volatile bool s_cleanShutdownCompleted = false;
 	private static CancellationTokenSource s_shutdownCts = new();
 	private static int s_activeWriters = 0;
 
@@ -252,14 +256,28 @@ public class Controller
 	[UnmanagedCallersOnly(EntryPoint = "RemoteControllerEntry")]
 	public static void RemoteControllerEntry(IntPtr mainProcessHandle)
 	{
-		Cleanup();
-		s_mainProcessHandle = mainProcessHandle;
-		var workerThread = new Thread(Main)
+		lock (s_entryLock)
 		{
-			IsBackground = true,
-			Name = "RemoteController.Main",
-		};
-		workerThread.Start();
+			if (s_workerThread != null && s_workerThread.IsAlive)
+			{
+				Log.Warning("A worker thread from a previous controller instance is still running. Requesting thread termination...");
+				s_shutdownCts.Cancel();
+				s_running = false;
+				if (!s_workerThread.Join(INIT_CLEANUP_TIMEOUT_MS))
+				{
+					Log.Warning($"Previous worker thread did not terminate within {INIT_CLEANUP_TIMEOUT_MS} ms timeout.");
+				}
+			}
+
+			Cleanup();
+			s_mainProcessHandle = mainProcessHandle;
+			s_workerThread = new Thread(Main)
+			{
+				IsBackground = true,
+				Name = "RemoteController.Main",
+			};
+			s_workerThread.Start();
+		}
 	}
 
 	private static void Main()
@@ -347,7 +365,7 @@ public class Controller
 		{
 			// IMPORTANT: Don't throw to avoid crashing the game process
 			// The intent is to catch all unhandled exceptions and terminate gracefully
-			Log.Fatal(ex, "Unhandled exception.");
+			Log.Fatal(ex, "Unhandled exception in RemoteController.Main.");
 		}
 		finally
 		{
@@ -356,14 +374,19 @@ public class Controller
 			/* Unload */
 			// IMPORTANT: This MUST be the last action to execute in the entry point.
 			// Otherwise, the code after this call will not execute as we self-unload and terminate the thread.
-			unsafe
+			// The DLL should only be freed if cleanup was successful.
+			// Otherwise, we risk unloading with active function hooks, which will lead to an immediate game crash.
+			if (s_cleanShutdownCompleted)
 			{
-				if (NativeFunctions.GetModuleHandleEx(
-						(uint)NativeFunctions.GetModuleFlag.GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | (uint)NativeFunctions.GetModuleFlag.GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-						(IntPtr)NativePtr(),
-						out IntPtr hModule))
+				unsafe
 				{
-					NativeFunctions.FreeLibraryAndExitThread(hModule, 0);
+					if (NativeFunctions.GetModuleHandleEx(
+							(uint)NativeFunctions.GetModuleFlag.GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | (uint)NativeFunctions.GetModuleFlag.GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+							(IntPtr)NativePtr(),
+							out IntPtr hModule))
+					{
+						NativeFunctions.FreeLibraryAndExitThread(hModule, 0);
+					}
 				}
 			}
 		}
@@ -482,52 +505,64 @@ public class Controller
 	{
 		Log.Information("Running shutdown sequence...");
 
-		s_shutdownCts.Cancel();
-		s_running = false;
-
-		if (s_processMonitorThread != null && s_processMonitorThread.IsAlive)
+		try
 		{
-			if (!s_processMonitorThread.Join(PROCESS_MONITOR_JOIN_TIMEOUT_MS))
-				Log.Warning("Process monitor thread did not exit in time.");
+			s_shutdownCts.Cancel();
+			s_running = false;
 
-			s_processMonitorThread = null;
+			if (s_processMonitorThread != null && s_processMonitorThread.IsAlive)
+			{
+				if (!s_processMonitorThread.Join(PROCESS_MONITOR_JOIN_TIMEOUT_MS))
+					Log.Warning("Process monitor thread did not exit in time.");
+
+				s_processMonitorThread = null;
+			}
+
+			if (s_mainProcessHandle != IntPtr.Zero)
+			{
+				NativeFunctions.CloseHandle(s_mainProcessHandle);
+				s_mainProcessHandle = IntPtr.Zero;
+			}
+
+			s_shutdownCts.Dispose();
+			s_shutdownCts = new CancellationTokenSource();
+
+			if (!SpinWait.SpinUntil(() => Volatile.Read(ref s_activeWriters) == 0, ACTIVE_WRITERS_DRAIN_TIMEOUT_MS))
+			{
+				Log.Warning($"Active writers did not drain within {ACTIVE_WRITERS_DRAIN_TIMEOUT_MS}ms (remaining: {s_activeWriters}). Proceeding with disposal.");
+			}
+			else
+			{
+				Log.Debug("All active writers drained successfully.");
+			}
+
+			HookRegistry.Instance.UnregisterAll();
+			s_driverManager?.Dispose();
+			s_driverManager = null;
+
+			s_outgoingEndpoint?.Dispose();
+			s_outgoingEndpoint = null;
+			s_incomingEndpoint?.Dispose();
+			s_incomingEndpoint = null;
+
+			s_pendingMsgRequests.Clear();
+			s_sequenceCounters.Clear();
+			s_eventSubscriptionRefCount.Clear();
+
+			Log.Information("Shutdown complete. Remember us...Remember...that we once lived.");
+			s_cleanShutdownCompleted = true;
 		}
-
-		if (s_mainProcessHandle != IntPtr.Zero)
+		catch (Exception ex)
 		{
-			NativeFunctions.CloseHandle(s_mainProcessHandle);
-			s_mainProcessHandle = IntPtr.Zero;
+			s_cleanShutdownCompleted = false;
+			Log.Fatal(ex, "Error occured during shutdown sequence.");
 		}
-
-		s_shutdownCts.Dispose();
-		s_shutdownCts = new CancellationTokenSource();
-
-		if (!SpinWait.SpinUntil(() => Volatile.Read(ref s_activeWriters) == 0, ACTIVE_WRITERS_DRAIN_TIMEOUT_MS))
+		finally
 		{
-			Log.Warning($"Active writers did not drain within {ACTIVE_WRITERS_DRAIN_TIMEOUT_MS}ms (remaining: {s_activeWriters}). Proceeding with disposal.");
+			Logger.Deinitialize(); // Keep the logger as the last step
+			GC.Collect(2, GCCollectionMode.Forced, true);
+			GC.WaitForPendingFinalizers();
 		}
-		else
-		{
-			Log.Debug("All active writers drained successfully.");
-		}
-
-		HookRegistry.Instance.UnregisterAll();
-		s_driverManager?.Dispose();
-		s_driverManager = null;
-
-		s_outgoingEndpoint?.Dispose();
-		s_outgoingEndpoint = null;
-		s_incomingEndpoint?.Dispose();
-		s_incomingEndpoint = null;
-
-		s_pendingMsgRequests.Clear();
-		s_sequenceCounters.Clear();
-		s_eventSubscriptionRefCount.Clear();
-
-		Log.Information("Shutdown complete. Remember us...Remember...that we once lived.");
-		Logger.Deinitialize(); // Keep the logger as the last step
-		GC.Collect(2, GCCollectionMode.Forced, true);
-		GC.WaitForPendingFinalizers();
 	}
 
 	[RequiresDynamicCode("HookRegistry requires dynamic code")]

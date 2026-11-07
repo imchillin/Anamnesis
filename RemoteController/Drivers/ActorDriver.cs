@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace RemoteController.Drivers;
@@ -19,7 +19,7 @@ public sealed class ActorDriver : DriverBase<ActorDriver>
 
 	private readonly nint objTablePtr;
 
-	private RedrawModule Redraw { get; }
+	private RedrawModule? Redraw { get; set; }
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ActorDriver"/> class.
@@ -39,14 +39,16 @@ public sealed class ActorDriver : DriverBase<ActorDriver>
 
 		Log.Debug($"Object table instance found at address: 0x{this.objTablePtr:X}");
 
-		this.Redraw = new RedrawModule(this.objTablePtr);
-		this.RegisterInstance();
+		this.RegisterInstance(() =>
+		{
+			this.Redraw = new RedrawModule(this.objTablePtr);
+		});
 	}
 
-	public bool RedrawActor(RedrawRequest request) => this.Redraw.RequestRedraw(request);
-	public bool SetVisor(nint drawDataPtr, byte state) => this.Redraw.SetVisor(drawDataPtr, state);
-	public bool SetHeadgearHidden(nint drawDataPtr, byte hide) => this.Redraw.SetHeadgearHidden(drawDataPtr, hide);
-	public bool SetVieraEarsHidden(nint drawDataPtr, byte hide) => this.Redraw.SetVieraEarsHidden(drawDataPtr, hide);
+	public bool RedrawActor(RedrawRequest request) => this.Redraw?.RequestRedraw(request) ?? false;
+	public bool SetVisor(nint drawDataPtr, byte state) => this.Redraw?.SetVisor(drawDataPtr, state) ?? false;
+	public bool SetHeadgearHidden(nint drawDataPtr, byte hide) => this.Redraw?.SetHeadgearHidden(drawDataPtr, hide) ?? false;
+	public bool SetVieraEarsHidden(nint drawDataPtr, byte hide) => this.Redraw?.SetVieraEarsHidden(drawDataPtr, hide) ?? false;
 
 	/// <inheritdoc/>
 	protected override void OnDispose() { }

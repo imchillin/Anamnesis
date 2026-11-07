@@ -20,8 +20,8 @@ using AtkModuleStruct = RemoteController.Interop.Types.AtkModule;
 public sealed class TextInputDriver : DriverBase<TextInputDriver>
 {
 	private readonly FrameworkDriver frameworkDriver;
-	private readonly FunctionHook<AtkModuleDelegates.HandleTextInputActive> handleTextInputHook;
-	private readonly AtkModuleDelegates.HandleTextInputActive textInputHookDetour;
+	private FunctionHook<AtkModuleDelegates.HandleTextInputActive>? handleTextInputHook;
+	private AtkModuleDelegates.HandleTextInputActive? textInputHookDetour;
 
 	private bool isTextInputActive;
 
@@ -46,15 +46,17 @@ public sealed class TextInputDriver : DriverBase<TextInputDriver>
 
 		this.frameworkDriver = frameworkDriver;
 
-		this.textInputHookDetour = this.OnHandleTextInputActive;
-		this.handleTextInputHook = HookRegistry.CreateAndActivateHook(this.textInputHookDetour, HookBehavior.After);
+		this.RegisterInstance(() =>
+		{
+			this.textInputHookDetour = this.OnHandleTextInputActive;
+			this.handleTextInputHook = HookRegistry.CreateAndActivateHook(this.textInputHookDetour, HookBehavior.After);
 
-		this.StateChanged += this.OnTextInputStateChanged;
-		this.RegisterInstance();
+			this.StateChanged += this.OnTextInputStateChanged;
 
-		// Get initial reading
-		this.isTextInputActive = this.GetTextInputState();
-		this.StateChanged?.Invoke(this.isTextInputActive);
+			// Get initial reading
+			this.isTextInputActive = this.GetTextInputState();
+			this.StateChanged?.Invoke(this.isTextInputActive);
+		});
 	}
 
 	/// <summary>
@@ -66,7 +68,7 @@ public sealed class TextInputDriver : DriverBase<TextInputDriver>
 	protected override void OnDispose()
 	{
 		this.StateChanged -= this.OnTextInputStateChanged;
-		this.handleTextInputHook.Dispose();
+		this.handleTextInputHook?.Dispose();
 		this.StateChanged = null;
 	}
 
@@ -78,7 +80,7 @@ public sealed class TextInputDriver : DriverBase<TextInputDriver>
 
 	private unsafe nint OnHandleTextInputActive(nint atkModule, nint outResult, nint inArgs, int inArgsCount)
 	{
-		nint result = this.handleTextInputHook.OriginalFunction(atkModule, outResult, inArgs, inArgsCount);
+		nint result = this.handleTextInputHook?.OriginalFunction(atkModule, outResult, inArgs, inArgsCount) ?? nint.Zero;
 
 		try
 		{

@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace RemoteController.Drivers;
@@ -30,25 +30,25 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	// - "UpdateVisualPosition" and "UpdateVisualRotation" are hooked to prevent the game from updating the visual position and rotation of objects.
 
 	private readonly GposeDriver gposeDriver;
-	private readonly FunctionHook<GameObjectDelegates.SetPosition> hookSetPosition;
-	private readonly FunctionHook<HkaPartialSkeleton.SetBoneModelTransform> hookPhysics;
-	private readonly FunctionHook<HkaLookAtIkSolver.Solve> hookLookAt;
-	private readonly FunctionHook<HkaPoseDelegate.CalculateBoneModelSpace> hookCalculateBone;
-	private readonly FunctionHook<HkaPoseDelegate.SyncModelSpace> hookSyncModel;
-	private readonly FunctionHook<BoneKineDriver.ApplyKineDriverTransforms> hookKineDriver;
-	private readonly FunctionHook<GameObjectDelegates.UpdateVisualPosition> hookUpdateVisualPosition;
-	private readonly FunctionHook<GameObjectDelegates.UpdateVisualRotation> hookUpdateVisualRotation;
-	private readonly FunctionHook<GameObjectDelegates.UpdateVisualScale> hookUpdateVisualScale;
+	private FunctionHook<GameObjectDelegates.SetPosition>? hookSetPosition;
+	private FunctionHook<HkaPartialSkeleton.SetBoneModelTransform>? hookPhysics;
+	private FunctionHook<HkaLookAtIkSolver.Solve>? hookLookAt;
+	private FunctionHook<HkaPoseDelegate.CalculateBoneModelSpace>? hookCalculateBone;
+	private FunctionHook<HkaPoseDelegate.SyncModelSpace>? hookSyncModel;
+	private FunctionHook<BoneKineDriver.ApplyKineDriverTransforms>? hookKineDriver;
+	private FunctionHook<GameObjectDelegates.UpdateVisualPosition>? hookUpdateVisualPosition;
+	private FunctionHook<GameObjectDelegates.UpdateVisualRotation>? hookUpdateVisualRotation;
+	private FunctionHook<GameObjectDelegates.UpdateVisualScale>? hookUpdateVisualScale;
 
-	private readonly GameObjectDelegates.SetPosition setPositionDetour;
-	private readonly HkaPartialSkeleton.SetBoneModelTransform physicsDetour;
-	private readonly HkaLookAtIkSolver.Solve lookAtDetour;
-	private readonly HkaPoseDelegate.CalculateBoneModelSpace calculateBoneDetour;
-	private readonly HkaPoseDelegate.SyncModelSpace syncModelDetour;
-	private readonly BoneKineDriver.ApplyKineDriverTransforms kineDriverDetour;
-	private readonly GameObjectDelegates.UpdateVisualPosition updateVisualPositionDetour;
-	private readonly GameObjectDelegates.UpdateVisualRotation updateVisualRotationDetour;
-	private readonly GameObjectDelegates.UpdateVisualScale updateVisualScaleDetour;
+	private GameObjectDelegates.SetPosition? setPositionDetour;
+	private HkaPartialSkeleton.SetBoneModelTransform? physicsDetour;
+	private HkaLookAtIkSolver.Solve? lookAtDetour;
+	private HkaPoseDelegate.CalculateBoneModelSpace? calculateBoneDetour;
+	private HkaPoseDelegate.SyncModelSpace? syncModelDetour;
+	private BoneKineDriver.ApplyKineDriverTransforms? kineDriverDetour;
+	private GameObjectDelegates.UpdateVisualPosition? updateVisualPositionDetour;
+	private GameObjectDelegates.UpdateVisualRotation? updateVisualRotationDetour;
+	private GameObjectDelegates.UpdateVisualScale? updateVisualScaleDetour;
 
 	private volatile bool isPosingEnabled = false;
 	private volatile bool arePhysicsFrozen = false;
@@ -68,33 +68,36 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 		if (Controller.SigResolver == null)
 			throw new InvalidOperationException("Cannot initialize posing driver: signature resolver is not available.");
 
-		unsafe
-		{
-			// NOTE: Keep references to the detour methods to prevent them from being garbage collected
-			this.physicsDetour = this.DetourSetBoneModelTransform;
-			this.lookAtDetour = this.DetourLookAtSolve;
-			this.calculateBoneDetour = this.DetourCalculateBoneModelSpace;
-			this.syncModelDetour = this.DetourSyncModelSpace;
-			this.kineDriverDetour = this.DetourApplyKineDriverTransforms;
-			this.setPositionDetour = this.DetourSetPosition;
-			this.updateVisualPositionDetour = this.DetourUpdateVisualPosition;
-			this.updateVisualRotationDetour = this.DetourUpdateVisualRotation;
-			this.updateVisualScaleDetour = this.DetourUpdateVisualScale;
-
-			this.hookPhysics = HookRegistry.CreateAndActivateHook(this.physicsDetour);
-			this.hookLookAt = HookRegistry.CreateAndActivateHook(this.lookAtDetour);
-			this.hookCalculateBone = HookRegistry.CreateAndActivateHook(this.calculateBoneDetour);
-			this.hookSyncModel = HookRegistry.CreateAndActivateHook(this.syncModelDetour);
-			this.hookKineDriver = HookRegistry.CreateAndActivateHook(this.kineDriverDetour);
-			this.hookSetPosition = HookRegistry.CreateAndActivateHook(this.setPositionDetour);
-			this.hookUpdateVisualPosition = HookRegistry.CreateAndActivateHook(this.updateVisualPositionDetour);
-			this.hookUpdateVisualRotation = HookRegistry.CreateAndActivateHook(this.updateVisualRotationDetour);
-			this.hookUpdateVisualScale = HookRegistry.CreateAndActivateHook(this.updateVisualScaleDetour);
-		}
-
 		this.gposeDriver = gposeDriver;
-		this.gposeDriver.StateChanged += this.OnGposeStateChanged;
-		this.RegisterInstance();
+
+		this.RegisterInstance(() =>
+		{
+			unsafe
+			{
+				// NOTE: Keep references to the detour methods to prevent them from being garbage collected
+				this.physicsDetour = this.DetourSetBoneModelTransform;
+				this.lookAtDetour = this.DetourLookAtSolve;
+				this.calculateBoneDetour = this.DetourCalculateBoneModelSpace;
+				this.syncModelDetour = this.DetourSyncModelSpace;
+				this.kineDriverDetour = this.DetourApplyKineDriverTransforms;
+				this.setPositionDetour = this.DetourSetPosition;
+				this.updateVisualPositionDetour = this.DetourUpdateVisualPosition;
+				this.updateVisualRotationDetour = this.DetourUpdateVisualRotation;
+				this.updateVisualScaleDetour = this.DetourUpdateVisualScale;
+
+				this.hookPhysics = HookRegistry.CreateAndActivateHook(this.physicsDetour);
+				this.hookLookAt = HookRegistry.CreateAndActivateHook(this.lookAtDetour);
+				this.hookCalculateBone = HookRegistry.CreateAndActivateHook(this.calculateBoneDetour);
+				this.hookSyncModel = HookRegistry.CreateAndActivateHook(this.syncModelDetour);
+				this.hookKineDriver = HookRegistry.CreateAndActivateHook(this.kineDriverDetour);
+				this.hookSetPosition = HookRegistry.CreateAndActivateHook(this.setPositionDetour);
+				this.hookUpdateVisualPosition = HookRegistry.CreateAndActivateHook(this.updateVisualPositionDetour);
+				this.hookUpdateVisualRotation = HookRegistry.CreateAndActivateHook(this.updateVisualRotationDetour);
+				this.hookUpdateVisualScale = HookRegistry.CreateAndActivateHook(this.updateVisualScaleDetour);
+			}
+
+			this.gposeDriver.StateChanged += this.OnGposeStateChanged;
+		});
 	}
 
 	/// <summary>
@@ -129,20 +132,22 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	/// <inheritdoc/>
 	protected override void OnDispose()
 	{
-		this.gposeDriver.StateChanged -= this.OnGposeStateChanged;
+		if (this.gposeDriver != null)
+			this.gposeDriver.StateChanged -= this.OnGposeStateChanged;
+
 		this.isPosingEnabled = false;
 		this.arePhysicsFrozen = false;
 		this.isWorldVisualStateFrozen = false;
 
-		this.hookPhysics.Dispose();
-		this.hookLookAt.Dispose();
-		this.hookCalculateBone.Dispose();
-		this.hookSyncModel.Dispose();
-		this.hookKineDriver.Dispose();
-		this.hookSetPosition.Dispose();
-		this.hookUpdateVisualPosition.Dispose();
-		this.hookUpdateVisualRotation.Dispose();
-		this.hookUpdateVisualScale.Dispose();
+		this.hookPhysics?.Dispose();
+		this.hookLookAt?.Dispose();
+		this.hookCalculateBone?.Dispose();
+		this.hookSyncModel?.Dispose();
+		this.hookKineDriver?.Dispose();
+		this.hookSetPosition?.Dispose();
+		this.hookUpdateVisualPosition?.Dispose();
+		this.hookUpdateVisualRotation?.Dispose();
+		this.hookUpdateVisualScale?.Dispose();
 	}
 
 	private unsafe nint DetourSetBoneModelTransform(nint partialPtr, ulong boneId, HkaTransform4* transform, byte bUpdateSecondaryPose, byte bPropagate)
@@ -150,7 +155,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 		if (this.arePhysicsFrozen && partialPtr != nint.Zero)
 			return partialPtr;
 
-		return this.hookPhysics.OriginalFunction(partialPtr, boneId, transform, bUpdateSecondaryPose, bPropagate);
+		return this.hookPhysics!.OriginalFunction(partialPtr, boneId, transform, bUpdateSecondaryPose, bPropagate);
 	}
 
 	private unsafe byte* DetourLookAtSolve(byte* a1, HkaVector4* a2, HkaVector4* a3, float a4, HkaVector4* a5, HkaVector4* a6)
@@ -161,7 +166,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 			return a1;
 		}
 
-		return this.hookLookAt.OriginalFunction(a1, a2, a3, a4, a5, a6);
+		return this.hookLookAt!.OriginalFunction(a1, a2, a3, a4, a5, a6);
 	}
 
 	private unsafe HkaTransform4* DetourCalculateBoneModelSpace(nint posePtr, int boneIdx)
@@ -171,22 +176,22 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 			HkaPoseStruct* pose = (HkaPoseStruct*)posePtr;
 
 			if (!pose->ModelPose.IsValid || !pose->BoneFlags.IsValid)
-				return this.hookCalculateBone.OriginalFunction(posePtr, boneIdx);
+				return this.hookCalculateBone!.OriginalFunction(posePtr, boneIdx);
 
 			if (boneIdx < 0 || boneIdx >= pose->ModelPose.Length || boneIdx >= pose->BoneFlags.Length)
-				return this.hookCalculateBone.OriginalFunction(posePtr, boneIdx);
+				return this.hookCalculateBone!.OriginalFunction(posePtr, boneIdx);
 
 			// Get the pointer to the bone's model-space transform
 			HkaTransform4* transform = pose->GetModelPoseTransform(boneIdx);
 			if (transform == null)
-				return this.hookCalculateBone.OriginalFunction(posePtr, boneIdx);
+				return this.hookCalculateBone!.OriginalFunction(posePtr, boneIdx);
 
 			// Clear the dirty flag to indicate the bone is calculated
 			pose->ClearModelDirtyChain(boneIdx);
 			return transform;
 		}
 
-		return this.hookCalculateBone.OriginalFunction(posePtr, boneIdx);
+		return this.hookCalculateBone!.OriginalFunction(posePtr, boneIdx);
 	}
 
 	private void DetourSyncModelSpace(nint posePtr)
@@ -194,7 +199,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 		if (this.isPosingEnabled && posePtr != nint.Zero)
 			return;
 
-		this.hookSyncModel.OriginalFunction(posePtr);
+		this.hookSyncModel!.OriginalFunction(posePtr);
 	}
 
 	private void DetourApplyKineDriverTransforms(IntPtr kineDriverPtr, IntPtr hkaPosePtr)
@@ -202,7 +207,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 		if (this.isPosingEnabled && kineDriverPtr != nint.Zero && hkaPosePtr != nint.Zero)
 			return;
 
-		this.hookKineDriver.OriginalFunction(kineDriverPtr, hkaPosePtr);
+		this.hookKineDriver!.OriginalFunction(kineDriverPtr, hkaPosePtr);
 	}
 
 	private nint DetourSetPosition(nint goPtr, float x, float y, float z)
@@ -210,7 +215,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 		if (this.isWorldVisualStateFrozen && goPtr != nint.Zero)
 			return goPtr;
 
-		return this.hookSetPosition.OriginalFunction(goPtr, x, y, z);
+		return this.hookSetPosition!.OriginalFunction(goPtr, x, y, z);
 	}
 
 	private byte DetourUpdateVisualPosition(nint goPtr)
@@ -218,7 +223,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 		if (this.isWorldVisualStateFrozen && goPtr != nint.Zero)
 			return 0;
 
-		return this.hookUpdateVisualPosition.OriginalFunction(goPtr);
+		return this.hookUpdateVisualPosition!.OriginalFunction(goPtr);
 	}
 
 	private byte DetourUpdateVisualRotation(nint goPtr)
@@ -226,7 +231,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 		if (this.isWorldVisualStateFrozen && goPtr != nint.Zero)
 			return 0;
 
-		return this.hookUpdateVisualRotation.OriginalFunction(goPtr);
+		return this.hookUpdateVisualRotation!.OriginalFunction(goPtr);
 	}
 
 	private void DetourUpdateVisualScale(nint goPtr, bool a2)
@@ -234,7 +239,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 		if (this.isWorldVisualStateFrozen && goPtr != nint.Zero)
 			return;
 
-		this.hookUpdateVisualScale.OriginalFunction(goPtr, a2);
+		this.hookUpdateVisualScale!.OriginalFunction(goPtr, a2);
 	}
 
 	private void OnGposeStateChanged(bool isGpose)
