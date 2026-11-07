@@ -50,6 +50,9 @@ public class SkeletonEntity(ObjectHandle<ActorMemory> actor) : Skeleton(actor)
 	/// <summary>Gets a value indicating whether the skeleton has weapon bones.</summary>
 	public bool HasWeaponBones => this.Bones.Values.OfType<BoneEntity>().Any(b => b.Category == BoneCategory.MainHand || b.Category == BoneCategory.OffHand);
 
+	/// <summary>Gets a value indicating whether the skeleton has misc. bones (ornament, props, etc.).</summary>
+	public bool HasMiscellaneousBones => this.Bones.Values.OfType<BoneEntity>().Any(b => b.Category == BoneCategory.Ornament || b.Category == BoneCategory.Prop);
+
 	/// <summary>Gets a value indicating whether the skeleton has any selected bones.</summary>
 	public bool HasSelection => this.Bones.Values.OfType<BoneEntity>().Any(b => b.IsSelected);
 

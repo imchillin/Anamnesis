@@ -213,6 +213,26 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		set => Interlocked.Exchange(ref this.isSynchronizing, value ? 1 : 0);
 	}
 
+	/// <summary>
+	/// Gets the first ancestor of the specified type in the memory hierarchy.
+	/// </summary>
+	/// <typeparam name="T">The type of ancestor to find.</typeparam>
+	/// <returns>The ancestor memory object, or null if not found.</returns>
+	public T? GetParent<T>()
+		where T : MemoryBase
+	{
+		MemoryBase? current = this.parent;
+		while (current != null)
+		{
+			if (current is T match)
+				return match;
+
+			current = current.parent;
+		}
+
+		return null;
+	}
+
 	/// <summary>Raises the property changed event.</summary>
 	/// <param name="propertyName">The name of the property.</param>
 	/// <remarks>
@@ -485,15 +505,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 					if (node.Address != actualAddress)
 					{
-						node.Address = actualAddress;
-						node.delayedBinds = new ConcurrentQueue<BindInfo>();
-
-						// Invalidate the last known value of all binds on this node
-						foreach (var bind in node.Binds.Values)
-						{
-							bind.LastValue = null;
-							bind.LastFailureAddress = IntPtr.Zero;
-						}
+						node.OnAddressChanged(actualAddress);
 					}
 				}
 
@@ -876,7 +888,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 					}
 					else
 					{
-						memory.Address = childAddress;
+						memory.OnAddressChanged(childAddress, !isNew);
 						this.SetValueWithoutNotification(bind, memory);
 						bind.LastValue = memory;
 
@@ -1074,7 +1086,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				var current = locked[i];
 
 				// If an array element, direct property binds were already processed by the parent array's sync pass, so skip.
-				if (current.Parent is IArrayMemory && locked.Contains(current.Parent))
+				if (current.parentBind is not PropertyBindInfo && current.Parent is IArrayMemory && locked.Contains(current.Parent))
 				{
 					if (current is IArrayMemory nestedArray)
 					{
@@ -1178,6 +1190,21 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 			context.AddPath(current.parentBind!);
 			current = current.parent;
+		}
+	}
+
+	private void OnAddressChanged(IntPtr newAddress, bool invalidateBinds = true)
+	{
+		this.Address = newAddress;
+		if (!invalidateBinds)
+			return;
+
+		// Invalidate the last known value of all binds on this node
+		this.delayedBinds = new ConcurrentQueue<BindInfo>();
+		foreach (var bind in this.Binds.Values)
+		{
+			bind.LastValue = null;
+			bind.LastFailureAddress = IntPtr.Zero;
 		}
 	}
 }

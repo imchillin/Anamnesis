@@ -22,6 +22,11 @@ public class DummyActor : ActorMemory
 		// Do nothing
 	}
 
+	public override void SynchronizeSkeletons(IReadOnlySet<string>? inclGroups = null, IReadOnlySet<string>? exclGroups = null)
+	{
+		// Do nothing
+	}
+
 	public override void SetAddress(IntPtr address)
 	{
 		// Do nothing

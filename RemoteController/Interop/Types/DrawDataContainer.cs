@@ -40,10 +40,14 @@ public struct DrawDataContainer
 {
 	public const int MAIN_HAND_OFFSET = 0x010;
 	public const int OFF_HAND_OFFSET = 0x080;
+	public const int PROP1_OFFSET = 0x0F0;
+	public const int PROP2_OFFSET = 0x160;
 	public const int FACEWEAR_DIRTY_FLAG = 0x248;
 
 	[FieldOffset(MAIN_HAND_OFFSET)] public WeaponData MainHand;
 	[FieldOffset(OFF_HAND_OFFSET)] public WeaponData OffHand;
+	[FieldOffset(PROP1_OFFSET)] public WeaponData Prop1;
+	[FieldOffset(PROP2_OFFSET)] public WeaponData Prop2;
 	[FieldOffset(0x23E)] public byte DrawFlags;
 	[FieldOffset(0x240)] public ushort FacewearId;
 	[FieldOffset(FACEWEAR_DIRTY_FLAG)] public byte FacewearDirtyFlag;
@@ -70,6 +74,8 @@ public enum WeaponSlot : uint
 {
 	MainHand = 0,
 	OffHand = 1,
+	Prop1 = 2,
+	Prop2 = 3,
 }
 
 [StructLayout(LayoutKind.Explicit, Size = 8)]

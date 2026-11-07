@@ -21,6 +21,8 @@ public enum BoneCategory
 	Top,
 	MainHand,
 	OffHand,
+	Ornament,
+	Prop,
 }
 
 /// <summary>
@@ -44,6 +46,8 @@ public class BoneEntity(SkeletonEntity skeleton, List<TransformMemory> transform
 	{
 		_ when this.Name.StartsWith(PoseFile.MAIN_HAND_PREFIX, StringComparison.Ordinal) => BoneCategory.MainHand,
 		_ when this.Name.StartsWith(PoseFile.OFF_HAND_PREFIX, StringComparison.Ordinal) => BoneCategory.OffHand,
+		_ when this.Name.StartsWith(PoseFile.ORNAMENT_PREFIX, StringComparison.Ordinal) => BoneCategory.Ornament,
+		_ when this.Name.StartsWith(PoseFile.PROP1_PREFIX, StringComparison.Ordinal) || this.Name.StartsWith(PoseFile.PROP2_PREFIX, StringComparison.Ordinal) => BoneCategory.Prop,
 		_ when this.Name.Equals("j_ago", StringComparison.Ordinal) || this.Name.Equals("j_kao", StringComparison.Ordinal) => BoneCategory.Body,
 		_ => this.PartialSkeletonIndex switch
 		{

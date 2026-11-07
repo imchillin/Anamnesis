@@ -450,6 +450,9 @@
   "Pose_Matrix_RightFootCategory": "Right Foot",
   "Pose_Matrix_GenitalCategory": "Genitals",
 
+  "Pose_Matrix_Ornament": "Ornament",
+  "Pose_Matrix_Prop": "Prop",
+
   "Pose_CharacterRoot": "Character",
   "Pose_Head": "Head",
   "Pose_Ears": "Ears",

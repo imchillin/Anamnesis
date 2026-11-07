@@ -246,6 +246,25 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	}
 
 	/// <summary>
+	/// Synchronizes all skeleton memory structures associated with this actor
+	/// (body model, main hand, off hand, ornament, and props).
+	/// </summary>
+	/// <param name="inclGroups">Optional set of synchronization groups to include.</param>
+	/// <param name="exclGroups">Optional set of synchronization groups to exclude.</param>
+	public virtual void SynchronizeSkeletons(IReadOnlySet<string>? inclGroups = null, IReadOnlySet<string>? exclGroups = null)
+	{
+		if (this.IsRefreshing || this.Address == IntPtr.Zero || this.ModelObject?.Skeleton == null || this.ModelObject.Skeleton.Address == IntPtr.Zero)
+			return;
+
+		this.ModelObject.Skeleton.Synchronize(inclGroups, exclGroups);
+		this.DrawData.MainHand?.Model?.Skeleton?.Synchronize(inclGroups, exclGroups);
+		this.DrawData.OffHand?.Model?.Skeleton?.Synchronize(inclGroups, exclGroups);
+		this.Ornament?.ModelObject?.Skeleton?.Synchronize(inclGroups, exclGroups);
+		this.DrawData.Prop1?.Model?.Skeleton?.Synchronize(inclGroups, exclGroups);
+		this.DrawData.Prop2?.Model?.Skeleton?.Synchronize(inclGroups, exclGroups);
+	}
+
+	/// <summary>
 	/// Asynchronously refresh the actor to force the game to reflect appearance changes.
 	/// </summary>
 	public async Task Refresh(bool forceReload = false)
@@ -283,6 +302,8 @@ public class ActorMemory : GameObjectMemory, IDisposable
 				this.forceReloadOnRefresh = false;
 			}
 			while (this.needsRefresh);
+
+			base.Synchronize(exclGroups: TargetService.ExcludeSkeletonGroup);
 		}
 		catch (Exception ex)
 		{

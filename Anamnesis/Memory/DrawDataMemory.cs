@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory;
@@ -27,6 +27,8 @@ public class DrawDataMemory : MemoryBase
 
 	[Bind(DrawDataContainer.MAIN_HAND_OFFSET)] public WeaponMemory? MainHand { get; set; }
 	[Bind(DrawDataContainer.OFF_HAND_OFFSET)] public WeaponMemory? OffHand { get; set; }
+	[Bind(DrawDataContainer.PROP1_OFFSET)] public WeaponMemory? Prop1 { get; set; }
+	[Bind(DrawDataContainer.PROP2_OFFSET)] public WeaponMemory? Prop2 { get; set; }
 	[Bind(0x01D0)] public ActorEquipmentMemory? Equipment { get; set; }
 	[Bind(0x0220)] public ActorCustomizeMemory? Customize { get; set; }
 

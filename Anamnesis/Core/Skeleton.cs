@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Core;
@@ -231,9 +231,7 @@ public class Skeleton : INotifyPropertyChanged
 			if (!GposeService.Instance.IsGpose || a.ModelObject?.Skeleton == null)
 				return;
 
-			a.ModelObject.Skeleton.Synchronize();
-			a.DrawData.MainHand?.Model?.Skeleton?.Synchronize();
-			a.DrawData.OffHand?.Model?.Skeleton?.Synchronize();
+			a.SynchronizeSkeletons();
 
 			// Get all bones
 			this.AddBones(a.ModelObject.Skeleton);
@@ -243,6 +241,15 @@ public class Skeleton : INotifyPropertyChanged
 
 			if (a.DrawData.OffHand?.Model?.Skeleton != null)
 				this.AddBones(a.DrawData.OffHand.Model.Skeleton, PoseFile.OFF_HAND_PREFIX);
+
+			if (a.Ornament?.ModelObject?.Skeleton != null)
+				this.AddBones(a.Ornament.ModelObject.Skeleton, PoseFile.ORNAMENT_PREFIX);
+
+			if (a.DrawData.Prop1?.Model?.Skeleton != null)
+				this.AddBones(a.DrawData.Prop1.Model.Skeleton, PoseFile.PROP1_PREFIX);
+
+			if (a.DrawData.Prop2?.Model?.Skeleton != null)
+				this.AddBones(a.DrawData.Prop2.Model.Skeleton, PoseFile.PROP2_PREFIX);
 
 			// Create Bone links from the link database
 			foreach ((string name, Bone bone) in this.Bones)
