@@ -4,6 +4,7 @@
 namespace Anamnesis.Services;
 
 using Anamnesis.Core;
+using Anamnesis.GUI.Dialogs;
 using Anamnesis.Memory;
 using PropertyChanged;
 using System;
@@ -105,6 +106,8 @@ public class GameService : ServiceBase<GameService>
 						// Do nothing, the process might have exited before we could inject.
 						this.injectionFailed = true;
 						Log.Warning(ex, "Failed to inject remote controller.");
+
+						_ = GenericDialog.ShowLocalizedAsync("Controller_InitFailed_Message", "Common_Attention");
 					}
 				}
 

@@ -25,6 +25,7 @@ public class Controller
 
 	private const int PROCESS_MONITOR_JOIN_TIMEOUT_MS = 500;
 	private const int ACTIVE_WRITERS_DRAIN_TIMEOUT_MS = 500;
+	private const int INIT_COMPLETED_TIMEOUT_MS = 15000;
 	private const int INIT_CLEANUP_TIMEOUT_MS = 5000;
 	private const int IPC_TIMEOUT_MS = 100;
 	private const int IPC_FAST_FAIL_TIMEOUT_MS = 16;
@@ -106,12 +107,14 @@ public class Controller
 	private static Thread? s_processMonitorThread = null;
 	private static Thread? s_workerThread = null;
 	private static readonly Lock s_entryLock = new();
+	private static readonly ManualResetEventSlim s_initCompletedEvent = new(false);
+	private static volatile bool s_initSucceeded = false;
 	private static volatile bool s_cleanShutdownCompleted = false;
 	private static CancellationTokenSource s_shutdownCts = new();
 	private static int s_activeWriters = 0;
 
 	[RequiresDynamicCode("Requires dynamic code")]
-	private static unsafe void* NativePtr() => (delegate* unmanaged<IntPtr, void>)&RemoteControllerEntry;
+	private static unsafe void* NativePtr() => (delegate* unmanaged<IntPtr, int>)&RemoteControllerEntry;
 
 	/// <summary>
 	/// Sends an intercept request to the host application and waits for a response.
@@ -254,7 +257,7 @@ public class Controller
 	/// This function is invoked remotely via unmanaged code.
 	/// </remarks>
 	[UnmanagedCallersOnly(EntryPoint = "RemoteControllerEntry")]
-	public static void RemoteControllerEntry(IntPtr mainProcessHandle)
+	public static int RemoteControllerEntry(IntPtr mainProcessHandle)
 	{
 		lock (s_entryLock)
 		{
@@ -277,6 +280,9 @@ public class Controller
 				Name = "RemoteController.Main",
 			};
 			s_workerThread.Start();
+
+			bool signaled = s_initCompletedEvent.Wait(INIT_COMPLETED_TIMEOUT_MS);
+			return (signaled && s_initSucceeded) ? 1 : 0;
 		}
 	}
 
@@ -345,6 +351,9 @@ public class Controller
 
 			FrameworkDriver.InstanceOrNull?.SynchronizeConfig();
 
+			s_initSucceeded = true;
+			s_initCompletedEvent.Set();
+
 			// Main loop
 			uint taskIndex = 0;
 			IntPtr avrtHandle = NativeFunctions.AvSetMmThreadCharacteristics("Games", ref taskIndex);
@@ -365,6 +374,8 @@ public class Controller
 		{
 			// IMPORTANT: Don't throw to avoid crashing the game process
 			// The intent is to catch all unhandled exceptions and terminate gracefully
+			s_initSucceeded = false;
+			s_initCompletedEvent.Set();
 			Log.Fatal(ex, "Unhandled exception in RemoteController.Main.");
 		}
 		finally
