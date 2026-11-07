@@ -7,6 +7,13 @@ using RemoteController.Interop.Types;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
+public static class AtkModule
+{
+	[FunctionBind("40 53 56 57 41 55 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 41 F6 00 0F")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public unsafe delegate nint HandleTextInputActive(nint atkModulePtr, nint outResult, nint inArgs, int inArgsCount);
+}
+
 public static class BoneKineDriver
 {
 	[FunctionBind("48 8B C4 55 57 48 83 EC 58")]

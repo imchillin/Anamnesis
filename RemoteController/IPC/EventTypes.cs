@@ -14,6 +14,7 @@ public enum EventId : uint
 {
 	Invalid = 0,
 	GposeStateChanged = 1,
+	TextInputStateChanged = 2,
 }
 
 /// <summary>
@@ -53,4 +54,13 @@ public struct EventSubscriptionData
 public struct GposeStateChangedPayload
 {
 	public bool IsInGpose;
+}
+
+/// <summary>
+/// Payload for in-game chat input focus state change events.
+/// </summary>
+[StructLayout(LayoutKind.Sequential)]
+public struct TextInputStateChangedPayload
+{
+	public bool IsActive;
 }

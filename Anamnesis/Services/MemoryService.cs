@@ -543,24 +543,28 @@ public partial class MemoryService : ServiceBase<MemoryService>, IProcessMemoryR
 		if (Process == null)
 			return;
 
-		int vkey = KeyInterop.VirtualKeyFromKey(key);
-
-		if (key == Key.LeftShift || key == Key.RightShift)
-			vkey = 0x10;
-
-		if (key == Key.LeftCtrl || key == Key.RightCtrl)
-			vkey = 0x11;
-
-		if (key == Key.LeftAlt || key == Key.RightAlt)
-			vkey = 0x12;
-
-		if (state == KeyboardKeyStates.Pressed)
+		int vkey = key switch
 		{
-			PostMessage(Process.MainWindowHandle, 0x100, (IntPtr)vkey, IntPtr.Zero);
+			Key.LeftShift or Key.RightShift => 0x10,
+			Key.LeftCtrl or Key.RightCtrl => 0x11,
+			Key.LeftAlt or Key.RightAlt or Key.System => 0x12,
+			_ => KeyInterop.VirtualKeyFromKey(key),
+		};
+
+		if (vkey == 0)
+			return;
+
+		uint scanCode = MapVirtualKey((uint)vkey, MAPVK_VK_TO_VSC);
+
+		if (state == KeyboardKeyStates.Pressed || state == KeyboardKeyStates.Down)
+		{
+			nint lParam = (nint)(1 | (scanCode << 16));
+			PostMessage(Process.MainWindowHandle, (uint)KeyboardInputMsg.WM_KEYDOWN, (nint)vkey, lParam);
 		}
 		else if (state == KeyboardKeyStates.Released)
 		{
-			PostMessage(Process.MainWindowHandle, 0x0101, (IntPtr)vkey, IntPtr.Zero);
+			nint lParam = unchecked((nint)(long)(0xC0000001u | (scanCode << 16)));
+			PostMessage(Process.MainWindowHandle, (uint)KeyboardInputMsg.WM_KEYUP, (nint)vkey, lParam);
 		}
 	}
 
