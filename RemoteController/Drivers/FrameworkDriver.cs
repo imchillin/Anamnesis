@@ -36,15 +36,15 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 	private readonly ConcurrentQueue<ConditionalTask> incomingCondTasks = new();
 	private readonly List<ConditionalTask> activeCondTasks = new();
 
-	private readonly FunctionHook<Framework.Tick> tickHook;
-	private readonly Framework.Tick detourTick;
+	private FunctionHook<Framework.Tick>? tickHook;
+	private Framework.Tick? detourTick;
 	private readonly nint frameworkInstancePtr;
 
 	private volatile int isSyncEnabled = 0;
 	private int requestVersion = 0;
 	private ulong tickCount = 0;
 
-	private GameConfigModule GameConfig { get; }
+	private GameConfigModule? GameConfig { get; set; }
 
 	/// <summary>
 	/// Event triggered on every frame update of the main game loop.
@@ -64,7 +64,7 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 	public FrameworkDriver()
 	{
 		if (Controller.SigResolver == null)
-			throw new InvalidOperationException("Cannot initialize posing driver: signature resolver is not available.");
+			throw new InvalidOperationException("Cannot initialize framework driver: signature resolver is not available.");
 
 		this.frameworkInstancePtr = Controller.Scanner?.GetStaticAddressFromSig(FRAMEWORK_INSTANCE_SIGNATURE) ?? nint.Zero;
 		if (this.frameworkInstancePtr == nint.Zero)
@@ -76,11 +76,12 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 
 		Log.Debug($"Framework instance found at address: 0x{this.frameworkInstancePtr:X}");
 
-		this.detourTick = this.DetourTick;
-		this.tickHook = HookRegistry.CreateAndActivateHook(this.detourTick);
-		this.GameConfig = new GameConfigModule(this, this.frameworkInstancePtr);
-
-		this.RegisterInstance();
+		this.RegisterInstance(() =>
+		{
+			this.detourTick = this.DetourTick;
+			this.tickHook = HookRegistry.CreateAndActivateHook(this.detourTick);
+			this.GameConfig = new GameConfigModule(this, this.frameworkInstancePtr);
+		});
 	}
 
 	/// <summary>
@@ -225,6 +226,9 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 		// NOTE: As the synchronization is done asynchronously, we do not need a tight deadline
 		Task.Run(async () =>
 		{
+			if (this.GameConfig == null)
+				return;
+
 			uint? currentFps = await this.GameConfig.GetUIntAsync("FPSInActive"); // 1 when the limiter is on, 0 when its off
 			if (currentFps != null)
 			{
@@ -251,6 +255,9 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 	public async void SetFpsLimiterEnabled(bool enabled, string? source = null)
 	{
 		string prefix = source != null ? $"[{source}] " : string.Empty;
+
+		if (this.GameConfig == null)
+			return;
 
 		uint targetValue = enabled ? 1u : 0u;
 		uint? currentValue = await this.GameConfig.GetUIntAsync("FPSInActive");
@@ -289,7 +296,7 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 	/// <inheritdoc/>
 	protected override void OnDispose()
 	{
-		this.tickHook.Dispose();
+		this.tickHook?.Dispose();
 		while (s_workItemPool.TryTake(out var item))
 			item.Dispose();
 
@@ -332,7 +339,7 @@ public class FrameworkDriver : DriverBase<FrameworkDriver>
 			this.ProcessRemoteSync();
 		}
 
-		return this.tickHook!.OriginalFunction(fPtr);
+		return this.tickHook?.OriginalFunction(fPtr) ?? 0;
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -341,8 +341,6 @@ internal sealed class Injector : IDisposable
 			asm.mov(rcx, (long)duplicatedHandle); // Pass duplicated process handle as first argument to the entry point
 			asm.call(rbx);                        // Call the entry point
 
-			// Set success code (1)
-			asm.mov(rax, 1);
 			asm.jmp(labelExit);
 
 			// Restore stack and return

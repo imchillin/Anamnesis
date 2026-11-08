@@ -1055,5 +1055,7 @@
   "Tip_30": "The Anamnesis Wiki has a lot of useful information about using Anamnesis!",
   "Tip_30_Url": "https://github.com/imchillin/Anamnesis/wiki",
   "Tip_31": "Hold shift while Anamnesis is starting to reset your settings.",
-  "Tip_32": "You can select and pose multiple bones at once in the Pose tab by holding Ctrl and clicking each bone you want to include."
+  "Tip_32": "You can select and pose multiple bones at once in the Pose tab by holding Ctrl and clicking each bone you want to include.",
+
+  "Controller_InitFailed_Message": "The application's internal controller failed to start.\n\nAs a result of this failure, some features such as posing, character updates, and state tracking, may be partially unavailable or non-functional.\n\nTry restarting Anamnesis. If this issue persists, then please report it at https://github.com/imchillin/Anamnesis/issues."
 }

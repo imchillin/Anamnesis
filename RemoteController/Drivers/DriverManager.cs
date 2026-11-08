@@ -13,8 +13,8 @@ using System.Diagnostics.CodeAnalysis;
 [RequiresDynamicCode("This class requires dynamic code due to hook reflection")]
 public sealed class DriverManager : IDisposable
 {
-	private const int FRAMEWORK_TIMEOUT_TICKS = 60;
-	private const int MANAGER_WAIT_TIMEOUT_MS = 5000;
+	private const int FRAMEWORK_TIMEOUT_TICKS = 600; // ~10 seconds at 60 FPS
+	private const int MANAGER_WAIT_TIMEOUT_MS = 10000;
 
 	private static readonly Stopwatch s_timer = new();
 	private readonly List<DriverEntry> drivers = [];
@@ -52,12 +52,20 @@ public sealed class DriverManager : IDisposable
 		if (this.IsInitialized)
 			throw new InvalidOperationException("Driver manager has already been initialized.");
 
-		// Initialize drivers in dependency order
-		this.Add(() => new FrameworkDriver(), SyncMode.Immediate);
-		this.Add(() => new GposeDriver(FrameworkDriver.Instance), SyncMode.FrameworkThread);
-		this.Add(() => new PosingDriver(GposeDriver.Instance), SyncMode.FrameworkThread);
-		this.Add(() => new ActorDriver(), SyncMode.FrameworkThread);
-		this.Add(() => new TextInputDriver(FrameworkDriver.Instance), SyncMode.FrameworkThread);
+		try
+		{
+			// Initialize drivers in dependency order
+			this.Add(() => new FrameworkDriver(), SyncMode.Immediate);
+			this.Add(() => new GposeDriver(FrameworkDriver.Instance), SyncMode.FrameworkThread);
+			this.Add(() => new PosingDriver(GposeDriver.Instance), SyncMode.FrameworkThread);
+			this.Add(() => new ActorDriver(), SyncMode.FrameworkThread);
+			this.Add(() => new TextInputDriver(FrameworkDriver.Instance), SyncMode.FrameworkThread);
+		}
+		catch
+		{
+			this.Dispose();
+			throw;
+		}
 
 		this.IsInitialized = true;
 		Log.Information("Driver manager initialized successfully.");
@@ -104,7 +112,7 @@ public sealed class DriverManager : IDisposable
 	private static T InitializeOnFramework<T>(Func<T> factory)
 		where T : IDisposable
 	{
-		if (FrameworkDriver.Instance == null || FrameworkDriver.Instance.IsDisposed)
+		if (FrameworkDriver.InstanceOrNull == null || FrameworkDriver.InstanceOrNull.IsDisposed)
 			throw new InvalidOperationException("FrameworkDriver instance is null. Cannot initialize on framework thread.");
 
 		T? instance = default;
@@ -112,7 +120,7 @@ public sealed class DriverManager : IDisposable
 		using var signal = new ManualResetEventSlim(false);
 		bool isTimedOut = false;
 
-		FrameworkDriver.Instance.RunOnTickUntil(null, 0, FRAMEWORK_TIMEOUT_TICKS, () =>
+		FrameworkDriver.InstanceOrNull.RunOnTickUntil(null, 0, FRAMEWORK_TIMEOUT_TICKS, () =>
 		{
 			try
 			{
@@ -151,7 +159,7 @@ public sealed class DriverManager : IDisposable
 
 	private static void DisposeOnFramework(IDisposable driver)
 	{
-		if (FrameworkDriver.Instance == null || FrameworkDriver.Instance.IsDisposed)
+		if (FrameworkDriver.InstanceOrNull == null || FrameworkDriver.InstanceOrNull.IsDisposed)
 		{
 			Log.Warning($"Framework driver unavailable. Disposing {driver.GetType().Name} on caller thread.");
 			driver.Dispose();
@@ -161,7 +169,7 @@ public sealed class DriverManager : IDisposable
 		using var signal = new ManualResetEventSlim(false);
 		Exception? capturedException = null;
 
-		FrameworkDriver.Instance.RunOnTickUntil(null, 0, FRAMEWORK_TIMEOUT_TICKS, () =>
+		FrameworkDriver.InstanceOrNull.RunOnTickUntil(null, 0, FRAMEWORK_TIMEOUT_TICKS, () =>
 		{
 			try
 			{
@@ -178,7 +186,11 @@ public sealed class DriverManager : IDisposable
 		});
 
 		if (!signal.Wait(MANAGER_WAIT_TIMEOUT_MS))
-			throw new TimeoutException($"Timed out disposing {driver.GetType().Name} on framework thread.");
+		{
+			Log.Warning($"Timed out disposing {driver.GetType().Name} on framework thread. Disposing on caller thread.");
+			driver.Dispose();
+			return;
+		}
 
 		if (capturedException != null)
 			throw capturedException;
