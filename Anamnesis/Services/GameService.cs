@@ -83,7 +83,13 @@ public class GameService : ServiceBase<GameService>
 		{
 			try
 			{
-				this.IsSignedIn = GetIsSignedIn();
+				var signedInState = GetIsSignedIn();
+				if (signedInState != this.IsSignedIn)
+				{
+					Log.Verbose($"User signed-in state changed: {(signedInState ? "True" : "False")}");
+				}
+
+				this.IsSignedIn = signedInState;
 
 				// Perform the remote controller injection once upon sign-in
 				// NOTE: We do it here instead of on open process detection to avoid collisions
