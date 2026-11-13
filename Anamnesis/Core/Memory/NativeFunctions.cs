@@ -33,6 +33,8 @@ internal static partial class NativeFunctions
 	public const string ENV_COMPAT_RUN_AS_ENVOKER = "RunAsInvoker";
 	public const int TIMERR_NOERROR = 0;
 
+	public const int MAX_X64_INSTRUCTION_LENGTH = 15;
+
 	public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
 	/// <summary>
