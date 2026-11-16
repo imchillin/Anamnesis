@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
@@ -27,7 +27,7 @@ public readonly struct Weather(ExcelPage page, uint offset, uint row)
 	public readonly string Description => page.ReadString(offset + 4, offset).ToString() ?? string.Empty;
 
 	/// <summary>Gets the icon reference for the weather.</summary>
-	public ImgRef Icon => new(page.ReadInt32(offset + 24));
+	public ImgRef Icon => ImgRef.GetOrCreate(page.ReadInt32(offset + 24));
 
 	/// <summary>
 	/// Creates a new instance of the <see cref="Weather"/> struct.

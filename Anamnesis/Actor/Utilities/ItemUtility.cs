@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Utilities;
@@ -73,9 +73,9 @@ public static class ItemUtility
 			{
 				BuddyEquip.BuddyItem? item = slot switch
 				{
-					ItemSlots.Head => equip.Head,
-					ItemSlots.Body => equip.Body,
-					ItemSlots.Legs => equip.Feet,
+					ItemSlots.Head => equip.GetHead(),
+					ItemSlots.Body => equip.GetBody(),
+					ItemSlots.Legs => equip.GetFeet(),
 					_ => null,
 				};
 

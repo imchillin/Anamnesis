@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
@@ -26,7 +26,7 @@ public readonly struct Action(ExcelPage page, uint offset, uint row)
 	public readonly string Name => page.ReadString(offset, offset).ToString();
 
 	/// <inheritdoc/>
-	public readonly ImgRef? Icon => new(page.ReadUInt16(offset + 8));
+	public readonly ImgRef? Icon => ImgRef.GetOrCreate(page.ReadUInt16(offset + 8));
 
 	/// <inheritdoc/>
 	public ActionTimeline? Timeline => this.AnimationEnd.IsValid && this.AnimationEnd.RowId >= 0 ? GameDataService.ActionTimelines.GetRow(this.AnimationEnd.RowId) : null;

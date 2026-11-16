@@ -187,14 +187,14 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 
 			foreach (BuddyEquip buddyEquip in GameDataService.BuddyEquips)
 			{
-				if (buddyEquip.Head != null)
-					this.AddItem(buddyEquip.Head);
+				if (buddyEquip.GetHead() is { } head)
+					this.AddItem(head);
 
-				if (buddyEquip.Body != null)
-					this.AddItem(buddyEquip.Body);
+				if (buddyEquip.GetBody() is { } body)
+					this.AddItem(body);
 
-				if (buddyEquip.Feet != null)
-					this.AddItem(buddyEquip.Feet);
+				if (buddyEquip.GetFeet() is { } feet)
+					this.AddItem(feet);
 			}
 		}
 		else
