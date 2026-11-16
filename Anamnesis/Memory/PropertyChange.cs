@@ -1,9 +1,10 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory;
 
 using Anamnesis.Core.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -77,11 +78,14 @@ public struct PropertyChange
 	}
 
 	/// <summary>The possible origins of a property change.</summary>
+	[Flags]
 	public enum Origins
 	{
-		User,
-		History,
-		Game,
+		User = 1 << 0,
+		History = 1 << 1,
+		Game = 1 << 2,
+
+		All = User | History | Game,
 	}
 
 	/// <summary>Gets the full path of the property change.</summary>

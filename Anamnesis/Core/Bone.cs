@@ -22,12 +22,12 @@ using XivToolsWpf.Math3D.Extensions;
 public class Bone : ITransform
 {
 	public const float EQUALITY_TOLERANCE = 0.00001f;
-	protected readonly ReaderWriterLockSlim TransformLock = new();
 	private static readonly ObjectPool<Stack<(Bone Bone, bool WriteLinked, Transform? PrecalcParent)>> s_boneWriteStackPool
 		= ObjectPool.Create<Stack<(Bone Bone, bool WriteLinked, Transform? PrecalcParent)>>();
 	private static readonly ObjectPool<Stack<Bone>> s_boneReadStackPool = ObjectPool.Create<Stack<Bone>>();
 	private static readonly HashSet<string> s_attachmentBoneNames = new() { "n_buki_r", "n_buki_l", "j_buki_sebo_r", "j_buki_sebo_l" };
 	private static bool s_scaleLinked = true;
+	private readonly Lock transformLock = new();
 	private bool hasInitialReading = false;
 	private bool isDirty = false;
 	private Vector3 position;
@@ -97,7 +97,7 @@ public class Bone : ITransform
 		get => this.position;
 		set
 		{
-			if (!this.position.IsApproximately(value, EQUALITY_TOLERANCE))
+			if (this.position != value && !this.position.IsApproximately(value, EQUALITY_TOLERANCE))
 			{
 				this.position = value;
 				this.isDirty = true;
@@ -120,7 +120,7 @@ public class Bone : ITransform
 		get => this.rotation;
 		set
 		{
-			if (!this.rotation.IsApproximately(value, EQUALITY_TOLERANCE))
+			if (this.rotation != value && !this.rotation.IsApproximately(value, EQUALITY_TOLERANCE))
 			{
 				this.rotation = value;
 				this.isDirty = true;
@@ -142,7 +142,7 @@ public class Bone : ITransform
 		get => this.scale;
 		set
 		{
-			if (!this.scale.IsApproximately(value, EQUALITY_TOLERANCE))
+			if (this.scale != value && !this.scale.IsApproximately(value, EQUALITY_TOLERANCE))
 			{
 				this.scale = value;
 				this.isDirty = true;
@@ -181,8 +181,8 @@ public class Bone : ITransform
 	}
 
 	/// <summary>
-	/// Gets a value indicating whether the object's transform
-	/// has been modified since the last synchronization.
+	/// Gets a value indicating whether the object's transform has been
+	/// modified by Anamnesis but not synchronized with the game's memory.
 	/// </summary>
 	public bool IsDirty
 	{
@@ -235,17 +235,18 @@ public class Bone : ITransform
 		// Apply the inverse of the parent's character-relative rotation and scale to the local position
 		Quaternion parentRotInverse = Quaternion.Conjugate(parentTransform.Rotation);
 		localPosition = Vector3.Transform(localPosition, parentRotInverse);
-		if (parentTransform.Scale.X != 0)
+
+		if (parentTransform.Scale.X != 1.0f && parentTransform.Scale.X != 0)
 		{
 			localPosition.X /= parentTransform.Scale.X;
 		}
 
-		if (parentTransform.Scale.Y != 0)
+		if (parentTransform.Scale.Y != 1.0f && parentTransform.Scale.Y != 0)
 		{
 			localPosition.Y /= parentTransform.Scale.Y;
 		}
 
-		if (parentTransform.Scale.Z != 0)
+		if (parentTransform.Scale.Z != 1.0f && parentTransform.Scale.Z != 0)
 		{
 			localPosition.Z /= parentTransform.Scale.Z;
 		}
@@ -297,54 +298,70 @@ public class Bone : ITransform
 			{
 				Bone currentBone = bonesToProcess.Pop();
 
-				var transformStruct = currentBone.TransformMemories[0].Transform;
-				var localTransform = new Transform
-				{
-					Position = transformStruct.Position,
-					Rotation = transformStruct.Rotation,
-					Scale = transformStruct.Scale,
-				};
+				if (currentBone.TransformMemories.Count == 0)
+					continue;
 
-				// Convert the character-relative transform into a parent-relative transform
-				if (currentBone.Parent != null)
+				var transformStruct = currentBone.TransformMemories[0].Transform;
+				Transform localTransform;
+
+				unsafe
 				{
-					Transform parentTransform;
-					if (currentBone.Parent.TransformMemories.Count > 0)
+					Transform modelTransform = *(Transform*)&transformStruct;
+
+					// Convert the character-relative transform into a parent-relative transform
+					if (currentBone.Parent != null)
 					{
-						var parentTransformStruct = currentBone.Parent.TransformMemories[0].Transform;
-						parentTransform = new Transform
+						if (currentBone.Parent.TransformMemories.Count > 0)
 						{
-							Position = parentTransformStruct.Position,
-							Rotation = parentTransformStruct.Rotation,
-							Scale = parentTransformStruct.Scale,
-						};
+							var parentTransformStruct = currentBone.Parent.TransformMemories[0].Transform;
+							Transform parentTransform = *(Transform*)&parentTransformStruct;
+							localTransform = ModelToLocalSpace(modelTransform, parentTransform);
+						}
+						else
+						{
+							localTransform = ModelToLocalSpace(modelTransform, default);
+						}
 					}
 					else
 					{
-						parentTransform = default;
+						localTransform = modelTransform;
+					}
+				}
+
+				lock (currentBone.transformLock)
+				{
+					bool changed = false;
+					if (currentBone.position != localTransform.Position && !currentBone.position.IsApproximately(localTransform.Position, EQUALITY_TOLERANCE))
+					{
+						currentBone.Position = localTransform.Position;
+						changed = true;
 					}
 
-					localTransform = ModelToLocalSpace(localTransform, parentTransform);
-				}
+					if (currentBone.rotation != localTransform.Rotation && !currentBone.rotation.IsApproximately(localTransform.Rotation, EQUALITY_TOLERANCE))
+					{
+						currentBone.Rotation = localTransform.Rotation;
+						changed = true;
+					}
 
-				currentBone.TransformLock.EnterReadLock();
-				try
-				{
-					currentBone.Position = localTransform.Position;
-					currentBone.Rotation = localTransform.Rotation;
-					currentBone.Scale = localTransform.Scale;
+					if (currentBone.scale != localTransform.Scale && !currentBone.scale.IsApproximately(localTransform.Scale, EQUALITY_TOLERANCE))
+					{
+						currentBone.Scale = localTransform.Scale;
+						changed = true;
+					}
+
 					currentBone.hasInitialReading = true;
-				}
-				finally
-				{
-					currentBone.TransformLock.ExitReadLock();
+					if (changed || currentBone.isDirty)
+					{
+						currentBone.isDirty = false;
+					}
 				}
 
 				if (readChildren)
 				{
-					foreach (var child in currentBone.Children)
+					var children = currentBone.Children;
+					for (int i = 0; i < children.Count; i++)
 					{
-						bonesToProcess.Push(child);
+						bonesToProcess.Push(children[i]);
 					}
 				}
 			}
@@ -387,12 +404,10 @@ public class Bone : ITransform
 					if (currentBone.Parent.TransformMemories.Count > 0)
 					{
 						var pts = currentBone.Parent.TransformMemories[0].Transform;
-						parentTransform = new Transform
+						unsafe
 						{
-							Position = pts.Position,
-							Rotation = pts.Rotation,
-							Scale = pts.Scale,
-						};
+							parentTransform = *(Transform*)&pts;
+						}
 					}
 					else
 					{
@@ -440,8 +455,7 @@ public class Bone : ITransform
 					modelTransform = LocalToModelSpace(modelTransform, parentTransform!.Value);
 				}
 
-				currentBone.TransformLock.EnterWriteLock();
-				try
+				lock (currentBone.transformLock)
 				{
 					for (int i = 0; i < transformMemories.Count; ++i)
 					{
@@ -456,19 +470,19 @@ public class Bone : ITransform
 							continue;
 
 						var tm = transformMemories[i];
-						if (!tm.Position.IsApproximately(modelTransform.Position, EQUALITY_TOLERANCE))
+						if (tm.Position != modelTransform.Position && !tm.Position.IsApproximately(modelTransform.Position, EQUALITY_TOLERANCE))
 						{
 							tm.Position = modelTransform.Position;
 							changed = true;
 						}
 
-						if (!tm.Scale.IsApproximately(modelTransform.Scale, EQUALITY_TOLERANCE))
+						if (tm.Scale != modelTransform.Scale && !tm.Scale.IsApproximately(modelTransform.Scale, EQUALITY_TOLERANCE))
 						{
 							tm.Scale = modelTransform.Scale;
 							changed = true;
 						}
 
-						if (!tm.Rotation.IsApproximately(modelTransform.Rotation, EQUALITY_TOLERANCE))
+						if (tm.Rotation != modelTransform.Rotation && !tm.Rotation.IsApproximately(modelTransform.Rotation, EQUALITY_TOLERANCE))
 						{
 							tm.Rotation = modelTransform.Rotation;
 							changed = true;
@@ -521,10 +535,6 @@ public class Bone : ITransform
 					{
 						transformMemories[i].EnableReading = true;
 					}
-				}
-				finally
-				{
-					currentBone.TransformLock.ExitWriteLock();
 				}
 			}
 		}

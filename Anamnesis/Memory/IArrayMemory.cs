@@ -20,5 +20,5 @@ public interface IArrayMemory
 
 	/// <summary>Reads the array from memory.</summary>
 	/// <param name="locked">A list of locked memory objects.</param>
-	public abstract void ReadArrayMemory(List<MemoryBase> locked);
+	internal abstract void ReadArrayMemory(List<MemoryBase> locked);
 }

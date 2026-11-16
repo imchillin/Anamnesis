@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory;
@@ -41,7 +41,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	{
 		this.backupQueue = new(this.BackupAsync, 250);
 
-		this.PropertyChanged += this.HandlePropertyChanged;
+		this.AddPropertyChangedListener(this.HandlePropertyChanged, PropertyChange.Origins.User | PropertyChange.Origins.History);
 
 		// Initialize the debounce timer
 		this.refreshDebounceTimer = new(REFRESH_DEBOUNCE_TIMEOUT_MS) { AutoReset = false };
@@ -221,7 +221,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 
 	public override void Dispose()
 	{
-		this.PropertyChanged -= this.HandlePropertyChanged;
+		this.RemovePropertyChangedListener(this.HandlePropertyChanged);
 		this.refreshDebounceTimer?.Dispose();
 		base.Dispose();
 		GC.SuppressFinalize(this);

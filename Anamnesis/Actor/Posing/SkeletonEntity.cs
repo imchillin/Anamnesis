@@ -148,14 +148,16 @@ public class SkeletonEntity(ObjectHandle<ActorMemory> actor) : Skeleton(actor)
 			if (!this.HasSelection || !PoseService.Instance.IsEnabled)
 				return;
 
+			// Get all selected bones
+			var selectedBones = this.selectedBonesCache ??= this.Bones.Values.OfType<BoneEntity>().Where(b => b.IsSelected).ToList();
+			if (!selectedBones.Any(b => b.IsDirty))
+				return;
+
 			lock (HistoryService.Instance.LockObject)
 			{
 				try
 				{
 					actor.PauseSynchronization = true;
-
-					// Get all selected bones
-					var selectedBones = this.selectedBonesCache ??= this.Bones.Values.OfType<BoneEntity>().Where(b => b.IsSelected).ToList();
 
 					// Filter out bones that are descendants of other selected bones
 					HashSet<BoneEntity> ancestorBones = new();

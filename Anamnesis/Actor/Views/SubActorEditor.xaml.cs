@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Views;
@@ -90,19 +90,19 @@ public partial class SubActorEditor : UserControl
 	{
 		if (oldValue != null)
 		{
-			oldValue.PropertyChanged -= sender.OnActorPropertyChanged;
+			oldValue.RemovePropertyChangedListener(sender.OnActorPropertyChanged);
 		}
 
 		if (newValue != null)
 		{
-			newValue.PropertyChanged += sender.OnActorPropertyChanged;
+			newValue.AddPropertyChangedListener(sender.OnActorPropertyChanged, nameof(ActorMemory.MountId), nameof(ActorMemory.OrnamentId), nameof(ActorMemory.DataId));
 		}
 	}
 
 	private static void OnChanged(SubActorEditor sender, ActorMemory? oldValue, ActorMemory? newValue)
 	{
 		if (oldValue != null)
-			oldValue.PropertyChanged -= sender.OnActorPropertyChanged;
+			oldValue.RemovePropertyChangedListener(sender.OnActorPropertyChanged);
 
 		if (newValue == null || sender.Actor == null)
 		{
@@ -110,7 +110,7 @@ public partial class SubActorEditor : UserControl
 			return;
 		}
 
-		newValue.PropertyChanged += sender.OnActorPropertyChanged;
+		newValue.AddPropertyChangedListener(sender.OnActorPropertyChanged, nameof(ActorMemory.MountId), nameof(ActorMemory.OrnamentId), nameof(ActorMemory.DataId));
 
 		if (sender.SubActorType == Types.Companion)
 		{
@@ -145,12 +145,7 @@ public partial class SubActorEditor : UserControl
 
 	private void OnActorPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		if (e.PropertyName == nameof(ActorMemory.MountId)
-			|| e.PropertyName == nameof(ActorMemory.OrnamentId)
-			|| e.PropertyName == nameof(ActorMemory.DataId))
-		{
-			_ = this.UpdateSubActorAsync();
-		}
+		_ = this.UpdateSubActorAsync();
 	}
 
 	private async Task UpdateSubActorAsync()

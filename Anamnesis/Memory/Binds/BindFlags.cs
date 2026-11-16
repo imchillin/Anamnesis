@@ -1,11 +1,14 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory;
 
+using System;
+
 /// <summary>
 /// Flags used to specify binding behaviors in memory operations.
 /// </summary>
+[Flags]
 public enum BindFlags : byte
 {
 	None = 0,

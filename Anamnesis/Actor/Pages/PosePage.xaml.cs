@@ -606,7 +606,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.Actor?.Do(actor =>
 		{
 			actor.Refreshed -= this.OnActorRefreshed;
-			actor.PropertyChanged -= this.OnActorPropertyChanged;
+			actor.RemovePropertyChangedListener(this.OnActorPropertyChanged);
 		});
 		this.Actor = null;
 
@@ -664,13 +664,18 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.Actor?.Do(actor =>
 		{
 			actor.Refreshed -= this.OnActorRefreshed;
-			actor.PropertyChanged -= this.OnActorPropertyChanged;
+			actor.RemovePropertyChangedListener(this.OnActorPropertyChanged);
 		});
 
 		newActorHandle?.Do(actor =>
 		{
 			actor.Refreshed += this.OnActorRefreshed;
-			actor.PropertyChanged += this.OnActorPropertyChanged;
+			actor.AddPropertyChangedListener(
+				this.OnActorPropertyChanged,
+				nameof(ActorMemory.ModelObject),
+				nameof(ActorMemory.Ornament),
+				nameof(WeaponMemory.Model),
+				nameof(ActorModelMemory.Skeleton));
 		});
 
 		this.Actor = newActorHandle;
@@ -1221,22 +1226,20 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 				{
 					this.Skeleton?.WriteSkeleton();
 				}
-				else
-				{
-					this.Skeleton?.Actor?.Do(actor =>
-					{
-						try
-						{
-							actor.SynchronizeSkeletons(s_transformSyncGroups);
-						}
-						catch (Exception ex)
-						{
-							Log.Verbose(ex, "Failed to sync skeleton during skeleton finalization.");
-						}
-					});
 
-					this.Skeleton?.ReadTransforms();
-				}
+				this.Skeleton?.Actor?.Do(actor =>
+				{
+					try
+					{
+						actor.SynchronizeSkeletons(s_transformSyncGroups);
+					}
+					catch (Exception ex)
+					{
+						Log.Verbose(ex, "Failed to sync skeleton during skeleton finalization.");
+					}
+				});
+
+				this.Skeleton?.ReadTransforms();
 			}
 		}
 		catch (Exception ex)

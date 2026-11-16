@@ -13,6 +13,7 @@ using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -44,15 +45,6 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <summary>Dictionary of the object's property bindings.</summary>
 	public readonly Dictionary<string, PropertyBindInfo> Binds = new();
 
-	/// <summary>
-	/// A thread-local variable that determines whether property notifications should be suppressed.
-	/// </summary>
-	/// <remarks>
-	/// This is intended to be used to update properties while synchronization is taking place on
-	/// a thread, without supressing property notifications for the rest of the application.
-	/// </remarks>
-	protected readonly ThreadLocal<bool> SuppressPropNotifications = new(() => false);
-
 	/// <summary>List of child memory objects.</summary>
 	protected readonly List<MemoryBase> Children = new();
 
@@ -64,6 +56,9 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 	/// <summary>Lock object for thread synchronization.</summary>
 	private readonly Lock lockObject = new();
+
+	/// <summary>Lock object for property listener collection reads and writes.</summary>
+	private readonly Lock listenersLock = new();
 
 	/// <summary>
 	/// Represents the parent memory object, if any.
@@ -87,6 +82,8 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// due to ongoing memory reads.
 	/// </remarks>
 	private ConcurrentQueue<BindInfo> delayedBinds = new();
+
+	private volatile PropertyListener[]? propertyListeners;
 
 	private nint address = IntPtr.Zero;
 	private int enableReading = 1;
@@ -147,7 +144,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <summary>Gets or sets the object's memory address.</summary>
 	public IntPtr Address
 	{
-		get => Interlocked.CompareExchange(ref this.address, 0, 0);
+		get => (IntPtr)Volatile.Read(ref this.address);
 		set => Interlocked.Exchange(ref this.address, value);
 	}
 
@@ -174,7 +171,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	[DoNotNotify]
 	public bool EnableReading
 	{
-		get => Interlocked.CompareExchange(ref this.enableReading, 0, 0) == 1;
+		get => Volatile.Read(ref this.enableReading) == 1;
 		set => Interlocked.Exchange(ref this.enableReading, value ? 1 : 0);
 	}
 
@@ -182,7 +179,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	[DoNotNotify]
 	public bool EnableWriting
 	{
-		get => Interlocked.CompareExchange(ref this.enableWriting, 0, 0) == 1;
+		get => Volatile.Read(ref this.enableWriting) == 1;
 		set => Interlocked.Exchange(ref this.enableWriting, value ? 1 : 0);
 	}
 
@@ -194,7 +191,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	[DoNotNotify]
 	public bool PauseSynchronization
 	{
-		get => Interlocked.CompareExchange(ref this.pauseSynchronization, 0, 0) == 1;
+		get => Volatile.Read(ref this.pauseSynchronization) == 1;
 		set => Interlocked.Exchange(ref this.pauseSynchronization, value ? 1 : 0);
 	}
 
@@ -209,7 +206,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	[DoNotNotify]
 	protected bool IsSynchronizing
 	{
-		get => Interlocked.CompareExchange(ref this.isSynchronizing, 0, 0) == 1;
+		get => Volatile.Read(ref this.isSynchronizing) == 1;
 		set => Interlocked.Exchange(ref this.isSynchronizing, value ? 1 : 0);
 	}
 
@@ -237,7 +234,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <param name="propertyName">The name of the property.</param>
 	/// <remarks>
 	/// This is a custom event invoker that is used by Fody to notify of property changes.
-	/// It can  be used to manually raise property changed events in cases where the property
+	/// It can be used to manually raise property changed events in cases where the property
 	/// does not normally (e.g. the property has DoNotNotify attribute) or is not bound to a
 	/// memory address.
 	/// </remarks>
@@ -246,7 +243,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		if (this.IsDisposed)
 			return;
 
-		if (!this.Binds.TryGetValue(propertyName, out PropertyBindInfo? bind))
+		if (string.IsNullOrEmpty(propertyName) || this.Binds.Count == 0 || !this.Binds.TryGetValue(propertyName, out PropertyBindInfo? bind))
 		{
 			// If the bind is not found, assume it is not bound to a memory address.
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -255,7 +252,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 		// Suppress property notifications
 		// Ignore property changes which arise from sync with game memory and not from Anamnesis
-		if (this.SuppressPropNotifications.Value)
+		if (NotificationSuppression.Scope.IsActive)
 			return;
 
 		this.OnSelfPropertyChanged(this, new PropertyChangedEventArgs(propertyName));
@@ -309,11 +306,11 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			return;
 
 		// A sync is already in progress, cancel request.
-		if (Interlocked.CompareExchange(ref this.isSynchronizing, 0, 0) == 1)
+		if (Volatile.Read(ref this.isSynchronizing) == 1)
 			return;
 
 		// If synchronization is paused, cancel request.
-		if (Interlocked.CompareExchange(ref this.pauseSynchronization, 0, 0) == 1)
+		if (Volatile.Read(ref this.pauseSynchronization) == 1)
 			return;
 
 		if (inclGroups != null && exclGroups != null && inclGroups.Overlaps(exclGroups))
@@ -381,12 +378,77 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	}
 
 	/// <summary>
+	/// Adds a property change listener for one, many, or all properties with default origins (All).
+	/// </summary>
+	/// <param name="handler">The event callback that will be invoked on change.</param>
+	/// <param name="propertyNames">
+	/// A collection of zero or more properties to subscribe for.
+	/// If empty, then the event callback is invoked for all property changes.
+	/// </param>
+	public void AddPropertyChangedListener(PropertyChangedEventHandler handler, params string[] propertyNames)
+		=> this.AddPropertyChangedListener(handler, PropertyChange.Origins.All, propertyNames);
+
+	/// <summary>
+	/// Adds a property change listener for one, many, or all properties for target origins.
+	/// </summary>
+	/// <param name="handler">The event callback that will be invoked on change.</param>
+	/// <param name="origins">The property change origins to subscribe for.</param>
+	/// <param name="propertyNames">
+	/// A collection of zero or more properties to subscribe for.
+	/// If empty, then the event callback is invoked for all property changes.
+	/// </param>
+	public void AddPropertyChangedListener(PropertyChangedEventHandler handler, PropertyChange.Origins origins, params string[] propertyNames)
+	{
+		ArgumentNullException.ThrowIfNull(handler);
+		ArgumentNullException.ThrowIfNull(propertyNames);
+
+		lock (this.listenersLock)
+		{
+			var list = this.propertyListeners?.ToList() ?? [];
+			var names = propertyNames.Length == 0 ? [string.Empty] : propertyNames;
+
+			foreach (var name in names)
+			{
+				int idx = list.FindIndex(l => l.Handler == handler && l.PropertyName == name);
+				if (idx >= 0)
+					list[idx] = new PropertyListener(name, handler, list[idx].Origins | origins);
+				else
+					list.Add(new PropertyListener(name, handler, origins));
+			}
+
+			this.propertyListeners = [.. list];
+		}
+	}
+
+	/// <summary>
+	/// Removes a property change listener from one, many, or all properties.
+	/// </summary>
+	/// <param name="handler">The event callback to remove.</param>
+	/// <param name="propertyName">An optional property name to selectively remove properties from listeners with many property subscriptions.</param>
+	public void RemovePropertyChangedListener(PropertyChangedEventHandler handler, string? propertyName = null)
+	{
+		ArgumentNullException.ThrowIfNull(handler);
+
+		lock (this.listenersLock)
+		{
+			if (this.propertyListeners == null)
+				return;
+
+			var list = this.propertyListeners.ToList();
+			int removed = list.RemoveAll(l => l.Handler == handler && (propertyName == null || l.PropertyName == propertyName));
+
+			if (removed > 0)
+				this.propertyListeners = list.Count > 0 ? list.ToArray() : null;
+		}
+	}
+
+	/// <summary>
 	/// Reads all bound properties of this memory object directly from an in-memory buffer slice.
 	/// </summary>
 	/// <param name="locked">The list of currently locked memory objects.</param>
 	/// <param name="bufferPtr">Pointer to the start of this object's memory in the buffer.</param>
 	/// <param name="bufferSize">Size of the buffer slice available for this object.</param>
-	public unsafe void ReadFromBuffer(List<MemoryBase> locked, byte* bufferPtr, int bufferSize)
+	internal unsafe void ReadFromBuffer(List<MemoryBase> locked, byte* bufferPtr, int bufferSize)
 	{
 		if (this.disposed)
 			return;
@@ -636,13 +698,11 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 						if (current != this)
 						{
-							current.SuppressPropNotifications.Dispose();
 							current.disposed = true;
 						}
 					}
 
 					this.Children.Clear();
-					this.SuppressPropNotifications.Dispose();
 				}
 				finally
 				{
@@ -680,10 +740,10 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 		if (freeze)
 		{
-			value ??= bind.Property.GetValue(this);
+			value ??= bind.GetValue(this);
 
 			bind.FreezeValue = value;
-			bind.Property.SetValue(this, value);
+			bind.SetValue(this, value);
 		}
 		else
 		{
@@ -700,7 +760,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		MemoryBase? current = this;
 		while (current != null)
 		{
-			if (current.IsDisposed || Interlocked.CompareExchange(ref current.enableReading, 0, 0) != 1)
+			if (current.disposed || Volatile.Read(ref current.enableReading) != 1)
 				return false;
 
 			current = current.parent;
@@ -718,7 +778,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		MemoryBase? current = this;
 		while (current != null)
 		{
-			if (current.IsDisposed || Interlocked.CompareExchange(ref current.enableWriting, 0, 0) != 1)
+			if (current.disposed || Volatile.Read(ref current.enableWriting) != 1)
 				return false;
 
 			current = current.parent;
@@ -744,7 +804,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			return;
 		}
 
-		object? currentValue = bind.Property.GetValue(this);
+		object? currentValue = bind.GetValue(this);
 		if (currentValue == null || bind.Flags.HasFlagUnsafe(BindFlags.Pointer))
 			return;
 
@@ -756,7 +816,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		if (bind.LastValue == currentValue)
 			return;
 
-		if (!this.CanWrite(bind) || Interlocked.CompareExchange(ref this.isSynchronizing, 0, 0) == 1)
+		if (!this.CanWrite(bind) || Volatile.Read(ref this.isSynchronizing) == 1)
 		{
 			// If this bind couldn't be written right now, add it to the delayed bind list
 			// to attempt to write later.
@@ -812,9 +872,9 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		{
 			if (bind.IsMemoryBase)
 			{
-				if (bind.Property.GetValue(this) is MemoryBase memory)
+				if (bind.GetValue(this) is MemoryBase memory)
 				{
-					this.SetValueWithoutNotification(bind, null);
+					bind.SetValue(this, null);
 					bind.LastValue = null;
 					memory.Dispose();
 				}
@@ -843,7 +903,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				if (childAddress == bind.LastFailureAddress)
 					return;
 
-				MemoryBase? memory = bind.Property.GetValue(this) as MemoryBase;
+				MemoryBase? memory = bind.GetValue(this) as MemoryBase;
 				bool isNew = false;
 
 				if (childAddress != IntPtr.Zero && childAddress.ToInt64() > 0)
@@ -882,14 +942,14 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				{
 					if (childAddress == IntPtr.Zero || childAddress.ToInt64() < 0)
 					{
-						this.SetValueWithoutNotification(bind, null);
+						bind.SetValue(this, null);
 						bind.LastValue = null;
 						memory.Dispose();
 					}
 					else
 					{
 						memory.OnAddressChanged(childAddress, !isNew);
-						this.SetValueWithoutNotification(bind, memory);
+						bind.SetValue(this, memory);
 						bind.LastValue = memory;
 
 						if (isNew)
@@ -957,7 +1017,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 					bind.IsReading = true;
 				}
 
-				this.SetValueWithoutNotification(bind, memValue);
+				bind.SetValue(this, memValue);
 				bind.LastValue = memValue;
 			}
 
@@ -988,7 +1048,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				throw new NotSupportedException("Attempt to write a pointer value to memory.");
 
 			IntPtr bindAddress = bind.GetAddress();
-			object? val = bind.Property.GetValue(this) ?? throw new Exception("Attempt to write null value to memory");
+			object? val = bind.GetValue(this) ?? throw new Exception("Attempt to write null value to memory");
 			MemoryService.Write(bindAddress, val);
 			bind.LastValue = val;
 		}
@@ -1077,67 +1137,52 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		if (this.Address == IntPtr.Zero)
 			return;
 
-		try
+		using (NotificationSuppression.Enter())
 		{
-			SetIsSynchronizing(locked, true);
-
-			for (int i = 0; i < locked.Count; ++i)
+			try
 			{
-				var current = locked[i];
+				SetIsSynchronizing(locked, true);
 
-				// If an array element, direct property binds were already processed by the parent array's sync pass, so skip.
-				if (current.parentBind is not PropertyBindInfo && current.Parent is IArrayMemory && locked.Contains(current.Parent))
+				for (int i = 0; i < locked.Count; ++i)
 				{
-					if (current is IArrayMemory nestedArray)
+					var current = locked[i];
+
+					// If an array element, direct property binds were already processed by the parent array's sync pass, so skip.
+					if (current.parentBind is not PropertyBindInfo && current.Parent is IArrayMemory && current.Parent.IsSynchronizing)
 					{
-						nestedArray.ReadArrayMemory(locked);
+						if (current is IArrayMemory nestedArray)
+						{
+							nestedArray.ReadArrayMemory(locked);
+						}
+
+						continue;
 					}
 
-					continue;
-				}
-
-				// Process standard binds
-				foreach (PropertyBindInfo bind in current.Binds.Values)
-				{
-					try
+					// Process standard binds
+					foreach (PropertyBindInfo bind in current.Binds.Values)
 					{
-						current.ReadFromMemory(bind, locked);
+						try
+						{
+							current.ReadFromMemory(bind, locked);
+						}
+						catch (Exception ex)
+						{
+							throw new Exception($"Failed to read {current.GetType()} - {bind.Name}", ex);
+						}
 					}
-					catch (Exception ex)
-					{
-						throw new Exception($"Failed to read {current.GetType()} - {bind.Name}", ex);
-					}
-				}
 
-				// If array, process its indexed elements.
-				if (current is IArrayMemory arrayMemory)
-				{
-					arrayMemory.ReadArrayMemory(locked);
+					// If array, process its indexed elements.
+					if (current is IArrayMemory arrayMemory)
+					{
+						arrayMemory.ReadArrayMemory(locked);
+					}
 				}
 			}
+			finally
+			{
+				SetIsSynchronizing(locked, false);
+			}
 		}
-		finally
-		{
-			SetIsSynchronizing(locked, false);
-		}
-	}
-
-	/// <summary>
-	/// Sets the value of the specified property bind without triggering property change notifications.
-	/// </summary>
-	/// <param name="bind">The property bind information.</param>
-	/// <param name="value">The value to set.</param>
-	/// <remarks>
-	/// This is used in <see cref="ReadFromMemory"/> to ensure that memory changes
-	/// that originate from the game do not get processed via the OnSelfPropertyChanged, which is
-	/// intended to be called only for user-initiated changes (incl. history).
-	/// </remarks>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private void SetValueWithoutNotification(PropertyBindInfo bind, object? value)
-	{
-		this.SuppressPropNotifications.Value = true;
-		bind.Property.SetValue(this, value);
-		this.SuppressPropNotifications.Value = false;
 	}
 
 	/// <summary>
@@ -1148,45 +1193,37 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <exception cref="Exception">Thrown when the parent is not null but the parent bind is null.</exception>
 	private void PropagatePropertyChanged(string propertyName, PropertyChange context)
 	{
+		MemObjPropertyChangedEventArgs? args = null;
 		MemoryBase? current = this;
-		int ancestorCount = context.BindPath.Count;
-		bool hasAnySubscribers = current.PropertyChanged != null;
 
 		while (current != null)
 		{
+			var globalHandler = current.PropertyChanged;
+			if (globalHandler != null)
+			{
+				args ??= new MemObjPropertyChangedEventArgs(propertyName, context);
+				globalHandler.Invoke(current, args);
+			}
+
+			var listeners = current.propertyListeners;
+			if (listeners != null)
+			{
+				for (int i = 0; i < listeners.Length; i++)
+				{
+					ref readonly var listener = ref listeners[i];
+					if ((listener.Origins & context.Origin) != 0 && (listener.PropertyName.Length == 0 || listener.PropertyName == propertyName))
+					{
+						args ??= new MemObjPropertyChangedEventArgs(propertyName, context);
+						listener.Handler.Invoke(current, args);
+					}
+				}
+			}
+
 			if (current.parent == null)
 				break;
 
 			if (current.parentBind == null)
 				throw new Exception("Parent was not null, but parent bind was!");
-
-			ancestorCount++;
-			current = current.parent;
-
-			if (current.PropertyChanged != null)
-				hasAnySubscribers = true;
-		}
-
-		// If nobody is interested in the entire ancestor chain, don't propagate
-		if (!hasAnySubscribers)
-			return;
-
-		// Resize the bind info list that that we know total capacity
-		context.BindPath.Capacity = ancestorCount;
-
-		MemObjPropertyChangedEventArgs? args = null;
-		current = this;
-		while (current != null)
-		{
-			var handler = current.PropertyChanged;
-			if (handler != null)
-			{
-				args ??= new MemObjPropertyChangedEventArgs(propertyName, context);
-				handler.Invoke(current, args);
-			}
-
-			if (current.parent == null)
-				break;
 
 			context.AddPath(current.parentBind!);
 			current = current.parent;
@@ -1205,6 +1242,41 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		{
 			bind.LastValue = null;
 			bind.LastFailureAddress = IntPtr.Zero;
+		}
+	}
+
+	private readonly record struct PropertyListener(string PropertyName, PropertyChangedEventHandler Handler, PropertyChange.Origins Origins);
+
+	/// <summary>
+	/// A RAII scope that suppresses property notifications on the current thread for its duration.
+	/// </summary>
+	protected static class NotificationSuppression
+	{
+		public static Scope Enter() => new();
+
+		public readonly ref struct Scope
+		{
+			[ThreadStatic]
+			private static int s_depth;
+			private readonly bool isAcquired;
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public Scope()
+			{
+				s_depth++;
+				this.isAcquired = true;
+			}
+
+			public static bool IsActive => s_depth > 0;
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public void Dispose()
+			{
+				if (this.isAcquired && s_depth > 0)
+				{
+					s_depth--;
+				}
+			}
 		}
 	}
 }

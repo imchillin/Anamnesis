@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis;
@@ -98,7 +98,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		{
 			this.Memory.Do(a =>
 			{
-				a.PropertyChanged -= this.OnViewModelPropertyChanged;
+				a.RemovePropertyChangedListener(this.OnViewModelPropertyChanged);
 				a.Pinned = null;
 			});
 			this.Memory.Dispose();
@@ -252,7 +252,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		{
 			this.IsRetargeting = true;
 
-			this.Memory?.Do(a => a.PropertyChanged -= this.OnViewModelPropertyChanged);
+			this.Memory?.Do(a => a.RemovePropertyChangedListener(this.OnViewModelPropertyChanged));
 
 			ObjectHandle<GameObjectMemory>? newHandle = null;
 			bool? isGpose = GposeService.IsInGpose();
@@ -383,7 +383,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Kind)));
 		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsGPoseActor)));
 
-		this.Memory.Do(a => a.PropertyChanged += this.OnViewModelPropertyChanged);
+		this.Memory.Do(a => a.AddPropertyChangedListener(this.OnViewModelPropertyChanged, nameof(ActorMemory.DisplayName), nameof(ActorMemory.ObjectKind), nameof(ActorMemory.IsGPoseActor)));
 
 		this.UpdateInitials(this.DisplayName);
 

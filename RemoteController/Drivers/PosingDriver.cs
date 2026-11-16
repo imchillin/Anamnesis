@@ -10,13 +10,22 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 
 using GameObjectDelegates = Interop.Delegates.GameObject;
+using HkaPartialSkeletonDelegate = Interop.Delegates.HkaPartialSkeleton;
+using HkaPartialSkeletonStruct = Interop.Types.HkaPartialSkeleton;
 using HkaPoseDelegate = Interop.Delegates.HkaPose;
 using HkaPoseStruct = Interop.Types.HkaPose;
+using HumanPostBoneDeformerDelegate = Interop.Delegates.HumanPostBoneDeformer;
+using HumanPostBoneDeformerStruct = Interop.Types.HumanPostBoneDeformer;
 
 /// <summary>
 /// A driver class for controlling the havok animation engine within
 /// the game to enable pose functionality within GPose.
 /// </summary>
+/// <remarks>
+/// - Credits to the Ktisis team and Karou for discovering the solution for the bone drifting issue.<br/>
+/// - Credits to Karou for discovering the solution for eye pupil and iris bone manipulation.
+/// - Credits to Karou for figuring out how to cleanly toggle physics freezing on/off when posing is enabled.
+/// </remarks>
 [RequiresUnreferencedCode("This class is not trimming-safe")]
 [RequiresDynamicCode("This class requires dynamic code due to hook reflection")]
 public sealed class PosingDriver : DriverBase<PosingDriver>
@@ -28,10 +37,14 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	// - "CalculateBoneModelSpace" and "SyncModelSpace" are hooked to prevent the game from overwriting manual pose adjustments when it calculates bone transforms.
 	// - "GameObject.SetPosition" is hooked to prevent the GPose camera from resetting its position.
 	// - "UpdateVisualPosition" and "UpdateVisualRotation" are hooked to prevent the game from updating the visual position and rotation of objects.
+	// - "HkaPartialSkeleton.GetBoneLocalTransform" is hooked to allow for scale override of eye pupil and iris bones. This is necessary as Anamnesis does not currently modify the local-space pose, just model-space.
+	// - "HumanPostBoneDeformer.Execute" is hooked to prevent customization deformations (bust size, tail length, ear length) from executing on human skeletons during posing.
+	//   - When posing is enabled, transform updates are partially blocked by posing hooks, which causes the deformer to create an exponential feedback loop that breaks the mesh.
+	//   - Helmet visor rotation does not suffer from said feedback loop and must continue to run so that visors remain posable.
 
 	private readonly GposeDriver gposeDriver;
 	private FunctionHook<GameObjectDelegates.SetPosition>? hookSetPosition;
-	private FunctionHook<HkaPartialSkeleton.SetBoneModelTransform>? hookPhysics;
+	private FunctionHook<HkaPartialSkeletonDelegate.SetBoneModelTransform>? hookPhysics;
 	private FunctionHook<HkaLookAtIkSolver.Solve>? hookLookAt;
 	private FunctionHook<HkaPoseDelegate.CalculateBoneModelSpace>? hookCalculateBone;
 	private FunctionHook<HkaPoseDelegate.SyncModelSpace>? hookSyncModel;
@@ -39,9 +52,12 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	private FunctionHook<GameObjectDelegates.UpdateVisualPosition>? hookUpdateVisualPosition;
 	private FunctionHook<GameObjectDelegates.UpdateVisualRotation>? hookUpdateVisualRotation;
 	private FunctionHook<GameObjectDelegates.UpdateVisualScale>? hookUpdateVisualScale;
+	private FunctionHook<ProceduralBoneDriver.ApplyRootRelativeModelTransform>? hookProceduralBone;
+	private FunctionHook<HkaPartialSkeletonDelegate.GetBoneLocalTransform>? hookGetBoneLocalTransform;
+	private FunctionHook<HumanPostBoneDeformerDelegate.Execute>? hookPostBoneDeformer;
 
 	private GameObjectDelegates.SetPosition? setPositionDetour;
-	private HkaPartialSkeleton.SetBoneModelTransform? physicsDetour;
+	private HkaPartialSkeletonDelegate.SetBoneModelTransform? physicsDetour;
 	private HkaLookAtIkSolver.Solve? lookAtDetour;
 	private HkaPoseDelegate.CalculateBoneModelSpace? calculateBoneDetour;
 	private HkaPoseDelegate.SyncModelSpace? syncModelDetour;
@@ -49,6 +65,9 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	private GameObjectDelegates.UpdateVisualPosition? updateVisualPositionDetour;
 	private GameObjectDelegates.UpdateVisualRotation? updateVisualRotationDetour;
 	private GameObjectDelegates.UpdateVisualScale? updateVisualScaleDetour;
+	private ProceduralBoneDriver.ApplyRootRelativeModelTransform? proceduralBoneDetour;
+	private HkaPartialSkeletonDelegate.GetBoneLocalTransform? getBoneLocalTransformDetour;
+	private HumanPostBoneDeformerDelegate.Execute? postBoneDeformerDetour;
 
 	private volatile bool isPosingEnabled = false;
 	private volatile bool arePhysicsFrozen = false;
@@ -84,6 +103,9 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 				this.updateVisualPositionDetour = this.DetourUpdateVisualPosition;
 				this.updateVisualRotationDetour = this.DetourUpdateVisualRotation;
 				this.updateVisualScaleDetour = this.DetourUpdateVisualScale;
+				this.proceduralBoneDetour = this.DetourApplyRootRelativeModelTransform;
+				this.getBoneLocalTransformDetour = this.DetourGetBoneLocalTransform;
+				this.postBoneDeformerDetour = this.DetourPostBoneDeformerExecute;
 
 				this.hookPhysics = HookRegistry.CreateAndActivateHook(this.physicsDetour);
 				this.hookLookAt = HookRegistry.CreateAndActivateHook(this.lookAtDetour);
@@ -94,6 +116,9 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 				this.hookUpdateVisualPosition = HookRegistry.CreateAndActivateHook(this.updateVisualPositionDetour);
 				this.hookUpdateVisualRotation = HookRegistry.CreateAndActivateHook(this.updateVisualRotationDetour);
 				this.hookUpdateVisualScale = HookRegistry.CreateAndActivateHook(this.updateVisualScaleDetour);
+				this.hookProceduralBone = HookRegistry.CreateAndActivateHook(this.proceduralBoneDetour);
+				this.hookGetBoneLocalTransform = HookRegistry.CreateAndActivateHook(this.getBoneLocalTransformDetour);
+				this.hookPostBoneDeformer = HookRegistry.CreateAndActivateHook(this.postBoneDeformerDetour);
 			}
 
 			this.gposeDriver.StateChanged += this.OnGposeStateChanged;
@@ -148,14 +173,17 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 		this.hookUpdateVisualPosition?.Dispose();
 		this.hookUpdateVisualRotation?.Dispose();
 		this.hookUpdateVisualScale?.Dispose();
+		this.hookProceduralBone?.Dispose();
+		this.hookGetBoneLocalTransform?.Dispose();
+		this.hookPostBoneDeformer?.Dispose();
 	}
 
-	private unsafe nint DetourSetBoneModelTransform(nint partialPtr, ulong boneId, HkaTransform4* transform, byte bUpdateSecondaryPose, byte bPropagate)
+	private unsafe nint DetourSetBoneModelTransform(HkaPartialSkeletonStruct* partialSkeleton, ulong boneId, HkaTransform4* transform, byte bUpdateSecondaryPose, byte bPropagate)
 	{
-		if (this.arePhysicsFrozen && partialPtr != nint.Zero)
-			return partialPtr;
+		if (this.arePhysicsFrozen && partialSkeleton != null)
+			return (nint)partialSkeleton;
 
-		return this.hookPhysics!.OriginalFunction(partialPtr, boneId, transform, bUpdateSecondaryPose, bPropagate);
+		return this.hookPhysics!.OriginalFunction(partialSkeleton, boneId, transform, bUpdateSecondaryPose, bPropagate);
 	}
 
 	private unsafe byte* DetourLookAtSolve(byte* a1, HkaVector4* a2, HkaVector4* a3, float a4, HkaVector4* a5, HkaVector4* a6)
@@ -240,6 +268,54 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 			return;
 
 		this.hookUpdateVisualScale!.OriginalFunction(goPtr, a2);
+	}
+
+	private unsafe nint DetourApplyRootRelativeModelTransform(nint modifierPtr, HkaQuaternion* deltaRotation, nint posePtr)
+	{
+		if (this.isPosingEnabled && posePtr != nint.Zero)
+		{
+			HkaPoseStruct* pose = (HkaPoseStruct*)posePtr;
+			return (nint)pose->BoneFlags.Data;
+		}
+
+		return this.hookProceduralBone!.OriginalFunction(modifierPtr, deltaRotation, posePtr);
+	}
+
+	private unsafe HkaTransform4* DetourGetBoneLocalTransform(HkaPartialSkeletonStruct* partialSkeleton, HkaTransform4* outTransform, short boneIdx)
+	{
+		if (this.isPosingEnabled && partialSkeleton != null)
+		{
+			// Local-space of bone is marked as dirty so that the game recalculates from model-space, which Anamnesis uses to push transform updates
+			partialSkeleton->SetBoneLocalDirty(boneIdx);
+		}
+
+		return this.hookGetBoneLocalTransform!.OriginalFunction(partialSkeleton, outTransform, boneIdx);
+	}
+
+	private unsafe void DetourPostBoneDeformerExecute(HumanPostBoneDeformerStruct* deformer)
+	{
+		if (this.isPosingEnabled && deformer != null)
+		{
+			// Suppress all body customization deformations (bust, tail, ears) to prevent a positive feedback loop.
+			// Only helmet visor rotation is allowed so that visors remain posable.
+			if ((deformer->Flags & PostBoneDeformerFlags.Visor) == 0)
+				return;
+
+			PostBoneDeformerFlags originalFlags = deformer->Flags;
+			deformer->Flags &= PostBoneDeformerFlags.Visor;
+			try
+			{
+				this.hookPostBoneDeformer!.OriginalFunction(deformer);
+			}
+			finally
+			{
+				deformer->Flags = originalFlags;
+			}
+
+			return;
+		}
+
+		this.hookPostBoneDeformer!.OriginalFunction(deformer);
 	}
 
 	private void OnGposeStateChanged(bool isGpose)

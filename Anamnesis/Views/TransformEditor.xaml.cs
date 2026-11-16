@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Controls;
@@ -54,7 +54,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 		if (TargetService.Instance.SelectedActor != null)
 		{
 			this.currentActor = TargetService.Instance.SelectedActor;
-			this.currentActor.Do(a => a.PropertyChanged += this.OnActorPropertyChanged);
+			this.currentActor.Do(a => a.AddPropertyChangedListener(this.OnActorPropertyChanged, nameof(ActorMemory.IsMotionDisabled)));
 		}
 
 		TargetService.ActorSelected += this.OnSelectedActorChanged;
@@ -519,9 +519,9 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	private void OnSelectedActorChanged(ObjectHandle<ActorMemory>? actor)
 	{
 		// We already track skeleton changes so this is only used to keep track of actor property changes
-		this.currentActor?.Do(a => a.PropertyChanged -= this.OnActorPropertyChanged);
+		this.currentActor?.Do(a => a.RemovePropertyChangedListener(this.OnActorPropertyChanged));
 		this.currentActor = actor;
-		this.currentActor?.Do(a => a.PropertyChanged += this.OnActorPropertyChanged);
+		this.currentActor?.Do(a => a.AddPropertyChangedListener(this.OnActorPropertyChanged, nameof(ActorMemory.IsMotionDisabled)));
 
 		// Raise property changed for the entire TransformEditor
 		this.RaisePropertyChanged(string.Empty);
@@ -534,9 +534,6 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	/// <param name="e"> The event arguments.</param>
 	private void OnActorPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		if (e.PropertyName == nameof(ActorMemory.IsMotionDisabled))
-		{
-			this.RaisePropertyChanged(nameof(this.CanTranslate));
-		}
+		this.RaisePropertyChanged(nameof(this.CanTranslate));
 	}
 }
