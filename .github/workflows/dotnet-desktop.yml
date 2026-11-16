@@ -162,8 +162,8 @@ jobs:
             --framework "${{ env.DESKTOP_FRAMEWORK }}" `
             --noPortable `
             --msi `
-            --msiBanner "./Anamnesis/Assets/MsiBackground.bmp" `
-            --msiLogo "./Anamnesis/Assets/MsiTopBanner.bmp" `
+            --msiDialogBackground "./Anamnesis/Assets/MsiBackground.bmp" `
+            --msiTopBanner "./Anamnesis/Assets/MsiTopBanner.bmp" `
             --instLicense "./LICENSE.md" `
             -o "./Releases"
 
