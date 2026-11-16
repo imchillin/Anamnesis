@@ -12,16 +12,16 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4.2.2
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
         submodules: recursive
         persist-credentials: true
     
-    - name: Setup .NET 9.0
-      uses: actions/setup-dotnet@v3.4.2
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v6
       with:
-        dotnet-version: '9.0.x'
+        global-json-file: ./global.json
 
     - name: Restore dependencies
       run: dotnet restore

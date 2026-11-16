@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
@@ -52,7 +52,7 @@ public readonly struct Ornament(ExcelPage page, uint offset, uint row)
 	public readonly byte CustomizeGroupId => page.ReadUInt8(offset + 26);
 
 	/// <inheritdoc/>
-	public readonly ImgRef? Icon => new(page.ReadUInt16(offset + 20));
+	public readonly ImgRef? Icon => ImgRef.GetOrCreate(page.ReadUInt16(offset + 20));
 
 	/// <inheritdoc/>
 	public readonly Mod? Mod => null;

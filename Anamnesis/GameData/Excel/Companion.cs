@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
@@ -54,7 +54,7 @@ public readonly struct Companion(ExcelPage page, uint offset, uint row)
 	public readonly RowRef<ModelChara> Model => new(page.Module, (uint)page.ReadUInt16(offset + 16), page.Language);
 
 	/// <inheritdoc/>
-	public ImgRef? Icon => new(page.ReadUInt16(offset + 22));
+	public ImgRef? Icon => ImgRef.GetOrCreate(page.ReadUInt16(offset + 22));
 
 	/// <inheritdoc/>
 	public Mod? Mod => null;

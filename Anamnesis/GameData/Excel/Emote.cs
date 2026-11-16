@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
@@ -52,7 +52,7 @@ public readonly unsafe struct Emote(ExcelPage page, uint offset, uint row)
 	/// <summary>
 	/// Gets the image reference of the emote icon.
 	/// </summary>
-	public ImgRef? Icon => new(page.ReadUInt32(offset + 4));
+	public ImgRef? Icon => ImgRef.GetOrCreate(page.ReadUInt32(offset + 4));
 
 	public readonly byte EmoteCategoryRowId => (byte)page.ReadUInt8(offset + 38);
 
