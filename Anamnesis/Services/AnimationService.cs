@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Services;
@@ -50,7 +50,7 @@ public class AnimationService : ServiceBase<AnimationService>
 		ActorService.Instance,
 		TargetService.Instance,
 		GposeService.Instance,
-		GameDataService.Instance
+		GameDataService.Instance,
 	];
 
 	/// <summary>
