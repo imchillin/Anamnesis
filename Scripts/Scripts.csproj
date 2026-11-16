@@ -11,5 +11,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Anamnesis\Anamnesis.csproj" />
+    <ProjectReference Include="..\RemoteController\RemoteController.csproj" />
+    <ProjectReference Include="..\Lib\SharedMemoryIPC\SharedMemoryIPC\SharedMemoryIPC.csproj" />
   </ItemGroup>
 </Project>
