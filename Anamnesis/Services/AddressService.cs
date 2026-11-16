@@ -5,7 +5,9 @@ namespace Anamnesis.Services;
 
 using Anamnesis.Core;
 using Anamnesis.Memory;
+using Iced.Intel;
 using RemoteController.Drivers;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,9 +23,11 @@ public class AddressService : ServiceBase<AddressService>
 	public const int CURRENT_TERRITORY_ID_OFFSET = 0x4108;
 	public const int TRANSITION_TERRITORY_ID_OFFSET = 0x4118;
 	public const int FRAMEWORK_UIMODULE_OFFSET = 0x2B68;
-	public const int UIMODULE_AGENT_LOBBY_OFFSET = 0xE4AE8;
+	public const int UIMODULE_GET_AGENT_MODULE_VFUNC_INDEX = 37;
+	public const int AGENT_MODULE_LOBBY_OFFSET = 0x20;
 	public const int AGENT_LOBBY_IS_LOGGED_IN_OFFSET = 0x12D8;
 
+	private static int s_agentModuleOffset = -1;
 	private static IntPtr s_cameraManager;
 
 	public static IntPtr ObjectTable { get; private set; }
@@ -52,7 +56,12 @@ public class AddressService : ServiceBase<AddressService>
 			if (uiModule == IntPtr.Zero)
 				return IntPtr.Zero;
 
-			return MemoryService.Read<IntPtr>(IntPtr.Add(uiModule, UIMODULE_AGENT_LOBBY_OFFSET));
+			int agentModuleOffset = GetAgentModuleOffset();
+			if (agentModuleOffset < 0)
+				return IntPtr.Zero;
+
+			IntPtr agentModule = IntPtr.Add(uiModule, agentModuleOffset);
+			return MemoryService.Read<IntPtr>(IntPtr.Add(agentModule, AGENT_MODULE_LOBBY_OFFSET));
 		}
 	}
 
@@ -103,6 +112,7 @@ public class AddressService : ServiceBase<AddressService>
 	/// <inheritdoc/>
 	public override async Task Shutdown()
 	{
+		s_agentModuleOffset = -1;
 		ObjectTable = IntPtr.Zero;
 		GPoseFilters = IntPtr.Zero;
 		GameMain = IntPtr.Zero;
@@ -187,5 +197,74 @@ public class AddressService : ServiceBase<AddressService>
 				Log.Error(ex, $"Failed to scan memory for text signature: {name} (Have you tried restarting FFXIV?)");
 			}
 		});
+	}
+
+	/// <summary>
+	/// Resolves the offset of AgentModule within UIModule by disassembling UIModule's virtual function "GetAgentModule".
+	/// </summary>
+	/// <returns>The offset of AgentModule within UIModule, or -1 if resolution failed.</returns>
+	private static int GetAgentModuleOffset()
+	{
+		if (s_agentModuleOffset > 0)
+			return s_agentModuleOffset;
+
+		IntPtr uiModule = UIModule;
+		if (uiModule == IntPtr.Zero)
+			return -1;
+
+		try
+		{
+			IntPtr vtbl = MemoryService.Read<IntPtr>(uiModule);
+			if (vtbl == IntPtr.Zero)
+				return -1;
+
+			IntPtr vfuncPtr = MemoryService.Read<IntPtr>(IntPtr.Add(vtbl, UIMODULE_GET_AGENT_MODULE_VFUNC_INDEX * IntPtr.Size));
+			if (vfuncPtr == IntPtr.Zero)
+				return -1;
+
+			byte[] code = new byte[NativeFunctions.MAX_X64_INSTRUCTION_LENGTH];
+			if (!MemoryService.Read(vfuncPtr, code))
+				return -1;
+
+			var reader = new ByteArrayCodeReader(code);
+			var decoder = Decoder.Create(64, reader);
+			decoder.IP = (ulong)vfuncPtr;
+
+			var instruction = decoder.Decode();
+
+			// Resolve function entry in case function is hooked
+			if (instruction.Mnemonic == Mnemonic.Jmp && instruction.Op0Kind is OpKind.NearBranch64 or OpKind.NearBranch32)
+			{
+				vfuncPtr = (IntPtr)instruction.NearBranchTarget;
+				if (!MemoryService.Read(vfuncPtr, code))
+					return -1;
+
+				reader = new ByteArrayCodeReader(code);
+				decoder = Decoder.Create(64, reader);
+				decoder.IP = (ulong)vfuncPtr;
+				instruction = decoder.Decode();
+			}
+
+			// NOTE: GetAgentModule() is compiled as:
+			//   lea rax, [rcx + <offset>]
+			//   retn
+			if (instruction.Mnemonic == Mnemonic.Lea &&
+				instruction.Op0Register == Register.RAX &&
+				instruction.MemoryBase == Register.RCX &&
+				instruction.MemoryDisplacement64 > 0)
+			{
+				s_agentModuleOffset = (int)instruction.MemoryDisplacement64;
+				Log.Verbose($"Resolved UIModule.AgentModule offset dynamically: 0x{s_agentModuleOffset:X}");
+				return s_agentModuleOffset;
+			}
+
+			Log.Warning($"Unexpected instruction at UIModule.GetAgentModule (0x{vfuncPtr:X}): {instruction}.");
+		}
+		catch (Exception ex)
+		{
+			Log.Warning(ex, $"Failed to dynamically resolve AgentModule offset from UIModule vfunc {UIMODULE_GET_AGENT_MODULE_VFUNC_INDEX}.");
+		}
+
+		return -1;
 	}
 }

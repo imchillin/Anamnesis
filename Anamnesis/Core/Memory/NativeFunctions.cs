@@ -34,6 +34,8 @@ internal static partial class NativeFunctions
 	public const int TIMERR_NOERROR = 0;
 	public const uint MAPVK_VK_TO_VSC = 0;
 
+	public const int MAX_X64_INSTRUCTION_LENGTH = 15;
+
 	public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
 	/// <summary>
