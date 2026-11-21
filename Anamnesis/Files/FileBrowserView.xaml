@@ -210,11 +210,11 @@
 						<Grid.ContextMenu>
 							<ContextMenu IsEnabled="{Binding CanWrite}">
 								<MenuItem Click="OnDeleteClick"
-										  Header="Delete" />
+										  Header="Common_Delete" />
 								<MenuItem Click="OnEditClick"
-										  Header="Edit" />
+										  Header="Common_Edit" />
 								<MenuItem Click="OnRenameClick"
-										  Header="Rename" />
+										  Header="Common_Rename" />
 							</ContextMenu>
 						</Grid.ContextMenu>
 

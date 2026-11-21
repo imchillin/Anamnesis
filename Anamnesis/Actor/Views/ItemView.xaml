@@ -70,30 +70,21 @@
 						<Grid.ContextMenu>
 							<ContextMenu>
 								<!-- Console Games Wiki -->
-								<MenuItem Click="OnOpenInConsoleGamesWikiClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
-									<MenuItem.Header>
-										<XivToolsWpf:TextBlock Key="Site_OpenInConsoleGamesWiki"/>
-									</MenuItem.Header>
+								<MenuItem Header="Site_OpenInConsoleGamesWiki" Click="OnOpenInConsoleGamesWikiClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
 									<MenuItem.Icon>
 										<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 							
 								<!-- Gamer Escape -->
-								<MenuItem Click="OnOpenInGamerEscapeClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
-									<MenuItem.Header>
-										<XivToolsWpf:TextBlock Key="Site_OpenInGamerEscape"/>
-									</MenuItem.Header>
+								<MenuItem Header="Site_OpenInGamerEscape" Click="OnOpenInGamerEscapeClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
 									<MenuItem.Icon>
 										<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 							
 								<!-- Garland Tools -->
-								<MenuItem Click="OnOpenInGarlandToolsClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
-									<MenuItem.Header>
-										<XivToolsWpf:TextBlock Key="Site_OpenInGarlandTools"/>
-									</MenuItem.Header>
+								<MenuItem Header="Site_OpenInGarlandTools" Click="OnOpenInGarlandToolsClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
 									<MenuItem.Icon>
 										<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
@@ -102,30 +93,21 @@
 								<Separator Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}}"/>
 							
 								<!-- Copy Item Name -->
-								<MenuItem Click="OnCopyItemNameClicked" Visibility="{Binding IsValidItemForCopy, Converter={StaticResource B2V}, Mode=OneWay}">
-									<MenuItem.Header>
-										<XivToolsWpf:TextBlock Key="Item_CopyName"/>
-									</MenuItem.Header>
+								<MenuItem Header="Item_CopyName" Click="OnCopyItemNameClicked" Visibility="{Binding IsValidItemForCopy, Converter={StaticResource B2V}, Mode=OneWay}">
 									<MenuItem.Icon>
 										<Image Source="{Binding Item.Icon, Converter={StaticResource Img}}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 							
 								<!-- Reset Slot -->
-								<MenuItem Click="OnResetSlotClicked">
-									<MenuItem.Header>
-										<XivToolsWpf:TextBlock Key="Item_ResetSlot"/>
-									</MenuItem.Header>
+								<MenuItem Header="Item_ResetSlot" Click="OnResetSlotClicked">
 									<MenuItem.Icon>
 										<fa:IconImage Icon="UndoAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 							
 								<!-- Clear Slot -->
-								<MenuItem Click="OnClearSlotClicked">
-									<MenuItem.Header>
-										<XivToolsWpf:TextBlock Key="Item_ClearSlot"/>
-									</MenuItem.Header>
+								<MenuItem Header="Item_ClearSlot" Click="OnClearSlotClicked">
 									<MenuItem.Icon>
 										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
@@ -250,10 +232,7 @@
 
 					<Button.ContextMenu>
 						<ContextMenu>
-							<MenuItem Click="OnSwapDyeChannels">
-								<MenuItem.Header>
-									<XivToolsWpf:TextBlock Key="Character_Equipment_SwapDyeChannels"/>
-								</MenuItem.Header>
+							<MenuItem Header="Character_Equipment_SwapDyeChannels" Click="OnSwapDyeChannels">
 								<MenuItem.Icon>
 									<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 								</MenuItem.Icon>
@@ -299,10 +278,7 @@
 
 					<Button.ContextMenu>
 						<ContextMenu>
-							<MenuItem Click="OnSwapDyeChannels">
-								<MenuItem.Header>
-									<XivToolsWpf:TextBlock Key="Character_Equipment_SwapDyeChannels"/>
-								</MenuItem.Header>
+							<MenuItem Header="Character_Equipment_SwapDyeChannels" Click="OnSwapDyeChannels">
 								<MenuItem.Icon>
 									<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 								</MenuItem.Icon>

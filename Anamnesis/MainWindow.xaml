@@ -1,4 +1,4 @@
-﻿<XivToolsWpfWindows:ChromedWindow
+<XivToolsWpfWindows:ChromedWindow
 	x:Class="Anamnesis.GUI.MainWindow"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -40,16 +40,16 @@
 							<ToggleButton.ContextMenu>
 								<ContextMenu>
 									<MenuItem Click="OnUnpinActorClicked"
-											  Header="Unpin" />
+											  Header="Common_Unpin" />
 
 									<MenuItem Visibility="{Binding IsValid, Converter={StaticResource B2V}}" 
 											  Click="OnTargetActorClicked"
-											  Header="Target" />
+											  Header="Common_Target" />
 
-								<MenuItem Visibility="{Binding DataContext.SettingsService.Settings.UseExternalRefreshBrio, Source={x:Reference PinnedActorList}, Converter={StaticResource B2V}}" 
+									<MenuItem Visibility="{Binding DataContext.SettingsService.Settings.UseExternalRefreshBrio, Source={x:Reference PinnedActorList}, Converter={StaticResource B2V}}" 
 											  IsEnabled="{Binding IsGPoseActor}"
 											  Click="OnDespawnActorClicked"
-											  Header="Despawn" />
+											  Header="Common_Despawn" />
 								</ContextMenu>
 							</ToggleButton.ContextMenu>
 

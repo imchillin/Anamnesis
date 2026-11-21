@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
 	x:Class="Anamnesis.Actor.Pages.PosePage"
 	x:Name="RootControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -187,7 +187,7 @@
 
 					<MenuItem Style="{StaticResource ButtonMenuItemRight}">
 						<!-- Import modes (for the popup import options) -->
-						<MenuItem Style="{StaticResource AnamMenuItemHeader}">
+						<MenuItem Style="{StaticResource AnaMenuItemHeader}">
 							<MenuItem.Header>
 								<ContentControl>
 									<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="Transparent">
@@ -218,46 +218,35 @@
 						</MenuItem>
 
 						<!-- (Import) Full Chracter -->
-						<MenuItem Header="Pose_FullChar" 
-								  Style="{StaticResource AnaMenuItem}" 
-								  Click="OnImportFullCharClicked">
+						<MenuItem Header="Pose_FullChar" Click="OnImportFullCharClicked">
 							<MenuItem.ToolTip>
 								<XivToolsWpf:TextBlock Key="Pose_FullCharTooltip"/>
 							</MenuItem.ToolTip>
 						</MenuItem>
 
 						<!-- (Import) Body Only -->
-						<MenuItem Header="Pose_Body" 
-								  Style="{StaticResource AnaMenuItem}" 
-								  Click="OnImportBodyClicked">
+						<MenuItem Header="Pose_Body" Click="OnImportBodyClicked">
 							<MenuItem.ToolTip>
 								<XivToolsWpf:TextBlock Key="Pose_BodyTooltip" />
 							</MenuItem.ToolTip>
 						</MenuItem>
 
 						<!-- (Import) Face Only -->
-						<MenuItem Header="Pose_Expression" 
-								  Style="{StaticResource AnaMenuItem}" 
-								  Click="OnImportExpressionClicked">
+						<MenuItem Header="Pose_Expression" Click="OnImportExpressionClicked">
 							<MenuItem.ToolTip>
 								<XivToolsWpf:TextBlock Key="Pose_ExpressionTooltip" />
 							</MenuItem.ToolTip>
 						</MenuItem>
 
 						<!-- (Import) Weapons Only -->
-						<MenuItem Header="Pose_WeaponsOnly"
-								  Style="{StaticResource AnaMenuItem}"
-								  Click="OnImportWeaponsClicked">
+						<MenuItem Header="Pose_WeaponsOnly" Click="OnImportWeaponsClicked">
 							<MenuItem.ToolTip>
 								<XivToolsWpf:TextBlock Key="Pose_WeaponsOnlyTooltip" />
 							</MenuItem.ToolTip>
 						</MenuItem>
 
 						<!-- (Import) Selected Bones -->
-						<MenuItem Header="Pose_Selected"
-								  Style="{StaticResource AnaMenuItem}"
-								  Click="OnImportSelectedBonesClicked"
-								  IsEnabled="{Binding Skeleton.HasSelection}">
+						<MenuItem Header="Pose_Selected" Click="OnImportSelectedBonesClicked" IsEnabled="{Binding Skeleton.HasSelection}">
 							<MenuItem.ToolTip>
 								<XivToolsWpf:TextBlock Key="Pose_SelectedTooltip" />
 							</MenuItem.ToolTip>
@@ -269,16 +258,10 @@
 							  Style="{StaticResource ButtonMenuItemLeft}"
 							  Width="74"
 							  Click="OnExportClicked"/>
-					
-					<MenuItem Style="{StaticResource ButtonMenuItemRight}">
-						<MenuItem Header="Pose_Selected"
-								  Style="{StaticResource AnaMenuItem}"
-								  Click="OnExportSelectedClicked"
-								  IsEnabled="{Binding Skeleton.HasSelection}"/>
 
-						<MenuItem Header="Common_SaveFileMeta"
-							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnExportMetaClicked" />
+					<MenuItem Style="{StaticResource ButtonMenuItemRight}">
+						<MenuItem Header="Pose_Selected" Click="OnExportSelectedClicked" IsEnabled="{Binding Skeleton.HasSelection}"/>
+						<MenuItem Header="Common_SaveFileMeta" Click="OnExportMetaClicked" />
 					</MenuItem>
 				</Menu>
 			</Grid>
