@@ -10,6 +10,13 @@
 			 xmlns:local="clr-namespace:Anamnesis.Actor.Views"
 			 mc:Ignorable="d"
 			 d:DesignHeight="450">
+
+	<local:NpcSelectorDrawer.Resources>
+		<Style x:Key="SelectorItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+			<EventSetter Event="PreviewMouseRightButtonDown" Handler="OnItemPreviewMouseRightButtonDown"/>
+		</Style>
+	</local:NpcSelectorDrawer.Resources>
+
 	<Grid Margin="0, 6, 0, 0">
 
 		<Grid.RowDefinitions>
@@ -87,9 +94,7 @@
 
 		</Grid>
 
-		<xivToolsWpfSelectors:Selector
-			Grid.Row="2"
-			Width="256">
+		<xivToolsWpfSelectors:Selector Grid.Row="2" Width="256" ListBoxItemStyle="{StaticResource SelectorItemStyle}">
 
 			<xivToolsWpfSelectors:Selector.ItemTemplate>
 				<DataTemplate>

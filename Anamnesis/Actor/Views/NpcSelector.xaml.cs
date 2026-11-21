@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Views;
@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using XivToolsWpf;
 
 public abstract class NpcSelectorDrawer : SelectorDrawer<INpcBase>
@@ -201,12 +202,17 @@ public partial class NpcSelector : NpcSelectorDrawer
 		this.FilterItems();
 	}
 
+	private void OnItemPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+	{
+		e.Handled = true;
+	}
+
 	private async void OnCopyId(object sender, RoutedEventArgs e)
 	{
-		if (this.Value == null)
+		if (sender is not FrameworkElement element || element.DataContext is not INpcBase npc)
 			return;
 
-		await ClipboardUtility.CopyToClipboardAsync(this.Value.ToStringKey());
+		await ClipboardUtility.CopyToClipboardAsync(npc.ToStringKey());
 	}
 
 	[AddINotifyPropertyChangedInterface]
