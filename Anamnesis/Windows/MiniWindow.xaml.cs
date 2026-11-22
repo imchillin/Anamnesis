@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Windows;
@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using XivToolsWpf;
 
 /// <summary>
 /// Interaction logic for MiniWindow.xaml.
@@ -23,6 +22,7 @@ public partial class MiniWindow : Window
 	private Point downPos;
 	private bool mouseDown = false;
 	private bool isDeactivating = false;
+	private int idleGeneration = 0;
 
 	public MiniWindow(MainWindow main)
 	{
@@ -33,8 +33,6 @@ public partial class MiniWindow : Window
 
 		this.Left = SettingsService.Current.OverlayWindowPosition.X;
 		this.Top = SettingsService.Current.OverlayWindowPosition.Y;
-
-		_ = Task.Run(this.Ping);
 	}
 
 	private void OnLoaded(object sender, RoutedEventArgs e)
@@ -44,6 +42,7 @@ public partial class MiniWindow : Window
 
 	private async void Main_Deactivated(object? sender, System.EventArgs e)
 	{
+		int generation = ++this.idleGeneration;
 		this.isHidden = true;
 		this.main.Hide();
 
@@ -52,6 +51,12 @@ public partial class MiniWindow : Window
 		this.isDeactivating = true;
 		await Task.Delay(200);
 		this.isDeactivating = false;
+
+		await Task.Delay(300);
+		if (this.isHidden && generation == this.idleGeneration)
+		{
+			((Storyboard)this.Resources["AnimateIdleStoryboard"]).Begin(this, true);
+		}
 	}
 
 	private void OnMouseDown(object sender, MouseButtonEventArgs e)
@@ -92,6 +97,8 @@ public partial class MiniWindow : Window
 		if (delta.Length > 100)
 			return;
 
+		++this.idleGeneration;
+		((Storyboard)this.Resources["AnimateIdleStoryboard"]).Stop(this);
 		this.OnLocationChanged(null, null);
 		((Storyboard)this.Resources["AnimateOpenStoryboard"]).Begin(this);
 		this.main.Show();
@@ -139,21 +146,9 @@ public partial class MiniWindow : Window
 		}
 		else
 		{
+			++this.idleGeneration;
+			((Storyboard)this.Resources["AnimateIdleStoryboard"]).Stop(this);
 			this.main.Deactivated -= this.Main_Deactivated;
-		}
-	}
-
-	private async Task Ping()
-	{
-		while (this.main != null && this.Dispatcher != null)
-		{
-			await Task.Delay(3000);
-			await Dispatch.MainThread();
-
-			if (!this.isHidden)
-				continue;
-
-			((Storyboard)this.Resources["AnimateIdleStoryboard"]).Begin(this);
 		}
 	}
 }
