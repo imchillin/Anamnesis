@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Styles.Controls;
@@ -261,15 +261,15 @@ public partial class VectorEditor : UserControl, INotifyPropertyChanged
 
 	/// <summary>Gets the X-axis color based on the color mode.</summary>
 	[DependsOn(nameof(ColorMode))]
-	public string XColor => (this.ColorMode == ColorModes.Rotation) ? "#2861FD" : string.Empty;
+	public string? XColor => (this.ColorMode == ColorModes.Rotation) ? "#2861FD" : null;
 
 	/// <summary>Gets the Y-axis color based on the color mode.</summary>
 	[DependsOn(nameof(ColorMode))]
-	public string YColor => (this.ColorMode == ColorModes.Rotation) ? "#8DDB04" : string.Empty;
+	public string? YColor => (this.ColorMode == ColorModes.Rotation) ? "#8DDB04" : null;
 
 	/// <summary>Gets the Z-axis color based on the color mode.</summary>
 	[DependsOn(nameof(ColorMode))]
-	public string ZColor => (this.ColorMode == ColorModes.Rotation) ? "#FF1746" : string.Empty;
+	public string? ZColor => (this.ColorMode == ColorModes.Rotation) ? "#FF1746" : null;
 
 	/// <summary>Gets or sets the X value of the vector.</summary>
 	[AlsoNotifyFor(nameof(Value))]

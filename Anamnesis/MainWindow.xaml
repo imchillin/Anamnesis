@@ -11,6 +11,7 @@
 	xmlns:XivToolsWpfWindows="clr-namespace:XivToolsWpf.Windows;assembly=XivToolsWpf"
 	xmlns:tabs="clr-namespace:Anamnesis.Tabs"
 	xmlns:ana="clr-namespace:Anamnesis"
+	xmlns:services="clr-namespace:Anamnesis.Services"
 	Closing="OnClosing"
 	Icon="/Assets/Anamnesis.ico"
 	Loaded="Window_Loaded"
@@ -46,7 +47,7 @@
 											  Click="OnTargetActorClicked"
 											  Header="Common_Target" />
 
-									<MenuItem Visibility="{Binding DataContext.SettingsService.Settings.UseExternalRefreshBrio, Source={x:Reference PinnedActorList}, Converter={StaticResource B2V}}" 
+									<MenuItem Visibility="{Binding Settings.UseExternalRefreshBrio, Source={x:Static services:SettingsService.Instance}, Converter={StaticResource B2V}}" 
 											  IsEnabled="{Binding IsGPoseActor}"
 											  Click="OnDespawnActorClicked"
 											  Header="Common_Despawn" />
