@@ -289,7 +289,6 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable, IObjectTable
 			throw new InvalidOperationException("Cannot create a handle for an object not part of the object table.");
 
 		this.ptr = ptr;
-		this.table.RegisterHandle(this);
 
 		lock (ObjectHandleCache.Lock)
 		{
@@ -313,6 +312,9 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable, IObjectTable
 				this.hasCacheRef = true;
 			}
 		}
+
+		if (this.hasCacheRef)
+			this.table.RegisterHandle(this);
 	}
 
 	/// <summary>
@@ -496,6 +498,7 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable, IObjectTable
 
 		if (!this.IsValid)
 		{
+			this.table.UnregisterHandle(this);
 			lock (ObjectHandleCache.Lock)
 			{
 				if (ObjectHandleCache.Cache.TryRemove(currentPtr, out var entry))
