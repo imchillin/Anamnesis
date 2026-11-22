@@ -58,14 +58,17 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	];
 
 	private static readonly Lock s_hookLock = new();
+	private static readonly TimeSpan s_workQueueBudget = TimeSpan.FromMilliseconds(1);
 	private static readonly HashSet<string> s_transformSyncGroups = ["Transforms"];
-	private static readonly ConcurrentDictionary<string, PoseFile> s_poseRefRegistry = new();
+	private static readonly ConcurrentDictionary<IntPtr, PoseFile> s_poseRefRegistry = new();
+	private static readonly ConcurrentDictionary<IntPtr, PoseFile> s_savedPoseRegistry = new();
 	private static HookHandle? s_renderSkeletonHook = null;
 	private static PosePage? s_activeInstance = null;
 
 	private static DirectoryInfo? s_lastLoadDir;
 	private static DirectoryInfo? s_lastSaveDir;
 
+	private bool isConfirmingDisable;
 	private bool isLeftMouseButtonDownOnWindow;
 	private bool isDragging;
 	private Point origMouseDownPoint;
@@ -118,6 +121,27 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	public bool IsFlipping { get; private set; }
 	public ObjectHandle<ActorMemory>? Actor { get; private set; }
+
+	[DoNotNotify]
+	public bool IsPosingEnabled
+	{
+		get => PoseService.IsEnabled;
+		set
+		{
+			if (value == PoseService.IsEnabled)
+				return;
+
+			if (value || !SettingsService.Current.WarnOnUnsavedPose)
+			{
+				PoseService.SetEnabled(value);
+				return;
+			}
+
+			// Keep the toggle visually enabled until the user confirms disabling pose mode.
+			this.Dispatcher.BeginInvoke(() => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsPosingEnabled))));
+			_ = this.ConfirmAndDisablePoseModeAsync();
+		}
+	}
 
 	public SkeletonEntity? Skeleton
 	{
@@ -382,30 +406,29 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		return Volatile.Read(ref s_activeInstance)?.RenderSkeletonDetour(args) ?? [];
 	}
 
-	private static void CaptureBaselinePose(ObjectHandle<ActorMemory> actorHandle, bool overwrite = false)
+	private static PoseFile? CapturePose(ObjectHandle<ActorMemory> actorHandle)
 	{
-		if (!actorHandle.IsValid)
-			return;
-
-		if (actorHandle.Do(a => a.ModelObject?.Transform == null || a.ModelObject.Skeleton == null) != false)
-			return;
-
-		var actorId = actorHandle.DoRef(a => a.IdNoAddress);
-		if (actorId == null || (!overwrite && s_poseRefRegistry.ContainsKey(actorId)))
-			return;
+		if (!actorHandle.IsValid || actorHandle.Do(a => !a.IsGPoseActor || a.ModelObject?.Transform == null || a.ModelObject.Skeleton == null) != false)
+			return null;
 
 		PoseFile poseFile = new();
-		var skeleton = new Skeleton(actorHandle);
-		poseFile.WriteToFile(actorHandle, skeleton, null);
+		poseFile.WriteToFile(actorHandle, new Skeleton(actorHandle), null);
+		return poseFile;
+	}
+
+	private static void CaptureBaselinePose(ObjectHandle<ActorMemory> actorHandle, bool overwrite = false)
+	{
+		IntPtr actorAddress = actorHandle.Address;
+		if (actorAddress == IntPtr.Zero || (!overwrite && s_poseRefRegistry.ContainsKey(actorAddress)))
+			return;
+
+		if (CapturePose(actorHandle) is not PoseFile poseFile)
+			return;
 
 		if (overwrite)
-		{
-			s_poseRefRegistry[actorId] = poseFile;
-		}
+			s_poseRefRegistry[actorAddress] = poseFile;
 		else
-		{
-			s_poseRefRegistry.TryAdd(actorId, poseFile);
-		}
+			s_poseRefRegistry.TryAdd(actorAddress, poseFile);
 	}
 
 	private static void RestoreBonePositions(Dictionary<Bone, Vector3> bonePositions)
@@ -587,10 +610,17 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			WorkQueue.Value.Enabled |= true;
 		}
 
+		if (!PoseService.IsEnabled)
+		{
+			s_poseRefRegistry.Clear();
+			s_savedPoseRegistry.Clear();
+		}
+
 		this.OnDataContextChanged(null, default);
 
 		HistoryService.OnHistoryApplied += this.OnHistoryApplied;
 		PoseService.PropertyChanged += this.OnPoseServicePropertyChanged;
+		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsPosingEnabled)));
 	}
 
 	private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -625,6 +655,8 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		if (e.PropertyName == nameof(PoseService.IsEnabled))
 		{
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsPosingEnabled)));
+
 			await WorkQueue.Value.Enqueue(() =>
 			{
 				this.Skeleton?.Actor?.Do(actor =>
@@ -646,16 +678,21 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			{
 				this.OnClearClicked(null, null);
 				s_poseRefRegistry.Clear();
+				s_savedPoseRegistry.Clear();
 			}
 			else
 			{
-				var objHandles = ActorService.InstanceOrNull?.ObjectTable.GetAll();
-				if (objHandles != null)
+				var actorService = ActorService.InstanceOrNull;
+				var objHandles = actorService?.ObjectTable.GetAll();
+				if (actorService != null && objHandles != null)
 				{
 					List<Task<bool>> tasks = [];
 					foreach (var objHandle in objHandles)
 					{
-						var actorHandle = ActorService.InstanceOrNull?.ObjectTable.Get<ActorMemory>(objHandle.Address);
+						if (!actorService.IsGPoseActor(objHandle.Address))
+							continue;
+
+						var actorHandle = actorService.ObjectTable.Get<ActorMemory>(objHandle.Address);
 						if (actorHandle == null)
 							continue;
 
@@ -808,34 +845,108 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		await this.HandleSecondaryOptionImport(PoseImportOptions.WeaponsOnly);
 	}
 
-	private async void OnExportClicked(object sender, RoutedEventArgs e)
-	{
-		if (this.Actor == null || this.Skeleton == null)
-			return;
+	private async void OnExportClicked(object sender, RoutedEventArgs e) => await this.SavePoseAsync();
 
-		s_lastSaveDir = await PoseFile.Save(s_lastSaveDir, this.Actor, this.Skeleton);
-	}
-
-	private async void OnExportMetaClicked(object sender, RoutedEventArgs e)
-	{
-		if (this.Actor == null || this.Skeleton == null)
-			return;
-
-		s_lastSaveDir = await PoseFile.Save(s_lastSaveDir, this.Actor, this.Skeleton, null, true);
-	}
+	private async void OnExportMetaClicked(object sender, RoutedEventArgs e) => await this.SavePoseAsync(editMeta: true);
 
 	private async void OnExportSelectedClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.Skeleton == null)
 			return;
 
-		var bones = new HashSet<string>();
-		foreach (Bone bone in this.Skeleton.SelectedBones)
+		var bones = this.Skeleton.SelectedBones.Select(b => b.Name).ToHashSet();
+		await this.SavePoseAsync(bones);
+	}
+
+	private async Task SavePoseAsync(HashSet<string>? bones = null, bool editMeta = false)
+	{
+		if (this.Actor == null || this.Skeleton == null)
+			return;
+
+		var actorHandle = this.Actor;
+		var (dir, savedPose) = await PoseFile.Save(s_lastSaveDir, actorHandle, this.Skeleton, bones, editMeta);
+		if (dir != null)
+			s_lastSaveDir = dir;
+
+		if (bones == null && savedPose != null && actorHandle.Address != IntPtr.Zero)
+			s_savedPoseRegistry[actorHandle.Address] = savedPose;
+	}
+
+	private async Task ConfirmAndDisablePoseModeAsync()
+	{
+		if (this.isConfirmingDisable)
+			return;
+
+		this.isConfirmingDisable = true;
+
+		try
 		{
-			bones.Add(bone.Name);
+			if (await this.HasUnsavedPoseChangesAsync())
+			{
+				if (!PoseService.IsEnabled)
+					return;
+
+				bool? confirmed = await GenericDialog.ShowLocalizedAsync(
+					"Pose_WarningUnsavedChanges",
+					"Common_Confirm",
+					MessageBoxButton.YesNo,
+					"Common_DontAskAgain",
+					() => SettingsService.Current.WarnOnUnsavedPose = false);
+				if (confirmed != true)
+					return;
+			}
+
+			if (PoseService.IsEnabled)
+				PoseService.SetEnabled(false);
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Failed to verify unsaved pose changes before disabling pose mode.");
+		}
+		finally
+		{
+			this.isConfirmingDisable = false;
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsPosingEnabled)));
+		}
+	}
+
+	private async Task<bool> HasUnsavedPoseChangesAsync()
+	{
+		if (s_poseRefRegistry.IsEmpty)
+			return false;
+
+		bool hasChanges = false;
+		void CheckActors()
+		{
+			this.Skeleton?.WriteSkeleton();
+
+			var objectTable = ActorService.InstanceOrNull?.ObjectTable;
+			if (objectTable == null)
+				return;
+
+			foreach ((IntPtr actorAddress, PoseFile baselinePose) in s_poseRefRegistry)
+			{
+				var actorHandle = objectTable.Get<ActorMemory>(actorAddress);
+				if (actorHandle == null || CapturePose(actorHandle) is not PoseFile currentPose)
+					continue;
+
+				bool matchesSaved = s_savedPoseRegistry.TryGetValue(actorAddress, out PoseFile? savedPose)
+					&& currentPose.IsApproximately(savedPose);
+
+				if (!matchesSaved && !currentPose.IsApproximately(baselinePose))
+				{
+					hasChanges = true;
+					return;
+				}
+			}
 		}
 
-		s_lastSaveDir = await PoseFile.Save(s_lastSaveDir, this.Actor, this.Skeleton, bones);
+		if (WorkQueue.Value.Enabled)
+			await WorkQueue.Value.Enqueue(CheckActors);
+		else
+			CheckActors();
+
+		return hasChanges;
 	}
 
 	private void OnViewChanged(object sender, SelectionChangedEventArgs e)
@@ -856,14 +967,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		if (this.Actor == null || this.Skeleton == null)
 			return;
 
-		var actorId = this.Actor.DoRef(a => a.IdNoAddress);
-		if (actorId == null)
-		{
-			Log.Error("Failed to reset pose: Could not retrieve target actor's identifier");
-			return;
-		}
-
-		if (!s_poseRefRegistry.TryGetValue(actorId, out PoseFile? refPose))
+		if (!s_poseRefRegistry.TryGetValue(this.Actor.Address, out PoseFile? refPose))
 		{
 			Log.Error("Failed to reset pose: Baseline not found in pose registry");
 			return;
@@ -1247,7 +1351,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		try
 		{
-			WorkQueue.Value.ProcessPending();
+			WorkQueue.Value.ProcessPending(s_workQueueBudget);
 		}
 		catch (Exception ex)
 		{

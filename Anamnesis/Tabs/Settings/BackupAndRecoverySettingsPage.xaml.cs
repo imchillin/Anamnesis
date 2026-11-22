@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Tabs.Settings;
@@ -23,6 +23,7 @@ public partial class BackupAndRecoverySettingsPage : System.Windows.Controls.Use
 		this.SettingCategories = new()
 		{
 			{ "Backup", new SettingCategory("Backup", this.BackupGroupBox) },
+			{ "Confirmations", new SettingCategory("Confirmations", this.ConfirmationsGroupBox) },
 		};
 
 		// Set up backup category settings
@@ -31,6 +32,9 @@ public partial class BackupAndRecoverySettingsPage : System.Windows.Controls.Use
 		this.SettingCategories["Backup"].Settings.Add(new Setting("Settings_AutoSaveInterval", this.BnR_Backup_AutoSaveInterval));
 		this.SettingCategories["Backup"].Settings.Add(new Setting("Settings_AutoSaveSaveLast", this.BnR_Backup_AutoSaveSaveLast));
 		this.SettingCategories["Backup"].Settings.Add(new Setting("Settings_AutoSaveOnlyInGpose", this.BnR_Backup_AutoSaveOnlyInGpose));
+
+		// Set up confirmations category settings
+		this.SettingCategories["Confirmations"].Settings.Add(new Setting("Settings_WarnOnUnsavedPose", this.BnR_Confirmations_WarnOnUnsavedPose));
 	}
 
 	public static SettingsService SettingsService => SettingsService.Instance;

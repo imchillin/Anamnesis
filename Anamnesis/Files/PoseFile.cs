@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Files;
@@ -16,6 +16,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using XivToolsWpf.Math3D.Extensions;
 
 [Flags]
 public enum PoseMode
@@ -93,15 +94,15 @@ public class PoseFile : JsonFileBase
 		return boneName != "n_root" ? BoneProcessingModes.FullLoad : BoneProcessingModes.Ignore;
 	}
 
-	public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ObjectHandle<ActorMemory>? actor, Skeleton? skeleton, HashSet<string>? bones = null, bool editMeta = false)
+	public static async Task<(DirectoryInfo? Directory, PoseFile? File)> Save(DirectoryInfo? dir, ObjectHandle<ActorMemory>? actor, Skeleton? skeleton, HashSet<string>? bones = null, bool editMeta = false)
 	{
 		if (actor == null || skeleton == null)
-			return null;
+			return (null, null);
 
 		SaveResult result = await FileService.Save<PoseFile>(dir, FileService.DefaultPoseDirectory);
 
 		if (result.Path == null)
-			return null;
+			return (null, null);
 
 		var file = new PoseFile();
 		file.WriteToFile(actor, skeleton, bones);
@@ -112,7 +113,7 @@ public class PoseFile : JsonFileBase
 		if (editMeta)
 			FileMetaEditor.Show(result.Path, file);
 
-		return result.Directory;
+		return (result.Directory, file);
 	}
 
 	public void WriteToFile(ObjectHandle<ActorMemory> actor, Skeleton skeleton, HashSet<string>? bones)
@@ -187,6 +188,49 @@ public class PoseFile : JsonFileBase
 
 		return allBones;
 	}
+
+	/// <summary>
+	/// Determines whether this pose file is approximately equal to another pose file within a specified error margin.
+	/// </summary>
+	/// <param name="other">The pose file to compare with.</param>
+	/// <param name="errorMargin">The acceptable error margin for transform comparisons. Default is 0.001f.</param>
+	/// <returns>True if all transforms and bone collections match approximately; otherwise, false.</returns>
+	public bool IsApproximately(PoseFile? other, float errorMargin = 0.001f)
+	{
+		if (ReferenceEquals(this, other))
+			return true;
+
+		if (other == null)
+			return false;
+
+		if (!AreApproximatelyEqual(this.Position, other.Position, errorMargin)
+			|| !AreApproximatelyEqual(this.Rotation, other.Rotation, errorMargin)
+			|| !AreApproximatelyEqual(this.Scale, other.Scale, errorMargin))
+		{
+			return false;
+		}
+
+		Dictionary<string, Bone?> bonesA = this.GetAllBones();
+		Dictionary<string, Bone?> bonesB = other.GetAllBones();
+
+		return bonesA.Count == bonesB.Count
+			&& bonesA.All(kv => bonesB.TryGetValue(kv.Key, out Bone? b)
+				&& (kv.Value?.IsApproximately(b, errorMargin) ?? (b == null)));
+	}
+
+	private static bool AreApproximatelyEqual(Vector3? a, Vector3? b, float errorMargin) => (a, b) switch
+	{
+		(null, null) => true,
+		(Vector3 va, Vector3 vb) => va.IsApproximately(vb, errorMargin),
+		_ => false,
+	};
+
+	private static bool AreApproximatelyEqual(Quaternion? a, Quaternion? b, float errorMargin) => (a, b) switch
+	{
+		(null, null) => true,
+		(Quaternion qa, Quaternion qb) => qa.IsApproximately(qb, errorMargin) || qa.IsApproximately(-qb, errorMargin),
+		_ => false,
+	};
 
 	private void WriteToFile(ActorMemory actor, Skeleton skeleton, HashSet<string>? bones)
 	{
@@ -524,5 +568,24 @@ public class PoseFile : JsonFileBase
 		public Vector3? Position { get; set; }
 		public Quaternion? Rotation { get; set; }
 		public Vector3? Scale { get; set; }
+
+		/// <summary>
+		/// Determines whether this bone's transform is approximately equal to another bone's transform within a specified error margin.
+		/// </summary>
+		/// <param name="other">The bone to compare with.</param>
+		/// <param name="errorMargin">The acceptable error margin for transform comparisons. Default is 0.001f.</param>
+		/// <returns>True if position, rotation, and scale match approximately; otherwise, false.</returns>
+		public bool IsApproximately(Bone? other, float errorMargin = 0.001f)
+		{
+			if (ReferenceEquals(this, other))
+				return true;
+
+			if (other == null)
+				return false;
+
+			return AreApproximatelyEqual(this.Position, other.Position, errorMargin)
+				&& AreApproximatelyEqual(this.Rotation, other.Rotation, errorMargin)
+				&& AreApproximatelyEqual(this.Scale, other.Scale, errorMargin);
+		}
 	}
 }
