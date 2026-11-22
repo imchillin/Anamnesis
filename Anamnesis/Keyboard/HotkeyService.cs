@@ -34,7 +34,7 @@ public class HotkeyService : ServiceBase<HotkeyService>
 	[
 		SettingsService.Instance,
 		MemoryService.Instance,
-		GposeService.Instance
+		GposeService.Instance,
 	];
 
 	public static void RegisterHotkeyHandler(string function, Action callback)

@@ -76,7 +76,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 		AddressService.Instance,
 		GameService.Instance,
 		GameDataService.Instance,
-		GposeService.Instance
+		GposeService.Instance,
 	];
 
 	/// <inheritdoc/>

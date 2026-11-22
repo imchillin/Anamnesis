@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Sheets;
@@ -8,6 +8,7 @@ using Lumina.Data.Files;
 using Lumina.Extensions;
 using Serilog;
 using System;
+using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -27,6 +28,9 @@ public class ImgRef
 
 	/// <summary>Image cache.</summary>
 	private static readonly ConditionalWeakTable<ImgRef, ImageSource> s_imageCache = [];
+
+	/// <summary>Interned <see cref="ImgRef"/> instance cache keyed by image ID.</summary>
+	private static readonly ConcurrentDictionary<uint, ImgRef> s_refCache = [];
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ImgRef"/> class.
@@ -56,16 +60,31 @@ public class ImgRef
 	}
 
 	/// <summary>
-	/// Gets the image source from the reference's image identifier.
+	/// Gets a cached <see cref="ImgRef"/> instance for the specified image ID.
 	/// </summary>
-	/// <param name="imageId">The image identifier.</param>
-	/// <returns>A bitmap source or null if the image is not found.</returns>
+	/// <param name="imageId">An image ID.</param>
+	/// <returns>A cached <see cref="ImgRef"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ImageSource? GetImage(uint imageId)
-	{
-		ImgRef imgRef = new(imageId);
-		return imgRef.GetImage();
-	}
+	public static ImgRef GetOrCreate(uint imageId) =>
+		s_refCache.GetOrAdd(imageId, static id => new ImgRef(id));
+
+	/// <summary>
+	/// Gets a cached <see cref="ImgRef"/> instance for the specified image ID.
+	/// </summary>
+	/// <param name="imageId">An image ID.</param>
+	/// <returns>A cached <see cref="ImgRef"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ImgRef GetOrCreate(ushort imageId) =>
+		GetOrCreate((uint)imageId);
+
+	/// <summary>
+	/// Gets a cached <see cref="ImgRef"/> instance for the specified image ID.
+	/// </summary>
+	/// <param name="imageId">An image ID.</param>
+	/// <returns>A cached <see cref="ImgRef"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ImgRef GetOrCreate(int imageId) =>
+		GetOrCreate((uint)imageId);
 
 	/// <summary>
 	/// Gets the image source from the reference's image identifier.
@@ -73,11 +92,8 @@ public class ImgRef
 	/// <param name="imageId">The image identifier.</param>
 	/// <returns>A bitmap source or null if the image is not found.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ImageSource? GetImage(ushort imageId)
-	{
-		ImgRef imgRef = new(imageId);
-		return imgRef.GetImage();
-	}
+	public static ImageSource? GetImage(uint imageId) =>
+		GetOrCreate(imageId).GetImage();
 
 	/// <summary>
 	/// Gets the image source from the reference's image identifier.
@@ -85,11 +101,17 @@ public class ImgRef
 	/// <param name="imageId">The image identifier.</param>
 	/// <returns>A bitmap source or null if the image is not found.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ImageSource? GetImage(int imageId)
-	{
-		ImgRef imgRef = new(imageId);
-		return imgRef.GetImage();
-	}
+	public static ImageSource? GetImage(ushort imageId) =>
+		GetOrCreate(imageId).GetImage();
+
+	/// <summary>
+	/// Gets the image source from the reference's image identifier.
+	/// </summary>
+	/// <param name="imageId">The image identifier.</param>
+	/// <returns>A bitmap source or null if the image is not found.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ImageSource? GetImage(int imageId) =>
+		GetOrCreate(imageId).GetImage();
 
 	/// <summary>Gets the image source from the reference's image identifier.</summary>
 	/// <returns>A bitmap source or null if the image is not found.</returns>

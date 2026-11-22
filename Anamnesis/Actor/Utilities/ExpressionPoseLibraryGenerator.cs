@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Utilities;
@@ -207,9 +207,7 @@ public static class ExpressionPoseLibraryGenerator
 					AnimationService.Instance.ResetAnimationOverride(actor);
 
 					AnimationService.Instance.SpeedControlEnabled = prevSpeedControl;
-					if (actor.Animation != null)
-						actor.Animation.LinkSpeeds = prevLinkSpeeds;
-
+					actor.Animation?.LinkSpeeds = prevLinkSpeeds;
 					actor.AutomaticRefreshEnabled = prevAutoRefresh;
 					await actor.Refresh();
 				}

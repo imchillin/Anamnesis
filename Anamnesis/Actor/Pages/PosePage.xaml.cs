@@ -610,10 +610,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		});
 		this.Actor = null;
 
-		if (this.Skeleton != null)
-		{
-			this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
-		}
+		this.Skeleton?.PropertyChanged -= this.OnSkeletonPropertyChanged;
 
 		this.Skeleton?.Clear();
 		this.Skeleton = null;

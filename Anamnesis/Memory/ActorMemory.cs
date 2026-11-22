@@ -365,9 +365,9 @@ public class ActorMemory : GameObjectMemory, IDisposable
 				// Big hack to keep bone change history names short.
 				if (change.OriginBind.Memory.ParentBind?.Type == typeof(TransformMemory))
 				{
-					change.Name = (PoseService.SelectedBonesText == null) ?
-						LocalizationService.GetStringFormatted("History_ChangeBone", LocalizationService.GetString("Pose_OtherUnknown")) :
-						LocalizationService.GetStringFormatted("History_ChangeBone", PoseService.SelectedBonesText);
+					change.Name = (PoseService.SelectedBonesText == null)
+						? LocalizationService.GetStringFormatted("History_ChangeBone", LocalizationService.GetString("Pose_OtherUnknown"))
+						: LocalizationService.GetStringFormatted("History_ChangeBone", PoseService.SelectedBonesText);
 				}
 
 				this.History.Record(change);

@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Views;
@@ -104,8 +104,34 @@ public partial class FxivColorSelectorDrawer : UserControl, IDrawer
 
 	public class Item
 	{
-		public ColorData.Entry Entry { get; set; }
+		private ColorData.Entry entry;
+		private SolidColorBrush? brush;
+
+		public ColorData.Entry Entry
+		{
+			get => this.entry;
+			set
+			{
+				this.entry = value;
+				this.brush = null;
+			}
+		}
+
 		public int Index { get; set; }
-		public SolidColorBrush Brush => new(this.Entry.WpfColor);
+
+		public SolidColorBrush Brush
+		{
+			get
+			{
+				if (this.brush == null)
+				{
+					SolidColorBrush created = new(this.entry.WpfColor);
+					created.Freeze();
+					this.brush = created;
+				}
+
+				return this.brush;
+			}
+		}
 	}
 }
