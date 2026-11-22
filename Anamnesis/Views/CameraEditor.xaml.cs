@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Views;
@@ -28,7 +28,8 @@ public partial class CameraEditor : UserControl
 
 		this.ContentArea.DataContext = this;
 
-		SettingsService.SettingsChanged += this.OnSettingsChanged;
+		this.Loaded += this.OnLoaded;
+		this.Unloaded += this.OnUnloaded;
 	}
 
 	public static GameService GameService => GameService.Instance;
@@ -109,6 +110,18 @@ public partial class CameraEditor : UserControl
 
 			CameraService.GPoseCamera.Position = a.ModelObject.Transform.Position;
 		});
+	}
+
+	private void OnLoaded(object sender, RoutedEventArgs e)
+	{
+		SettingsService.SettingsChanged -= this.OnSettingsChanged;
+		SettingsService.SettingsChanged += this.OnSettingsChanged;
+		this.OnSettingsChanged(null, EventArgs.Empty);
+	}
+
+	private void OnUnloaded(object sender, RoutedEventArgs e)
+	{
+		SettingsService.SettingsChanged -= this.OnSettingsChanged;
 	}
 
 	private void OnSettingsChanged(object? sender, EventArgs e)

@@ -142,6 +142,19 @@ public partial class MainWindow : ChromedWindow
 		this.Opacity = SettingsService.Current.WindowOpacity;
 	}
 
+	protected override void OnClosed(EventArgs e)
+	{
+		base.OnClosed(e);
+
+		this.mini?.Close();
+		this.mini = null;
+
+		SettingsService.SettingsChanged -= this.OnSettingsChanged;
+		ViewService.ShowingDrawer -= this.OnShowDrawer;
+		TargetService.ActorSelected -= this.OnActorSelected;
+		GameService.Instance.PropertyChanged -= this.OnGameServicePropertyChanged;
+	}
+
 	private void OnSettingsChanged(object? sender = null, PropertyChangedEventArgs? args = null)
 	{
 		this.WindowScale.ScaleX = SettingsService.Current.Scale;
@@ -383,10 +396,6 @@ public partial class MainWindow : ChromedWindow
 			return;
 
 		this.IsClosing = true;
-		this.mini?.Close();
-
-		SettingsService.SettingsChanged -= this.OnSettingsChanged;
-		ViewService.ShowingDrawer -= this.OnShowDrawer;
 
 		SettingsService.Current.WindowPosition = new Point(this.Left, this.Top);
 		SettingsService.Save();

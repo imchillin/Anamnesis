@@ -61,6 +61,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	private static readonly HashSet<string> s_transformSyncGroups = ["Transforms"];
 	private static readonly ConcurrentDictionary<string, PoseFile> s_poseRefRegistry = new();
 	private static HookHandle? s_renderSkeletonHook = null;
+	private static PosePage? s_activeInstance = null;
 
 	private static DirectoryInfo? s_lastLoadDir;
 	private static DirectoryInfo? s_lastSaveDir;
@@ -82,11 +83,13 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		this.ContentArea.DataContext = this;
 
+		Volatile.Write(ref s_activeInstance, this);
+
 		lock (s_hookLock)
 		{
 			s_renderSkeletonHook ??= ControllerService.Instance.RegisterInterceptor<Framework.RenderGraphics>(
 				HookBehavior.After,
-				this.RenderSkeletonDetour);
+				RenderSkeletonDetourStatic);
 
 			if (s_renderSkeletonHook != null && s_renderSkeletonHook.IsValid)
 			{
@@ -374,6 +377,11 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		});
 	}
 
+	private static byte[] RenderSkeletonDetourStatic(ReadOnlySpan<byte> args)
+	{
+		return Volatile.Read(ref s_activeInstance)?.RenderSkeletonDetour(args) ?? [];
+	}
+
 	private static void CaptureBaselinePose(ObjectHandle<ActorMemory> actorHandle, bool overwrite = false)
 	{
 		if (!actorHandle.IsValid)
@@ -572,6 +580,8 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private void OnLoaded(object sender, RoutedEventArgs e)
 	{
+		Volatile.Write(ref s_activeInstance, this);
+
 		if (s_renderSkeletonHook != null && s_renderSkeletonHook.IsValid)
 		{
 			WorkQueue.Value.Enabled |= true;
@@ -585,8 +595,11 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private void OnUnloaded(object sender, RoutedEventArgs e)
 	{
-		WorkQueue.Value.Enabled = false;
-		WorkQueue.Value.Clear();
+		if (Interlocked.CompareExchange(ref s_activeInstance, null, this) == this)
+		{
+			WorkQueue.Value.Enabled = false;
+			WorkQueue.Value.Clear();
+		}
 
 		PoseService.PropertyChanged -= this.OnPoseServicePropertyChanged;
 		HistoryService.OnHistoryApplied -= this.OnHistoryApplied;
@@ -838,7 +851,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.ThreeDView.Visibility = selected == 3 ? Visibility.Visible : Visibility.Collapsed;
 	}
 
-	private async void HandlePoseReset(PoseImportOptions resetOption)
+	private async Task HandlePoseReset(PoseImportOptions resetOption)
 	{
 		if (this.Actor == null || this.Skeleton == null)
 			return;
@@ -860,16 +873,23 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		if (resetMode == PoseMode.None)
 			return;
 
-		await ImportPose(this.Actor, this.Skeleton, resetOption, resetMode, () => this.TransformEditor?.InvalidateInternalState(), refPose);
+		try
+		{
+			await ImportPose(this.Actor, this.Skeleton, resetOption, resetMode, () => this.TransformEditor?.InvalidateInternalState(), refPose);
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Failed to reset pose");
+		}
 	}
 
-	private async void OnPoseFullResetClicked(object sender, RoutedEventArgs e) => this.HandlePoseReset(PoseImportOptions.FullTransform);
+	private async void OnPoseFullResetClicked(object sender, RoutedEventArgs e) => await this.HandlePoseReset(PoseImportOptions.FullTransform);
 
-	private async void OnPoseExpressionResetClicked(object sender, RoutedEventArgs e) => this.HandlePoseReset(PoseImportOptions.ExpressionOnly);
+	private async void OnPoseExpressionResetClicked(object sender, RoutedEventArgs e) => await this.HandlePoseReset(PoseImportOptions.ExpressionOnly);
 
-	private async void OnPoseBodyResetClicked(object sender, RoutedEventArgs e) => this.HandlePoseReset(PoseImportOptions.BodyOnly);
+	private async void OnPoseBodyResetClicked(object sender, RoutedEventArgs e) => await this.HandlePoseReset(PoseImportOptions.BodyOnly);
 
-	private async void OnPoseSelectedBonesResetClicked(object sender, RoutedEventArgs e) => this.HandlePoseReset(PoseImportOptions.SelectedBones);
+	private async void OnPoseSelectedBonesResetClicked(object sender, RoutedEventArgs e) => await this.HandlePoseReset(PoseImportOptions.SelectedBones);
 
 	private async void OnPoseUpdateBaselineClicked(object sender, RoutedEventArgs e)
 	{
@@ -1249,6 +1269,10 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 				{
 					this.Skeleton = skeleton;
 					this.pendingSkeletonRetryAttempts = 0;
+
+					if (PoseService.IsEnabled)
+						CaptureBaselinePose(this.Actor);
+
 					Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => this.BindSkeleton(skeleton)));
 					Log.Verbose("Skeleton successfully created in detour.");
 				}
