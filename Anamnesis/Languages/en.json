@@ -26,6 +26,7 @@
   "Common_Rename": "Rename",
   "Common_Edit": "Edit",
   "Common_CopyId": "Copy ID",
+  "Common_Reset": "Reset",
 
   "ProcessSelector_AllWarning": "Selecting a process other than the DirectX 11 Final Fantasy XIV process can cause the selected process and Anamnesis to crash",
   "ProcessSelector_NotFound": "Final Fantasy XIV process (ffxiv_dx11) not found.",
@@ -440,6 +441,10 @@
   "Pose_ImportRotationImportTooltip": "Import pose rotations",
   "Pose_ImportPositionImportTooltip": "Import pose positions",
   "Pose_ImportScaleImportTooltip": "Import pose scale",
+  "Pose_ResetRotationTooltip": "Reset pose rotations",
+  "Pose_ResetPositionTooltip": "Reset pose positions",
+  "Pose_ResetScaleTooltip": "Reset pose scale",
+  "Pose_UpdateBaseline": "Update baseline pose",
 
   "Pose_Matrix_HeadCategory": "Head",
   "Pose_Matrix_EyeCategory": "Eye",

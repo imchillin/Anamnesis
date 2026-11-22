@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Services;
@@ -30,6 +30,7 @@ public class PoseService : ServiceBase<PoseService>
 
 	public static string? SelectedBonesText { get; set; }
 
+	[DoNotNotify]
 	public bool IsEnabled
 	{
 		get => this.isEnabled;
