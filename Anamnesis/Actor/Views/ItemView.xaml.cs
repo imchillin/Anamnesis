@@ -644,10 +644,10 @@ public partial class ItemView : UserControl
 
 	private async void OnGposeStateChanged(bool state)
 	{
+		await Dispatch.MainThread();
+
 		if (!this.IsWeapon)
 			return;
-
-		await Dispatch.MainThread();
 
 		this.NotifyGposeProperties();
 	}

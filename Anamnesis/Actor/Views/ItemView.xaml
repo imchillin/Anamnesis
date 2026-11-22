@@ -93,10 +93,6 @@
 		</ControlTemplate>
 
 		<ContextMenu x:Key="SlotContextMenu" x:Shared="False">
-			<ContextMenu.Resources>
-				<Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource AnaMenuItem}"/>
-			</ContextMenu.Resources>
-
 			<!-- Console Games Wiki -->
 			<MenuItem Header="Site_OpenInConsoleGamesWiki" Click="OnOpenInConsoleGamesWikiClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
 				<MenuItem.Icon>
@@ -143,10 +139,6 @@
 		</ContextMenu>
 
 		<ContextMenu x:Key="DyeContextMenu" x:Shared="False">
-			<ContextMenu.Resources>
-				<Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource AnaMenuItem}"/>
-			</ContextMenu.Resources>
-
 			<MenuItem Header="Character_Equipment_SwapDyeChannels" Click="OnSwapDyeChannels">
 				<MenuItem.Icon>
 					<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{StaticResource PrimaryHueMidBrush}"/>
