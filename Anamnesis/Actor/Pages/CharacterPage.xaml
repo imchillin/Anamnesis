@@ -114,7 +114,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_SetDyeNOnEquipment" Value="1"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="FillDrip" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<!-- Set Dye 1 to Clothes -->
@@ -123,7 +123,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_SetDyeNOnClothes" Value="1"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="FillDrip" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<!-- Set Dye 1 to Accessories -->
@@ -132,7 +132,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_SetDyeNOnAccessories" Value="1"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="FillDrip" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<!-- Set Dye 1 to Weapons -->
@@ -141,7 +141,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_SetDyeNOnWeapons" Value="1"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="FillDrip" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<Separator/>
@@ -151,7 +151,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDyeNOnEquipment" Value="1"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="Circle" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<!-- Clear Dye 1 to Clothes -->
@@ -160,7 +160,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDyeNOnClothes" Value="1"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="Circle" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<!-- Clear Dye 1 to Accessories -->
@@ -169,7 +169,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDyeNOnAccessories" Value="1"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="Circle" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<!-- Clear Dye 1 to Weapons -->
@@ -178,7 +178,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDyeNOnWeapons" Value="1"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="Circle" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<Separator/>
@@ -187,7 +187,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_SwapDyeChannels"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 							</ContextMenu>
@@ -220,7 +220,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_SetDyeNOnEquipment" Value="2"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="FillDrip" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<!-- Set Dye 2 to Clothes -->
@@ -229,7 +229,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_SetDyeNOnClothes" Value="2"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="FillDrip" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<!-- Set Dye 2 to Accessories -->
@@ -238,7 +238,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_SetDyeNOnAccessories" Value="2"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="FillDrip" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<!-- Set Dye 2 to Weapons -->
@@ -247,7 +247,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_SetDyeNOnWeapons" Value="2"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="FillDrip" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="FillDrip" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<Separator/>
@@ -257,7 +257,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDyeNOnEquipment" Value="2"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="Circle" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<!-- Clear Dye 2 to Clothes -->
@@ -266,7 +266,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDyeNOnClothes" Value="2"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="Circle" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<!-- Clear Dye 2 to Accessories -->
@@ -275,7 +275,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDyeNOnAccessories" Value="2"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="Circle" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<!-- Clear Dye 2 to Weapons -->
@@ -284,7 +284,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_ClearDyeNOnWeapons" Value="2"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="Circle" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 								<Separator/>
@@ -293,7 +293,7 @@
 										<XivToolsWpf:TextBlock Key="Character_Equipment_SwapDyeChannels"/>
 									</MenuItem.Header>
 									<MenuItem.Icon>
-										<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+										<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 									</MenuItem.Icon>
 								</MenuItem>
 							</ContextMenu>

@@ -96,21 +96,21 @@
 			<!-- Console Games Wiki -->
 			<MenuItem Header="Site_OpenInConsoleGamesWiki" Click="OnOpenInConsoleGamesWikiClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
 				<MenuItem.Icon>
-					<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+					<fa:IconImage Icon="ExternalLinkAlt" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 
 			<!-- Gamer Escape -->
 			<MenuItem Header="Site_OpenInGamerEscape" Click="OnOpenInGamerEscapeClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
 				<MenuItem.Icon>
-					<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+					<fa:IconImage Icon="ExternalLinkAlt" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 
 			<!-- Garland Tools -->
 			<MenuItem Header="Site_OpenInGarlandTools" Click="OnOpenInGarlandToolsClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
 				<MenuItem.Icon>
-					<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+					<fa:IconImage Icon="ExternalLinkAlt" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 
@@ -126,14 +126,14 @@
 			<!-- Reset Slot -->
 			<MenuItem Header="Item_ResetSlot" Click="OnResetSlotClicked">
 				<MenuItem.Icon>
-					<fa:IconImage Icon="UndoAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+					<fa:IconImage Icon="UndoAlt" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 
 			<!-- Clear Slot -->
 			<MenuItem Header="Item_ClearSlot" Click="OnClearSlotClicked">
 				<MenuItem.Icon>
-					<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+					<fa:IconImage Icon="Circle" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 		</ContextMenu>
@@ -141,7 +141,7 @@
 		<ContextMenu x:Key="DyeContextMenu" x:Shared="False">
 			<MenuItem Header="Character_Equipment_SwapDyeChannels" Click="OnSwapDyeChannels">
 				<MenuItem.Icon>
-					<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+					<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Click="OnToggleLinkDyes" Visibility="{Binding IsWeapon, Converter={StaticResource B2V}, Mode=OneWay}">
@@ -153,8 +153,8 @@
 				</MenuItem.Header>
 				<MenuItem.Icon>
 					<Grid>
-						<fa:IconImage Icon="Unlink" Foreground="{StaticResource PrimaryHueMidBrush}" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource B2V}}"/>
-						<fa:IconImage Icon="Link" Foreground="{StaticResource PrimaryHueMidBrush}" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource !B2V}}"/>
+						<fa:IconImage Icon="Unlink" Foreground="{DynamicResource PrimaryHueMidBrush}" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource B2V}}"/>
+						<fa:IconImage Icon="Link" Foreground="{DynamicResource PrimaryHueMidBrush}" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource !B2V}}"/>
 					</Grid>
 				</MenuItem.Icon>
 			</MenuItem>
