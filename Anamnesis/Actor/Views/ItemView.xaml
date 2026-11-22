@@ -13,6 +13,162 @@
 			 Unloaded="OnUnloaded"
 			 DataContextChanged="OnDataContextChanged">
 
+	<UserControl.Resources>
+		<ControlTemplate x:Key="WeaponWarningTemplate" TargetType="Control">
+			<XivToolsWpf:IconBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+								   Icon="ExclamationTriangle" Foreground="Orange" FontSize="20"
+								   IsHitTestVisible="True" ToolTipService.ShowOnDisabled="False">
+				<XivToolsWpf:IconBlock.ToolTip>
+					<XivToolsWpf:TextBlock Key="Character_Equipment_WeaponOverworldWarning" />
+				</XivToolsWpf:IconBlock.ToolTip>
+			</XivToolsWpf:IconBlock>
+		</ControlTemplate>
+
+		<ControlTemplate x:Key="WeaponSetTemplate" TargetType="Control">
+			<StackPanel Orientation="Horizontal">
+				<XivToolsWpf:NumberBox Width="28" Value="{Binding ItemModel.Set}" FontSize="12" FontWeight="Light">
+					<XivToolsWpf:NumberBox.ToolTip>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_ItemSet"/>
+					</XivToolsWpf:NumberBox.ToolTip>
+				</XivToolsWpf:NumberBox>
+
+				<TextBlock Text="," Style="{StaticResource Label}" Margin="2, 2, 4, 0"/>
+			</StackPanel>
+		</ControlTemplate>
+
+		<ControlTemplate x:Key="WeaponRowControlsTemplate" TargetType="Control">
+			<StackPanel Orientation="Horizontal">
+				<!-- Weapon Visibility -->
+				<ToggleButton Height="20" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding ItemModel.WeaponHidden}"
+							  BorderThickness="1" Padding="0" Margin="0" Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}, Mode=OneWay}">
+					<ToggleButton.ToolTip>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_WeaponToggle"/>
+					</ToggleButton.ToolTip>
+
+					<XivToolsWpf:IconBlock Icon="EyeSlash" FontSize="10"/>
+				</ToggleButton>
+
+				<!-- Weapon Tint -->
+				<ana:RgbColorControl Margin="2, 2, 0, 0" Value="{Binding ExtendedViewModel.Tint}">
+					<ana:RgbColorControl.ToolTip>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_Tint"/>
+					</ana:RgbColorControl.ToolTip>
+				</ana:RgbColorControl>
+			</StackPanel>
+		</ControlTemplate>
+
+		<ControlTemplate x:Key="HeadRowControlsTemplate" TargetType="Control">
+			<StackPanel Orientation="Horizontal">
+				<!-- Head/Hat Visibility and Visor -->
+				<ToggleButton Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding Actor.CanRefresh}"
+							  IsChecked="{Binding Actor.DrawData.HatHidden}"
+							  BorderThickness="1" Padding="0" Margin="0">
+					<ToggleButton.ToolTip>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_HatToggle"/>
+					</ToggleButton.ToolTip>
+
+					<XivToolsWpf:IconBlock Icon="EyeSlash" FontSize="10"/>
+				</ToggleButton>
+
+				<ToggleButton Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding Actor.CanRefresh}"
+							  IsChecked="{Binding Actor.DrawData.VisorToggled}"
+							  BorderThickness="1" Padding="0" Margin="0">
+					<ToggleButton.ToolTip>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_VisorToggle"/>
+					</ToggleButton.ToolTip>
+
+					<XivToolsWpf:IconBlock Icon="Mask" FontSize="10"/>
+				</ToggleButton>
+
+				<ToggleButton Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding Actor.CanRefresh}"
+							  Visibility="{Binding SupportsEarToggle, Converter={StaticResource B2V}, Mode=OneWay}" IsChecked="{Binding Actor.DrawData.HeadgearEarsHidden}"
+							  BorderThickness="1" Padding="0" Margin="0">
+					<ToggleButton.ToolTip>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_HeadgearEarsToggle"/>
+					</ToggleButton.ToolTip>
+
+					<XivToolsWpf:IconBlock Icon="EarDeaf" FontSize="10"/>
+				</ToggleButton>
+			</StackPanel>
+		</ControlTemplate>
+
+		<ContextMenu x:Key="SlotContextMenu" x:Shared="False">
+			<ContextMenu.Resources>
+				<Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource AnaMenuItem}"/>
+			</ContextMenu.Resources>
+
+			<!-- Console Games Wiki -->
+			<MenuItem Header="Site_OpenInConsoleGamesWiki" Click="OnOpenInConsoleGamesWikiClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
+				<MenuItem.Icon>
+					<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+
+			<!-- Gamer Escape -->
+			<MenuItem Header="Site_OpenInGamerEscape" Click="OnOpenInGamerEscapeClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
+				<MenuItem.Icon>
+					<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+
+			<!-- Garland Tools -->
+			<MenuItem Header="Site_OpenInGarlandTools" Click="OnOpenInGarlandToolsClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
+				<MenuItem.Icon>
+					<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+
+			<Separator Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}}"/>
+
+			<!-- Copy Item Name -->
+			<MenuItem Header="Item_CopyName" Click="OnCopyItemNameClicked" Visibility="{Binding IsValidItemForCopy, Converter={StaticResource B2V}, Mode=OneWay}">
+				<MenuItem.Icon>
+					<Image Source="{Binding Item.Icon, Converter={StaticResource Img}}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+
+			<!-- Reset Slot -->
+			<MenuItem Header="Item_ResetSlot" Click="OnResetSlotClicked">
+				<MenuItem.Icon>
+					<fa:IconImage Icon="UndoAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+
+			<!-- Clear Slot -->
+			<MenuItem Header="Item_ClearSlot" Click="OnClearSlotClicked">
+				<MenuItem.Icon>
+					<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+		</ContextMenu>
+
+		<ContextMenu x:Key="DyeContextMenu" x:Shared="False">
+			<ContextMenu.Resources>
+				<Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource AnaMenuItem}"/>
+			</ContextMenu.Resources>
+
+			<MenuItem Header="Character_Equipment_SwapDyeChannels" Click="OnSwapDyeChannels">
+				<MenuItem.Icon>
+					<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<MenuItem Click="OnToggleLinkDyes" Visibility="{Binding IsWeapon, Converter={StaticResource B2V}, Mode=OneWay}">
+				<MenuItem.Header>
+					<Grid>
+						<XivToolsWpf:TextBlock Key="EquipmentSelector_UnlinkDyes" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource B2V}}"/>
+						<XivToolsWpf:TextBlock Key="EquipmentSelector_LinkDyes" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource !B2V}}"/>
+					</Grid>
+				</MenuItem.Header>
+				<MenuItem.Icon>
+					<Grid>
+						<fa:IconImage Icon="Unlink" Foreground="{StaticResource PrimaryHueMidBrush}" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource B2V}}"/>
+						<fa:IconImage Icon="Link" Foreground="{StaticResource PrimaryHueMidBrush}" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource !B2V}}"/>
+					</Grid>
+				</MenuItem.Icon>
+			</MenuItem>
+		</ContextMenu>
+	</UserControl.Resources>
+
 	<GroupBox Margin="3, 0" x:Name="ContentArea">
 		<GroupBox.Header>
 			<Grid MaxWidth="150">
@@ -50,7 +206,7 @@
 			<Grid Grid.Row="0" Grid.RowSpan="2" IsEnabled="{Binding Actor.CanRefresh, Mode=OneWay}">
 				<Button Width="48" Height="48" Click="OnClick" MouseUp="OnSlotMouseUp"
 						Style="{DynamicResource TransparentButton}" IsEnabled="{Binding CanEditItem, Mode=OneWay}">
-					<Grid>
+					<Grid ContextMenuOpening="OnSlotContextMenuOpening">
 						<Image x:Name="SlotIcon" Source="{Binding IconSource}" Margin="6" Opacity="0.3"/>
 
 						<Grid Visibility="{Binding ItemModel, Converter={StaticResource NotNullToVisibilityConverter}}">
@@ -68,78 +224,42 @@
 							</StackPanel>
 						</Grid.ToolTip>
 						<Grid.ContextMenu>
-							<ContextMenu>
-								<!-- Console Games Wiki -->
-								<MenuItem Header="Site_OpenInConsoleGamesWiki" Click="OnOpenInConsoleGamesWikiClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
-									<MenuItem.Icon>
-										<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-							
-								<!-- Gamer Escape -->
-								<MenuItem Header="Site_OpenInGamerEscape" Click="OnOpenInGamerEscapeClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
-									<MenuItem.Icon>
-										<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-							
-								<!-- Garland Tools -->
-								<MenuItem Header="Site_OpenInGarlandTools" Click="OnOpenInGarlandToolsClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}, Mode=OneWay}">
-									<MenuItem.Icon>
-										<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-							
-								<Separator Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}}"/>
-							
-								<!-- Copy Item Name -->
-								<MenuItem Header="Item_CopyName" Click="OnCopyItemNameClicked" Visibility="{Binding IsValidItemForCopy, Converter={StaticResource B2V}, Mode=OneWay}">
-									<MenuItem.Icon>
-										<Image Source="{Binding Item.Icon, Converter={StaticResource Img}}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-							
-								<!-- Reset Slot -->
-								<MenuItem Header="Item_ResetSlot" Click="OnResetSlotClicked">
-									<MenuItem.Icon>
-										<fa:IconImage Icon="UndoAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-							
-								<!-- Clear Slot -->
-								<MenuItem Header="Item_ClearSlot" Click="OnClearSlotClicked">
-									<MenuItem.Icon>
-										<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-							</ContextMenu>
+							<ContextMenu/>
 						</Grid.ContextMenu>
 					</Grid>
 				</Button>
 
-				<fa:IconBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-							  Icon="ExclamationTriangle" Foreground="Orange" FontSize="20"
-							  Visibility="{Binding ShowWeaponWarning, Converter={StaticResource B2V}, Mode=OneWay}"
-							  IsHitTestVisible="True" ToolTipService.ShowOnDisabled="False">
-					<fa:IconBlock.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_Equipment_WeaponOverworldWarning" />
-					</fa:IconBlock.ToolTip>
-				</fa:IconBlock>
+				<Control Focusable="False" HorizontalAlignment="Center" VerticalAlignment="Center"
+						 Visibility="{Binding ShowWeaponWarning, Converter={StaticResource B2V}, Mode=OneWay}">
+					<Control.Style>
+						<Style TargetType="Control">
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding ShowWeaponWarning}" Value="True">
+									<Setter Property="Template" Value="{StaticResource WeaponWarningTemplate}"/>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</Control.Style>
+				</Control>
 			</Grid>
 
-			<ProgressBar IsIndeterminate="True" Style="{StaticResource MaterialDesignCircularProgressBar}" Grid.Row="0" Grid.RowSpan="2"
+			<ProgressBar IsIndeterminate="{Binding IsLoading, Mode=OneWay}" Style="{StaticResource MaterialDesignCircularProgressBar}" Grid.Row="0" Grid.RowSpan="2"
 						 Visibility="{Binding IsLoading, Converter={StaticResource B2V}, Mode=OneWay}"/>
 
 			<StackPanel Grid.Row="0" Grid.Column="1" Margin="3,0,0,0" Orientation="Horizontal" IsEnabled="{Binding Actor.CanRefresh, Mode=OneWay}">
 				<StackPanel Orientation="Horizontal" IsEnabled="{Binding CanEditItem, Mode=OneWay}">
-					<XivToolsWpf:NumberBox Width="28" Value="{Binding ItemModel.Set}" FontSize="12" FontWeight="Light"
-										   Visibility="{Binding IsWeapon, Converter={StaticResource B2V}, Mode=OneWay}">
-						<XivToolsWpf:NumberBox.ToolTip>
-							<XivToolsWpf:TextBlock Key="Character_Equipment_ItemSet"/>
-						</XivToolsWpf:NumberBox.ToolTip>
-					</XivToolsWpf:NumberBox>
+					<Control Focusable="False">
+						<Control.Style>
+							<Style TargetType="Control">
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding IsWeapon}" Value="True">
+										<Setter Property="Template" Value="{StaticResource WeaponSetTemplate}"/>
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</Control.Style>
+					</Control>
 
-					<TextBlock Text="," Style="{StaticResource Label}" Margin="2, 2, 4, 0" Visibility="{Binding IsWeapon, Converter={StaticResource B2V}, Mode=OneWay}"/>
 					<XivToolsWpf:NumberBox Width="28" Value="{Binding ItemModel.Base}" FontSize="12" FontWeight="Light">
 						<XivToolsWpf:NumberBox.ToolTip>
 							<XivToolsWpf:TextBlock Key="Character_Equipment_ItemBase"/>
@@ -157,57 +277,24 @@
 
 			<StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="2, 0, 0, 0" Orientation="Horizontal"
 						Visibility="{Binding CanDye, Converter={StaticResource B2V}}">
-				<!-- Weapon Visibility -->
-				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding ItemModel.WeaponHidden}"
-							  BorderThickness="1" Padding="0" Margin="0" Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}, Mode=OneWay}">
-					<ToggleButton.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_Equipment_WeaponToggle"/>
-					</ToggleButton.ToolTip>
-
-					<fa:IconBlock Icon="EyeSlash" FontSize="10"/>
-				</ToggleButton>
-
-				<!-- Head/Hat Visbility and Visor -->
-				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding Actor.CanRefresh}"
-							  Visibility="{Binding IsHead, Converter={StaticResource B2V}, Mode=OneWay}" IsChecked="{Binding Actor.DrawData.HatHidden}"
-							  BorderThickness="1" Padding="0" Margin="0">
-					<ToggleButton.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_Equipment_HatToggle"/>
-					</ToggleButton.ToolTip>
-
-					<fa:IconBlock Icon="EyeSlash" FontSize="10"/>
-				</ToggleButton>
-
-				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding Actor.CanRefresh}"
-							  Visibility="{Binding IsHead, Converter={StaticResource B2V}, Mode=OneWay}" IsChecked="{Binding Actor.DrawData.VisorToggled}"
-							  BorderThickness="1" Padding="0" Margin="0">
-					<ToggleButton.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_Equipment_VisorToggle"/>
-					</ToggleButton.ToolTip>
-
-					<fa:IconBlock Icon="Mask" FontSize="10"/>
-				</ToggleButton>
-
-				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding Actor.CanRefresh}"
-						  Visibility="{Binding SupportsEarToggle, Converter={StaticResource B2V}, Mode=OneWay}" IsChecked="{Binding Actor.DrawData.HeadgearEarsHidden}"
-						  BorderThickness="1" Padding="0" Margin="0">
-					<ToggleButton.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_Equipment_HeadgearEarsToggle"/>
-					</ToggleButton.ToolTip>
-
-					<fa:IconBlock Icon="EarDeaf" FontSize="10"/>
-				</ToggleButton>
-
-				<!-- Weapon Tint -->
-				<ana:RgbColorControl Margin="2, 2, 0, 0"  Value="{Binding ExtendedViewModel.Tint}"
-									 Visibility="{Binding IsWeapon, Converter={StaticResource B2V}, Mode=OneWay}">
-					<ana:RgbColorControl.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_Equipment_Tint"/>
-					</ana:RgbColorControl.ToolTip>
-				</ana:RgbColorControl>
+				<Control Focusable="False">
+					<Control.Style>
+						<Style TargetType="Control">
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding IsWeapon}" Value="True">
+									<Setter Property="Template" Value="{StaticResource WeaponRowControlsTemplate}"/>
+								</DataTrigger>
+								<DataTrigger Binding="{Binding IsHead}" Value="True">
+									<Setter Property="Template" Value="{StaticResource HeadRowControlsTemplate}"/>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</Control.Style>
+				</Control>
 
 				<!-- Dye -->
 				<Button MouseUp="OnDyeMouseUp" Margin="2, 4, 0, 0" Grid.Column="0" Grid.RowSpan="2" Click="OnDyeClick"
+						ContextMenuOpening="OnDyeContextMenuOpening"
 						Height="20" Width="20" VerticalAlignment="Top" Style="{DynamicResource TransparentButton}"
 						IsEnabled="{Binding Actor.CanRefresh, Mode=OneWay}">
 
@@ -231,30 +318,11 @@
 					</Grid>
 
 					<Button.ContextMenu>
-						<ContextMenu>
-							<MenuItem Header="Character_Equipment_SwapDyeChannels" Click="OnSwapDyeChannels">
-								<MenuItem.Icon>
-									<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{StaticResource PrimaryHueMidBrush}"/>
-								</MenuItem.Icon>
-							</MenuItem>
-							<MenuItem Click="OnToggleLinkDyes" Visibility="{Binding IsWeapon, Converter={StaticResource B2V}, Mode=OneWay}">
-								<MenuItem.Header>
-									<Grid>
-										<XivToolsWpf:TextBlock Key="EquipmentSelector_UnlinkDyes" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource B2V}}"/>
-										<XivToolsWpf:TextBlock Key="EquipmentSelector_LinkDyes" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource !B2V}}"/>
-									</Grid>
-								</MenuItem.Header>
-								<MenuItem.Icon>
-									<Grid>
-										<fa:IconImage Icon="Unlink" Foreground="{StaticResource PrimaryHueMidBrush}" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource B2V}}"/>
-										<fa:IconImage Icon="Link" Foreground="{StaticResource PrimaryHueMidBrush}" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource !B2V}}"/>
-									</Grid>
-								</MenuItem.Icon>
-							</MenuItem>
-						</ContextMenu>
+						<ContextMenu/>
 					</Button.ContextMenu>
 				</Button>
 				<Button MouseUp="OnDye2MouseUp" Margin="2, 4, 0, 0" Grid.Column="0" Grid.RowSpan="2" Click="OnDyeClick2" VerticalAlignment="Top"
+						ContextMenuOpening="OnDyeContextMenuOpening"
 						Height="20" Width="20" Style="{DynamicResource TransparentButton}" IsEnabled="{Binding Actor.CanRefresh, Mode=OneWay}">
 
 					<Grid>
@@ -277,27 +345,7 @@
 					</Grid>
 
 					<Button.ContextMenu>
-						<ContextMenu>
-							<MenuItem Header="Character_Equipment_SwapDyeChannels" Click="OnSwapDyeChannels">
-								<MenuItem.Icon>
-									<fa:IconImage Icon="ArrowRightArrowLeft" Foreground="{StaticResource PrimaryHueMidBrush}"/>
-								</MenuItem.Icon>
-							</MenuItem>
-							<MenuItem Click="OnToggleLinkDyes" Visibility="{Binding IsWeapon, Converter={StaticResource B2V}, Mode=OneWay}">
-								<MenuItem.Header>
-									<Grid>
-										<XivToolsWpf:TextBlock Key="EquipmentSelector_UnlinkDyes" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource B2V}}"/>
-										<XivToolsWpf:TextBlock Key="EquipmentSelector_LinkDyes" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource !B2V}}"/>
-									</Grid>
-								</MenuItem.Header>
-								<MenuItem.Icon>
-									<Grid>
-										<fa:IconImage Icon="Unlink" Foreground="{StaticResource PrimaryHueMidBrush}" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource B2V}}"/>
-										<fa:IconImage Icon="Link" Foreground="{StaticResource PrimaryHueMidBrush}" Visibility="{Binding LinkWeaponDyes, Converter={StaticResource !B2V}}"/>
-									</Grid>
-								</MenuItem.Icon>
-							</MenuItem>
-						</ContextMenu>
+						<ContextMenu/>
 					</Button.ContextMenu>
 				</Button>
 			</StackPanel>

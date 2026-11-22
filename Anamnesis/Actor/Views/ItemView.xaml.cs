@@ -16,6 +16,7 @@ using Serilog;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -191,6 +192,18 @@ public partial class ItemView : UserControl
 		sender.OnViewModelPropertyChanged(null, null);
 	}
 
+	private static IDye GetDye(byte dyeId)
+	{
+		try
+		{
+			return GameDataService.Dyes.GetRow(dyeId);
+		}
+		catch (ArgumentOutOfRangeException)
+		{
+			return DyeUtility.NoneDye;
+		}
+	}
+
 	private static void SetModel(IEquipmentItemMemory? itemModel, ushort modelSet, ushort modelBase, ushort modelVariant)
 	{
 		if (itemModel is ItemMemory itemView)
@@ -229,6 +242,23 @@ public partial class ItemView : UserControl
 		return item.ModelSet == weaponVm.Set
 			&& item.ModelBase == weaponVm.Base
 			&& item.ModelVariant == weaponVm.Variant;
+	}
+
+	private void OnSlotContextMenuOpening(object sender, ContextMenuEventArgs e) => this.OpenLazyContextMenu(sender, e, "SlotContextMenu");
+
+	private void OnDyeContextMenuOpening(object sender, ContextMenuEventArgs e) => this.OpenLazyContextMenu(sender, e, "DyeContextMenu");
+
+	private void OpenLazyContextMenu(object sender, ContextMenuEventArgs e, string resourceKey)
+	{
+		if (sender is not FrameworkElement element || element.ContextMenu is not { Items.Count: 0 })
+			return;
+
+		var menu = (ContextMenu)this.FindResource(resourceKey);
+		menu.PlacementTarget = element;
+		menu.DataContext = this;
+		element.ContextMenu = menu;
+		menu.IsOpen = true;
+		e.Handled = true;
 	}
 
 	private void OnOpenInConsoleGamesWikiClicked(object sender, RoutedEventArgs e)
@@ -489,7 +519,18 @@ public partial class ItemView : UserControl
 			if (this.ItemModel == null || GameDataService.Dyes == null)
 				return;
 
-			this.IsLoading = true;
+			using CancellationTokenSource loadingCts = new();
+			CancellationToken loadingToken = loadingCts.Token;
+			_ = Task.Delay(100, loadingToken).ContinueWith(
+				async _ =>
+				{
+					await Dispatch.MainThread();
+					if (!loadingToken.IsCancellationRequested)
+						this.IsLoading = true;
+				},
+				loadingToken,
+				TaskContinuationOptions.OnlyOnRanToCompletion,
+				TaskScheduler.Default);
 
 			try
 			{
@@ -511,27 +552,8 @@ public partial class ItemView : UserControl
 					}
 
 					itemVm.EquippedItem = item;
-
-					IDye? dye;
-					IDye? dye2;
-
-					try
-					{
-						dye = GameDataService.Dyes.GetRow(itemVm.Dye);
-					}
-					catch (ArgumentOutOfRangeException)
-					{
-						dye = DyeUtility.NoneDye;
-					}
-
-					try
-					{
-						dye2 = GameDataService.Dyes.GetRow(itemVm.Dye2);
-					}
-					catch (ArgumentOutOfRangeException)
-					{
-						dye2 = DyeUtility.NoneDye;
-					}
+					IDye dye = GetDye(itemVm.Dye);
+					IDye dye2 = GetDye(itemVm.Dye2);
 
 					await Dispatch.MainThread();
 
@@ -560,26 +582,8 @@ public partial class ItemView : UserControl
 					if (weaponVm.Set == 0)
 						weaponVm.Dye = 0;
 
-					IDye? dye;
-					IDye? dye2;
-
-					try
-					{
-						dye = GameDataService.Dyes.GetRow(weaponVm.Dye);
-					}
-					catch (ArgumentOutOfRangeException)
-					{
-						dye = DyeUtility.NoneDye;
-					}
-
-					try
-					{
-						dye2 = GameDataService.Dyes.GetRow(weaponVm.Dye2);
-					}
-					catch (ArgumentOutOfRangeException)
-					{
-						dye2 = DyeUtility.NoneDye;
-					}
+					IDye dye = GetDye(weaponVm.Dye);
+					IDye dye2 = GetDye(weaponVm.Dye2);
 
 					await Dispatch.MainThread();
 
@@ -594,8 +598,13 @@ public partial class ItemView : UserControl
 			{
 				Log.Error(ex, "Failed to update item");
 			}
-
-			this.IsLoading = false;
+			finally
+			{
+				loadingCts.Cancel();
+				await Dispatch.MainThread();
+				if (this.IsLoading)
+					this.IsLoading = false;
+			}
 		});
 	}
 
@@ -609,7 +618,8 @@ public partial class ItemView : UserControl
 		if (this.Actor?.DrawData.Customize != null)
 			this.Actor.DrawData.Customize.PropertyChanged += this.OnActorCustomizePropertyChanged;
 
-		this.OnPropertyChanged(nameof(this.SupportsEarToggle));
+		if (this.IsHead)
+			this.OnPropertyChanged(nameof(this.SupportsEarToggle));
 	}
 
 	private void OnLoaded(object sender, RoutedEventArgs e)
@@ -617,8 +627,11 @@ public partial class ItemView : UserControl
 		if (LocalizationService.Instance != null)
 			LocalizationService.Instance.LocaleChanged += this.OnLocaleChanged;
 
-		GposeService.GposeStateChanged += this.OnGposeStateChanged;
-		this.OnGposeStateChanged(GposeService.Instance?.IsGpose ?? false);
+		if (this.IsWeapon)
+		{
+			GposeService.GposeStateChanged += this.OnGposeStateChanged;
+			this.NotifyGposeProperties();
+		}
 	}
 
 	private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -631,8 +644,16 @@ public partial class ItemView : UserControl
 
 	private async void OnGposeStateChanged(bool state)
 	{
+		if (!this.IsWeapon)
+			return;
+
 		await Dispatch.MainThread();
 
+		this.NotifyGposeProperties();
+	}
+
+	private void NotifyGposeProperties()
+	{
 		this.OnPropertyChanged(nameof(this.CanEditItem));
 		this.OnPropertyChanged(nameof(this.ShowWeaponWarning));
 	}

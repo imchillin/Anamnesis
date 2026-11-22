@@ -38,6 +38,7 @@ public partial class CharacterPage : UserControl, INotifyPropertyChanged
 {
 	private static DirectoryInfo? s_lastLoadDir;
 	private static DirectoryInfo? s_lastSaveDir;
+	private bool hasInitializedActor = false;
 
 	public CharacterPage()
 	{
@@ -719,6 +720,11 @@ public partial class CharacterPage : UserControl, INotifyPropertyChanged
 
 	private void OnActorChanged(ObjectHandle<ActorMemory>? actorHandle)
 	{
+		if (this.hasInitializedActor && ReferenceEquals(this.Actor, actorHandle))
+			return;
+
+		this.hasInitializedActor = true;
+
 		if (this.Actor != null)
 		{
 			this.Actor.PropertyChanged -= this.OnActorHandlePropertyChanged;
@@ -751,7 +757,9 @@ public partial class CharacterPage : UserControl, INotifyPropertyChanged
 		{
 			bool hasValidSelection = this.Actor != null && this.Actor.IsValid && this.Actor.Do(a => a.ObjectKind.IsSupportedType()) == true;
 			this.IsEnabled = hasValidSelection;
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Actor)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanDyeEquipment)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanDyeWeapons)));
 		};
 
 		if (Application.Current.Dispatcher.CheckAccess())
