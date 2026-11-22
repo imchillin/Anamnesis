@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GUI;
@@ -87,6 +87,11 @@ public partial class MainWindow : ChromedWindow
 		{
 			if (value != Tabs.Actor)
 				TargetService.ClearSelection();
+
+			if (value == Tabs.Settings)
+				this.SettingsTabHost.Content ??= new Anamnesis.Tabs.SettingsTab();
+			else if (value == Tabs.Developer)
+				this.DeveloperTabHost.Content ??= new Anamnesis.Tabs.DeveloperTab();
 
 			this.tab = value;
 		}
