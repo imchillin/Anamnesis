@@ -302,18 +302,29 @@
 				</Button>
 			</StackPanel>
 
-			<ContentControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="-5,2,-3,-2" Content="{Binding ExtendedViewModel}"
+			<ContentControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="-5,2,-3,-2"
 							Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}, Mode=OneWay}">
-				<ContentControl.ContentTemplate>
-					<DataTemplate>
-						<ana:VectorEditor Value="{Binding Transform.Scale}" Minimum="0" Maximum="float.MaxValue" TickFrequency="0.01"
-										  DefaultValue="1" CanLink="True" Linked="True" SliderMode="Relative"
-										  DecimalPlaces="{Binding Settings.SliderPrecision, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
-										  ShowSliderThumb="{Binding Settings.ShowSliderThumb, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
-										  LayoutStyle="Compact" EnableStepButtons="True"
-										  SliderType="{Binding Settings.BoneScaleSliderType, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"/>
-					</DataTemplate>
-				</ContentControl.ContentTemplate>
+				<ContentControl.Style>
+					<Style TargetType="ContentControl">
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding IsValidWeapon}" Value="True">
+								<Setter Property="Content" Value="{Binding ExtendedViewModel}"/>
+								<Setter Property="ContentTemplate">
+									<Setter.Value>
+										<DataTemplate>
+											<ana:VectorEditor Value="{Binding Transform.Scale}" Minimum="0" Maximum="float.MaxValue" TickFrequency="0.01"
+															  DefaultValue="1" CanLink="True" Linked="True" SliderMode="Relative"
+															  DecimalPlaces="{Binding Settings.SliderPrecision, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
+															  ShowSliderThumb="{Binding Settings.ShowSliderThumb, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
+															  LayoutStyle="Compact" EnableStepButtons="True"
+															  SliderType="{Binding Settings.BoneScaleSliderType, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"/>
+										</DataTemplate>
+									</Setter.Value>
+								</Setter>
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</ContentControl.Style>
 			</ContentControl>
 		</Grid>
 	</GroupBox>
