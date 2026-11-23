@@ -162,7 +162,9 @@ jobs:
 
       - name: Install Velopack CLI & Build Package
         run: |
-          dotnet tool install -g vpk
+          [xml]$csproj = Get-Content ./Anamnesis/Anamnesis.csproj
+          $vpkVersion = ($csproj.Project.ItemGroup.PackageReference | Where-Object Include -eq "Velopack").Version
+          dotnet tool install -g vpk --version $vpkVersion
           
           # Download previous release metadata for delta package generation
           vpk download github --repoUrl "https://github.com/${{ github.repository }}" --channel "${{ env.VPK_CHANNEL }}"
@@ -174,6 +176,7 @@ jobs:
             -p "./publish" `
             -e "Anamnesis.exe" `
             -c "${{ env.VPK_CHANNEL }}" `
+            -r win-x64 `
             --framework "${{ env.DESKTOP_FRAMEWORK }}" `
             --noPortable `
             --msi `
