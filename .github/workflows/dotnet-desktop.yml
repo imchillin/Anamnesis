@@ -218,6 +218,19 @@ jobs:
         id: upload_migration
         run: |
           gh release upload "${{ env.RELEASE_TAG }}" "./Migration.zip" --clobber
+          gh release delete-asset "${{ env.RELEASE_TAG }}" "Anamnesis-${{ env.VPK_CHANNEL }}-Setup.exe" --yes
+
+          $msiName = (Get-ChildItem -Path "./Releases/*.msi" | Select-Object -First 1).Name
+          $msiUrl = "https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_TAG }}/$msiName"
+          $notes = @(
+            "---",
+            "### Installation",
+            "* **New users / Manual install:** Download and run [**$msiName**]($msiUrl).",
+            "* **Existing users:** Update automatically through the application when prompted.",
+            "* *All other attached files are used by the auto-updater and can be ignored.*"
+          ) -join "`n"
+
+          gh release edit "${{ env.RELEASE_TAG }}" --notes $notes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
