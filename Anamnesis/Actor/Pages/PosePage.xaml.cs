@@ -771,13 +771,6 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private async Task Refresh()
 	{
-		await Dispatch.MainThread();
-
-		this.ThreeDView.DataContext = null;
-		this.BodyGuiView.DataContext = null;
-		this.FaceGuiView.DataContext = null;
-		this.MatrixView.DataContext = null;
-
 		_ = WorkQueue.Value.Enqueue(() =>
 		{
 			if (this.Skeleton != null)
@@ -795,6 +788,12 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 			this.pendingSkeletonRetryAttempts = MAX_SKELETON_CREATION_ATTEMPTS;
 		});
+
+		await Dispatch.MainThread();
+		this.ThreeDView.DataContext = null;
+		this.BodyGuiView.DataContext = null;
+		this.FaceGuiView.DataContext = null;
+		this.MatrixView.DataContext = null;
 	}
 
 	private void OnSkeletonPropertyChanged(object? sender, PropertyChangedEventArgs e)
