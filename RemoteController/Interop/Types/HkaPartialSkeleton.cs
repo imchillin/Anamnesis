@@ -18,6 +18,14 @@ public unsafe struct HkaPartialSkeleton
 	public HkaPose* Pose;
 
 	/// <summary>
+	/// Gets a pointer to the model-space transform for the specified bone, or null if unavailable.
+	/// </summary>
+	/// <param name="boneIndex">The index of the bone.</param>
+	/// <returns>A pointer to the model-space transform, or null if invalid.</returns>
+	public readonly HkaTransform4* GetBoneModelTransform(short boneIndex)
+		=> this.Pose != null ? this.Pose->GetModelPoseTransform(boneIndex) : null;
+
+	/// <summary>
 	/// Marks the local-space transform for the specified bone as dirty in the Havok pose.
 	/// </summary>
 	/// <param name="boneIndex">The index of the bone.</param>

@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
 	x:Class="Anamnesis.Actor.Pages.PosePage"
 	x:Name="RootControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -6,6 +6,7 @@
 	xmlns:anaUtils="clr-namespace:Anamnesis"
 	xmlns:controls="clr-namespace:Anamnesis.Actor.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:Anamnesis.Actor.Pages"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:views="clr-namespace:Anamnesis.Actor.Views"
 	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
@@ -15,6 +16,31 @@
 	Loaded="OnLoaded"
 	Unloaded="OnUnloaded"
 	mc:Ignorable="d">
+
+	<UserControl.Resources>
+		<DataTemplate DataType="{x:Type local:PoseTransformOptions}">
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="Transparent">
+				<CheckBox Margin="3" VerticalContentAlignment="Center" IsChecked="{Binding Rotation, Mode=TwoWay}">
+					<XivToolsWpf:TextBlock Key="Pose_EnableRotation" Margin="0,-2,0,2" />
+					<CheckBox.ToolTip>
+						<XivToolsWpf:TextBlock Key="{Binding RotationTooltipKey}" />
+					</CheckBox.ToolTip>
+				</CheckBox>
+				<CheckBox Margin="3" VerticalContentAlignment="Center" IsChecked="{Binding Position, Mode=TwoWay}">
+					<XivToolsWpf:TextBlock Key="Pose_EnablePosition" Margin="0,-2,0,2" />
+					<CheckBox.ToolTip>
+						<XivToolsWpf:TextBlock Key="{Binding PositionTooltipKey}" />
+					</CheckBox.ToolTip>
+				</CheckBox>
+				<CheckBox Margin="3" VerticalContentAlignment="Center" IsChecked="{Binding Scale, Mode=TwoWay}">
+					<XivToolsWpf:TextBlock Key="Pose_EnableScale" Margin="0,-2,0,2" />
+					<CheckBox.ToolTip>
+						<XivToolsWpf:TextBlock Key="{Binding ScaleTooltipKey}" />
+					</CheckBox.ToolTip>
+				</CheckBox>
+			</StackPanel>
+		</DataTemplate>
+	</UserControl.Resources>
 
 	<Grid x:Name="ContentArea">
 		<Grid IsEnabled="{Binding Skeleton, Converter={StaticResource NotNullToBoolConverter}}">
@@ -187,77 +213,39 @@
 
 					<MenuItem Style="{StaticResource ButtonMenuItemRight}">
 						<!-- Import modes (for the popup import options) -->
-						<MenuItem Style="{StaticResource AnamMenuItemHeader}">
-							<MenuItem.Header>
-								<ContentControl>
-									<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="Transparent">
-										<CheckBox Margin="3" VerticalContentAlignment="Center"
-												   IsChecked="{Binding ImportPoseRotation, ElementName=RootControl, Mode=TwoWay}">
-											<XivToolsWpf:TextBlock Key="Pose_EnableRotation" Margin="0,-2,0,2" />
-											<CheckBox.ToolTip>
-												<XivToolsWpf:TextBlock Key="Pose_ImportRotationImportTooltip" />
-											</CheckBox.ToolTip>
-										</CheckBox>
-										<CheckBox Margin="3" VerticalContentAlignment="Center"
-												  IsChecked="{Binding ImportPosePosition, ElementName=RootControl, Mode=TwoWay}">
-											<XivToolsWpf:TextBlock Key="Pose_EnablePosition" Margin="0,-2,0,2" />
-											<CheckBox.ToolTip>
-												<XivToolsWpf:TextBlock Key="Pose_ImportPositionImportTooltip" />
-											</CheckBox.ToolTip>
-										</CheckBox>
-										<CheckBox Margin="3" VerticalContentAlignment="Center"
-												  IsChecked="{Binding ImportPoseScale, ElementName=RootControl, Mode=TwoWay}">
-											<XivToolsWpf:TextBlock Key="Pose_EnableScale" Margin="0,-2,0,2" />
-											<CheckBox.ToolTip>
-												<XivToolsWpf:TextBlock Key="Pose_ImportScaleImportTooltip" />
-											</CheckBox.ToolTip>
-										</CheckBox>
-									</StackPanel>
-								</ContentControl>
-							</MenuItem.Header>
-						</MenuItem>
+						<MenuItem Style="{StaticResource AnaMenuItemHeader}"
+								  Header="{Binding ImportPoseOptions, ElementName=RootControl}" />
 
 						<!-- (Import) Full Chracter -->
-						<MenuItem Header="Pose_FullChar" 
-								  Style="{StaticResource AnaMenuItem}" 
-								  Click="OnImportFullCharClicked">
+						<MenuItem Header="Pose_FullChar" Click="OnImportFullCharClicked">
 							<MenuItem.ToolTip>
 								<XivToolsWpf:TextBlock Key="Pose_FullCharTooltip"/>
 							</MenuItem.ToolTip>
 						</MenuItem>
 
 						<!-- (Import) Body Only -->
-						<MenuItem Header="Pose_Body" 
-								  Style="{StaticResource AnaMenuItem}" 
-								  Click="OnImportBodyClicked">
+						<MenuItem Header="Pose_Body" Click="OnImportBodyClicked">
 							<MenuItem.ToolTip>
 								<XivToolsWpf:TextBlock Key="Pose_BodyTooltip" />
 							</MenuItem.ToolTip>
 						</MenuItem>
 
 						<!-- (Import) Face Only -->
-						<MenuItem Header="Pose_Expression" 
-								  Style="{StaticResource AnaMenuItem}" 
-								  Click="OnImportExpressionClicked">
+						<MenuItem Header="Pose_Expression" Click="OnImportExpressionClicked">
 							<MenuItem.ToolTip>
 								<XivToolsWpf:TextBlock Key="Pose_ExpressionTooltip" />
 							</MenuItem.ToolTip>
 						</MenuItem>
 
 						<!-- (Import) Weapons Only -->
-						<MenuItem Header="Pose_WeaponsOnly"
-								  Style="{StaticResource AnaMenuItem}"
-								  Click="OnImportWeaponsClicked">
+						<MenuItem Header="Pose_WeaponsOnly" Click="OnImportWeaponsClicked">
 							<MenuItem.ToolTip>
 								<XivToolsWpf:TextBlock Key="Pose_WeaponsOnlyTooltip" />
 							</MenuItem.ToolTip>
 						</MenuItem>
 
 						<!-- (Import) Selected Bones -->
-						<MenuItem Header="Pose_Selected"
-								  Style="{StaticResource AnaMenuItem}"
-								  Click="OnImportSelectedBonesClicked"
-								  IsEnabled="{Binding Skeleton.HasSelection}">
+						<MenuItem Header="Pose_Selected" Click="OnImportSelectedBonesClicked" IsEnabled="{Binding Skeleton.HasSelection}">
 							<MenuItem.ToolTip>
 								<XivToolsWpf:TextBlock Key="Pose_SelectedTooltip" />
 							</MenuItem.ToolTip>
@@ -269,16 +257,10 @@
 							  Style="{StaticResource ButtonMenuItemLeft}"
 							  Width="74"
 							  Click="OnExportClicked"/>
-					
-					<MenuItem Style="{StaticResource ButtonMenuItemRight}">
-						<MenuItem Header="Pose_Selected"
-								  Style="{StaticResource AnaMenuItem}"
-								  Click="OnExportSelectedClicked"
-								  IsEnabled="{Binding Skeleton.HasSelection}"/>
 
-						<MenuItem Header="Common_SaveFileMeta"
-							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnExportMetaClicked" />
+					<MenuItem Style="{StaticResource ButtonMenuItemRight}">
+						<MenuItem Header="Pose_Selected" Click="OnExportSelectedClicked" IsEnabled="{Binding Skeleton.HasSelection}"/>
+						<MenuItem Header="Common_SaveFileMeta" Click="OnExportMetaClicked" />
 					</MenuItem>
 				</Menu>
 			</Grid>
@@ -303,7 +285,7 @@
 							<ToggleButton
 								Style="{StaticResource MaterialDesignSwitchToggleButton}"
 								IsEnabled="{Binding GposeService.IsGpose}" 
-								IsChecked="{Binding PoseService.IsEnabled}"
+								IsChecked="{Binding IsPosingEnabled, Mode=TwoWay}"
 								Height="28"
 								Margin="8,0,6,0">
 							</ToggleButton>
@@ -327,7 +309,7 @@
 								<XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldState" Margin="0, 0, 0, 3"/>
 							</CheckBox>
 
-							<Button Margin="0,3,6,3" MinWidth="48"
+							<Button Margin="3,3,6,3" MinWidth="48"
 									VerticalContentAlignment="Center"
 									Click="OnParentingModeClicked"
 									IsEnabled="{Binding PoseService.IsEnabled}"
@@ -335,7 +317,7 @@
 								<Button.ToolTip>
 									<XivToolsWpf:TextBlock Key="Pose_Parenting_Tooltip"/>
 								</Button.ToolTip>
-								
+
 								<Grid Margin="5, 0, 5, 0" Width="115">
 									<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 										<StackPanel.Style>
@@ -383,6 +365,19 @@
 									</StackPanel>
 								</Grid>
 							</Button>
+							<Menu Margin="0" VerticalAlignment="Center" IsEnabled="{Binding PoseService.IsEnabled}" Style="{StaticResource AnaMenu}">
+								<MenuItem Header="Common_Reset" Icon="ArrowRotateLeft" Style="{StaticResource TransparentButtonMenuItemLeft}" Click="OnPoseFullResetClicked" Width="78"/>
+								<MenuItem Style="{StaticResource TransparentButtonMenuItemRight}">
+									<MenuItem Style="{StaticResource AnaMenuItemHeader}"
+											  Header="{Binding ResetPoseOptions, ElementName=RootControl}" />
+									<MenuItem Header="Common_All" Click="OnPoseFullResetClicked"/>
+									<MenuItem Header="Pose_Expression" Click="OnPoseExpressionResetClicked"/>
+									<MenuItem Header="Pose_Body" Click="OnPoseBodyResetClicked"/>
+									<MenuItem Header="Pose_Selected" Click="OnPoseSelectedBonesResetClicked" IsEnabled="{Binding Skeleton.HasSelection}"/>
+									<Separator/>
+									<MenuItem Header="Pose_UpdateBaseline" Click="OnPoseUpdateBaselineClicked"/>
+								</MenuItem>
+							</Menu>
 						</StackPanel>
 
 						<StackPanel Margin="2" Orientation="Horizontal" HorizontalAlignment="Right">

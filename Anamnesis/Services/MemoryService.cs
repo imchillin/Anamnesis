@@ -647,11 +647,11 @@ public partial class MemoryService : ServiceBase<MemoryService>, IProcessMemoryR
 
 		// checke the game version as soon as we can
 		string file = MemoryService.GamePath + "game/ffxivgame.ver";
-		GameVersion = await Task.Run(() => File.ReadAllText(file));
+		GameVersion = await Task.Run(() => File.ReadAllText(file).Trim());
 
 		Log.Information($"Found game version: {GameVersion}");
 
-		if (GameVersion != VersionInfo.ValidatedGameVersion)
+		if (!string.IsNullOrEmpty(VersionInfo.ValidatedGameVersion) && GameVersion != VersionInfo.ValidatedGameVersion)
 		{
 			Log.Warning($"Unrecognized game version: {GameVersion}. Current validated version is: {VersionInfo.ValidatedGameVersion}");
 #if !DEBUG

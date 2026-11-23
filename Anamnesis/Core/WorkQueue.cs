@@ -1,10 +1,11 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Core;
 
 using Serilog;
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Channels;
@@ -173,10 +174,10 @@ public class WorkQueue
 	/// </returns>
 	public bool ProcessPending(TimeSpan budget)
 	{
-		if (!this.Enabled)
+		if (!this.Enabled || this.IsEmpty)
 			return false;
 
-		var sw = System.Diagnostics.Stopwatch.StartNew();
+		long startTimestamp = Stopwatch.GetTimestamp();
 		var reader = this.reader;
 
 		while (reader.TryRead(out var item))
@@ -198,8 +199,8 @@ public class WorkQueue
 				}
 			}
 
-			if (sw.Elapsed > budget)
-				return true; // Return true to check for pending work on next process call
+			if (Stopwatch.GetElapsedTime(startTimestamp) > budget)
+				return !this.IsEmpty;
 		}
 
 		return false; // Queue is fully drained

@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Services;
@@ -135,6 +135,7 @@ public class Settings : INotifyPropertyChanged
 	}
 
 	public bool AutoSaveOnlyInGpose { get; set; } = true;
+	public bool WarnOnUnsavedPose { get; set; } = true;
 
 	public GizmoDragModes GizmoDragMode { get; set; } = GizmoDragModes.Linear;
 

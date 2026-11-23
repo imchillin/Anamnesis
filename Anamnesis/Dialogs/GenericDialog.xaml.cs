@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GUI.Dialogs;
@@ -28,18 +28,21 @@ public partial class GenericDialog : UserControl, IDialog<bool?>
 
 	public string? Left { get; set; }
 	public string? Right { get; set; }
+	public string? CheckboxLabel { get; set; }
+	public bool IsCheckboxChecked { get; set; }
 
 	public static void ShowLocalized(string messageKey, string captionKey)
 	{
 		Task.Run(() => ShowLocalizedAsync(messageKey, captionKey, MessageBoxButton.OK));
 	}
 
-	public static Task<bool?> ShowLocalizedAsync(string messageKey, string captionKey, MessageBoxButton buttons = MessageBoxButton.OK)
+	public static Task<bool?> ShowLocalizedAsync(string messageKey, string captionKey, MessageBoxButton buttons = MessageBoxButton.OK, string? checkboxLabelKey = null, Action? onCheckboxConfirmed = null)
 	{
 		string message = LocalizationService.GetString(messageKey, true);
 		string caption = LocalizationService.GetString(captionKey, true);
+		string? checkboxLabel = checkboxLabelKey != null ? LocalizationService.GetString(checkboxLabelKey, true) : null;
 
-		return ShowAsync(message, caption, buttons);
+		return ShowAsync(message, caption, buttons, checkboxLabel, onCheckboxConfirmed);
 	}
 
 	public static void Show(string message, string caption)
@@ -47,13 +50,14 @@ public partial class GenericDialog : UserControl, IDialog<bool?>
 		Task.Run(() => ShowAsync(message, caption, MessageBoxButton.OK));
 	}
 
-	public static async Task<bool?> ShowAsync(string message, string caption, MessageBoxButton buttons)
+	public static async Task<bool?> ShowAsync(string message, string caption, MessageBoxButton buttons, string? checkboxLabel = null, Action? onCheckboxConfirmed = null)
 	{
 		await Dispatch.MainThread();
 
 		var dlg = new GenericDialog
 		{
 			Message = message,
+			CheckboxLabel = checkboxLabel,
 		};
 
 		switch (buttons)
@@ -83,7 +87,11 @@ public partial class GenericDialog : UserControl, IDialog<bool?>
 				}
 		}
 
-		return await ViewService.ShowDialog<GenericDialog, bool?>(caption, dlg);
+		bool? result = await ViewService.ShowDialog<GenericDialog, bool?>(caption, dlg);
+		if (result == true && dlg.IsCheckboxChecked)
+			onCheckboxConfirmed?.Invoke();
+
+		return result;
 	}
 
 	public void Cancel()

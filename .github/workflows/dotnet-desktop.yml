@@ -1,9 +1,10 @@
 name: Publish Anamnesis
 
 permissions:
-  id-token: write     # Required for attestations
-  attestations: write # Required for attestations
-  contents: write     # Required for creating the draft release
+  id-token: write      # Required for attestations
+  attestations: write  # Required for attestations
+  contents: write      # Required for creating the draft release and pushing PR branch
+  pull-requests: write # Required for creating the channels manifest update PR
 
 on:
   workflow_dispatch:
@@ -17,6 +18,11 @@ on:
         type: string
         description: 'Semantic version (e.g., "1.1.0")'
         required: true
+      validated_game_version:
+        type: string
+        description: 'Validated game version (e.g., "2026.11.03.0000.0000"). Leave empty to keep current.'
+        required: false
+        default: ''
 
 concurrency:
   group: publish-${{ github.ref_name }}
@@ -55,6 +61,12 @@ jobs:
           }
 
           $channelData = $manifest.channels.$channelId
+          $inputGameVersion = "${{ github.event.inputs.validated_game_version }}".Trim()
+          $validatedGameVersion = if ($inputGameVersion) { $inputGameVersion } else { "$($channelData.validated_game_version)".Trim() }
+          if ([string]::IsNullOrWhiteSpace($validatedGameVersion)) {
+            Write-Error "Error: Channel '$channelId' does not define a 'validated_game_version' in channels.json."
+            exit 1
+          }
 
           # Process input version
           $inputVer = "${{ github.event.inputs.version }}".Trim()
@@ -81,10 +93,12 @@ jobs:
           echo "RELEASE_TAG=$tag" >> $env:GITHUB_ENV
           echo "IS_PRERELEASE=$isPreRelease" >> $env:GITHUB_ENV
           echo "VPK_CHANNEL=$vpkChannel" >> $env:GITHUB_ENV
+          echo "VALIDATED_GAME_VERSION=$validatedGameVersion" >> $env:GITHUB_ENV
 
           Write-Host "Target Version: $targetVer"
           Write-Host "Release Tag: $tag"
           Write-Host "Is Pre-release: $isPreRelease"
+          Write-Host "Validated Game Version: $validatedGameVersion"
 
       - name: Fetch framework version from local global file
         id: fetch_framework_version
@@ -114,7 +128,8 @@ jobs:
         run: dotnet publish Anamnesis/Anamnesis.csproj `
           /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml" `
           /p:DefineConstants="CI_BUILD" `
-          /p:Version="${{ env.RELEASE_VERSION }}"
+          /p:Version="${{ env.RELEASE_VERSION }}" `
+          /p:ValidatedGameVersion="${{ env.VALIDATED_GAME_VERSION }}"
 
       - name: Publish UpdateExtractor
         run: dotnet publish UpdateExtractor/UpdateExtractor.csproj `
@@ -205,3 +220,34 @@ jobs:
           gh release upload "${{ env.RELEASE_TAG }}" "./Migration.zip" --clobber
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create PR for channels manifest update
+        if: ${{ github.event.inputs.validated_game_version != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $channelId = "${{ github.event.inputs.channel }}".Trim()
+          $gameVersion = "${{ env.VALIDATED_GAME_VERSION }}"
+          $branchName = "chore/update-channels-${{ env.RELEASE_TAG }}"
+
+          git checkout -B $branchName origin/master
+
+          $manifest = Get-Content ./channels.json | ConvertFrom-Json
+          if ($manifest.channels.$channelId.validated_game_version -eq $gameVersion) {
+            Write-Host "Channel '$channelId' on master is already at '$gameVersion'. Skipping PR."
+            exit 0
+          }
+
+          $manifest.channels.$channelId.validated_game_version = $gameVersion
+          $manifest | ConvertTo-Json | Set-Content ./channels.json
+
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git commit -am "Update $channelId channel game version to $gameVersion (${{ env.RELEASE_TAG }})"
+          git push origin $branchName --force-with-lease
+
+          gh pr create `
+            --base master `
+            --head $branchName `
+            --title "Update $channelId channel to game version $gameVersion (${{ env.RELEASE_TAG }})" `
+            --body "Automated update of ``channels.json`` for release **${{ env.RELEASE_TAG }}**."

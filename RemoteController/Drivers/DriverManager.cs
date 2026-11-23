@@ -57,7 +57,7 @@ public sealed class DriverManager : IDisposable
 			// Initialize drivers in dependency order
 			this.Add(() => new FrameworkDriver(), SyncMode.Immediate);
 			this.Add(() => new GposeDriver(FrameworkDriver.Instance), SyncMode.FrameworkThread);
-			this.Add(() => new PosingDriver(GposeDriver.Instance), SyncMode.FrameworkThread);
+			this.Add(() => new PosingDriver(FrameworkDriver.Instance, GposeDriver.Instance), SyncMode.FrameworkThread);
 			this.Add(() => new ActorDriver(), SyncMode.FrameworkThread);
 			this.Add(() => new TextInputDriver(FrameworkDriver.Instance), SyncMode.FrameworkThread);
 		}

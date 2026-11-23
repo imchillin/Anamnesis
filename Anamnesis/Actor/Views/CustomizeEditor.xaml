@@ -226,14 +226,8 @@
 		<XivToolsWpf:NumberBox Grid.Row="9" Grid.Column="1" Value="{Binding Customize.Bust}" Visibility="{Binding HasBust, Converter={StaticResource B2V}, Mode=OneWay}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 0, 0, 2"/>
 
 		<!-- Muscle / Ears / Tail Size -->
-		<XivToolsWpf:TextBlock Grid.Row="10" Grid.Column="0" Key="Character_Appearance_Muscle" Style="{StaticResource Label}" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}, Mode=OneWay}"/>
-		<XivToolsWpf:NumberBox Grid.Row="10" Grid.Column="1" Value="{Binding Customize.EarMuscleTailSize}" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}, Mode=OneWay}" Minimum="0" Maximum="100" Slider="Absolute"/>
-
-		<XivToolsWpf:TextBlock Grid.Row="10" Grid.Column="0" Key="Character_Appearance_EarsSize" Style="{StaticResource Label}" Visibility="{Binding HasEars, Converter={StaticResource B2V}, Mode=OneWay}"/>
-		<XivToolsWpf:NumberBox Grid.Row="10" Grid.Column="1" Value="{Binding Customize.EarMuscleTailSize}" Visibility="{Binding HasEars, Converter={StaticResource B2V}, Mode=OneWay}" Minimum="0" Maximum="100" Slider="Absolute"/>
-
-		<XivToolsWpf:TextBlock Grid.Row="10" Grid.Column="0" Key="Character_Appearance_TailSize" Style="{StaticResource Label}" Visibility="{Binding HasTail, Converter={StaticResource B2V}, Mode=OneWay}"/>
-		<XivToolsWpf:NumberBox Grid.Row="10" Grid.Column="1" Value="{Binding Customize.EarMuscleTailSize}" Visibility="{Binding HasTail, Converter={StaticResource B2V}, Mode=OneWay}" Minimum="0" Maximum="100" Slider="Absolute"/>
+		<XivToolsWpf:TextBlock Grid.Row="10" Grid.Column="0" Key="{Binding EarMuscleTailLabelKey, Mode=OneWay}" Style="{StaticResource Label}" Visibility="{Binding HasEarMuscleTailSlider, Converter={StaticResource B2V}, Mode=OneWay}"/>
+		<XivToolsWpf:NumberBox Grid.Row="10" Grid.Column="1" Value="{Binding Customize.EarMuscleTailSize}" Visibility="{Binding HasEarMuscleTailSlider, Converter={StaticResource B2V}, Mode=OneWay}" Minimum="0" Maximum="100" Slider="Absolute"/>
 
 		<Grid Grid.Row="11" Grid.ColumnSpan="2">
 			<Grid.RowDefinitions>

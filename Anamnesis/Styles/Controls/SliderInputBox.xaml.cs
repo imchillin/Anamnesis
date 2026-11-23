@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Styles.Controls;
@@ -38,7 +38,7 @@ public partial class SliderInputBox : UserControl
 	public static readonly IBind<decimal?> DefaultValueDp = Binder.Register<decimal?, SliderInputBox>(nameof(DefaultValue), BindMode.OneWay);
 
 	/// <summary>Dependency property for the suffix text.</summary>
-	public static readonly IBind<string> SuffixDp = Binder.Register<string, SliderInputBox>(nameof(Suffix), OnSuffixChanged, BindMode.OneWay);
+	public static readonly IBind<string> SuffixDp = Binder.Register<string, SliderInputBox>(nameof(Suffix), OnSuffixChanged, BindMode.OneWay, defaultValue: string.Empty);
 
 	/// <summary>Dependency property for the minimum value.</summary>
 	public static readonly IBind<string?> MinDp = Binder.Register<string?, SliderInputBox>(nameof(Minimum), OnMinimumChanged, BindMode.TwoWay);
@@ -50,7 +50,7 @@ public partial class SliderInputBox : UserControl
 	public static readonly IBind<int?> DecimalPlacesDp = Binder.Register<int?, SliderInputBox>(nameof(DecimalPlaces), OnDecimalPlacesChanged, BindMode.OneWay);
 
 	/// <summary>Dependency property for the slider mode.</summary>
-	public static readonly IBind<SliderModes> SliderModeDp = Binder.Register<SliderModes, SliderInputBox>(nameof(SliderMode), BindMode.OneWay);
+	public static readonly IBind<SliderModes> SliderModeDp = Binder.Register<SliderModes, SliderInputBox>(nameof(SliderMode), BindMode.OneWay, defaultValue: SliderModes.Absolute);
 
 	/// <summary>Dependency property for the overflow behavior.</summary>
 	public static readonly IBind<OverflowModes> OverflowDp = Binder.Register<OverflowModes, SliderInputBox>(nameof(OverflowBehavior), OnOverflowBehaviorChanged, BindMode.OneWay);
@@ -59,20 +59,20 @@ public partial class SliderInputBox : UserControl
 	public static readonly IBind<bool> LockedDp = Binder.Register<bool, SliderInputBox>(nameof(Locked), BindMode.OneWay);
 
 	/// <summary>Dependency property for the tick frequency.</summary>
-	public static readonly IBind<decimal> TickFrequencyDp = Binder.Register<decimal, SliderInputBox>(nameof(TickFrequency), OnTickFrequencyChanged, BindMode.OneWay);
+	public static readonly IBind<decimal> TickFrequencyDp = Binder.Register<decimal, SliderInputBox>(nameof(TickFrequency), OnTickFrequencyChanged, BindMode.OneWay, defaultValue: 0.01m);
 
 	/// <summary>Dependency property for the border color.</summary>
-	public static readonly IBind<string?> BorderColorDp = Binder.Register<string?, SliderInputBox>(nameof(BorderColor), BindMode.OneWay);
+	public static readonly IBind<string?> BorderColorDp = Binder.Register<string?, SliderInputBox>(nameof(BorderColor), BindMode.OneWay, defaultValue: "#00000000");
 
 	/// <summary>Dependency property for the visibility of the decrease and increase buttons.</summary>
-	public static readonly IBind<bool> EnableStepButtonsDp = Binder.Register<bool, SliderInputBox>(nameof(EnableStepButtons), BindMode.OneWay);
+	public static readonly IBind<bool> EnableStepButtonsDp = Binder.Register<bool, SliderInputBox>(nameof(EnableStepButtons), OnEnableStepButtonsChanged, BindMode.OneWay, defaultValue: true);
 
 	/// <summary>Dependency property for the slider type.</summary>
-	public static readonly IBind<SliderTypes> SliderTypeDp = Binder.Register<SliderTypes, SliderInputBox>(nameof(SliderType), OnSliderTypeChanged, BindMode.OneWay);
+	public static readonly IBind<SliderTypes> SliderTypeDp = Binder.Register<SliderTypes, SliderInputBox>(nameof(SliderType), OnSliderTypeChanged, BindMode.OneWay, defaultValue: SliderTypes.Modern);
 
 	/// <summary>Dependency property for the visibility of the tick visualizer.</summary>
 	/// <remarks>Applies only to the standard slider mode.</remarks>
-	public static readonly IBind<bool> ShowSliderThumbDp = Binder.Register<bool, SliderInputBox>(nameof(ShowSliderThumb), OnShowSliderThumbChanged, BindMode.OneWay);
+	public static readonly IBind<bool> ShowSliderThumbDp = Binder.Register<bool, SliderInputBox>(nameof(ShowSliderThumb), OnShowSliderThumbChanged, BindMode.OneWay, defaultValue: false);
 
 	/// <summary>The key for the dragging background color.</summary>
 	private const string DRAG_BG_KEY = "DraggingBackgroundColor";
@@ -183,16 +183,7 @@ public partial class SliderInputBox : UserControl
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
 
-		// Default property configuration
-		this.TickFrequency = 0.01m;
-		this.EnableStepButtons = true;
-		this.Suffix = string.Empty;
-		this.BorderColor = "#00000000";
-		this.SliderType = SliderTypes.Modern;
-		this.ShowSliderThumb = false;
 		this.SliderThumb.Visibility = Visibility.Collapsed;
-		this.SliderMode = SliderModes.Absolute;
-
 		this.InputField.IsReadOnly = true;
 		this.InputField.IsReadOnlyCaretVisible = false;
 
@@ -666,6 +657,16 @@ public partial class SliderInputBox : UserControl
 			return;
 
 		sender.OnPropertyChanged(nameof(Label));
+	}
+
+	/// <summary>
+	/// Handles changes to the step buttons enabled state.
+	/// </summary>
+	/// <param name="sender">The sender.</param>
+	/// <param name="value">The new value.</param>
+	private static void OnEnableStepButtonsChanged(SliderInputBox sender, bool value)
+	{
+		sender.OnPropertyChanged(nameof(ShowStepButtons));
 	}
 
 	/// <summary>

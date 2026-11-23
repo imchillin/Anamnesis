@@ -4,6 +4,7 @@
 namespace RemoteController.Interop.Types;
 
 using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 /// <summary>
@@ -27,6 +28,9 @@ public enum PostBoneDeformerFlags : uint
 	/// <summary>
 	/// Tail bone scaling and interpolation (n_sippo_a, n_sippo_b) based on the tail length customize slider.
 	/// </summary>
+	/// <remarks>
+	/// This is two bits: 0x200 (Miqo'te, Hrothgar) and 0x400 (Au Ra).
+	/// </remarks>
 	Tail = 0x600,
 
 	/// <summary>
@@ -47,8 +51,16 @@ public enum PostBoneDeformerFlags : uint
 [StructLayout(LayoutKind.Explicit, Size = 0x88)]
 public unsafe struct HumanPostBoneDeformer
 {
+	public const int SKELETON_OFFSET = 0x48;
 	public const int FLAGS_OFFSET = 0x64;
+	public const int BUST_SCALE_OFFSET = 0x68;
+
+	[FieldOffset(SKELETON_OFFSET)]
+	public nint Skeleton;
 
 	[FieldOffset(FLAGS_OFFSET)]
 	public PostBoneDeformerFlags Flags;
+
+	[FieldOffset(BUST_SCALE_OFFSET)]
+	public Vector3 BustScale;
 }

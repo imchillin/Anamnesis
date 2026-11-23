@@ -50,14 +50,6 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
-
-		if (TargetService.Instance.SelectedActor != null)
-		{
-			this.currentActor = TargetService.Instance.SelectedActor;
-			this.currentActor.Do(a => a.AddPropertyChangedListener(this.OnActorPropertyChanged, nameof(ActorMemory.IsMotionDisabled)));
-		}
-
-		TargetService.ActorSelected += this.OnSelectedActorChanged;
 	}
 
 	/// <inheritdoc/>
@@ -496,7 +488,18 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	/// <param name="e">The event arguments.</param>
 	private void OnLoaded(object sender, RoutedEventArgs e)
 	{
+		HistoryService.OnHistoryApplied -= this.OnHistoryApplied;
 		HistoryService.OnHistoryApplied += this.OnHistoryApplied;
+
+		TargetService.ActorSelected -= this.OnSelectedActorChanged;
+		TargetService.ActorSelected += this.OnSelectedActorChanged;
+		this.OnSelectedActorChanged(TargetService.Instance.SelectedActor);
+
+		if (this.Skeleton != null)
+		{
+			this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+			this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
+		}
 	}
 
 	/// <summary>Handles the unloaded event.</summary>
@@ -505,6 +508,10 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	private void OnUnloaded(object sender, RoutedEventArgs e)
 	{
 		HistoryService.OnHistoryApplied -= this.OnHistoryApplied;
+		TargetService.ActorSelected -= this.OnSelectedActorChanged;
+
+		this.currentActor?.Do(a => a.RemovePropertyChangedListener(this.OnActorPropertyChanged));
+		this.currentActor = null;
 
 		if (this.Skeleton != null)
 		{

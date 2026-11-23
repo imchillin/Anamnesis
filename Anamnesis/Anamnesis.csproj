@@ -29,6 +29,9 @@
     <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
     <StartupObject>Anamnesis.App</StartupObject>
   </PropertyGroup>
+  <ItemGroup Condition="'$(ValidatedGameVersion)' != ''">
+    <AssemblyMetadata Include="ValidatedGameVersion" Value="$(ValidatedGameVersion)" />
+  </ItemGroup>
   <ItemGroup>
     <RemoteControllerSources Include="..\RemoteController\**\*.cs" Exclude="..\RemoteController\obj\**;..\RemoteController\bin\**" />
   </ItemGroup>
