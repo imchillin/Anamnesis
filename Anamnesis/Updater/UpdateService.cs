@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Updater;
@@ -126,8 +126,9 @@ public partial class UpdateService : ServiceBase<UpdateService>
 
 			CurrentChannelData = activeChannelData;
 			var githubSource = new GithubSource(GITHUB_REPO_URL, accessToken: null, prerelease: true);
+			string latestGameVersion = GetLatestChainGameVersion(GlobalManifest, activeChannelId);
 
-			if (IsChannelCompatible(activeChannelData))
+			if (IsChannelCompatible(activeChannelData, latestGameVersion))
 			{
 				string activeVelopackChannel = GetVelopackChannel(activeChannelId);
 				var updateOpts = new UpdateOptions
@@ -159,9 +160,9 @@ public partial class UpdateService : ServiceBase<UpdateService>
 				return false;
 			}
 
-			Log.Information($"The channel '{activeChannelId}' is not compatible with game version '{VersionInfo.ValidatedGameVersion}'. Checking fallbacks...");
+			Log.Information($"The channel '{activeChannelId}' (validated game version: '{activeChannelData.ValidatedGameVersion}') is outdated compared to a fallback channel (latest: '{latestGameVersion}'). Checking fallbacks...");
 
-			var visitedChannels = new HashSet<string> { activeChannelId };
+			var visitedChannels = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { activeChannelId };
 			string? nextFallbackId = activeChannelData.Fallback;
 
 			while (!string.IsNullOrEmpty(nextFallbackId))
@@ -178,7 +179,7 @@ public partial class UpdateService : ServiceBase<UpdateService>
 					break;
 				}
 
-				if (IsChannelCompatible(fallbackChannelData))
+				if (IsChannelCompatible(fallbackChannelData, latestGameVersion))
 				{
 					string fallbackVelopackChannel = GetVelopackChannel(nextFallbackId);
 					var fallBackUpdateOpts = new UpdateOptions
@@ -188,6 +189,13 @@ public partial class UpdateService : ServiceBase<UpdateService>
 					};
 
 					this.updateManager = new UpdateManager(githubSource, fallBackUpdateOpts);
+
+					if (!this.updateManager.IsInstalled)
+					{
+						Log.Warning("The portable application does not support automatic updates.");
+						return false;
+					}
+
 					this.pendingUpdate = await this.updateManager.CheckForUpdatesAsync();
 
 					if (this.pendingUpdate != null)
@@ -292,12 +300,35 @@ public partial class UpdateService : ServiceBase<UpdateService>
 		return $"{osShortName}-{manifestChannelId}";
 	}
 
-	private static bool IsChannelCompatible(ChannelData channelData)
+	private static string GetLatestChainGameVersion(ChannelsManifest manifest, string startChannelId)
 	{
-		if (string.IsNullOrEmpty(channelData.ValidatedGameVersion))
+		string latest = string.Empty;
+		var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+		string? currentId = startChannelId;
+
+		while (!string.IsNullOrEmpty(currentId)
+			&& visited.Add(currentId)
+			&& manifest.Channels.TryGetValue(currentId, out var channelData))
+		{
+			string version = channelData.ValidatedGameVersion?.Trim() ?? string.Empty;
+			if (string.CompareOrdinal(version, latest) > 0)
+				latest = version;
+
+			currentId = channelData.Fallback;
+		}
+
+		return latest;
+	}
+
+	private static bool IsChannelCompatible(ChannelData channelData, string targetGameVersion)
+	{
+		if (string.IsNullOrWhiteSpace(targetGameVersion))
+			return true;
+
+		if (string.IsNullOrWhiteSpace(channelData.ValidatedGameVersion))
 			return false;
 
-		return string.Equals(channelData.ValidatedGameVersion, VersionInfo.ValidatedGameVersion, StringComparison.OrdinalIgnoreCase);
+		return string.CompareOrdinal(channelData.ValidatedGameVersion.Trim(), targetGameVersion.Trim()) >= 0;
 	}
 
 	private async Task<ChannelsManifest> FetchChannelsManifest()
