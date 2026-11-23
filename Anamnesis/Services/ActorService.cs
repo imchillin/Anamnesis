@@ -629,7 +629,7 @@ public class ActorService : ServiceBase<ActorService>
 		if (objectIndex == -1)
 			return false;
 
-		return this.IsGPoseActor(objectIndex);
+		return IsGPoseActor(objectIndex);
 	}
 
 	/// <summary>Determines if the actor is in the overworld.</summary>
@@ -651,7 +651,7 @@ public class ActorService : ServiceBase<ActorService>
 		if (objectIndex == -1)
 			return false;
 
-		return this.IsLocalOverworldPlayer(objectIndex);
+		return IsLocalOverworldPlayer(objectIndex);
 	}
 
 	/// <summary>Determines if the actor is the local GPose player.</summary>
@@ -667,7 +667,7 @@ public class ActorService : ServiceBase<ActorService>
 		if (objectIndex == -1)
 			return false;
 
-		return this.IsLocalGPosePlayer(objectIndex);
+		return IsLocalGPosePlayer(objectIndex);
 	}
 
 	/// <summary>Determines if the actor is the local player.</summary>
