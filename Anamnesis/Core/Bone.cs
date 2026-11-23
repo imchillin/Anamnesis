@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Core;
@@ -22,12 +22,12 @@ using XivToolsWpf.Math3D.Extensions;
 public class Bone : ITransform
 {
 	public const float EQUALITY_TOLERANCE = 0.00001f;
-	protected readonly ReaderWriterLockSlim TransformLock = new();
 	private static readonly ObjectPool<Stack<(Bone Bone, bool WriteLinked, Transform? PrecalcParent)>> s_boneWriteStackPool
 		= ObjectPool.Create<Stack<(Bone Bone, bool WriteLinked, Transform? PrecalcParent)>>();
 	private static readonly ObjectPool<Stack<Bone>> s_boneReadStackPool = ObjectPool.Create<Stack<Bone>>();
 	private static readonly HashSet<string> s_attachmentBoneNames = new() { "n_buki_r", "n_buki_l", "j_buki_sebo_r", "j_buki_sebo_l" };
 	private static bool s_scaleLinked = true;
+	private readonly Lock transformLock = new();
 	private bool hasInitialReading = false;
 	private bool isDirty = false;
 	private Vector3 position;
@@ -97,7 +97,7 @@ public class Bone : ITransform
 		get => this.position;
 		set
 		{
-			if (!this.position.IsApproximately(value, EQUALITY_TOLERANCE))
+			if (this.position != value && !this.position.IsApproximately(value, EQUALITY_TOLERANCE))
 			{
 				this.position = value;
 				this.isDirty = true;
@@ -120,7 +120,7 @@ public class Bone : ITransform
 		get => this.rotation;
 		set
 		{
-			if (!this.rotation.IsApproximately(value, EQUALITY_TOLERANCE))
+			if (this.rotation != value && !this.rotation.IsApproximately(value, EQUALITY_TOLERANCE))
 			{
 				this.rotation = value;
 				this.isDirty = true;
@@ -142,7 +142,7 @@ public class Bone : ITransform
 		get => this.scale;
 		set
 		{
-			if (!this.scale.IsApproximately(value, EQUALITY_TOLERANCE))
+			if (this.scale != value && !this.scale.IsApproximately(value, EQUALITY_TOLERANCE))
 			{
 				this.scale = value;
 				this.isDirty = true;
@@ -181,8 +181,8 @@ public class Bone : ITransform
 	}
 
 	/// <summary>
-	/// Gets a value indicating whether the object's transform
-	/// has been modified since the last synchronization.
+	/// Gets a value indicating whether the object's transform has been
+	/// modified by Anamnesis but not synchronized with the game's memory.
 	/// </summary>
 	public bool IsDirty
 	{
@@ -205,9 +205,9 @@ public class Bone : ITransform
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Transform LocalToModelSpace(Transform localTransform, Transform parentTransform)
 	{
-		// Apply the parent's character-relative rotation to the local position
-		Vector3 modelPosition = Vector3.Transform(localTransform.Position, parentTransform.Rotation);
-		modelPosition += parentTransform.Position;
+		// Apply the parent's scale, then character-relative rotation to the local position
+		Vector3 scaledLocalPos = localTransform.Position * parentTransform.Scale;
+		Vector3 modelPosition = Vector3.Transform(scaledLocalPos, parentTransform.Rotation) + parentTransform.Position;
 
 		// Apply the parent's character-relative rotation to the local rotation
 		Quaternion modelRotation = Quaternion.Normalize(parentTransform.Rotation * localTransform.Rotation);
@@ -232,9 +232,24 @@ public class Bone : ITransform
 		// Subtract the parent's character-relative position from the model position
 		Vector3 localPosition = modelTransform.Position - parentTransform.Position;
 
-		// Apply the inverse of the parent's character-relative rotation to the local position
+		// Apply the inverse of the parent's character-relative rotation and scale to the local position
 		Quaternion parentRotInverse = Quaternion.Conjugate(parentTransform.Rotation);
 		localPosition = Vector3.Transform(localPosition, parentRotInverse);
+
+		if (parentTransform.Scale.X != 1.0f && parentTransform.Scale.X != 0)
+		{
+			localPosition.X /= parentTransform.Scale.X;
+		}
+
+		if (parentTransform.Scale.Y != 1.0f && parentTransform.Scale.Y != 0)
+		{
+			localPosition.Y /= parentTransform.Scale.Y;
+		}
+
+		if (parentTransform.Scale.Z != 1.0f && parentTransform.Scale.Z != 0)
+		{
+			localPosition.Z /= parentTransform.Scale.Z;
+		}
 
 		// Apply the inverse of the parent's character-relative rotation to the model rotation
 		Quaternion localRotation = Quaternion.Normalize(parentRotInverse * modelTransform.Rotation);
@@ -269,8 +284,7 @@ public class Bone : ITransform
 	/// Snapshots are primarily used by the skeleton object to optimize memory reads.
 	/// </remarks>
 	/// <param name="readChildren">Whether to read the transforms of child bones.</param>
-	/// <param name="snapshot">An optional snapshot of transforms to use instead of memory.</param>
-	public virtual void ReadTransform(bool readChildren = false, Dictionary<string, Transform>? snapshot = null)
+	public virtual void ReadTransform(bool readChildren = false)
 	{
 		if (this.TransformMemories.Count == 0)
 			return;
@@ -284,64 +298,70 @@ public class Bone : ITransform
 			{
 				Bone currentBone = bonesToProcess.Pop();
 
-				// Use snapshot if available, otherwise use values from memory
-				// Note: Values are expected to be in model space
-				Transform localTransform;
-				if (snapshot != null && snapshot.TryGetValue(currentBone.Name, out var transform))
-				{
-					localTransform = transform;
-				}
-				else
-				{
-					var transformMemory = currentBone.TransformMemories[0];
-					localTransform = new Transform
-					{
-						Position = transformMemory.Position,
-						Rotation = transformMemory.Rotation,
-						Scale = transformMemory.Scale,
-					};
-				}
+				if (currentBone.TransformMemories.Count == 0)
+					continue;
 
-				// Convert the character-relative transform into a parent-relative transform
-				if (currentBone.Parent != null)
+				var transformStruct = currentBone.TransformMemories[0].Transform;
+				Transform localTransform;
+
+				unsafe
 				{
-					Transform parentTransform;
-					if (snapshot != null && snapshot.TryGetValue(currentBone.Parent.Name, out var parentSnapshot))
+					Transform modelTransform = *(Transform*)&transformStruct;
+
+					// Convert the character-relative transform into a parent-relative transform
+					if (currentBone.Parent != null)
 					{
-						parentTransform = parentSnapshot;
+						if (currentBone.Parent.TransformMemories.Count > 0)
+						{
+							var parentTransformStruct = currentBone.Parent.TransformMemories[0].Transform;
+							Transform parentTransform = *(Transform*)&parentTransformStruct;
+							localTransform = ModelToLocalSpace(modelTransform, parentTransform);
+						}
+						else
+						{
+							localTransform = ModelToLocalSpace(modelTransform, default);
+						}
 					}
 					else
 					{
-						var parentTransformMemory = currentBone.Parent.TransformMemories[0];
-						parentTransform = new Transform
-						{
-							Position = parentTransformMemory.Position,
-							Rotation = parentTransformMemory.Rotation,
-							Scale = parentTransformMemory.Scale,
-						};
+						localTransform = modelTransform;
+					}
+				}
+
+				lock (currentBone.transformLock)
+				{
+					bool changed = false;
+					if (currentBone.position != localTransform.Position && !currentBone.position.IsApproximately(localTransform.Position, EQUALITY_TOLERANCE))
+					{
+						currentBone.Position = localTransform.Position;
+						changed = true;
 					}
 
-					localTransform = ModelToLocalSpace(localTransform, parentTransform);
-				}
+					if (currentBone.rotation != localTransform.Rotation && !currentBone.rotation.IsApproximately(localTransform.Rotation, EQUALITY_TOLERANCE))
+					{
+						currentBone.Rotation = localTransform.Rotation;
+						changed = true;
+					}
 
-				currentBone.TransformLock.EnterReadLock();
-				try
-				{
-					currentBone.Position = localTransform.Position;
-					currentBone.Rotation = localTransform.Rotation;
-					currentBone.Scale = localTransform.Scale;
+					if (currentBone.scale != localTransform.Scale && !currentBone.scale.IsApproximately(localTransform.Scale, EQUALITY_TOLERANCE))
+					{
+						currentBone.Scale = localTransform.Scale;
+						changed = true;
+					}
+
 					currentBone.hasInitialReading = true;
-				}
-				finally
-				{
-					currentBone.TransformLock.ExitReadLock();
+					if (changed || currentBone.isDirty)
+					{
+						currentBone.isDirty = false;
+					}
 				}
 
 				if (readChildren)
 				{
-					foreach (var child in currentBone.Children)
+					var children = currentBone.Children;
+					for (int i = 0; i < children.Count; i++)
 					{
-						bonesToProcess.Push(child);
+						bonesToProcess.Push(children[i]);
 					}
 				}
 			}
@@ -378,6 +398,23 @@ public class Bone : ITransform
 					currentBone.ReadTransform();
 				}
 
+				Transform? parentTransform = precalcParent;
+				if (parentTransform == null && currentBone.Parent != null)
+				{
+					if (currentBone.Parent.TransformMemories.Count > 0)
+					{
+						var pts = currentBone.Parent.TransformMemories[0].Transform;
+						unsafe
+						{
+							parentTransform = *(Transform*)&pts;
+						}
+					}
+					else
+					{
+						parentTransform = default;
+					}
+				}
+
 				// Calculate deltas for linked Bones
 				Quaternion rotDelta = Quaternion.Identity;
 				Vector3 scaleDelta = Vector3.One;
@@ -395,7 +432,7 @@ public class Bone : ITransform
 					};
 
 					Transform memLocal = currentBone.Parent != null
-						? ModelToLocalSpace(memModel, precalcParent ?? ComputeModelSpaceTransform(currentBone.Parent))
+						? ModelToLocalSpace(memModel, parentTransform!.Value)
 						: memModel;
 
 					rotDelta = currentBone.Rotation * Quaternion.Inverse(memLocal.Rotation);
@@ -415,12 +452,10 @@ public class Bone : ITransform
 
 				if (currentBone.Parent != null)
 				{
-					Transform parentTransform = precalcParent ?? ComputeModelSpaceTransform(currentBone.Parent);
-					modelTransform = LocalToModelSpace(modelTransform, parentTransform);
+					modelTransform = LocalToModelSpace(modelTransform, parentTransform!.Value);
 				}
 
-				currentBone.TransformLock.EnterWriteLock();
-				try
+				lock (currentBone.transformLock)
 				{
 					for (int i = 0; i < transformMemories.Count; ++i)
 					{
@@ -435,19 +470,19 @@ public class Bone : ITransform
 							continue;
 
 						var tm = transformMemories[i];
-						if (!tm.Position.IsApproximately(modelTransform.Position, EQUALITY_TOLERANCE))
+						if (tm.Position != modelTransform.Position && !tm.Position.IsApproximately(modelTransform.Position, EQUALITY_TOLERANCE))
 						{
 							tm.Position = modelTransform.Position;
 							changed = true;
 						}
 
-						if (!tm.Scale.IsApproximately(modelTransform.Scale, EQUALITY_TOLERANCE))
+						if (tm.Scale != modelTransform.Scale && !tm.Scale.IsApproximately(modelTransform.Scale, EQUALITY_TOLERANCE))
 						{
 							tm.Scale = modelTransform.Scale;
 							changed = true;
 						}
 
-						if (!tm.Rotation.IsApproximately(modelTransform.Rotation, EQUALITY_TOLERANCE))
+						if (tm.Rotation != modelTransform.Rotation && !tm.Rotation.IsApproximately(modelTransform.Rotation, EQUALITY_TOLERANCE))
 						{
 							tm.Rotation = modelTransform.Rotation;
 							changed = true;
@@ -500,10 +535,6 @@ public class Bone : ITransform
 					{
 						transformMemories[i].EnableReading = true;
 					}
-				}
-				finally
-				{
-					currentBone.TransformLock.ExitWriteLock();
 				}
 			}
 		}
@@ -562,55 +593,5 @@ public class Bone : ITransform
 		this.Parent?.Children.Remove(this);
 		this.Parent = newParent;
 		newParent?.Children.Add(this);
-	}
-
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static Transform ComputeModelSpaceTransform(Bone bone)
-	{
-		int depth = 0;
-		Bone? current = bone;
-		while (current != null)
-		{
-			depth++;
-			current = current.Parent;
-		}
-
-		Bone[] ancestors = System.Buffers.ArrayPool<Bone>.Shared.Rent(depth);
-		try
-		{
-			current = bone;
-			int index = 0;
-			while (current != null && index < depth)
-			{
-				ancestors[index++] = current;
-				current = current.Parent;
-			}
-
-			Transform modelTransform = new()
-			{
-				Position = Vector3.Zero,
-				Rotation = Quaternion.Identity,
-				Scale = Vector3.One,
-			};
-
-			for (int i = depth - 1; i >= 0; i--)
-			{
-				Bone ancestor = ancestors[i];
-				Transform localTransform = new()
-				{
-					Position = ancestor.Position,
-					Rotation = ancestor.Rotation,
-					Scale = ancestor.Scale,
-				};
-
-				modelTransform = LocalToModelSpace(localTransform, modelTransform);
-			}
-
-			return modelTransform;
-		}
-		finally
-		{
-			System.Buffers.ArrayPool<Bone>.Shared.Return(ancestors);
-		}
 	}
 }

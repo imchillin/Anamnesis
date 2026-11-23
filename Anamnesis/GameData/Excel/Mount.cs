@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
@@ -16,6 +16,12 @@ using Lumina.Excel.Sheets;
 public readonly struct Mount(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Mount>, INpcBase
 {
+	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
 	/// <inheritdoc/>
 	public uint RowId => row;
 
@@ -63,7 +69,7 @@ public readonly struct Mount(ExcelPage page, uint offset, uint row)
 	public readonly RowRef<MountCustomize> MountCustomize => new(page.Module, page.ReadUInt8(offset + 74), page.Language);
 
 	/// <inheritdoc/>
-	public ImgRef? Icon => new(page.ReadUInt16(offset + 52));
+	public ImgRef? Icon => ImgRef.GetOrCreate(page.ReadUInt16(offset + 52));
 
 	/// <inheritdoc/>
 	public Mod? Mod => null;

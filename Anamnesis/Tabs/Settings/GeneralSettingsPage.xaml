@@ -6,7 +6,7 @@
              xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              xmlns:XivToolsWPF="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
              mc:Ignorable="d"
-             d:DesignHeight="450">
+             d:DesignHeight="600">
 	<GroupBox x:Name="ContentArea" Style="{StaticResource PanelGroupBox}">
 		<GroupBox.Header>
 			<XivToolsWPF:Header Key="SettingsPages_General" Icon="Cog"/>
@@ -14,6 +14,7 @@
 		
 		<Grid HorizontalAlignment="Left" Width="450" Margin="10, 4, 0, 0">
 			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
@@ -264,6 +265,59 @@
 						<TextBox Grid.Column="1" Margin="3, 0, 0, 0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding SettingsService.Settings.DefaultSceneDirectory}" IsEnabled="False"/>
 						<Button Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseScene"/>
 					</Grid> -->
+				</Grid>
+			</GroupBox>
+
+			<!-- Updates -->
+			<GroupBox x:Name="UpdatesGroupBox" Grid.Row="3" Margin="0, 0, 0, 10">
+				<GroupBox.Header>
+					<XivToolsWPF:Header Key="Settings_UpdatesHeader" Icon="CodeBranch"/>
+				</GroupBox.Header>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+
+					<Grid x:Name="General_Updates_ReleaseChannel" Grid.Row="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="20"/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_ReleaseChannel" Style="{StaticResource Label}"/>
+						<ComboBox Margin="6" Grid.Column="1" IsEnabled="{Binding HasReleaseChannels, Mode=OneWay}"
+								  SelectedValue="{Binding SelectedReleaseChannel}" ItemsSource="{Binding ReleaseChannels, Mode=OneWay}">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Display}"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+						<TextBlock Grid.Column="2" VerticalAlignment="Center">
+							<fa:IconBlock Icon="InfoCircle" FontSize="13"/>
+							<TextBlock.ToolTip>
+								<XivToolsWPF:TextBlock Key="Settings_ReleaseChannelTooltip"/>
+							</TextBlock.ToolTip>
+						</TextBlock>
+					</Grid>
+
+					<Grid x:Name="General_Updates_ReleaseChannel_Check" Grid.Row="1">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="20"/>
+						</Grid.ColumnDefinitions>
+
+						<Button Grid.Column="1" Margin="6" Style="{StaticResource TransparentButton}" Click="OnCheckForUpdates">
+							<XivToolsWPF:TextBlock Key="About_CheckForUpdates" />
+						</Button>
+					</Grid>
+
+					<XivToolsWPF:InfoControl Grid.Row="2" Key="Settings_UpdatesRateLimitWarning" Grid.ColumnSpan="2"/>
 				</Grid>
 			</GroupBox>
 		</Grid>

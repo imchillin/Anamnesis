@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory;
+
 public class PartialSkeletonMemory : MemoryBase
 {
 	[Bind(0x120, BindFlags.DontCacheOffsets)] public short ConnectedParentBoneIndex { get; set; }

@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Controls;
@@ -50,14 +50,6 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
-
-		if (TargetService.Instance.SelectedActor != null)
-		{
-			this.currentActor = TargetService.Instance.SelectedActor;
-			this.currentActor.Do(a => a.PropertyChanged += this.OnActorPropertyChanged);
-		}
-
-		TargetService.ActorSelected += this.OnSelectedActorChanged;
 	}
 
 	/// <inheritdoc/>
@@ -496,7 +488,18 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	/// <param name="e">The event arguments.</param>
 	private void OnLoaded(object sender, RoutedEventArgs e)
 	{
+		HistoryService.OnHistoryApplied -= this.OnHistoryApplied;
 		HistoryService.OnHistoryApplied += this.OnHistoryApplied;
+
+		TargetService.ActorSelected -= this.OnSelectedActorChanged;
+		TargetService.ActorSelected += this.OnSelectedActorChanged;
+		this.OnSelectedActorChanged(TargetService.Instance.SelectedActor);
+
+		if (this.Skeleton != null)
+		{
+			this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+			this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
+		}
 	}
 
 	/// <summary>Handles the unloaded event.</summary>
@@ -505,6 +508,10 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	private void OnUnloaded(object sender, RoutedEventArgs e)
 	{
 		HistoryService.OnHistoryApplied -= this.OnHistoryApplied;
+		TargetService.ActorSelected -= this.OnSelectedActorChanged;
+
+		this.currentActor?.Do(a => a.RemovePropertyChangedListener(this.OnActorPropertyChanged));
+		this.currentActor = null;
 
 		if (this.Skeleton != null)
 		{
@@ -519,9 +526,9 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	private void OnSelectedActorChanged(ObjectHandle<ActorMemory>? actor)
 	{
 		// We already track skeleton changes so this is only used to keep track of actor property changes
-		this.currentActor?.Do(a => a.PropertyChanged -= this.OnActorPropertyChanged);
+		this.currentActor?.Do(a => a.RemovePropertyChangedListener(this.OnActorPropertyChanged));
 		this.currentActor = actor;
-		this.currentActor?.Do(a => a.PropertyChanged += this.OnActorPropertyChanged);
+		this.currentActor?.Do(a => a.AddPropertyChangedListener(this.OnActorPropertyChanged, nameof(ActorMemory.IsMotionDisabled)));
 
 		// Raise property changed for the entire TransformEditor
 		this.RaisePropertyChanged(string.Empty);
@@ -534,9 +541,6 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	/// <param name="e"> The event arguments.</param>
 	private void OnActorPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		if (e.PropertyName == nameof(ActorMemory.IsMotionDisabled))
-		{
-			this.RaisePropertyChanged(nameof(this.CanTranslate));
-		}
+		this.RaisePropertyChanged(nameof(this.CanTranslate));
 	}
 }

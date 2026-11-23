@@ -14,6 +14,12 @@ public readonly struct Race(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Race>
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public readonly uint RowId => row;
 
 	/// <summary>Gets the full race name.</summary>

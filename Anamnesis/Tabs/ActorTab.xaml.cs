@@ -28,7 +28,8 @@ public partial class ActorTab : UserControl
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
 
-		TargetService.ActorSelected += this.OnActorSelected;
+		this.Loaded += this.OnLoaded;
+		this.Unloaded += this.OnUnloaded;
 		this.Tabs.CollectionChanged += this.OnTabsChanged;
 
 		this.AddPage<CharacterPage>("AppearanceTab", IconChar.UserEdit);
@@ -118,6 +119,18 @@ public partial class ActorTab : UserControl
 		}
 
 		this.loading = false;
+	}
+
+	private void OnLoaded(object sender, RoutedEventArgs e)
+	{
+		TargetService.ActorSelected -= this.OnActorSelected;
+		TargetService.ActorSelected += this.OnActorSelected;
+		this.OnActorSelected(TargetService.Instance.SelectedActor);
+	}
+
+	private void OnUnloaded(object sender, RoutedEventArgs e)
+	{
+		TargetService.ActorSelected -= this.OnActorSelected;
 	}
 
 	private void OnActorSelected(ObjectHandle<ActorMemory>? actorHandle)

@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Tabs;
@@ -44,15 +44,6 @@ public partial class SettingsTab : System.Windows.Controls.UserControl
 			new SettingsPage<ConnectionsSettingsPage>(IconChar.NetworkWired, "SettingsPages", "Connections"),
 			new SettingsPage<BackupAndRecoverySettingsPage>(IconChar.Database, "SettingsPages", "BackupAndRecovery"),
 		};
-
-		// Force initialization of all pages
-		// This is done to ensure that all settings are configured before the user interacts with them
-		foreach (var page in this.Pages)
-		{
-			page.IsActive = true;
-			var content = page.Content;
-			page.IsActive = false;
-		}
 
 		// Set the first page as active
 		this.SelectedPage = this.Pages[0];
@@ -125,8 +116,14 @@ public partial class SettingsTab : System.Windows.Controls.UserControl
 
 		public override void FilterContent(string query)
 		{
-			if (this.Content is not ISettingSection filterableContent)
-				return;
+			if (this.content == null)
+			{
+				if (string.IsNullOrEmpty(query))
+					return;
+
+				this.IsActive = true;
+				_ = this.Content;
+			}
 
 			foreach (var category in this.SettingCategories)
 			{

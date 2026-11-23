@@ -77,6 +77,12 @@ public class ItemMemory : MemoryBase, IEquipmentItemMemory
 		}
 	}
 
+	ushort IEquipmentItemMemory.Variant
+	{
+		get => this.Variant;
+		set => this.Variant = (byte)value;
+	}
+
 	[AlsoNotifyFor(nameof(ItemId))]
 	public byte Dye
 	{

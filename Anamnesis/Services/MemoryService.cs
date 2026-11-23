@@ -64,6 +64,9 @@ public partial class MemoryService : ServiceBase<MemoryService>, IProcessMemoryR
 	/// <summary>Gets the process being managed.</summary>
 	public static Process? Process { get; private set; }
 
+	/// <summary> Gets the game version attached to the process.</summary>
+	public static string? GameVersion { get; private set; }
+
 	/// <summary>Gets a value indicating whether the process is alive.</summary>
 	public static bool IsProcessAlive
 	{
@@ -540,24 +543,28 @@ public partial class MemoryService : ServiceBase<MemoryService>, IProcessMemoryR
 		if (Process == null)
 			return;
 
-		int vkey = KeyInterop.VirtualKeyFromKey(key);
-
-		if (key == Key.LeftShift || key == Key.RightShift)
-			vkey = 0x10;
-
-		if (key == Key.LeftCtrl || key == Key.RightCtrl)
-			vkey = 0x11;
-
-		if (key == Key.LeftAlt || key == Key.RightAlt)
-			vkey = 0x12;
-
-		if (state == KeyboardKeyStates.Pressed)
+		int vkey = key switch
 		{
-			PostMessage(Process.MainWindowHandle, 0x100, (IntPtr)vkey, IntPtr.Zero);
+			Key.LeftShift or Key.RightShift => 0x10,
+			Key.LeftCtrl or Key.RightCtrl => 0x11,
+			Key.LeftAlt or Key.RightAlt or Key.System => 0x12,
+			_ => KeyInterop.VirtualKeyFromKey(key),
+		};
+
+		if (vkey == 0)
+			return;
+
+		uint scanCode = MapVirtualKey((uint)vkey, MAPVK_VK_TO_VSC);
+
+		if (state == KeyboardKeyStates.Pressed || state == KeyboardKeyStates.Down)
+		{
+			nint lParam = (nint)(1 | (scanCode << 16));
+			PostMessage(Process.MainWindowHandle, (uint)KeyboardInputMsg.WM_KEYDOWN, (nint)vkey, lParam);
 		}
 		else if (state == KeyboardKeyStates.Released)
 		{
-			PostMessage(Process.MainWindowHandle, 0x0101, (IntPtr)vkey, IntPtr.Zero);
+			nint lParam = unchecked((nint)(long)(0xC0000001u | (scanCode << 16)));
+			PostMessage(Process.MainWindowHandle, (uint)KeyboardInputMsg.WM_KEYUP, (nint)vkey, lParam);
 		}
 	}
 
@@ -640,13 +647,13 @@ public partial class MemoryService : ServiceBase<MemoryService>, IProcessMemoryR
 
 		// checke the game version as soon as we can
 		string file = MemoryService.GamePath + "game/ffxivgame.ver";
-		string gameVer = await Task.Run(() => File.ReadAllText(file));
+		GameVersion = await Task.Run(() => File.ReadAllText(file).Trim());
 
-		Log.Information($"Found game version: {gameVer}");
+		Log.Information($"Found game version: {GameVersion}");
 
-		if (gameVer != VersionInfo.ValidatedGameVersion)
+		if (!string.IsNullOrEmpty(VersionInfo.ValidatedGameVersion) && GameVersion != VersionInfo.ValidatedGameVersion)
 		{
-			Log.Warning($"Unrecognized game version: {gameVer}. Current validated version is: {VersionInfo.ValidatedGameVersion}");
+			Log.Warning($"Unrecognized game version: {GameVersion}. Current validated version is: {VersionInfo.ValidatedGameVersion}");
 #if !DEBUG
 			await GenericDialog.ShowLocalizedAsync("Error_WrongVersion", "Error_WrongVersionTitle");
 #endif
@@ -776,6 +783,7 @@ public partial class MemoryService : ServiceBase<MemoryService>, IProcessMemoryR
 					}
 
 					Log.Information("FFXIV Process has terminated");
+					GameVersion = null;
 					await Task.Delay(PROCESS_WATCHDOG_INTERVAL);
 					await this.GetProcess();
 

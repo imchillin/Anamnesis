@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
@@ -13,6 +13,12 @@ public readonly struct Glasses(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Glasses>
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public readonly uint RowId => row;
 
 	/// <summary>Gets the name of the glasses.</summary>
@@ -26,7 +32,7 @@ public readonly struct Glasses(ExcelPage page, uint offset, uint row)
 		: LocalizationService.GetString("Facewear_None_Desc");
 
 	/// <summary>Gets the icon reference for the glasses.</summary>
-	public ImgRef Icon => new(page.ReadInt32(offset + 28));
+	public ImgRef Icon => ImgRef.GetOrCreate(page.ReadInt32(offset + 28));
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the glasses are marked as favorite.

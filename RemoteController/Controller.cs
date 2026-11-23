@@ -25,6 +25,8 @@ public class Controller
 
 	private const int PROCESS_MONITOR_JOIN_TIMEOUT_MS = 500;
 	private const int ACTIVE_WRITERS_DRAIN_TIMEOUT_MS = 500;
+	private const int INIT_COMPLETED_TIMEOUT_MS = 15000;
+	private const int INIT_CLEANUP_TIMEOUT_MS = 5000;
 	private const int IPC_TIMEOUT_MS = 100;
 	private const int IPC_FAST_FAIL_TIMEOUT_MS = 16;
 	private const int BATCH_INVOKE_BUFFER_STARTSIZE = 1024;
@@ -84,6 +86,11 @@ public class Controller
 		[DriverCommand.ActorSetVisor] = DriverCommandHandler.Invoke<SetVisorCommandPayload, bool>(p => ActorDriver.Instance.SetVisor(p.Ptr, p.State)),
 		[DriverCommand.ActorHideHeadgear] = DriverCommandHandler.Invoke<HideHeadgearCommandPayload, bool>(p => ActorDriver.Instance.SetHeadgearHidden(p.Ptr, p.Hide)),
 		[DriverCommand.ActorHideVieraEars] = DriverCommandHandler.Invoke<HideVieraEarsCommandPayload, bool>(p => ActorDriver.Instance.SetVieraEarsHidden(p.Ptr, p.Hide)),
+
+		// Text input driver commands
+		[DriverCommand.GetIsTextInputActive] = DriverCommandHandler.ConditionalGetter(
+			() => TextInputDriver.IsInitialized,
+			() => TextInputDriver.Instance.IsTextInputActive),
 	};
 
 #pragma warning disable CA2211
@@ -98,11 +105,16 @@ public class Controller
 	private static volatile bool s_running = true;
 	private static IntPtr s_mainProcessHandle = IntPtr.Zero;
 	private static Thread? s_processMonitorThread = null;
+	private static Thread? s_workerThread = null;
+	private static readonly Lock s_entryLock = new();
+	private static readonly ManualResetEventSlim s_initCompletedEvent = new(false);
+	private static volatile bool s_initSucceeded = false;
+	private static volatile bool s_cleanShutdownCompleted = false;
 	private static CancellationTokenSource s_shutdownCts = new();
 	private static int s_activeWriters = 0;
 
 	[RequiresDynamicCode("Requires dynamic code")]
-	private static unsafe void* NativePtr() => (delegate* unmanaged<IntPtr, void>)&RemoteControllerEntry;
+	private static unsafe void* NativePtr() => (delegate* unmanaged<IntPtr, int>)&RemoteControllerEntry;
 
 	/// <summary>
 	/// Sends an intercept request to the host application and waits for a response.
@@ -245,22 +257,35 @@ public class Controller
 	/// This function is invoked remotely via unmanaged code.
 	/// </remarks>
 	[UnmanagedCallersOnly(EntryPoint = "RemoteControllerEntry")]
-	[RequiresUnreferencedCode("This code snippet is not trimming-safe.")]
-	[RequiresDynamicCode("HookRegistry requires dynamic code")]
-	public static void RemoteControllerEntry(IntPtr mainProcessHandle)
+	public static int RemoteControllerEntry(IntPtr mainProcessHandle)
 	{
-		Cleanup();
-		s_mainProcessHandle = mainProcessHandle;
-		var workerThread = new Thread(Main)
+		lock (s_entryLock)
 		{
-			IsBackground = true,
-			Name = "RemoteController.Main",
-		};
-		workerThread.Start();
+			if (s_workerThread != null && s_workerThread.IsAlive)
+			{
+				Log.Warning("A worker thread from a previous controller instance is still running. Requesting thread termination...");
+				s_shutdownCts.Cancel();
+				s_running = false;
+				if (!s_workerThread.Join(INIT_CLEANUP_TIMEOUT_MS))
+				{
+					Log.Warning($"Previous worker thread did not terminate within {INIT_CLEANUP_TIMEOUT_MS} ms timeout.");
+				}
+			}
+
+			Cleanup();
+			s_mainProcessHandle = mainProcessHandle;
+			s_workerThread = new Thread(Main)
+			{
+				IsBackground = true,
+				Name = "RemoteController.Main",
+			};
+			s_workerThread.Start();
+
+			bool signaled = s_initCompletedEvent.Wait(INIT_COMPLETED_TIMEOUT_MS);
+			return (signaled && s_initSucceeded) ? 1 : 0;
+		}
 	}
 
-	[RequiresUnreferencedCode("This code snippet is not trimming-safe as it uses the hook manager.")]
-	[RequiresDynamicCode("HookRegistry requires dynamic code")]
 	private static void Main()
 	{
 		try
@@ -326,6 +351,9 @@ public class Controller
 
 			FrameworkDriver.InstanceOrNull?.SynchronizeConfig();
 
+			s_initSucceeded = true;
+			s_initCompletedEvent.Set();
+
 			// Main loop
 			uint taskIndex = 0;
 			IntPtr avrtHandle = NativeFunctions.AvSetMmThreadCharacteristics("Games", ref taskIndex);
@@ -346,7 +374,9 @@ public class Controller
 		{
 			// IMPORTANT: Don't throw to avoid crashing the game process
 			// The intent is to catch all unhandled exceptions and terminate gracefully
-			Log.Fatal(ex, "Unhandled exception.");
+			s_initSucceeded = false;
+			s_initCompletedEvent.Set();
+			Log.Fatal(ex, "Unhandled exception in RemoteController.Main.");
 		}
 		finally
 		{
@@ -355,14 +385,19 @@ public class Controller
 			/* Unload */
 			// IMPORTANT: This MUST be the last action to execute in the entry point.
 			// Otherwise, the code after this call will not execute as we self-unload and terminate the thread.
-			unsafe
+			// The DLL should only be freed if cleanup was successful.
+			// Otherwise, we risk unloading with active function hooks, which will lead to an immediate game crash.
+			if (s_cleanShutdownCompleted)
 			{
-				if (NativeFunctions.GetModuleHandleEx(
-						(uint)NativeFunctions.GetModuleFlag.GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | (uint)NativeFunctions.GetModuleFlag.GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-						(IntPtr)NativePtr(),
-						out IntPtr hModule))
+				unsafe
 				{
-					NativeFunctions.FreeLibraryAndExitThread(hModule, 0);
+					if (NativeFunctions.GetModuleHandleEx(
+							(uint)NativeFunctions.GetModuleFlag.GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | (uint)NativeFunctions.GetModuleFlag.GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+							(IntPtr)NativePtr(),
+							out IntPtr hModule))
+					{
+						NativeFunctions.FreeLibraryAndExitThread(hModule, 0);
+					}
 				}
 			}
 		}
@@ -481,52 +516,64 @@ public class Controller
 	{
 		Log.Information("Running shutdown sequence...");
 
-		s_shutdownCts.Cancel();
-		s_running = false;
-
-		if (s_processMonitorThread != null && s_processMonitorThread.IsAlive)
+		try
 		{
-			if (!s_processMonitorThread.Join(PROCESS_MONITOR_JOIN_TIMEOUT_MS))
-				Log.Warning("Process monitor thread did not exit in time.");
+			s_shutdownCts.Cancel();
+			s_running = false;
 
-			s_processMonitorThread = null;
+			if (s_processMonitorThread != null && s_processMonitorThread.IsAlive)
+			{
+				if (!s_processMonitorThread.Join(PROCESS_MONITOR_JOIN_TIMEOUT_MS))
+					Log.Warning("Process monitor thread did not exit in time.");
+
+				s_processMonitorThread = null;
+			}
+
+			if (s_mainProcessHandle != IntPtr.Zero)
+			{
+				NativeFunctions.CloseHandle(s_mainProcessHandle);
+				s_mainProcessHandle = IntPtr.Zero;
+			}
+
+			s_shutdownCts.Dispose();
+			s_shutdownCts = new CancellationTokenSource();
+
+			if (!SpinWait.SpinUntil(() => Volatile.Read(ref s_activeWriters) == 0, ACTIVE_WRITERS_DRAIN_TIMEOUT_MS))
+			{
+				Log.Warning($"Active writers did not drain within {ACTIVE_WRITERS_DRAIN_TIMEOUT_MS}ms (remaining: {s_activeWriters}). Proceeding with disposal.");
+			}
+			else
+			{
+				Log.Debug("All active writers drained successfully.");
+			}
+
+			HookRegistry.Instance.UnregisterAll();
+			s_driverManager?.Dispose();
+			s_driverManager = null;
+
+			s_outgoingEndpoint?.Dispose();
+			s_outgoingEndpoint = null;
+			s_incomingEndpoint?.Dispose();
+			s_incomingEndpoint = null;
+
+			s_pendingMsgRequests.Clear();
+			s_sequenceCounters.Clear();
+			s_eventSubscriptionRefCount.Clear();
+
+			Log.Information("Shutdown complete. Remember us...Remember...that we once lived.");
+			s_cleanShutdownCompleted = true;
 		}
-
-		if (s_mainProcessHandle != IntPtr.Zero)
+		catch (Exception ex)
 		{
-			NativeFunctions.CloseHandle(s_mainProcessHandle);
-			s_mainProcessHandle = IntPtr.Zero;
+			s_cleanShutdownCompleted = false;
+			Log.Fatal(ex, "Error occured during shutdown sequence.");
 		}
-
-		s_shutdownCts.Dispose();
-		s_shutdownCts = new CancellationTokenSource();
-
-		if (!SpinWait.SpinUntil(() => Volatile.Read(ref s_activeWriters) == 0, ACTIVE_WRITERS_DRAIN_TIMEOUT_MS))
+		finally
 		{
-			Log.Warning($"Active writers did not drain within {ACTIVE_WRITERS_DRAIN_TIMEOUT_MS}ms (remaining: {s_activeWriters}). Proceeding with disposal.");
+			Logger.Deinitialize(); // Keep the logger as the last step
+			GC.Collect(2, GCCollectionMode.Forced, true);
+			GC.WaitForPendingFinalizers();
 		}
-		else
-		{
-			Log.Debug("All active writers drained successfully.");
-		}
-
-		HookRegistry.Instance.UnregisterAll();
-		s_driverManager?.Dispose();
-		s_driverManager = null;
-
-		s_outgoingEndpoint?.Dispose();
-		s_outgoingEndpoint = null;
-		s_incomingEndpoint?.Dispose();
-		s_incomingEndpoint = null;
-
-		s_pendingMsgRequests.Clear();
-		s_sequenceCounters.Clear();
-		s_eventSubscriptionRefCount.Clear();
-
-		Log.Information("Shutdown complete. Remember us...Remember...that we once lived.");
-		Logger.Deinitialize(); // Keep the logger as the last step
-		GC.Collect(2, GCCollectionMode.Forced, true);
-		GC.WaitForPendingFinalizers();
 	}
 
 	[RequiresDynamicCode("HookRegistry requires dynamic code")]
@@ -548,7 +595,12 @@ public class Controller
 							if (hookId == MessageId.FRAMEWORK_SYNC_COMMAND_ID)
 								HandleFrameworkSyncRequest();
 							else
-								HandleWrapperInvoke(header.Id, payload);
+							{
+								unsafe
+								{
+									EnqueueWorkItem(header.Id, payload, &ProcessInvokeInternal);
+								}
+							}
 						}
 						break;
 
@@ -561,7 +613,12 @@ public class Controller
 						break;
 
 					case PayloadType.Command:
-						HandleDriverCommand(header.Id, payload);
+						{
+							unsafe
+							{
+								EnqueueWorkItem(header.Id, payload, &ProcessDriverCommandInternal);
+							}
+						}
 						break;
 
 					case PayloadType.Bye:
@@ -799,19 +856,23 @@ public class Controller
 		}
 	}
 
-	[RequiresDynamicCode("HookRegistry requires dynamic code")]
-	private static void HandleWrapperInvoke(uint msgId, ReadOnlySpan<byte> argsPayload)
+	/// <summary>
+	/// Enqueues a work item to be processed by the work pipeline.
+	/// </summary>
+	/// <remarks>
+	/// Handlers passed as <paramref name="handler"/> must return the
+	/// rented argument buffer to the pool at the end of their execution.
+	/// </remarks>
+	[RequiresDynamicCode("Function invokes handles that require dynamic code")]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static unsafe void EnqueueWorkItem(uint msgId, ReadOnlySpan<byte> argsPayload, delegate* managed<(uint MsgId, byte[] Data, int Length), void> handler)
 	{
 		int payloadLength = argsPayload.Length;
 		byte[] rentedBuffer = s_bufferPool.Rent(payloadLength);
 		argsPayload.CopyTo(rentedBuffer);
 
 		var workItem = s_workItemPool.Get();
-		unsafe
-		{
-			workItem.Initialize(s_workItemPool, &ProcessInvokeInternal, (msgId, rentedBuffer, payloadLength));
-		}
-
+		workItem.Initialize(s_workItemPool, handler, (msgId, rentedBuffer, payloadLength));
 		s_workPipeline.Enqueue(workItem);
 	}
 
@@ -878,33 +939,39 @@ public class Controller
 		FrameworkDriver.Instance.IsSyncEnabled = true;
 	}
 
-	private static void HandleDriverCommand(uint msgId, ReadOnlySpan<byte> payload)
+	[RequiresDynamicCode("MarshalUtils requires dynamic code")]
+	private static void ProcessDriverCommandInternal((uint MsgId, byte[] Data, int Length) state)
 	{
-		if (payload.Length < sizeof(DriverCommand))
-		{
-			SendResponse(msgId, PayloadType.NAck);
-			return;
-		}
-
-		DriverCommand commandId = MarshalUtils.Read<DriverCommand>(payload);
-		ReadOnlySpan<byte> args = payload[sizeof(DriverCommand)..];
-
-		if (!s_commandHandlers.TryGetValue(commandId, out var handler))
-		{
-			SendResponse(msgId, PayloadType.NAck);
-			Log.Warning($"Unknown driver command: 0x{(int)commandId:X4}");
-			return;
-		}
-
 		try
 		{
+			var payload = new ReadOnlySpan<byte>(state.Data, 0, state.Length);
+			if (payload.Length < sizeof(DriverCommand))
+			{
+				SendResponse(state.MsgId, PayloadType.NAck);
+				return;
+			}
+
+			DriverCommand commandId = MarshalUtils.Read<DriverCommand>(payload);
+			ReadOnlySpan<byte> args = payload[sizeof(DriverCommand)..];
+
+			if (!s_commandHandlers.TryGetValue(commandId, out var handler))
+			{
+				SendResponse(state.MsgId, PayloadType.NAck);
+				Log.Warning($"Unknown driver command: 0x{(int)commandId:X4}");
+				return;
+			}
+
 			byte[] response = handler(args);
-			SendResponse(msgId, response, PayloadType.Ack);
+			SendResponse(state.MsgId, response, PayloadType.Ack);
 		}
 		catch (Exception ex)
 		{
-			SendResponse(msgId, PayloadType.NAck);
-			Log.Error(ex, $"Error executing driver command: 0x{(int)commandId:X4}");
+			SendResponse(state.MsgId, PayloadType.NAck);
+			Log.Error(ex, $"Error executing driver command for MsgId: {state.MsgId}");
+		}
+		finally
+		{
+			s_bufferPool.Return(state.Data);
 		}
 	}
 

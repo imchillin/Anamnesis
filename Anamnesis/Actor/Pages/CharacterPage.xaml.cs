@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Pages;
@@ -38,6 +38,7 @@ public partial class CharacterPage : UserControl, INotifyPropertyChanged
 {
 	private static DirectoryInfo? s_lastLoadDir;
 	private static DirectoryInfo? s_lastSaveDir;
+	private bool hasInitializedActor = false;
 
 	public CharacterPage()
 	{
@@ -680,13 +681,36 @@ public partial class CharacterPage : UserControl, INotifyPropertyChanged
 		if (this.Actor == null)
 			return;
 
-		SaveResult result = await FileService.Save<DatCharacterFile>(s_lastSaveDir, FileService.DefaultCharacterDirectory);
+		ActorCustomizeMemory? customize = this.Actor.DoRef(a => a.DrawData.Customize);
+		if (customize == null)
+			return;
 
+		// Validate options first before prompting for file location
+		if (!DatCharacterFile.ValidateAllowedOptions(customize, out string? validationError))
+		{
+			GenericDialog.Show(validationError ?? $"{LocalizationService.GetString("Character_Export_DAT_FailCustomCustomize")}.", LocalizationService.GetString("Character_Export_DAT_FailDialogTitle"));
+			return;
+		}
+
+		SaveResult result = await FileService.Save<DatCharacterFile>(s_lastSaveDir, FileService.DefaultCharacterDirectory);
 		if (result.Path == null)
 			return;
 
+		string? description = await GenericInputDialog.ShowAsync(
+			LocalizationService.GetString("Character_Export_DAT_DescriptionPrompt"),
+			$"{LocalizationService.GetString("Character_Export_DAT_DialogTitle")} ({result.Path.Name})",
+			string.Empty,
+			maxLength: DatCharacterFile.MAX_DESCRIPTION_LENGTH);
+
+		// If user cancelled the dialog, cancel the export
+		if (description == null)
+			return;
+
 		var file = new DatCharacterFile();
-		file.WriteToFile(this.Actor);
+		file.WriteToFile(this.Actor, description);
+
+		if (file.Data == null)
+			return;
 
 		using var stream = new FileStream(result.Path.FullName, FileMode.Create);
 		file.Serialize(stream);
@@ -696,6 +720,11 @@ public partial class CharacterPage : UserControl, INotifyPropertyChanged
 
 	private void OnActorChanged(ObjectHandle<ActorMemory>? actorHandle)
 	{
+		if (this.hasInitializedActor && ReferenceEquals(this.Actor, actorHandle))
+			return;
+
+		this.hasInitializedActor = true;
+
 		if (this.Actor != null)
 		{
 			this.Actor.PropertyChanged -= this.OnActorHandlePropertyChanged;
@@ -728,7 +757,9 @@ public partial class CharacterPage : UserControl, INotifyPropertyChanged
 		{
 			bool hasValidSelection = this.Actor != null && this.Actor.IsValid && this.Actor.Do(a => a.ObjectKind.IsSupportedType()) == true;
 			this.IsEnabled = hasValidSelection;
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Actor)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanDyeEquipment)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanDyeWeapons)));
 		};
 
 		if (Application.Current.Dispatcher.CheckAccess())

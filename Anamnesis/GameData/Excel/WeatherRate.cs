@@ -11,6 +11,12 @@ public readonly unsafe struct WeatherRate(ExcelPage page, uint offset, uint row)
 	: IExcelRow<WeatherRate>
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public readonly uint RowId => row;
 
 	/// <summary>

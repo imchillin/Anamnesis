@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Styles.Converters;
@@ -16,18 +16,21 @@ public class NullableStringToBrushConverter : IValueConverter
 		if (value == null)
 		{
 			// Default color
-			return new SolidColorBrush(Colors.Transparent);
+			return Brushes.Transparent;
 		}
 
 		if (value is string colorString)
 		{
+			if (string.IsNullOrWhiteSpace(colorString))
+				return Brushes.Transparent;
+
 			try
 			{
-				return (SolidColorBrush)(new BrushConverter().ConvertFromString(colorString) ?? new SolidColorBrush(Colors.Transparent));
+				return (SolidColorBrush)(new BrushConverter().ConvertFromString(colorString) ?? Brushes.Transparent);
 			}
 			catch (FormatException)
 			{
-				return new SolidColorBrush(Colors.Transparent);
+				return Brushes.Transparent;
 			}
 		}
 

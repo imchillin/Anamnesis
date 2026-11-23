@@ -27,6 +27,9 @@ public enum DriverCommand : int
 	ActorSetVisor,
 	ActorHideHeadgear,
 	ActorHideVieraEars,
+
+	// Text input driver commands
+	GetIsTextInputActive,
 }
 
 /// <summary>

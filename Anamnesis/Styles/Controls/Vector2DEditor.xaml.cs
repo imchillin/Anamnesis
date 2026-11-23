@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Styles.Controls;
@@ -18,7 +18,7 @@ using XivToolsWpf.DependencyProperties;
 public partial class Vector2DEditor : UserControl, INotifyPropertyChanged
 {
 	/// <summary>Gets or sets the layout style.</summary>
-	public static readonly IBind<LayoutStyles> LayoutStyleDp = Binder.Register<LayoutStyles, Vector2DEditor>(nameof(LayoutStyle));
+	public static readonly IBind<LayoutStyles> LayoutStyleDp = Binder.Register<LayoutStyles, Vector2DEditor>(nameof(LayoutStyle), defaultValue: LayoutStyles.Standard);
 
 	/// <summary>Gets or sets the vector value.</summary>
 	public static readonly IBind<Vector2> ValueDp = Binder.Register<Vector2, Vector2DEditor>(nameof(Value), OnValueChanged);
@@ -27,7 +27,7 @@ public partial class Vector2DEditor : UserControl, INotifyPropertyChanged
 	public static readonly IBind<decimal?> DefaultValueDp = Binder.Register<decimal?, Vector2DEditor>(nameof(DefaultValue), BindMode.OneWay);
 
 	/// <summary>Gets or sets the tick frequency.</summary>
-	public static readonly IBind<decimal> TickFrequencyDp = Binder.Register<decimal, Vector2DEditor>(nameof(TickFrequency));
+	public static readonly IBind<decimal> TickFrequencyDp = Binder.Register<decimal, Vector2DEditor>(nameof(TickFrequency), defaultValue: 0.01m);
 
 	/// <summary>Gets or sets the minimum value.</summary>
 	public static readonly IBind<string?> MinDp = Binder.Register<string?, Vector2DEditor>(nameof(Minimum));
@@ -42,29 +42,29 @@ public partial class Vector2DEditor : UserControl, INotifyPropertyChanged
 	public static readonly IBind<bool> LinkedDp = Binder.Register<bool, Vector2DEditor>(nameof(Linked));
 
 	/// <summary>Gets or sets the color mode.</summary>
-	public static readonly IBind<ColorModes> ColorModeDp = Binder.Register<ColorModes, Vector2DEditor>(nameof(ColorMode), BindMode.OneWay);
+	public static readonly IBind<ColorModes> ColorModeDp = Binder.Register<ColorModes, Vector2DEditor>(nameof(ColorMode), BindMode.OneWay, defaultValue: ColorModes.Standard);
 
 	/// <summary>Gets or sets the suffix.</summary>
-	public static readonly IBind<string> SuffixDp = Binder.Register<string, Vector2DEditor>(nameof(Suffix));
+	public static readonly IBind<string> SuffixDp = Binder.Register<string, Vector2DEditor>(nameof(Suffix), defaultValue: string.Empty);
 
 	/// <summary>Gets or sets a value indicating whether step buttons are enabled.</summary>
-	public static readonly IBind<bool> EnableStepButtonsDp = Binder.Register<bool, Vector2DEditor>(nameof(EnableStepButtons));
+	public static readonly IBind<bool> EnableStepButtonsDp = Binder.Register<bool, Vector2DEditor>(nameof(EnableStepButtons), defaultValue: true);
 
 	/// <summary>Gets or sets the number of decimal places.</summary>
-	public static readonly IBind<int> DecimalPlacesDp = Binder.Register<int, Vector2DEditor>(nameof(DecimalPlaces));
+	public static readonly IBind<int> DecimalPlacesDp = Binder.Register<int, Vector2DEditor>(nameof(DecimalPlaces), defaultValue: 0);
 
 	/// <summary>Gets or sets the overflow behavior.</summary>
-	public static readonly IBind<SliderInputBox.OverflowModes> OverflowModeDp = Binder.Register<SliderInputBox.OverflowModes, Vector2DEditor>(nameof(OverflowBehavior));
+	public static readonly IBind<SliderInputBox.OverflowModes> OverflowModeDp = Binder.Register<SliderInputBox.OverflowModes, Vector2DEditor>(nameof(OverflowBehavior), defaultValue: SliderInputBox.OverflowModes.Clamp);
 
 	/// <summary>Dependency property for the slider mode.</summary>
-	public static readonly IBind<SliderInputBox.SliderModes> SliderModeDp = Binder.Register<SliderInputBox.SliderModes, Vector2DEditor>(nameof(SliderMode), BindMode.OneWay);
+	public static readonly IBind<SliderInputBox.SliderModes> SliderModeDp = Binder.Register<SliderInputBox.SliderModes, Vector2DEditor>(nameof(SliderMode), BindMode.OneWay, defaultValue: SliderInputBox.SliderModes.Absolute);
 
 	/// <summary>Dependency property for the classic slider mode.</summary>
-	public static readonly IBind<SliderInputBox.SliderTypes> SliderTypeDp = Binder.Register<SliderInputBox.SliderTypes, Vector2DEditor>(nameof(SliderType), BindMode.OneWay);
+	public static readonly IBind<SliderInputBox.SliderTypes> SliderTypeDp = Binder.Register<SliderInputBox.SliderTypes, Vector2DEditor>(nameof(SliderType), BindMode.OneWay, defaultValue: SliderInputBox.SliderTypes.Modern);
 
 	/// <summary>Dependency property for the visibility of the tick visualizer.</summary>
 	/// <remarks>Applies only to the standard slider mode.</remarks>
-	public static readonly IBind<bool> ShowSliderThumbDp = Binder.Register<bool, Vector2DEditor>(nameof(ShowSliderThumb), BindMode.OneWay);
+	public static readonly IBind<bool> ShowSliderThumbDp = Binder.Register<bool, Vector2DEditor>(nameof(ShowSliderThumb), BindMode.OneWay, defaultValue: false);
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Vector2DEditor"/> class.
@@ -73,17 +73,6 @@ public partial class Vector2DEditor : UserControl, INotifyPropertyChanged
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
-
-		this.LayoutStyle = LayoutStyles.Standard;
-		this.TickFrequency = 0.01m;
-		this.ColorMode = ColorModes.Standard;
-		this.Suffix = string.Empty;
-		this.EnableStepButtons = true;
-		this.DecimalPlaces = 0;
-		this.OverflowBehavior = SliderInputBox.OverflowModes.Clamp;
-		this.SliderMode = SliderInputBox.SliderModes.Absolute;
-		this.SliderType = SliderInputBox.SliderTypes.Modern;
-		this.ShowSliderThumb = false;
 	}
 
 	/// <inheritdoc/>
@@ -256,11 +245,11 @@ public partial class Vector2DEditor : UserControl, INotifyPropertyChanged
 
 	/// <summary>Gets the X-axis color based on the color mode.</summary>
 	[DependsOn(nameof(ColorMode))]
-	public string XColor => (this.ColorMode == ColorModes.Rotation) ? "#2861FD" : string.Empty;
+	public string? XColor => (this.ColorMode == ColorModes.Rotation) ? "#2861FD" : null;
 
 	/// <summary>Gets the Y-axis color based on the color mode.</summary>
 	[DependsOn(nameof(ColorMode))]
-	public string YColor => (this.ColorMode == ColorModes.Rotation) ? "#8DDB04" : string.Empty;
+	public string? YColor => (this.ColorMode == ColorModes.Rotation) ? "#8DDB04" : null;
 
 	/// <summary>Gets or sets the X value of the vector.</summary>
 	[AlsoNotifyFor(nameof(Value))]

@@ -13,5 +13,8 @@ public class WeaponModelMemory : DrawObjectMemory
 	/// Available only in GPose. Internally an array of <see cref="PartialSkeletonMemory"/> elements.
 	/// Offsets are not cached to avoid issues.
 	/// </remarks>
-	[Bind(0x0A0, BindFlags.Pointer | BindFlags.OnlyInGPose | BindFlags.DontCacheOffsets)] public SkeletonMemory? Skeleton { get; set; }
+	[Bind(0x0A0, BindFlags.Pointer | BindFlags.OnlyInGPose | BindFlags.DontCacheOffsets, SyncGroup = "Skeleton")] public SkeletonMemory? Skeleton { get; set; }
+
+	/// <summary>Gets or sets the attachment memory of the weapon model.</summary>
+	[Bind(0x0D8, BindFlags.DontCacheOffsets)] public AttachMemory? Attach { get; set; }
 }

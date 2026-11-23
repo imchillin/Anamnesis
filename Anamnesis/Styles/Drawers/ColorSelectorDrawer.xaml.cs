@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Styles.Drawers;
@@ -304,6 +304,9 @@ public partial class ColorSelectorDrawer : UserControl, IDrawer, INotifyProperty
 
 	private class ColorOption
 	{
+		private WpfColor color;
+		private SolidColorBrush? colorBrush;
+
 		public ColorOption(WpfColor c, string name)
 		{
 			this.Name = name;
@@ -322,13 +325,32 @@ public partial class ColorSelectorDrawer : UserControl, IDrawer, INotifyProperty
 			this.Color = color;
 		}
 
-		public WpfColor Color { get; set; }
-		public SolidColorBrush ColorBrush => new(this.Color);
+		public WpfColor Color
+		{
+			get => this.color;
+			set
+			{
+				if (this.color != value)
+				{
+					this.color = value;
+					this.colorBrush = null;
+				}
+			}
+		}
+
+		public SolidColorBrush ColorBrush => this.colorBrush ??= CreateFrozenBrush(this.color);
 		public string Name { get; set; }
 
 		public Color4 AsColor()
 		{
 			return new Color4(this.Color.ScR, this.Color.ScG, this.Color.ScB, this.Color.ScA);
+		}
+
+		private static SolidColorBrush CreateFrozenBrush(WpfColor color)
+		{
+			SolidColorBrush brush = new(color);
+			brush.Freeze();
+			return brush;
 		}
 	}
 }

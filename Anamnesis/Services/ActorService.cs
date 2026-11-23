@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis;
@@ -22,6 +22,11 @@ using System.Runtime.Remoting;
 using System.Threading;
 using System.Threading.Tasks;
 
+internal interface IObjectTableListener
+{
+	void OnTableChanged();
+}
+
 /// <summary>
 /// A representation of the game's object table in memory.
 /// </summary>
@@ -31,10 +36,12 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	private const int OBJECT_TABLE_SIZE = ActorDriver.OBJECT_TABLE_SIZE;
 
 	private static readonly int s_objectTableSizeInBytes = OBJECT_TABLE_SIZE * IntPtr.Size;
+	private static readonly object s_handleSentinel = new();
 
 	private readonly IntPtr[] objTable = new IntPtr[OBJECT_TABLE_SIZE];
 	private readonly byte[] objTableBuffer;
 	private readonly ReaderWriterLockSlim tableLock = new();
+	private readonly ConditionalWeakTable<IObjectTableListener, object> activeHandles = new();
 	private HashSet<IntPtr> objSet = [];
 	private int isRefreshing = 0;
 
@@ -54,6 +61,7 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	/// </summary>
 	public void Dispose()
 	{
+		this.activeHandles.Clear();
 		ArrayPool<byte>.Shared.Return(this.objTableBuffer);
 		this.tableLock.Dispose();
 		GC.SuppressFinalize(this);
@@ -104,7 +112,13 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 				this.tableLock.ExitUpgradeableReadLock();
 			}
 
+			foreach ((IObjectTableListener listener, _) in this.activeHandles)
+			{
+				listener.OnTableChanged();
+			}
+
 			TableChanged?.Invoke();
+
 			Log.Verbose("Object table updated.");
 		}
 		finally
@@ -234,6 +248,10 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 	/// <returns>True if the object table contains the memory object's address, otherwise false.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool Contains(MemoryBase memObj) => this.Contains(memObj.Address);
+
+	internal void RegisterHandle(IObjectTableListener handle) => this.activeHandles.AddOrUpdate(handle, s_handleSentinel);
+
+	internal void UnregisterHandle(IObjectTableListener handle) => this.activeHandles.Remove(handle);
 }
 
 /// <summary>
@@ -244,12 +262,13 @@ public class ObjectTable : INotifyPropertyChanged, IDisposable
 /// Either <see cref="GameObjectMemory"/> or a derived type.
 /// </typeparam>
 [AddINotifyPropertyChangedInterface]
-public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
+public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable, IObjectTableListener
 	where T : GameObjectMemory
 {
 	private readonly ObjectTable table;
+	private readonly bool hasCacheRef;
 	private IntPtr ptr;
-	private bool disposed = false;
+	private int disposed = 0;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ObjectHandle{T}"/> class that
@@ -262,12 +281,14 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	/// </exception>
 	public ObjectHandle(IntPtr ptr, ObjectTable table)
 	{
-		this.ptr = ptr;
+		ArgumentNullException.ThrowIfNull(table);
+
 		this.table = table;
-		this.table.TableChanged += this.OnTableChanged;
 
 		if (ptr == IntPtr.Zero || !this.table.Contains(ptr))
 			throw new InvalidOperationException("Cannot create a handle for an object not part of the object table.");
+
+		this.ptr = ptr;
 
 		lock (ObjectHandleCache.Lock)
 		{
@@ -278,6 +299,7 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 					var obj = MemoryObjectFactory.Create(ptr);
 					entry = new ObjectHandleCache.CacheEntry(obj);
 					ObjectHandleCache.Cache.TryAdd(ptr, entry);
+					this.hasCacheRef = true;
 				}
 				catch (Exception ex)
 				{
@@ -287,8 +309,20 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 			else
 			{
 				Interlocked.Increment(ref entry.RefCount);
+				this.hasCacheRef = true;
 			}
 		}
+
+		if (this.hasCacheRef)
+			this.table.RegisterHandle(this);
+	}
+
+	/// <summary>
+	/// Finalizes an instance of the <see cref="ObjectHandle{T}"/> class.
+	/// </summary>
+	~ObjectHandle()
+	{
+		this.Dispose(false);
 	}
 
 	/// <summary>
@@ -313,7 +347,7 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	/// <summary>
 	/// Gets a value indicating whether this handle is still valid.
 	/// </summary>
-	public bool IsValid => !this.disposed && this.ptr != IntPtr.Zero && this.table.Contains(this.ptr) && this.Unsafe != null;
+	public bool IsValid => Volatile.Read(ref this.disposed) == 0 && this.ptr != IntPtr.Zero && this.table.Contains(this.ptr) && this.Unsafe != null;
 
 	/// <summary>
 	/// An unsafe reference to the underlying object.
@@ -350,34 +384,7 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	/// </summary>
 	public void Dispose()
 	{
-		if (this.disposed)
-			return;
-
-		this.disposed = true;
-		this.table.TableChanged -= this.OnTableChanged;
-		var cacheKey = this.ptr;
-		this.ptr = IntPtr.Zero;
-
-		lock (ObjectHandleCache.Lock)
-		{
-			if (ObjectHandleCache.Cache.TryGetValue(cacheKey, out var entry))
-			{
-				int newCount = Interlocked.Decrement(ref entry.RefCount);
-				if (newCount <= 0)
-				{
-					if (ObjectHandleCache.Cache.TryRemove(cacheKey, out var removedEntry))
-					{
-						if (!removedEntry.Object.IsDisposed)
-							removedEntry.Object.Dispose();
-					}
-				}
-			}
-		}
-
-		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Unsafe)));
-		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsValid)));
-		Invalidated?.Invoke(this);
-
+		this.Dispose(true);
 		GC.SuppressFinalize(this);
 	}
 
@@ -483,16 +490,70 @@ public class ObjectHandle<T> : INotifyPropertyChanged, IDisposable
 	/// <summary>
 	/// Emits an invalidation event if the underlying object is no longer valid.
 	/// </summary>
-	private void OnTableChanged()
+	void IObjectTableListener.OnTableChanged()
 	{
+		var currentPtr = this.ptr;
+		if (Volatile.Read(ref this.disposed) != 0 || currentPtr == IntPtr.Zero)
+			return;
+
 		if (!this.IsValid)
 		{
-			if (ObjectHandleCache.Cache.TryRemove(this.ptr, out var entry))
+			this.table.UnregisterHandle(this);
+			lock (ObjectHandleCache.Lock)
 			{
-				if (!entry.Object.IsDisposed)
-					entry.Object.Dispose();
+				if (ObjectHandleCache.Cache.TryRemove(currentPtr, out var entry))
+				{
+					if (!entry.Object.IsDisposed)
+						entry.Object.Dispose();
+				}
 			}
 
+			Invalidated?.Invoke(this);
+		}
+	}
+
+	/// <summary>
+	/// Disposes resources used internally by the object handle.
+	/// </summary>
+	/// <param name="disposing">
+	/// True if called from <see cref="Dispose()"/>; false if called from the finalizer.
+	/// </param>
+	protected virtual void Dispose(bool disposing)
+	{
+		if (Interlocked.Exchange(ref this.disposed, 1) != 0)
+			return;
+
+		var cacheKey = this.ptr;
+		this.ptr = IntPtr.Zero;
+
+		if (disposing)
+		{
+			this.table.UnregisterHandle(this);
+		}
+
+		if (this.hasCacheRef && cacheKey != IntPtr.Zero)
+		{
+			lock (ObjectHandleCache.Lock)
+			{
+				if (ObjectHandleCache.Cache.TryGetValue(cacheKey, out var entry))
+				{
+					int newCount = Interlocked.Decrement(ref entry.RefCount);
+					if (newCount <= 0)
+					{
+						if (ObjectHandleCache.Cache.TryRemove(cacheKey, out var removedEntry))
+						{
+							if (!removedEntry.Object.IsDisposed)
+								removedEntry.Object.Dispose();
+						}
+					}
+				}
+			}
+		}
+
+		if (disposing)
+		{
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Unsafe)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsValid)));
 			Invalidated?.Invoke(this);
 		}
 	}
@@ -568,7 +629,7 @@ public class ActorService : ServiceBase<ActorService>
 		if (objectIndex == -1)
 			return false;
 
-		return this.IsGPoseActor(objectIndex);
+		return IsGPoseActor(objectIndex);
 	}
 
 	/// <summary>Determines if the actor is in the overworld.</summary>
@@ -590,7 +651,7 @@ public class ActorService : ServiceBase<ActorService>
 		if (objectIndex == -1)
 			return false;
 
-		return this.IsLocalOverworldPlayer(objectIndex);
+		return IsLocalOverworldPlayer(objectIndex);
 	}
 
 	/// <summary>Determines if the actor is the local GPose player.</summary>
@@ -606,7 +667,7 @@ public class ActorService : ServiceBase<ActorService>
 		if (objectIndex == -1)
 			return false;
 
-		return this.IsLocalGPosePlayer(objectIndex);
+		return IsLocalGPosePlayer(objectIndex);
 	}
 
 	/// <summary>Determines if the actor is the local player.</summary>

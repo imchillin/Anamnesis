@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
@@ -12,6 +12,12 @@ public readonly struct CharaMakeCustomize(ExcelPage page, uint offset, uint row)
 	: IExcelRow<CharaMakeCustomize>
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public uint RowId => row;
 
 	/// <summary>Gets the name of the customization option.</summary>
@@ -21,7 +27,7 @@ public readonly struct CharaMakeCustomize(ExcelPage page, uint offset, uint row)
 	public readonly RowRef<Item> HintItem => new(page.Module, page.ReadUInt32(offset + 8), page.Language);
 
 	/// <summary>Gets the icon of the customization option.</summary>
-	public ImgRef? Icon => new(page.ReadUInt32(offset));
+	public ImgRef? Icon => ImgRef.GetOrCreate(page.ReadUInt32(offset));
 
 	/// <summary>Gets the icon of the hint item if available.</summary>
 	public ImgRef? ItemIcon => this.HintItem.Value.RowId != 0 ? this.HintItem.Value.Icon : null;

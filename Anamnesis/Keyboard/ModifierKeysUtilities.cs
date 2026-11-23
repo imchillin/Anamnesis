@@ -10,6 +10,17 @@ using System.Windows.Input;
 
 public static class ModifierKeysUtilities
 {
+	public static bool IsModifierKey(Key key)
+	{
+		return key is Key.LeftShift or Key.RightShift
+			or Key.LeftCtrl or Key.RightCtrl
+			or Key.LeftAlt or Key.RightAlt
+			or Key.LWin or Key.RWin
+			or Key.CapsLock or Key.Capital
+			or Key.NumLock or Key.Scroll
+			or Key.System;
+	}
+
 	public static ModifierKeys GetModifierKeyFromCode(int keyCode)
 	{
 		return keyCode switch

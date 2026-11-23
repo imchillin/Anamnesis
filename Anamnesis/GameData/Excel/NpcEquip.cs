@@ -11,6 +11,12 @@ public readonly struct NpcEquip(ExcelPage page, uint offset, uint row)
 	: IExcelRow<NpcEquip>
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public readonly uint RowId => row;
 
 	/// <summary>Gets the model (base, set, variant) identifier of the main hand.</summary>

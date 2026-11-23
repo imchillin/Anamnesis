@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.Updater;
+
 using System.Windows;
 using System.Windows.Controls;
 using Anamnesis.Extensions;

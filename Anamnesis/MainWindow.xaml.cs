@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GUI;
@@ -88,6 +88,11 @@ public partial class MainWindow : ChromedWindow
 			if (value != Tabs.Actor)
 				TargetService.ClearSelection();
 
+			if (value == Tabs.Settings)
+				this.SettingsTabHost.Content ??= new Anamnesis.Tabs.SettingsTab();
+			else if (value == Tabs.Developer)
+				this.DeveloperTabHost.Content ??= new Anamnesis.Tabs.DeveloperTab();
+
 			this.tab = value;
 		}
 	}
@@ -135,6 +140,19 @@ public partial class MainWindow : ChromedWindow
 	{
 		base.OnDeactivated(e);
 		this.Opacity = SettingsService.Current.WindowOpacity;
+	}
+
+	protected override void OnClosed(EventArgs e)
+	{
+		base.OnClosed(e);
+
+		this.mini?.Close();
+		this.mini = null;
+
+		SettingsService.SettingsChanged -= this.OnSettingsChanged;
+		ViewService.ShowingDrawer -= this.OnShowDrawer;
+		TargetService.ActorSelected -= this.OnActorSelected;
+		GameService.Instance.PropertyChanged -= this.OnGameServicePropertyChanged;
 	}
 
 	private void OnSettingsChanged(object? sender = null, PropertyChangedEventArgs? args = null)
@@ -378,10 +396,6 @@ public partial class MainWindow : ChromedWindow
 			return;
 
 		this.IsClosing = true;
-		this.mini?.Close();
-
-		SettingsService.SettingsChanged -= this.OnSettingsChanged;
-		ViewService.ShowingDrawer -= this.OnShowDrawer;
 
 		SettingsService.Current.WindowPosition = new Point(this.Left, this.Top);
 		SettingsService.Save();

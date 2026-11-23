@@ -1,4 +1,4 @@
-﻿root = true
+root = true
 
 [*.cs]
 # ======================================================================================== #
@@ -116,6 +116,7 @@ dotnet_diagnostic.SA1027.severity = none
 ## Readability rules
 dotnet_diagnostic.SA1101.severity = none
 dotnet_diagnostic.SA1108.severity = none
+dotnet_diagnostic.SA1121.severity = none
 
 dotnet_diagnostic.SX1101.severity = none
 
@@ -138,6 +139,7 @@ dotnet_diagnostic.SA1308.severity = none
 dotnet_diagnostic.SA1309.severity = none
 dotnet_diagnostic.SA1310.severity = none
 dotnet_diagnostic.SA1311.severity = none
+dotnet_diagnostic.SA1315.severity = none
 
 ## Maintainability rules
 dotnet_diagnostic.SA1401.severity = none
@@ -145,6 +147,7 @@ dotnet_diagnostic.SA1402.severity = silent
 
 ## Layout rules
 dotnet_diagnostic.SA1503.severity = none
+dotnet_diagnostic.SA1504.severity = none
 dotnet_diagnostic.SA1512.severity = none
 dotnet_diagnostic.SA1515.severity = none
 dotnet_diagnostic.SA1516.severity = none

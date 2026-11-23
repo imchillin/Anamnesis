@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GUI.Views;
@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -234,12 +235,19 @@ public partial class FileBrowserView : FileBrowserDrawer
 
 	protected override bool Filter(EntryWrapper item, string[]? search)
 	{
-		bool matches = false;
+		if (search == null || search.Length == 0)
+			return true;
 
-		matches |= SearchUtility.Matches(item.Name, search);
-		matches |= SearchUtility.Matches(item.Directory, search);
+		if (SearchUtility.Matches(item.Name, search))
+			return true;
 
-		return matches;
+		if (SearchUtility.Matches(item.Directory, search))
+			return true;
+
+		if (SearchUtility.Matches(item.Tags, search))
+			return true;
+
+		return false;
 	}
 
 	protected override int Compare(EntryWrapper itemA, EntryWrapper itemB)
@@ -525,6 +533,7 @@ public partial class FileBrowserView : FileBrowserDrawer
 			return;
 
 		FileMetaEditor.Show(this.Selected.Entry, this.Selected.File);
+		this.UpdateEntriesThreaded();
 	}
 
 	private void OnRenameClick(object sender, RoutedEventArgs e)
@@ -567,6 +576,7 @@ public partial class FileBrowserView : FileBrowserDrawer
 		public readonly FileBrowserView View = view;
 		public readonly FileFilter? Filter = filter;
 
+		private readonly Lock fileLock = new();
 		private FileBase? file;
 
 		public FileBase? File
@@ -575,10 +585,22 @@ public partial class FileBrowserView : FileBrowserDrawer
 			{
 				if (this.file == null)
 				{
-					if (this.Filter == null)
-						return null;
-
-					this.file = FileService.Load((FileInfo)this.Entry, this.Filter.FileType);
+					lock (this.fileLock)
+					{
+						if (this.file == null)
+						{
+							if (this.Filter == null || this.Entry is not FileInfo fileInfo || !fileInfo.Exists)
+								return null;
+							try
+							{
+								this.file = FileService.Load(fileInfo, this.Filter.FileType);
+							}
+							catch (Exception ex)
+							{
+								Log.Warning(ex, $"Failed to load file preview for: {this.Entry.FullName}");
+							}
+						}
+					}
 				}
 
 				return this.file;
@@ -607,6 +629,8 @@ public partial class FileBrowserView : FileBrowserDrawer
 			}
 		}
 
+		public string? Tags => this.File?.TagsString;
+		public bool HasTags => !string.IsNullOrEmpty(this.Tags);
 		public DateTime? DateModified => this.Entry.LastWriteTime;
 		public bool CanSelect => true;
 		public bool IsDirectory => this.Entry is DirectoryInfo;

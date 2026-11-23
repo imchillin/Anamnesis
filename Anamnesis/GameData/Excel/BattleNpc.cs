@@ -18,6 +18,12 @@ public readonly struct BattleNpc(ExcelPage page, uint offset, uint row)
 	: IExcelRow<BattleNpc>, INpcBase
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public uint RowId => row;
 
 	/// <summary>The singular name of the battle non-player entity.</summary>

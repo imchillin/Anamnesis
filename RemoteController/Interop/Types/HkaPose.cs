@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace RemoteController.Interop.Types;
@@ -163,5 +163,45 @@ public unsafe struct HkaPose
 		}
 
 		this.ModelInSync = 0;
+	}
+
+	/// <summary>
+	/// Sets the local-dirty flag for the specified bone,
+	/// indicating that the local-space transform needs recalculation from model space.
+	/// </summary>
+	/// <param name="boneIndex">The index of the bone.</param>
+	public void SetBoneLocalDirty(int boneIndex)
+	{
+		if (!this.BoneFlags.IsValid || boneIndex < 0 || boneIndex >= this.BoneFlags.Length)
+			return;
+
+		this.BoneFlags[boneIndex] |= (int)BoneFlag.LocalDirty;
+		this.LocalInSync = 0;
+	}
+
+	/// <summary>
+	/// Gets a value indicating whether the specified bone has its local-space transform marked dirty.
+	/// </summary>
+	/// <param name="boneIndex">The index of the bone.</param>
+	/// <returns>True if the bone's local-space transform is dirty; otherwise, false.</returns>
+	public readonly bool IsBoneLocalDirty(int boneIndex)
+	{
+		if (!this.BoneFlags.IsValid || boneIndex < 0 || boneIndex >= this.BoneFlags.Length)
+			return false;
+
+		return (this.BoneFlags[boneIndex] & (int)BoneFlag.LocalDirty) != 0;
+	}
+
+	/// <summary>
+	/// Gets a value indicating whether the specified bone has its model-space transform marked dirty.
+	/// </summary>
+	/// <param name="boneIndex">The index of the bone.</param>
+	/// <returns>True if the bone's model-space transform is dirty; otherwise, false.</returns>
+	public readonly bool IsBoneModelDirty(int boneIndex)
+	{
+		if (!this.BoneFlags.IsValid || boneIndex < 0 || boneIndex >= this.BoneFlags.Length)
+			return false;
+
+		return (this.BoneFlags[boneIndex] & (int)BoneFlag.ModelDirty) != 0;
 	}
 }

@@ -16,6 +16,12 @@ public readonly unsafe struct CharaMakeType(ExcelPage page, uint offset, uint ro
 	: IExcelRow<CharaMakeType>
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public uint RowId => row;
 
 	/// <summary>Gets a string representation of the row identifier.</summary>

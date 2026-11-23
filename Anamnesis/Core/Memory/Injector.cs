@@ -180,10 +180,8 @@ internal sealed class Injector : IDisposable
 			// Try to locate the injected DLL in the target process to validate that it loaded successfully
 			this.targetProcess.Refresh();
 			var module = this.targetProcess.Modules.Cast<ProcessModule>()
-				.FirstOrDefault(m => m.FileName.Equals(this.remoteCtrlDllPath, StringComparison.OrdinalIgnoreCase));
-
-			if (module == null)
-				throw new InvalidOperationException("Module load failed silently in target process");
+				.FirstOrDefault(m => m.FileName.Equals(this.remoteCtrlDllPath, StringComparison.OrdinalIgnoreCase))
+				?? throw new InvalidOperationException("Module load failed silently in target process");
 
 			moduleBaseAddress = module.BaseAddress;
 			this.dllInjected = true;
@@ -341,8 +339,6 @@ internal sealed class Injector : IDisposable
 			asm.mov(rcx, (long)duplicatedHandle); // Pass duplicated process handle as first argument to the entry point
 			asm.call(rbx);                        // Call the entry point
 
-			// Set success code (1)
-			asm.mov(rax, 1);
 			asm.jmp(labelExit);
 
 			// Restore stack and return

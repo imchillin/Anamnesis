@@ -1,4 +1,4 @@
-﻿<XivToolsWpfWindows:ChromedWindow
+<XivToolsWpfWindows:ChromedWindow
 	x:Class="Anamnesis.GUI.MainWindow"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -11,6 +11,7 @@
 	xmlns:XivToolsWpfWindows="clr-namespace:XivToolsWpf.Windows;assembly=XivToolsWpf"
 	xmlns:tabs="clr-namespace:Anamnesis.Tabs"
 	xmlns:ana="clr-namespace:Anamnesis"
+	xmlns:services="clr-namespace:Anamnesis.Services"
 	Closing="OnClosing"
 	Icon="/Assets/Anamnesis.ico"
 	Loaded="Window_Loaded"
@@ -40,16 +41,16 @@
 							<ToggleButton.ContextMenu>
 								<ContextMenu>
 									<MenuItem Click="OnUnpinActorClicked"
-											  Header="Unpin" />
+											  Header="Common_Unpin" />
 
 									<MenuItem Visibility="{Binding IsValid, Converter={StaticResource B2V}}" 
 											  Click="OnTargetActorClicked"
-											  Header="Target" />
+											  Header="Common_Target" />
 
-								<MenuItem Visibility="{Binding DataContext.SettingsService.Settings.UseExternalRefreshBrio, Source={x:Reference PinnedActorList}, Converter={StaticResource B2V}}" 
+									<MenuItem Visibility="{Binding Settings.UseExternalRefreshBrio, Source={x:Static services:SettingsService.Instance}, Converter={StaticResource B2V}}" 
 											  IsEnabled="{Binding IsGPoseActor}"
 											  Click="OnDespawnActorClicked"
-											  Header="Despawn" />
+											  Header="Common_Despawn" />
 								</ContextMenu>
 							</ToggleButton.ContextMenu>
 
@@ -403,8 +404,8 @@
 				  Margin="3, 28, 3, 0">
 
 				<tabs:HomeTab Visibility="{Binding ShowHome, Converter={StaticResource B2V}, FallbackValue=Visible}"/>
-				<tabs:SettingsTab Visibility="{Binding ShowSettings, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
-				<tabs:DeveloperTab Visibility="{Binding ShowDeveloper, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
+				<ContentControl x:Name="SettingsTabHost" Focusable="False" Visibility="{Binding ShowSettings, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
+				<ContentControl x:Name="DeveloperTabHost" Focusable="False" Visibility="{Binding ShowDeveloper, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
 				<tabs:ActorTab Visibility="{Binding ShowActor, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
 				
 			</Grid>

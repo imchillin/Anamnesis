@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace RemoteController.Interop.Delegates;
@@ -6,6 +6,16 @@ namespace RemoteController.Interop.Delegates;
 using RemoteController.Interop.Types;
 using System.Numerics;
 using System.Runtime.InteropServices;
+
+using HkaPartialSkeletonStruct = RemoteController.Interop.Types.HkaPartialSkeleton;
+using HumanPostBoneDeformerStruct = RemoteController.Interop.Types.HumanPostBoneDeformer;
+
+public static class AtkModule
+{
+	[FunctionBind("40 53 56 57 41 55 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 41 F6 00 0F")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public unsafe delegate nint HandleTextInputActive(nint atkModulePtr, nint outResult, nint inArgs, int inArgsCount);
+}
 
 public static class BoneKineDriver
 {
@@ -101,9 +111,17 @@ public static class GameMain
 
 public static class HkaPartialSkeleton
 {
+	[FunctionBind("40 53 48 83 EC 20 48 8B 89 48 01 00 00 48 8B DA 48 85 C9 74 ?? 66 45 85 C0 78 ?? 48 8B 41 28 4D 0F BF C8 42 F6 04 88 02")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public unsafe delegate void GetBoneModelMatrix(HkaPartialSkeletonStruct* partialSkeleton, Matrix4x4* outMatrix, short boneIdx);
+
+	[FunctionBind("4C 8B DC 56 41 56 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 ?? 4C 8B B1")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public unsafe delegate HkaTransform4* GetBoneLocalTransform(HkaPartialSkeletonStruct* partialSkeleton, HkaTransform4* outTransform, short boneIdx);
+
 	[FunctionBind("48 8B C4 48 89 58 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 0F 29 70 B8 0F 29 78 A8 44 0F 29 40 ?? 44 0F 29 48 ?? 48 8B 05 ?? ?? ?? ??")]
 	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
-	public unsafe delegate nint SetBoneModelTransform(nint partialPtr, ulong boneId, HkaTransform4* transform, byte bUpdateSecondaryPose, byte bPropagate);
+	public unsafe delegate nint SetBoneModelTransform(HkaPartialSkeletonStruct* partialSkeleton, ulong boneId, HkaTransform4* transform, byte bUpdateSecondaryPose, byte bPropagate);
 }
 
 public static class HkaLookAtIkSolver
@@ -129,4 +147,18 @@ public static class Human
 	[FunctionBind("E8 ?? ?? ?? ?? 83 BF ?? ?? ?? ?? ?? 75 34")]
 	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
 	public unsafe delegate bool UpdateDrawData(nint hPtr, byte* data, bool skipEquipment);
+}
+
+public static class HumanPostBoneDeformer
+{
+	[FunctionBind("4C 8B DC 49 89 5B ?? 49 89 73 ?? 55 57 41 54 41 56 41 57 49 8D 6B ?? 48 81 EC ?? ?? ?? ?? 41 0F 29 73")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public unsafe delegate void Execute(HumanPostBoneDeformerStruct* deformer);
+}
+
+public static class ProceduralBoneDriver
+{
+	[FunctionBind("4C 8B DC 53 56 57 41 56 41 57 48 81 EC ?? ?? ?? ?? 41 0F 29 73")]
+	[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
+	public unsafe delegate nint ApplyRootRelativeModelTransform(nint modifierPtr, HkaQuaternion* deltaRotation, nint posePtr);
 }

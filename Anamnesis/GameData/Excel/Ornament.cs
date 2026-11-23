@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
@@ -14,6 +14,12 @@ using Lumina.Excel;
 public readonly struct Ornament(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Ornament>, INpcBase
 {
+	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
 	/// <inheritdoc/>
 	public readonly uint RowId => row;
 
@@ -43,10 +49,10 @@ public readonly struct Ornament(ExcelPage page, uint offset, uint row)
 	/// <summary>
 	/// Gets the attachment point of the ornament to the character.
 	/// </summary>
-	public readonly byte AttachPoint => page.ReadUInt8(offset + 26);
+	public readonly byte CustomizeGroupId => page.ReadUInt8(offset + 26);
 
 	/// <inheritdoc/>
-	public readonly ImgRef? Icon => new(page.ReadUInt16(offset + 20));
+	public readonly ImgRef? Icon => ImgRef.GetOrCreate(page.ReadUInt16(offset + 20));
 
 	/// <inheritdoc/>
 	public readonly Mod? Mod => null;

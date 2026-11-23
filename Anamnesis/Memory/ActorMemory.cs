@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory;
@@ -41,7 +41,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	{
 		this.backupQueue = new(this.BackupAsync, 250);
 
-		this.PropertyChanged += this.HandlePropertyChanged;
+		this.AddPropertyChangedListener(this.HandlePropertyChanged, PropertyChange.Origins.User | PropertyChange.Origins.History);
 
 		// Initialize the debounce timer
 		this.refreshDebounceTimer = new(REFRESH_DEBOUNCE_TIMEOUT_MS) { AutoReset = false };
@@ -221,7 +221,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 
 	public override void Dispose()
 	{
-		this.PropertyChanged -= this.HandlePropertyChanged;
+		this.RemovePropertyChangedListener(this.HandlePropertyChanged);
 		this.refreshDebounceTimer?.Dispose();
 		base.Dispose();
 		GC.SuppressFinalize(this);
@@ -243,6 +243,25 @@ public class ActorMemory : GameObjectMemory, IDisposable
 		{
 			_ = this.TakeInitialSnapshotAsync();
 		}
+	}
+
+	/// <summary>
+	/// Synchronizes all skeleton memory structures associated with this actor
+	/// (body model, main hand, off hand, ornament, and props).
+	/// </summary>
+	/// <param name="inclGroups">Optional set of synchronization groups to include.</param>
+	/// <param name="exclGroups">Optional set of synchronization groups to exclude.</param>
+	public virtual void SynchronizeSkeletons(IReadOnlySet<string>? inclGroups = null, IReadOnlySet<string>? exclGroups = null)
+	{
+		if (this.IsRefreshing || this.Address == IntPtr.Zero || this.ModelObject?.Skeleton == null || this.ModelObject.Skeleton.Address == IntPtr.Zero)
+			return;
+
+		this.ModelObject.Skeleton.Synchronize(inclGroups, exclGroups);
+		this.DrawData.MainHand?.Model?.Skeleton?.Synchronize(inclGroups, exclGroups);
+		this.DrawData.OffHand?.Model?.Skeleton?.Synchronize(inclGroups, exclGroups);
+		this.Ornament?.ModelObject?.Skeleton?.Synchronize(inclGroups, exclGroups);
+		this.DrawData.Prop1?.Model?.Skeleton?.Synchronize(inclGroups, exclGroups);
+		this.DrawData.Prop2?.Model?.Skeleton?.Synchronize(inclGroups, exclGroups);
 	}
 
 	/// <summary>
@@ -283,6 +302,8 @@ public class ActorMemory : GameObjectMemory, IDisposable
 				this.forceReloadOnRefresh = false;
 			}
 			while (this.needsRefresh);
+
+			base.Synchronize(exclGroups: TargetService.ExcludeSkeletonGroup);
 		}
 		catch (Exception ex)
 		{
@@ -344,9 +365,9 @@ public class ActorMemory : GameObjectMemory, IDisposable
 				// Big hack to keep bone change history names short.
 				if (change.OriginBind.Memory.ParentBind?.Type == typeof(TransformMemory))
 				{
-					change.Name = (PoseService.SelectedBonesText == null) ?
-						LocalizationService.GetStringFormatted("History_ChangeBone", LocalizationService.GetString("Pose_OtherUnknown")) :
-						LocalizationService.GetStringFormatted("History_ChangeBone", PoseService.SelectedBonesText);
+					change.Name = (PoseService.SelectedBonesText == null)
+						? LocalizationService.GetStringFormatted("History_ChangeBone", LocalizationService.GetString("Pose_OtherUnknown"))
+						: LocalizationService.GetStringFormatted("History_ChangeBone", PoseService.SelectedBonesText);
 				}
 
 				this.History.Record(change);

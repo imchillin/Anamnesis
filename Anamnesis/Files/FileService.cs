@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Files;
@@ -21,6 +21,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -55,52 +56,67 @@ public class FileService : ServiceBase<FileService>
 	private static readonly Dictionary<Type, string> s_typeNameLookup = [];
 	private static readonly Dictionary<Type, FileFilter> s_fileTypeFilterLookup = [];
 
-	public static Shortcut Desktop => new(
+	private static Shortcut? s_desktop;
+	private static CachedShortcut? s_defaultPoseDirectory;
+	private static CachedShortcut? s_defaultCharacterDirectory;
+	private static CachedShortcut? s_defaultCameraDirectory;
+	private static CachedShortcut? s_defaultSceneDirectory;
+	private static Shortcut? s_standardPoseDirectory;
+	private static Shortcut? s_standardAppearancesDirectory;
+	private static Shortcut? s_cmToolPoseSaveDir;
+	private static Shortcut? s_cmToolAppearanceSaveDir;
+	private static Shortcut? s_ffxivDatCharacterDirectory;
+
+	public static Shortcut Desktop => s_desktop ??= new(
 		new DirectoryInfo(ParseToFilePath("%Desktop%")),
 		"Shortcuts/Desktop.png",
 		"Shortcut_Desktop");
 
-	public static Shortcut DefaultPoseDirectory => new(
-		new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultPoseDirectory)),
+	public static Shortcut DefaultPoseDirectory => GetCachedShortcut(
+		ref s_defaultPoseDirectory,
+		SettingsService.Current.DefaultPoseDirectory,
 		"Shortcuts/Anamnesis.png",
 		"Shortcut_AnamnesisPose");
 
-	public static Shortcut DefaultCharacterDirectory => new(
-		new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultCharacterDirectory)),
+	public static Shortcut DefaultCharacterDirectory => GetCachedShortcut(
+		ref s_defaultCharacterDirectory,
+		SettingsService.Current.DefaultCharacterDirectory,
 		"Shortcuts/Anamnesis.png",
 		"Shortcut_AnamnesisCharacter");
 
-	public static Shortcut DefaultCameraDirectory => new(
-		new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultCameraShotDirectory)),
+	public static Shortcut DefaultCameraDirectory => GetCachedShortcut(
+		ref s_defaultCameraDirectory,
+		SettingsService.Current.DefaultCameraShotDirectory,
 		"Shortcuts/Anamnesis.png",
 		"Shortcut_AnamnesisCamera");
 
-	public static Shortcut DefaultSceneDirectory => new(
-		new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultSceneDirectory)),
+	public static Shortcut DefaultSceneDirectory => GetCachedShortcut(
+		ref s_defaultSceneDirectory,
+		SettingsService.Current.DefaultSceneDirectory,
 		"Shortcuts/Anamnesis.png",
 		"Shortcut_AnamnesisScenes");
 
-	public static Shortcut StandardPoseDirectory => new(
+	public static Shortcut StandardPoseDirectory => s_standardPoseDirectory ??= new(
 		new DirectoryInfo(ParseToFilePath($"{StandardLibDirectory}Poses/")),
 		"Shortcuts/AnamnesisBuiltIn.png",
 		"Shortcut_BuiltInPose");
 
-	public static Shortcut StandardAppearancesDirectory => new(
+	public static Shortcut StandardAppearancesDirectory => s_standardAppearancesDirectory ??= new(
 		new DirectoryInfo(ParseToFilePath($"{StandardLibDirectory}Appearances/")),
 		"Shortcuts/AnamnesisBuiltIn.png",
 		"Shortcut_BuiltInAppearances");
 
-	public static Shortcut CMToolPoseSaveDir => new(
+	public static Shortcut CMToolPoseSaveDir => s_cmToolPoseSaveDir ??= new(
 		new DirectoryInfo(ParseToFilePath("%MyDocuments%/CMTool/Matrix Saves/")),
 		"Shortcuts/cmtool.png",
 		"Shortcut_CMToolPose");
 
-	public static Shortcut CMToolAppearanceSaveDir => new(
+	public static Shortcut CMToolAppearanceSaveDir => s_cmToolAppearanceSaveDir ??= new(
 		new DirectoryInfo(ParseToFilePath("%MyDocuments%/CMTool/")),
 		"Shortcuts/cmtool.png",
 		"Shortcut_CMToolPose");
 
-	public static Shortcut FFxivDatCharacterDirectory => new(
+	public static Shortcut FFxivDatCharacterDirectory => s_ffxivDatCharacterDirectory ??= new(
 		new DirectoryInfo(ParseToFilePath("%MyDocuments%/My Games/FINAL FANTASY XIV - A Realm Reborn/")),
 		"Shortcuts/ffxiv.png",
 		"Shortcut_FfxivAppearance");
@@ -243,7 +259,7 @@ public class FileService : ServiceBase<FileService>
 			if (Activator.CreateInstance(fileType) is not FileBase file)
 				throw new Exception($"Failed to create instance of file type: {fileType}");
 
-			using var stream = new FileStream(info.FullName, FileMode.Open);
+			using var stream = new FileStream(info.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 			return file.Deserialize(stream);
 		}
 		catch (Exception ex)
@@ -269,7 +285,7 @@ public class FileService : ServiceBase<FileService>
 					if (Activator.CreateInstance(fileType) is not FileBase file)
 						throw new Exception($"Failed to create instance of file type: {fileType}");
 
-					using var stream = new FileStream(info.FullName, FileMode.Open);
+					using var stream = new FileStream(info.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 					return file.Deserialize(stream);
 				}
 				catch (Exception ex)
@@ -728,37 +744,35 @@ public class FileService : ServiceBase<FileService>
 				legacyLibDir.Delete(true);
 			}
 
-			// Check version file
 			DirectoryInfo libDir = new(ParseToFilePath(StandardLibDirectory));
-			string verFile = Path.Combine(libDir.FullName, "ver.txt");
-			if (libDir.Exists && File.Exists(verFile))
+			string checksumFile = Path.Combine(libDir.FullName, "checksum.txt");
+
+			// Determine whether to replace the library contents based on checksum comparison
+			string currentArchiveChecksum;
+			using (Stream embedded = EmbeddedFileUtility.Load("Data\\StandardLibrary.tar.gz"))
+			{
+				byte[] hashBytes = await SHA256.HashDataAsync(embedded);
+				currentArchiveChecksum = Convert.ToHexStringLower(hashBytes);
+			}
+
+			// Check existing checksum file
+			if (libDir.Exists && File.Exists(checksumFile))
 			{
 				try
 				{
-					string verText = await File.ReadAllTextAsync(verFile);
+					string existingChecksum = (await File.ReadAllTextAsync(checksumFile)).Trim();
 
-					if (string.IsNullOrEmpty(verText))
+					if (string.Equals(existingChecksum, currentArchiveChecksum, StringComparison.OrdinalIgnoreCase))
 					{
-						Log.Warning("Standard library version file missing or empty. Replacing library contents...");
+						Log.Debug("Standard pose library is up to date.");
+						return;
 					}
-					else if (!DateTime.TryParse(verText, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime _))
-					{
-						if (!Version.TryParse(verText, out Version? stdLibVer))
-						{
-							Log.Error($"Failed to parse standard pose library version: {verText}");
-							return;
-						}
 
-						if (stdLibVer == VersionInfo.ApplicationVersion)
-						{
-							Log.Information($"Standard pose library up to date");
-							return;
-						}
-					}
+					Log.Information("Standard pose library checksum mismatch or archive updated. Re-extracting...");
 				}
 				catch (Exception ex)
 				{
-					Log.Warning(ex, "Failed to read standard library version file");
+					Log.Warning(ex, "Failed to read standard library checksum file. Proceeding with re-extraction...");
 				}
 
 				SetAttributesNormal(libDir);
@@ -767,7 +781,6 @@ public class FileService : ServiceBase<FileService>
 
 			libDir.Create();
 			SetAttributesNormal(libDir);
-			await File.WriteAllTextAsync(verFile, VersionInfo.ApplicationVersion.ToString());
 
 			// Load the embedded archive and extract it
 			{
@@ -798,6 +811,8 @@ public class FileService : ServiceBase<FileService>
 				}
 			}
 
+			await File.WriteAllTextAsync(checksumFile, currentArchiveChecksum);
+
 			Log.Information($"Extracted standard library");
 		}
 		catch (Exception ex)
@@ -805,6 +820,20 @@ public class FileService : ServiceBase<FileService>
 			Log.Error(ex, "Failed to extract standard library");
 		}
 	}
+
+	private static Shortcut GetCachedShortcut(ref CachedShortcut? cache, string rawPath, string icon, string key)
+	{
+		CachedShortcut? entry = cache;
+		if (entry == null || !string.Equals(entry.RawPath, rawPath, StringComparison.Ordinal))
+		{
+			entry = new CachedShortcut(rawPath, new Shortcut(new DirectoryInfo(ParseToFilePath(rawPath)), icon, key));
+			cache = entry;
+		}
+
+		return entry.Instance;
+	}
+
+	private sealed record CachedShortcut(string RawPath, Shortcut Instance);
 }
 
 public class Shortcut

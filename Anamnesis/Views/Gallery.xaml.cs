@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Views;
@@ -39,8 +39,8 @@ public partial class Gallery : UserControl
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
 
-		SettingsService.SettingsChanged += this.OnSettingsChanged;
-		this.OnSettingsChanged(null, null);
+		this.Loaded += this.OnLoaded;
+		this.Unloaded += this.OnUnloaded;
 	}
 
 	public bool CanSkip { get; set; } = false;
@@ -48,6 +48,19 @@ public partial class Gallery : UserControl
 	public string Image1Author { get; set; } = string.Empty;
 	public string? Image2Path { get; set; } = null;
 	public string Image2Author { get; set; } = string.Empty;
+
+	private void OnLoaded(object sender, RoutedEventArgs e)
+	{
+		SettingsService.SettingsChanged -= this.OnSettingsChanged;
+		SettingsService.SettingsChanged += this.OnSettingsChanged;
+		this.OnSettingsChanged(null, null);
+	}
+
+	private void OnUnloaded(object sender, RoutedEventArgs e)
+	{
+		SettingsService.SettingsChanged -= this.OnSettingsChanged;
+		this.isRunning = false;
+	}
 
 	private void OnSettingsChanged(object? sender, PropertyChangedEventArgs? e)
 	{
@@ -69,14 +82,14 @@ public partial class Gallery : UserControl
 
 		this.isRunning = true;
 
-		while (!this.IsVisible)
+		while (this.isRunning && !this.IsVisible)
 			await Task.Delay(500);
 
 		var rnd = new Random();
 
 		this.forceUpdate = true;
 
-		while (Application.Current != null && SettingsService.Current.ShowGallery)
+		while (this.isRunning && Application.Current != null && SettingsService.Current.ShowGallery)
 		{
 			List<Entry> entries;
 
@@ -120,21 +133,24 @@ public partial class Gallery : UserControl
 
 			while (this.isRunning)
 			{
-				while (!this.IsVisible)
+				while (this.isRunning && !this.IsVisible)
 					await Task.Delay(5000);
 
-				if (!SettingsService.Current.ShowGallery)
+				if (!this.isRunning || !SettingsService.Current.ShowGallery)
 				{
 					this.isRunning = false;
 					return;
 				}
 
 				int delay = 0;
-				while (!this.forceUpdate && delay < IMG_DELAY)
+				while (this.isRunning && !this.forceUpdate && delay < IMG_DELAY)
 				{
 					delay += 100;
 					await Task.Delay(100);
 				}
+
+				if (!this.isRunning)
+					return;
 
 				this.currentIndex++;
 

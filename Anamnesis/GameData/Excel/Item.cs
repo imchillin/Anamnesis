@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
@@ -19,6 +19,12 @@ using System.Runtime.CompilerServices;
 public readonly unsafe struct Item(ExcelPage page, uint offset, uint row)
 	: IExcelRow<Item>, IItem, IEquatable<Item>
 {
+	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
 	/// <inheritdoc/>
 	public uint RowId => row;
 
@@ -41,7 +47,7 @@ public readonly unsafe struct Item(ExcelPage page, uint offset, uint row)
 	public readonly ReadOnlySeString? SeDescription => page.ReadString(offset + 8, offset);
 
 	/// <inheritdoc/>
-	public ImgRef Icon => new(page.ReadUInt16(offset + 136));
+	public ImgRef Icon => ImgRef.GetOrCreate(page.ReadUInt16(offset + 136));
 
 	/// <inheritdoc/>
 	public readonly byte EquipLevel => page.ReadUInt8(offset + 78);

@@ -95,8 +95,8 @@ public sealed class RedrawModule
 		byte[] result = FrameworkDriver.RunOnTick(() => this.ProcessInternal(req));
 		bool success = result.Length > 0 && result[0] == 1;
 
-		// If a full redraw took place, we need to wait for the game object to become visible again
-		if (success && req.Type == RedrawType.Full)
+		// Wait for the game object and its model resources to finish loading and become visible
+		if (success)
 		{
 			this.WaitUntilVisible(req.ObjectIndex);
 		}
@@ -301,7 +301,9 @@ public sealed class RedrawModule
 
 	private void WaitUntilVisible(int index)
 	{
-		FrameworkDriver.Instance?.RunOnTickUntil(
+		try
+		{
+			FrameworkDriver.Instance?.RunOnTickUntilAsync(
 			condition: () =>
 			{
 				nint entryPtr = this.objTablePtr + (index * IntPtr.Size);
@@ -316,7 +318,11 @@ public sealed class RedrawModule
 				var drawObject = Controller.MemoryReader?.Read<DrawObjectStruct>(modelPtr);
 				return drawObject?.IsVisible ?? false;
 			},
-			deferTicks: 0,
-			timeoutTicks: 100);
+			deferTicks: 1,
+			timeoutTicks: 100).GetAwaiter().GetResult();
+		}
+		catch (OperationCanceledException)
+		{
+		}
 	}
 }

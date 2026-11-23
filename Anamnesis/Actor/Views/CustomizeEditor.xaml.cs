@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Views;
@@ -41,6 +41,7 @@ public partial class CustomizeEditor : UserControl
 	};
 
 	private readonly DispatcherTimer debounceTimer;
+	private bool hasInitializedActor = false;
 
 	public CustomizeEditor()
 	{
@@ -75,6 +76,14 @@ public partial class CustomizeEditor : UserControl
 	[DependsOn(nameof(Customize), nameof(HasEars), nameof(HasTail))]
 	public bool HasSeparateTailEarsModel => this.Customize?.Race != Races.Elezen && this.Customize?.Race != Races.Lalafel;
 	public bool HasMuscles { get; set; }
+	[DependsOn(nameof(HasMuscles), nameof(HasEars), nameof(HasTail))]
+	public bool HasEarMuscleTailSlider => this.HasMuscles || this.HasEars || this.HasTail;
+	[DependsOn(nameof(HasMuscles), nameof(HasEars), nameof(HasTail))]
+	public string EarMuscleTailLabelKey => this.HasEars
+		? "Character_Appearance_EarsSize"
+		: this.HasTail
+			? "Character_Appearance_TailSize"
+			: "Character_Appearance_Muscle";
 	public bool HasBust { get; set; }
 	public bool CanAge { get; set; }
 	public CharaMakeCustomize? Hair { get; set; }
@@ -111,9 +120,11 @@ public partial class CustomizeEditor : UserControl
 
 	private void OnActorChanged(ActorMemory? actor)
 	{
-		this.Actor = actor;
-		Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
+		if (this.hasInitializedActor && ReferenceEquals(this.Actor, actor) && ReferenceEquals(this.Customize, actor?.DrawData.Customize))
+			return;
 
+		this.hasInitializedActor = true;
+		this.Actor = actor;
 		this.Hair = null;
 		this.FacePaint = null;
 
@@ -121,12 +132,19 @@ public partial class CustomizeEditor : UserControl
 			this.Customize.PropertyChanged -= this.OnAppearancePropertyChanged;
 
 		if (actor?.DrawData.Customize == null)
+		{
+			this.Customize = null;
+			this.IsEnabled = false;
 			return;
+		}
 
 		this.Customize = actor.DrawData.Customize;
 		this.Customize.PropertyChanged += this.OnAppearancePropertyChanged;
 
-		Application.Current.Dispatcher.Invoke(this.UpdateRaceAndTribe);
+		if (this.Dispatcher.CheckAccess())
+			this.UpdateRaceAndTribe();
+		else
+			this.Dispatcher.Invoke(this.UpdateRaceAndTribe);
 	}
 
 	private void DebounceTimer_Tick(object? sender, EventArgs e)
@@ -194,8 +212,6 @@ public partial class CustomizeEditor : UserControl
 			else
 				this.Customize.Head = this.ValidFaceOptions[0];
 		}
-
-		this.OnPropertyChanged(nameof(this.ValidFaceOptions));
 	}
 
 	private void UpdateTailEarsOptions(Tribes tribe, Genders gender, Ages age)
@@ -216,8 +232,6 @@ public partial class CustomizeEditor : UserControl
 			else
 				this.Customize.TailEarsType = this.ValidTailEarsOptions[0];
 		}
-
-		this.OnPropertyChanged(nameof(this.ValidTailEarsOptions));
 	}
 
 	private void UpdateRaceAndTribe()
@@ -251,8 +265,6 @@ public partial class CustomizeEditor : UserControl
 			this.IsEnabled = false;
 			return;
 		}
-
-		this.IsEnabled = true;
 
 		// Unsubscribe from events to avoid the callbacks from being called
 		this.RaceComboBox.SelectionChanged -= this.OnRaceChanged;

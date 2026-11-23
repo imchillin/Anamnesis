@@ -22,6 +22,8 @@ public partial class PoseMatrixView : UserControl
 	private IEnumerable<BoneEntity>? topBonesCache;
 	private IEnumerable<BoneEntity>? mainHandBonesCache;
 	private IEnumerable<BoneEntity>? offHandBonesCache;
+	private IEnumerable<BoneEntity>? ornamentBonesCache;
+	private IEnumerable<BoneEntity>? propBonesCache;
 
 	public PoseMatrixView()
 	{
@@ -45,6 +47,12 @@ public partial class PoseMatrixView : UserControl
 
 	[DependsOn(nameof(Skeleton))]
 	public IEnumerable<BoneEntity> OffHandBones => this.offHandBonesCache ??= this.GetBonesByCategory(BoneCategory.OffHand);
+
+	[DependsOn(nameof(Skeleton))]
+	public IEnumerable<BoneEntity> OrnamentBones => this.ornamentBonesCache ??= this.GetBonesByCategory(BoneCategory.Ornament);
+
+	[DependsOn(nameof(Skeleton))]
+	public IEnumerable<BoneEntity> PropBones => this.propBonesCache ??= this.GetBonesByCategory(BoneCategory.Prop);
 
 	public void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 	{
@@ -93,5 +101,7 @@ public partial class PoseMatrixView : UserControl
 		this.topBonesCache = null;
 		this.mainHandBonesCache = null;
 		this.offHandBonesCache = null;
+		this.ornamentBonesCache = null;
+		this.propBonesCache = null;
 	}
 }

@@ -14,6 +14,8 @@ using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using Velopack;
+using Velopack.Locators;
 using XivToolsWpf;
 using Application = System.Windows.Application;
 
@@ -85,6 +87,34 @@ public partial class App : Application
 
 		base.OnExit(e);
 	}
+
+#pragma warning disable IDE0060
+	[STAThread]
+	private static void Main(string[] args)
+	{
+		try
+		{
+			VelopackApp.Build().Run();
+
+			if (VelopackLocator.Current != null)
+			{
+				SemanticVersion? appVersion = VelopackLocator.Current.CurrentlyInstalledVersion;
+				if (appVersion != null)
+				{
+					VersionInfo.ApplicationVersion = appVersion.Version;
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Velopack failed to start: {ex.Message}");
+		}
+
+		App app = new();
+		app.InitializeComponent();
+		app.Run();
+	}
+#pragma warning restore IDE0060
 
 	private static void CheckWorkingDirectory()
 	{

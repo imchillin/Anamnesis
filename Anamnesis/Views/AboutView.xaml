@@ -74,8 +74,10 @@
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://brailleinstitute.org/freefont" FontSize="12" >Atkinson Hyperlegible Font</Hyperlink>
 					<LineBreak />
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/Reloaded-Project/Reloaded.Hooks" FontSize="12" >Reloaded.Hooks</Hyperlink>
-					<LineBreak />
+					<TextBlock>&amp;</TextBlock>
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/icedland/iced" FontSize="12" >Iced</Hyperlink>
+					<LineBreak />
+					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/velopack/velopack" FontSize="12" >Velopack</Hyperlink>
 			</TextBlock>
 
 			

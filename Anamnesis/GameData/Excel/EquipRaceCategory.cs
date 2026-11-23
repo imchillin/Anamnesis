@@ -14,6 +14,12 @@ public readonly struct EquipRaceCategory(ExcelPage page, uint offset, uint row)
 	: IExcelRow<EquipRaceCategory>
 {
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public uint RowId => row;
 
 	/// <summary>

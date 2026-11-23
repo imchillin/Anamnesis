@@ -52,6 +52,12 @@ public readonly struct Stain(ExcelPage page, uint offset, uint row)
 	};
 
 	/// <inheritdoc/>
+	public ExcelPage ExcelPage => page;
+
+	/// <inheritdoc/>
+	public uint RowOffset => offset;
+
+	/// <inheritdoc/>
 	public readonly uint RowId => row;
 
 	/// <inheritdoc/>

@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Views;
@@ -13,6 +13,7 @@ using Anamnesis.Styles.Drawers;
 using PropertyChanged;
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -89,19 +90,19 @@ public partial class SubActorEditor : UserControl
 	{
 		if (oldValue != null)
 		{
-			oldValue.PropertyChanged -= sender.OnActorPropertyChanged;
+			oldValue.RemovePropertyChangedListener(sender.OnActorPropertyChanged);
 		}
 
 		if (newValue != null)
 		{
-			newValue.PropertyChanged += sender.OnActorPropertyChanged;
+			newValue.AddPropertyChangedListener(sender.OnActorPropertyChanged, nameof(ActorMemory.MountId), nameof(ActorMemory.OrnamentId), nameof(ActorMemory.DataId));
 		}
 	}
 
 	private static void OnChanged(SubActorEditor sender, ActorMemory? oldValue, ActorMemory? newValue)
 	{
 		if (oldValue != null)
-			oldValue.PropertyChanged -= sender.OnActorPropertyChanged;
+			oldValue.RemovePropertyChangedListener(sender.OnActorPropertyChanged);
 
 		if (newValue == null || sender.Actor == null)
 		{
@@ -109,7 +110,7 @@ public partial class SubActorEditor : UserControl
 			return;
 		}
 
-		newValue.PropertyChanged += sender.OnActorPropertyChanged;
+		newValue.AddPropertyChangedListener(sender.OnActorPropertyChanged, nameof(ActorMemory.MountId), nameof(ActorMemory.OrnamentId), nameof(ActorMemory.DataId));
 
 		if (sender.SubActorType == Types.Companion)
 		{
@@ -142,15 +143,15 @@ public partial class SubActorEditor : UserControl
 		}
 	}
 
-	private async void OnActorPropertyChanged(object? sender, PropertyChangedEventArgs e)
+	private void OnActorPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		if (e.PropertyName == nameof(ActorMemory.MountId)
-			|| e.PropertyName == nameof(ActorMemory.OrnamentId)
-			|| e.PropertyName == nameof(ActorMemory.DataId))
-		{
-			await Dispatch.MainThread();
-			OnChanged(this, this.SubActor, this.SubActor);
-		}
+		_ = this.UpdateSubActorAsync();
+	}
+
+	private async Task UpdateSubActorAsync()
+	{
+		await Dispatch.MainThread();
+		OnChanged(this, this.SubActor, this.SubActor);
 	}
 
 	private void OnClick(object sender, RoutedEventArgs e)
