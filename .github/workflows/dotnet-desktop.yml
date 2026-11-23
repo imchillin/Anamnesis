@@ -1,9 +1,10 @@
 name: Publish Anamnesis
 
 permissions:
-  id-token: write     # Required for attestations
-  attestations: write # Required for attestations
-  contents: write     # Required for creating the draft release
+  id-token: write      # Required for attestations
+  attestations: write  # Required for attestations
+  contents: write      # Required for creating the draft release and pushing PR branch
+  pull-requests: write # Required for creating the channels manifest update PR
 
 on:
   workflow_dispatch:
@@ -17,6 +18,11 @@ on:
         type: string
         description: 'Semantic version (e.g., "1.1.0")'
         required: true
+      validated_game_version:
+        type: string
+        description: 'Validated game version (e.g., "2026.11.03.0000.0000"). Leave empty to keep current.'
+        required: false
+        default: ''
 
 concurrency:
   group: publish-${{ github.ref_name }}
@@ -55,7 +61,8 @@ jobs:
           }
 
           $channelData = $manifest.channels.$channelId
-          $validatedGameVersion = "$($channelData.validated_game_version)".Trim()
+          $inputGameVersion = "${{ github.event.inputs.validated_game_version }}".Trim()
+          $validatedGameVersion = if ($inputGameVersion) { $inputGameVersion } else { "$($channelData.validated_game_version)".Trim() }
           if ([string]::IsNullOrWhiteSpace($validatedGameVersion)) {
             Write-Error "Error: Channel '$channelId' does not define a 'validated_game_version' in channels.json."
             exit 1
@@ -213,3 +220,34 @@ jobs:
           gh release upload "${{ env.RELEASE_TAG }}" "./Migration.zip" --clobber
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create PR for channels manifest update
+        if: ${{ github.event.inputs.validated_game_version != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $channelId = "${{ github.event.inputs.channel }}".Trim()
+          $gameVersion = "${{ env.VALIDATED_GAME_VERSION }}"
+          $branchName = "chore/update-channels-${{ env.RELEASE_TAG }}"
+
+          git checkout -B $branchName origin/master
+
+          $manifest = Get-Content ./channels.json | ConvertFrom-Json
+          if ($manifest.channels.$channelId.validated_game_version -eq $gameVersion) {
+            Write-Host "Channel '$channelId' on master is already at '$gameVersion'. Skipping PR."
+            exit 0
+          }
+
+          $manifest.channels.$channelId.validated_game_version = $gameVersion
+          $manifest | ConvertTo-Json | Set-Content ./channels.json
+
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git commit -am "Update $channelId channel game version to $gameVersion (${{ env.RELEASE_TAG }})"
+          git push origin $branchName --force-with-lease
+
+          gh pr create `
+            --base master `
+            --head $branchName `
+            --title "Update $channelId channel to game version $gameVersion (${{ env.RELEASE_TAG }})" `
+            --body "Automated update of ``channels.json`` for release **${{ env.RELEASE_TAG }}**."
