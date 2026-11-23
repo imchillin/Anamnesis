@@ -50,6 +50,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	[ThreadStatic]
 	private static DeformerPass s_deformerPass;
 
+	private readonly FrameworkDriver frameworkDriver;
 	private readonly GposeDriver gposeDriver;
 	private readonly ConcurrentDictionary<(nint Deformer, nint Skeleton), Vector3> lastBustScales = new();
 	private readonly ConcurrentDictionary<(nint PartialSkeleton, short BoneIndex), (Vector3 Shifted, Vector3 Unshifted, bool Pending)> deformerShifts = new();
@@ -82,6 +83,12 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	private HkaPartialSkeletonDelegate.GetBoneLocalTransform? getBoneLocalTransformDetour;
 	private HumanPostBoneDeformerDelegate.Execute? postBoneDeformerDetour;
 
+	// Front-buffer (requested) state written by IPC commands and read by property getters
+	private volatile bool pendingPosingEnabled = false;
+	private volatile bool pendingPhysicsFrozen = false;
+	private volatile bool pendingWorldVisualStateFrozen = false;
+
+	// Back-buffer (active) state committed at the start of each frame and read by detours
 	private volatile bool isPosingEnabled = false;
 	private volatile bool arePhysicsFrozen = false;
 	private volatile bool isWorldVisualStateFrozen = false;
@@ -96,17 +103,21 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	/// <summary>
 	/// Initializes a new instance of the <see cref="PosingDriver"/> class.
 	/// </summary>
+	/// <param name="frameworkDriver">
+	/// A reference to the <see cref="FrameworkDriver"/> instance used to commit state changes at frame boundaries.
+	/// </param>
 	/// <param name="gposeDriver">
 	/// A reference to the <see cref="GposeDriver"/> instance used to subscribe to GPose state updates.
 	/// </param>
 	/// <exception cref="InvalidOperationException">
 	/// Thrown if the signature resolver is not available, which is required for creating function hooks.
 	/// </exception>
-	public PosingDriver(GposeDriver gposeDriver)
+	public PosingDriver(FrameworkDriver frameworkDriver, GposeDriver gposeDriver)
 	{
 		if (Controller.SigResolver == null)
 			throw new InvalidOperationException("Cannot initialize posing driver: signature resolver is not available.");
 
+		this.frameworkDriver = frameworkDriver;
 		this.gposeDriver = gposeDriver;
 
 		this.RegisterInstance(() =>
@@ -143,6 +154,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 				this.hookPostBoneDeformer = HookRegistry.CreateAndActivateHook(this.postBoneDeformerDetour);
 			}
 
+			this.frameworkDriver.GameTick += this.OnGameTick;
 			this.gposeDriver.StateChanged += this.OnGposeStateChanged;
 		});
 	}
@@ -152,13 +164,8 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	/// </summary>
 	public bool FreezePhysics
 	{
-		get => this.arePhysicsFrozen;
-		set
-		{
-			this.arePhysicsFrozen = value;
-			if (value)
-				this.deformerShifts.Clear();
-		}
+		get => this.pendingPhysicsFrozen;
+		set => this.pendingPhysicsFrozen = value;
 	}
 
 	/// <summary>
@@ -167,16 +174,8 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	/// </summary>
 	public bool PosingEnabled
 	{
-		get => this.isPosingEnabled;
-		set
-		{
-			this.isPosingEnabled = value;
-			if (!value)
-			{
-				this.lastBustScales.Clear();
-				this.deformerShifts.Clear();
-			}
-		}
+		get => this.pendingPosingEnabled;
+		set => this.pendingPosingEnabled = value;
 	}
 
 	/// <summary>
@@ -185,16 +184,22 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	/// </summary>
 	public bool FreezeWorldVisualState
 	{
-		get => this.isWorldVisualStateFrozen;
-		set => this.isWorldVisualStateFrozen = value;
+		get => this.pendingWorldVisualStateFrozen;
+		set => this.pendingWorldVisualStateFrozen = value;
 	}
 
 	/// <inheritdoc/>
 	protected override void OnDispose()
 	{
+		if (this.frameworkDriver != null)
+			this.frameworkDriver.GameTick -= this.OnGameTick;
+
 		if (this.gposeDriver != null)
 			this.gposeDriver.StateChanged -= this.OnGposeStateChanged;
 
+		this.pendingPosingEnabled = false;
+		this.pendingPhysicsFrozen = false;
+		this.pendingWorldVisualStateFrozen = false;
 		this.isPosingEnabled = false;
 		this.arePhysicsFrozen = false;
 		this.isWorldVisualStateFrozen = false;
@@ -451,6 +456,26 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 		}
 	}
 
+	private void OnGameTick()
+	{
+		bool posing = this.pendingPosingEnabled;
+		bool physicsFrozen = this.pendingPhysicsFrozen;
+		bool worldFrozen = this.pendingWorldVisualStateFrozen;
+
+		if (posing == this.isPosingEnabled && physicsFrozen == this.arePhysicsFrozen && worldFrozen == this.isWorldVisualStateFrozen)
+			return;
+
+		if (!posing)
+			this.lastBustScales.Clear();
+
+		if (!posing || physicsFrozen)
+			this.deformerShifts.Clear();
+
+		this.isPosingEnabled = posing;
+		this.arePhysicsFrozen = physicsFrozen;
+		this.isWorldVisualStateFrozen = worldFrozen;
+	}
+
 	private void OnGposeStateChanged(bool isGpose)
 	{
 		if (!isGpose)
@@ -458,6 +483,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 			this.PosingEnabled = false;
 			this.FreezePhysics = false;
 			this.FreezeWorldVisualState = false;
+			this.OnGameTick();
 		}
 	}
 }
