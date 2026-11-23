@@ -1,14 +1,9 @@
 {
   "channels": {
     "stable": {
-        "name": "Stable",
-        "validated_game_version": "2026.06.18.0000.0000",
-        "fallback": null
-    },
-    "experimental": {
-        "name": "Experimental",
-        "validated_game_version": "2026.06.18.0000.0000",
-        "fallback": "stable"
+      "name": "Stable",
+      "validated_game_version": "2026.11.03.0000.0000",
+      "fallback": null
     }
   }
 }
