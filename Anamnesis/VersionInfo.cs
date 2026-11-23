@@ -4,6 +4,8 @@
 namespace Anamnesis;
 
 using System;
+using System.Linq;
+using System.Reflection;
 
 public static class VersionInfo
 {
@@ -16,7 +18,13 @@ public static class VersionInfo
 	/// <summary>
 	/// The latest game version that the tool has been validated for.
 	/// </summary>
-	public static readonly string ValidatedGameVersion = "2026.11.03.0000.0000";
+	/// <remarks>
+	/// [!] Do NOT manually update this field. It is injected at build time
+	/// from channels.json via the ValidatedGameVersion MSBuild property.
+	/// </remarks>
+	public static readonly string ValidatedGameVersion = Assembly.GetExecutingAssembly()
+		.GetCustomAttributes<AssemblyMetadataAttribute>()
+		.FirstOrDefault(a => a.Key == nameof(ValidatedGameVersion))?.Value ?? string.Empty;
 
 	/// <summary>
 	/// Application version.

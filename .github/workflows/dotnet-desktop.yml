@@ -55,6 +55,11 @@ jobs:
           }
 
           $channelData = $manifest.channels.$channelId
+          $validatedGameVersion = "$($channelData.validated_game_version)".Trim()
+          if ([string]::IsNullOrWhiteSpace($validatedGameVersion)) {
+            Write-Error "Error: Channel '$channelId' does not define a 'validated_game_version' in channels.json."
+            exit 1
+          }
 
           # Process input version
           $inputVer = "${{ github.event.inputs.version }}".Trim()
@@ -81,10 +86,12 @@ jobs:
           echo "RELEASE_TAG=$tag" >> $env:GITHUB_ENV
           echo "IS_PRERELEASE=$isPreRelease" >> $env:GITHUB_ENV
           echo "VPK_CHANNEL=$vpkChannel" >> $env:GITHUB_ENV
+          echo "VALIDATED_GAME_VERSION=$validatedGameVersion" >> $env:GITHUB_ENV
 
           Write-Host "Target Version: $targetVer"
           Write-Host "Release Tag: $tag"
           Write-Host "Is Pre-release: $isPreRelease"
+          Write-Host "Validated Game Version: $validatedGameVersion"
 
       - name: Fetch framework version from local global file
         id: fetch_framework_version
@@ -114,7 +121,8 @@ jobs:
         run: dotnet publish Anamnesis/Anamnesis.csproj `
           /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml" `
           /p:DefineConstants="CI_BUILD" `
-          /p:Version="${{ env.RELEASE_VERSION }}"
+          /p:Version="${{ env.RELEASE_VERSION }}" `
+          /p:ValidatedGameVersion="${{ env.VALIDATED_GAME_VERSION }}"
 
       - name: Publish UpdateExtractor
         run: dotnet publish UpdateExtractor/UpdateExtractor.csproj `

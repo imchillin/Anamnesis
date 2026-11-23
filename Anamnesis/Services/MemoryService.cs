@@ -651,7 +651,7 @@ public partial class MemoryService : ServiceBase<MemoryService>, IProcessMemoryR
 
 		Log.Information($"Found game version: {GameVersion}");
 
-		if (GameVersion != VersionInfo.ValidatedGameVersion)
+		if (!string.IsNullOrEmpty(VersionInfo.ValidatedGameVersion) && GameVersion != VersionInfo.ValidatedGameVersion)
 		{
 			Log.Warning($"Unrecognized game version: {GameVersion}. Current validated version is: {VersionInfo.ValidatedGameVersion}");
 #if !DEBUG

@@ -122,7 +122,18 @@ public partial class UpdateService : ServiceBase<UpdateService>
 			}
 
 			if (!GlobalManifest.Channels.TryGetValue(activeChannelId, out var activeChannelData))
-				throw new Exception($"Current update channel '{activeChannelId}' not found in channels manifest.");
+			{
+				if (activeChannelId.Equals(Settings.DEFAULT_UPDATE_CHANNEL, StringComparison.OrdinalIgnoreCase)
+					|| !GlobalManifest.Channels.TryGetValue(Settings.DEFAULT_UPDATE_CHANNEL, out activeChannelData))
+				{
+					throw new Exception($"Current update channel '{activeChannelId}' not found in channels manifest.");
+				}
+
+				Log.Warning($"Update channel '{activeChannelId}' is no longer in the channels manifest. Falling back to '{Settings.DEFAULT_UPDATE_CHANNEL}'.");
+				activeChannelId = Settings.DEFAULT_UPDATE_CHANNEL;
+				SettingsService.Current.UpdateChannel = activeChannelId;
+				SettingsService.Save();
+			}
 
 			CurrentChannelData = activeChannelData;
 			var githubSource = new GithubSource(GITHUB_REPO_URL, accessToken: null, prerelease: true);
