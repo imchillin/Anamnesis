@@ -397,6 +397,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 		if (e.PropertyName == nameof(ActorMemory.DisplayName))
 		{
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.DisplayName)));
 			this.UpdateInitials(this.Memory.DoRef(a => a.DisplayName));
 			return;
 		}

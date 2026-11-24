@@ -35,7 +35,6 @@ public class GameObjectMemory : MemoryBase
 
 	public string NameHash => HashUtility.GetHashString(this.NameBytes.ToString(), true);
 
-	[AlsoNotifyFor(nameof(DisplayName))]
 	public string? Nickname { get; set; }
 
 	[DependsOn(nameof(ObjectIndex))]
@@ -50,6 +49,7 @@ public class GameObjectMemory : MemoryBase
 	/// <summary>
 	/// Gets the Nickname or if not set, the Name.
 	/// </summary>
+	[DependsOn(nameof(Nickname), nameof(Name))]
 	public string DisplayName => this.Nickname ?? this.Name;
 
 	[DependsOn(nameof(NameBytes))]
