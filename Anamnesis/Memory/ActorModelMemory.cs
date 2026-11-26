@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory;
@@ -9,6 +9,15 @@ using System.ComponentModel;
 
 public class ActorModelMemory : DrawObjectMemory
 {
+	[Flags]
+	public enum AnimationLoadFlags : uint
+	{
+		None = 0,
+		Base = 1 << 0,
+		Mount = 1 << 3,
+		Ornament = 1 << 4,
+	}
+
 	/// <summary>
 	/// Gets or sets the main-hand weapon memory object.
 	/// </summary>
@@ -34,6 +43,7 @@ public class ActorModelMemory : DrawObjectMemory
 	[Bind(0x2A4)] public float Height { get; set; }
 	[Bind(0x2E0)] public float Wetness { get; set; }
 	[Bind(0x2EC)] public float Drenched { get; set; }
+	[Bind(0x2F4)] public AnimationLoadFlags AnimationLoadDone { get; set; }
 	[Bind(0xAA0)] public short DataPath { get; set; }
 	[Bind(0xAA4)] public byte DataHead { get; set; }
 	[Bind(0xBF0, BindFlags.Pointer)] public ConstantBufferMemory<ExtendedAppearanceMemory>? CustomizeParameterCBuffer { get; private set; }

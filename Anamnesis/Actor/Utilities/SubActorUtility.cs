@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Utilities;
@@ -52,6 +52,9 @@ public class SubActorUtility
 			memory.OrnamentId = (ushort)ornament.RowId;
 			memory.Ornament.OrnamentId = (ushort)ornament.RowId;
 			memory.Ornament.CustomizeGroupId = (byte)ornament.CustomizeGroupId;
+			memory.Ornament.ModelSkeletonId = ornament.ModelChara.ValueNullable?.Model ?? 0;
+			memory.ModelObject?.AnimationLoadDone &= ~ActorModelMemory.AnimationLoadFlags.Ornament;
+
 			Apply(ornament, memory.Ornament);
 		}
 		else

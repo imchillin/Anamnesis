@@ -44,7 +44,10 @@ public readonly struct Ornament(ExcelPage page, uint offset, uint row)
 	public readonly string Description => string.Empty;
 
 	/// <inheritdoc/>
-	public readonly uint ModelCharaRow => (uint)page.ReadUInt16(offset + 16);
+	public readonly uint ModelCharaRow => this.ModelChara.RowId;
+
+	/// <summary>Gets the ModelChara object reference of the ornament.</summary>
+	public readonly RowRef<Lumina.Excel.Sheets.ModelChara> ModelChara => new(page.Module, (uint)page.ReadUInt16(offset + 16), page.Language);
 
 	/// <summary>
 	/// Gets the attachment point of the ornament to the character.

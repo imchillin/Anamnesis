@@ -87,6 +87,7 @@ public class ActorMemory : GameObjectMemory, IDisposable
 	[Bind(0x0A30)] public AnimationMemory? Animation { get; set; }
 	[Bind(0x1A58)] public byte Voice { get; set; }
 	[Bind(0x1B38, BindFlags.ActorRefresh)] public int ModelType { get; set; } = -1; // Invalid by default to prevent false positive human checks
+	[Bind(0x1B3C)] public int ModelSkeletonId { get; set; }
 	[Bind(0x1BA4)] public bool IsMotionDisabled { get; set; }
 	[Bind(0x22E8)] public float Transparency { get; set; }
 	[Bind(0x2364)] public byte CharacterModeRaw { get; set; }
