@@ -379,14 +379,7 @@ public partial class SliderInputBox : UserControl
 	public int? DecimalPlaces
 	{
 		get => DecimalPlacesDp.Get(this);
-		set
-		{
-			Debug.Assert(value >= 0, "You cannot set a negative number to the decimal places property");
-			this.isInternalSet = true;
-			DecimalPlacesDp.Set(this, value);
-			this.isInternalSet = false;
-			this.Value = Math.Round(this.Value, value ?? INT_ROUNDING);
-		}
+		set => DecimalPlacesDp.Set(this, value);
 	}
 
 	/// <summary>Gets or sets the slider mode.</summary>
@@ -624,11 +617,8 @@ public partial class SliderInputBox : UserControl
 	/// <param name="value">The new value.</param>
 	private static void OnDecimalPlacesChanged(SliderInputBox sender, int? value)
 	{
-		if (sender.isInternalSet)
-			return;
-
-		Debug.Assert(value >= 0, "You cannot set a negative number to the decimal places property");
-		sender.DecimalPlaces = value;
+		Debug.Assert(value is null or >= 0, "You cannot set a negative number to the decimal places property");
+		sender.OnPropertyChanged(nameof(Value));
 		sender.OnPropertyChanged(nameof(Label));
 	}
 
