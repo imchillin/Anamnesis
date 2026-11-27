@@ -236,6 +236,9 @@ public partial class UpdateService : ServiceBase<UpdateService>
 
 				nextFallbackId = fallbackChannelData.Fallback;
 			}
+
+			SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
+			SettingsService.Save();
 		}
 		catch (HttpRequestException ex)
 		{
@@ -249,8 +252,6 @@ public partial class UpdateService : ServiceBase<UpdateService>
 			Log.Error(ex, "Failed to carry out update check");
 		}
 
-		SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
-		SettingsService.Save();
 		return false;
 	}
 
