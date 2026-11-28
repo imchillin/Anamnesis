@@ -243,10 +243,10 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		if (this.IsDisposed)
 			return;
 
-		if (string.IsNullOrEmpty(propertyName) || this.Binds.Count == 0 || !this.Binds.TryGetValue(propertyName, out PropertyBindInfo? bind))
+		if (string.IsNullOrEmpty(propertyName) || this.Binds.Count == 0 || !this.Binds.ContainsKey(propertyName))
 		{
 			// If the bind is not found, assume it is not bound to a memory address.
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			this.NotifyLocalPropertyChanged(propertyName);
 			return;
 		}
 
@@ -800,7 +800,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		if (!this.Binds.TryGetValue(e.PropertyName, out PropertyBindInfo? bind))
 		{
 			// If the bind is not found, assume it is not bound to a memory address.
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(e.PropertyName));
+			this.NotifyLocalPropertyChanged(e.PropertyName);
 			return;
 		}
 
@@ -1211,11 +1211,11 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				for (int i = 0; i < listeners.Length; i++)
 				{
 					ref readonly var listener = ref listeners[i];
-					if ((listener.Origins & context.Origin) != 0 && (listener.PropertyName.Length == 0 || listener.PropertyName == propertyName))
-					{
-						args ??= new MemObjPropertyChangedEventArgs(propertyName, context);
-						listener.Handler.Invoke(current, args);
-					}
+					if (!listener.Matches(propertyName, context.Origin))
+						continue;
+
+					args ??= new MemObjPropertyChangedEventArgs(propertyName, context);
+					listener.Handler.Invoke(current, args);
 				}
 			}
 
@@ -1227,6 +1227,35 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 			context.AddPath(current.parentBind!);
 			current = current.parent;
+		}
+	}
+
+	private void NotifyLocalPropertyChanged(string propertyName)
+	{
+		var globalHandler = this.PropertyChanged;
+		var listeners = this.propertyListeners;
+		if (globalHandler == null && listeners == null)
+			return;
+
+		PropertyChangedEventArgs? args = null;
+		if (globalHandler != null)
+		{
+			args = new PropertyChangedEventArgs(propertyName);
+			globalHandler.Invoke(this, args);
+		}
+
+		if (listeners == null)
+			return;
+
+		var origin = NotificationSuppression.Scope.IsActive ? PropertyChange.Origins.Game : PropertyChange.Origins.User;
+		for (int i = 0; i < listeners.Length; i++)
+		{
+			ref readonly var listener = ref listeners[i];
+			if (!listener.Matches(propertyName, origin))
+				continue;
+
+			args ??= new PropertyChangedEventArgs(propertyName);
+			listener.Handler.Invoke(this, args);
 		}
 	}
 
@@ -1245,7 +1274,14 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		}
 	}
 
-	private readonly record struct PropertyListener(string PropertyName, PropertyChangedEventHandler Handler, PropertyChange.Origins Origins);
+	private readonly record struct PropertyListener(string PropertyName, PropertyChangedEventHandler Handler, PropertyChange.Origins Origins)
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool Matches(string propertyName, PropertyChange.Origins origin)
+		{
+			return (this.Origins & origin) != 0 && (this.PropertyName.Length == 0 || string.IsNullOrEmpty(propertyName) || this.PropertyName == propertyName);
+		}
+	}
 
 	/// <summary>
 	/// A RAII scope that suppresses property notifications on the current thread for its duration.
