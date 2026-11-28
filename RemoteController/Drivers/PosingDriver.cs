@@ -26,7 +26,7 @@ using HumanPostBoneDeformerStruct = Interop.Types.HumanPostBoneDeformer;
 /// </summary>
 /// <remarks>
 /// - Credits to the Ktisis team and Karou for discovering the solution for the bone drifting issue.<br/>
-/// - Credits to Karou for discovering the solution for eye pupil and iris bone manipulation.
+/// - Credits to Karou for discovering the solution for eye pupil and iris bone manipulation.<br/>
 /// - Credits to Karou for helping figure out how to cleanly toggle physics freezing on/off when posing is enabled.
 /// </remarks>
 [RequiresUnreferencedCode("This class is not trimming-safe")]
@@ -43,9 +43,9 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	// - "GameObject.SetPosition" is hooked to prevent the GPose camera from resetting its position.
 	// - "UpdateVisualPosition" and "UpdateVisualRotation" are hooked to prevent the game from updating the visual position and rotation of objects.
 	// - "HkaPartialSkeleton.GetBoneLocalTransform" is hooked to allow for scale override of eye pupil and iris bones. This is necessary as Anamnesis does not currently modify the local-space pose, just model-space.
-	// - "HumanPostBoneDeformer.Execute" is hooked to prevent customization deformations from compounding during posing, while still forwarding helmet visor rotation, adjusted bust scale ratios, and Viera ear length shifts when physics are active.
+	// - "HumanPostBoneDeformer.Execute" is hooked to prevent customization deformations from compounding during posing, while still forwarding adjusted bust scale ratios and Viera ear length shifts when physics are active.
 
-	private const PostBoneDeformerFlags LENGTH_PASS_FLAGS = PostBoneDeformerFlags.VieraEars;
+	private const PostBoneDeformerFlags TRANSLATION_PASS_FLAGS = PostBoneDeformerFlags.VieraEars;
 
 	[ThreadStatic]
 	private static DeformerPass s_deformerPass;
@@ -97,7 +97,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 	{
 		None,
 		Passthrough,
-		LengthOnly,
+		TranslationOnly,
 	}
 
 	/// <summary>
@@ -264,7 +264,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 		var key = ((nint)partialSkeleton, (short)boneId);
 		if (fromPhysics)
 		{
-			// Mark any tracked deformer-shifted bone so its length shift is re-applied this frame
+			// Mark any tracked deformer-shifted bone so its translation shift is re-applied this frame
 			if (!this.deformerShifts.IsEmpty && this.deformerShifts.TryGetValue(key, out var current) && !current.Pending)
 				this.deformerShifts.TryUpdate(key, (default, default, true), current);
 		}
@@ -406,7 +406,7 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 
 		PostBoneDeformerFlags originalFlags = deformer->Flags;
 		Vector3 originalBustScale = deformer->BustScale;
-		PostBoneDeformerFlags passthroughFlags = originalFlags & PostBoneDeformerFlags.Visor;
+		PostBoneDeformerFlags passthroughFlags = PostBoneDeformerFlags.None;
 
 		// Apply only the incremental bust scale ratio so manual bust scaling does not compound every frame
 		if ((originalFlags & PostBoneDeformerFlags.Bust) != 0)
@@ -421,21 +421,21 @@ public sealed class PosingDriver : DriverBase<PosingDriver>
 			}
 		}
 
-		// Re-apply translation-based length shifts after unfrozen physics reset bone positions to bind length
-		PostBoneDeformerFlags lengthPassFlags = this.arePhysicsFrozen
+		// Re-apply translation-based deformer shifts after unfrozen physics reset bone positions to bind pose
+		PostBoneDeformerFlags translationPassFlags = this.arePhysicsFrozen
 			? PostBoneDeformerFlags.None
-			: originalFlags & LENGTH_PASS_FLAGS;
+			: originalFlags & TRANSLATION_PASS_FLAGS;
 
-		if ((passthroughFlags | lengthPassFlags) == PostBoneDeformerFlags.None)
+		if ((passthroughFlags | translationPassFlags) == PostBoneDeformerFlags.None)
 			return;
 
 		try
 		{
-			// Run passthrough passes (Visor/Bust) separately from length passes so SetBoneModelTransform(..) can apply distinct policies
+			// Run passthrough passes separately from translation-only passes so SetBoneModelTransform(..) can apply distinct policies
 			ReadOnlySpan<(DeformerPass Pass, PostBoneDeformerFlags Flags)> passes =
 			[
 				(DeformerPass.Passthrough, passthroughFlags),
-				(DeformerPass.LengthOnly, lengthPassFlags),
+				(DeformerPass.TranslationOnly, translationPassFlags),
 			];
 
 			foreach (var (pass, flags) in passes)
