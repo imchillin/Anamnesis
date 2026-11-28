@@ -61,7 +61,7 @@
 						
 						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_Theme_Color" Style="{StaticResource Label}"
 											   IsEnabled="{Binding SettingsService.Current.OverrideSystemTheme}"/>
-						<wpf:ColorPicker Color="{Binding SettingsService.Settings.ThemeTrimColor}" Grid.Column="1"
+						<wpf:ColorPicker Color="{Binding SettingsService.Settings.ThemeTrimColor, Delay=150}" Grid.Column="1"
 										 IsEnabled="{Binding SettingsService.Current.OverrideSystemTheme}"/>
 					</Grid>
 				</Grid>

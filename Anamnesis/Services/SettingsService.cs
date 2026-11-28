@@ -1,4 +1,4 @@
-﻿// © Anamnesis.
+// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Services;
@@ -10,6 +10,7 @@ using Anamnesis.Serialization;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -22,6 +23,8 @@ using XivToolsWpf;
 public class SettingsService : ServiceBase<SettingsService>
 {
 	private static readonly string s_settingsPath = FileService.ParseToFilePath(FileService.StoreDirectory + "/Settings.json");
+	private static readonly string s_settingsTempPath = s_settingsPath + ".tmp";
+	private static readonly Lock s_saveLock = new();
 
 	/// <summary>
 	/// Event that is raised when the settings have changed.
@@ -56,12 +59,16 @@ public class SettingsService : ServiceBase<SettingsService>
 	/// </summary>
 	public static void Save()
 	{
-		var settings = InstanceOrNull?.Settings;
-		if (settings == null)
-			return;
+		lock (s_saveLock)
+		{
+			var settings = InstanceOrNull?.Settings;
+			if (settings == null)
+				return;
 
-		string json = SerializerService.Serialize(settings);
-		File.WriteAllText(s_settingsPath, json);
+			string json = SerializerService.Serialize(settings);
+			File.WriteAllText(s_settingsTempPath, json);
+			File.Move(s_settingsTempPath, s_settingsPath, overwrite: true);
+		}
 	}
 
 	/// <summary>
@@ -128,12 +135,19 @@ public class SettingsService : ServiceBase<SettingsService>
 		if (this.Settings == null)
 			return;
 
-		if (sender is Settings settings)
+		if (sender is Settings)
 		{
 			Save();
 		}
 
-		ApplyTheme();
+		if (string.IsNullOrEmpty(e.PropertyName)
+			|| e.PropertyName is nameof(this.Settings.OverrideSystemTheme)
+				or nameof(this.Settings.ThemeLight)
+				or nameof(this.Settings.ThemeTrimColor))
+		{
+			ApplyTheme();
+		}
+
 		SettingsChanged?.Invoke(sender, e);
 	}
 }
