@@ -11,6 +11,7 @@ using Anamnesis.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -132,7 +133,6 @@ public partial class UpdateService : ServiceBase<UpdateService>
 				Log.Warning($"Update channel '{activeChannelId}' is no longer in the channels manifest. Falling back to '{Settings.DEFAULT_UPDATE_CHANNEL}'.");
 				activeChannelId = Settings.DEFAULT_UPDATE_CHANNEL;
 				SettingsService.Current.UpdateChannel = activeChannelId;
-				SettingsService.Save();
 			}
 
 			CurrentChannelData = activeChannelData;
@@ -141,34 +141,13 @@ public partial class UpdateService : ServiceBase<UpdateService>
 
 			if (IsChannelCompatible(activeChannelData, latestGameVersion))
 			{
-				string activeVelopackChannel = GetVelopackChannel(activeChannelId);
-				var updateOpts = new UpdateOptions
-				{
-					ExplicitChannel = activeVelopackChannel,
-					AllowVersionDowngrade = true, // Desirable as it allows users to switch channels without being blocked by version checks
-				};
-
-				this.updateManager = new UpdateManager(githubSource, updateOpts);
-
-				if (!this.updateManager.IsInstalled)
-				{
-					Log.Warning("The portable application does not support automatic updates.");
+				if (!this.TryInitUpdateManager(githubSource, activeChannelId))
 					return false;
-				}
 
 				this.pendingUpdate = await this.updateManager.CheckForUpdatesAsync();
-				if (this.pendingUpdate != null)
-				{
-					bool update = await this.PromptUpdateConfirmation(this.pendingUpdate, activeChannelId);
-					SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
-					SettingsService.Save();
-					return update;
-				}
 
 				// Active channel is compatible and up to date. Do not evaluate fallbacks.
-				SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
-				SettingsService.Save();
-				return false;
+				return this.pendingUpdate != null && await this.PromptUpdateConfirmation(this.pendingUpdate, activeChannelId);
 			}
 
 			Log.Information($"The channel '{activeChannelId}' (validated game version: '{activeChannelData.ValidatedGameVersion}') is outdated compared to a fallback channel (latest: '{latestGameVersion}'). Checking fallbacks...");
@@ -192,20 +171,8 @@ public partial class UpdateService : ServiceBase<UpdateService>
 
 				if (IsChannelCompatible(fallbackChannelData, latestGameVersion))
 				{
-					string fallbackVelopackChannel = GetVelopackChannel(nextFallbackId);
-					var fallBackUpdateOpts = new UpdateOptions
-					{
-						ExplicitChannel = fallbackVelopackChannel,
-						AllowVersionDowngrade = true,
-					};
-
-					this.updateManager = new UpdateManager(githubSource, fallBackUpdateOpts);
-
-					if (!this.updateManager.IsInstalled)
-					{
-						Log.Warning("The portable application does not support automatic updates.");
+					if (!this.TryInitUpdateManager(githubSource, nextFallbackId))
 						return false;
-					}
 
 					this.pendingUpdate = await this.updateManager.CheckForUpdatesAsync();
 
@@ -220,14 +187,10 @@ public partial class UpdateService : ServiceBase<UpdateService>
 
 						if (acceptSwitch == true)
 						{
-							SettingsService.Current.UpdateChannel = nextFallbackId!;
-							SettingsService.Save();
+							SettingsService.Current.UpdateChannel = nextFallbackId;
 
 							CurrentChannelData = fallbackChannelData;
-							bool update = await this.PromptUpdateConfirmation(this.pendingUpdate, nextFallbackId!);
-							SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
-							SettingsService.Save();
-							return update;
+							return await this.PromptUpdateConfirmation(this.pendingUpdate, nextFallbackId);
 						}
 
 						break; // The user declined the channel switch
@@ -236,9 +199,6 @@ public partial class UpdateService : ServiceBase<UpdateService>
 
 				nextFallbackId = fallbackChannelData.Fallback;
 			}
-
-			SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
-			SettingsService.Save();
 		}
 		catch (HttpRequestException ex)
 		{
@@ -250,6 +210,17 @@ public partial class UpdateService : ServiceBase<UpdateService>
 		catch (Exception ex)
 		{
 			Log.Error(ex, "Failed to carry out update check");
+		}
+		finally
+		{
+			try
+			{
+				SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
+			}
+			catch (Exception ex)
+			{
+				Log.Warning(ex, "Failed to save last update check timestamp.");
+			}
 		}
 
 		return false;
@@ -341,6 +312,27 @@ public partial class UpdateService : ServiceBase<UpdateService>
 			return false;
 
 		return string.CompareOrdinal(channelData.ValidatedGameVersion.Trim(), targetGameVersion.Trim()) >= 0;
+	}
+
+	[MemberNotNullWhen(true, nameof(updateManager))]
+	private bool TryInitUpdateManager(GithubSource source, string channelId)
+	{
+		string velopackChannel = GetVelopackChannel(channelId);
+		var updateOpts = new UpdateOptions
+		{
+			ExplicitChannel = velopackChannel,
+			AllowVersionDowngrade = true, // Desirable as it allows users to switch channels without being blocked by version checks
+		};
+
+		this.updateManager = new UpdateManager(source, updateOpts);
+
+		if (!this.updateManager.IsInstalled)
+		{
+			Log.Warning("The portable application does not support automatic updates.");
+			return false;
+		}
+
+		return true;
 	}
 
 	private async Task<ChannelsManifest> FetchChannelsManifest()
