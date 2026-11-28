@@ -104,8 +104,17 @@ public partial class SliderInputBox : UserControl
 	/// <summary>Constant for floating-point number rounding to a whole number.</summary>
 	private const int INT_ROUNDING = 0;
 
-	/// <summary>Constant for floating-point number rounding to two decimal places.</summary>
+	/// <summary>Constant for floating-point number rounding to three decimal places.</summary>
 	private const int FLOAT_POINT_ROUNDING = 3;
+
+	/// <summary>Intrinsic significant decimal digits for <see cref="float"/> values.</summary>
+	private const int SINGLE_SIG_DIGITS = 7;
+
+	/// <summary>Intrinsic significant decimal digits for <see cref="double"/> values.</summary>
+	private const int DOUBLE_SIG_DIGITS = 15;
+
+	/// <summary>Maximum fractional digits supported by <see cref="Math.Round(decimal, int, MidpointRounding)"/>.</summary>
+	private const int MAX_DECIMAL_ROUNDING = 28;
 
 	/// <summary>The width of the slider thumb rectangle.</summary>
 	private const double THUMB_RECT_WIDTH = 10.0;
@@ -124,6 +133,9 @@ public partial class SliderInputBox : UserControl
 
 	/// <summary>The half-width of the slider thumb rectangle.</summary>
 	private const double THUMB_RECT_HALF_WIDTH = THUMB_RECT_WIDTH / 2;
+
+	/// <summary>Cached format strings for common decimal place counts (0–6) to avoid per-update allocations.</summary>
+	private static readonly string[] s_decimalFormats = ["0", "0.#", "0.##", "0.###", "0.####", "0.#####", "0.######"];
 
 	/// <summary>Timer for the initial delay before the increase button starts repeating.</summary>
 	private readonly DispatcherTimer increaseButtonInitialDelayTimer;
@@ -158,7 +170,7 @@ public partial class SliderInputBox : UserControl
 	private bool isInternalSet = false;
 
 	/// <summary>The starting value of the slider when the mouse drag started.</summary>
-	private double relativeSliderStart;
+	private decimal relativeSliderStart;
 
 	/// <summary>Cached minimum of parsed dependency property value.</summary>
 	private decimal? parsedMinimum;
@@ -174,6 +186,9 @@ public partial class SliderInputBox : UserControl
 	/// reliable due to the step buttons.
 	/// </remarks>
 	private double? inputAreaWidth;
+
+	/// <summary>Indicates whether the user has modified the input field text since activation.</summary>
+	private bool hasInputTextChanged = false;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SliderInputBox"/> class and sets up default property values and event handlers.
@@ -259,9 +274,10 @@ public partial class SliderInputBox : UserControl
 	public static double SliderThumbWidth => THUMB_RECT_WIDTH;
 
 	/// <summary>Gets or sets the slider value.</summary>
+	[DoNotCheckEquality]
 	public decimal Value
 	{
-		get => this.RoundValue(ValueDp.Get(this));
+		get => ValueDp.Get(this);
 		set
 		{
 			// Don't allow the value to be set if the control is locked
@@ -275,6 +291,7 @@ public partial class SliderInputBox : UserControl
 			this.isInternalSet = true;
 			ValueDp.Set(this, newVal);
 			this.UpdateTickPosition();
+			this.SyncInputFieldText(onlyIfUnedited: true);
 			this.isInternalSet = false;
 		}
 	}
@@ -309,6 +326,9 @@ public partial class SliderInputBox : UserControl
 		set
 		{
 			this.InputField.IsReadOnly = !value;
+			if (value)
+				this.SyncInputFieldText();
+
 			this.ContentArea.Background = new SolidColorBrush((Color)this.FindResource(value || !this.IsMouseHovered ? NORMAL_BG_KEY : HOVER_BG_KEY));
 		}
 	}
@@ -536,19 +556,9 @@ public partial class SliderInputBox : UserControl
 		if (sender.isInternalSet)
 			return;
 
-		// Detect the bound value type if not already set
-		if (sender.valueBindingSrcType == null)
-		{
-			var binding = sender.GetBindingExpression(ValueDp.Property);
-			Type? type = null;
-			if (binding?.ResolvedSourcePropertyName != null)
-				type = binding.ResolvedSource.GetType().GetProperty(binding.ResolvedSourcePropertyName)?.PropertyType;
-
-			sender.valueBindingSrcType = type != null ? Type.GetTypeCode(type) : TypeCode.Decimal;
-		}
-
 		sender.Value = sender.Validate(val);
 		sender.UpdateTickPosition();
+		sender.SyncInputFieldText(onlyIfUnedited: true);
 		sender.OnPropertyChanged(nameof(Label));
 	}
 
@@ -618,8 +628,8 @@ public partial class SliderInputBox : UserControl
 	private static void OnDecimalPlacesChanged(SliderInputBox sender, int? value)
 	{
 		Debug.Assert(value is null or >= 0, "You cannot set a negative number to the decimal places property");
-		sender.OnPropertyChanged(nameof(Value));
 		sender.OnPropertyChanged(nameof(Label));
+		sender.SyncInputFieldText(onlyIfUnedited: true);
 	}
 
 	/// <summary>
@@ -794,7 +804,7 @@ public partial class SliderInputBox : UserControl
 						}
 						else if (this.SliderMode == SliderModes.Relative || !this.HasValidBounds)
 						{
-							this.relativeSliderStart = (double)this.Value;
+							this.relativeSliderStart = this.Value;
 						}
 					}
 				}
@@ -848,7 +858,7 @@ public partial class SliderInputBox : UserControl
 					if (diff.Length >= (double)DRAG_MIN_DISTANCE)
 					{
 						decimal delta = (decimal)diff.X * this.TickFrequency * (decimal)SettingsService.Current.SliderSensitivity;
-						this.Value = (decimal)this.relativeSliderStart + ApplyKeyModifiers(delta);
+						this.Value = this.relativeSliderStart + ApplyKeyModifiers(delta);
 					}
 				}
 			}
@@ -1082,6 +1092,7 @@ public partial class SliderInputBox : UserControl
 	private void TickValue(bool increase)
 	{
 		this.Value += ApplyKeyModifiers(increase ? this.TickFrequency : -this.TickFrequency);
+		this.SyncInputFieldText();
 	}
 
 	/// <summary>
@@ -1118,40 +1129,80 @@ public partial class SliderInputBox : UserControl
 	}
 
 	/// <summary>
-	/// Rounds the value to the specified number of decimal places.
+	/// Resolves and caches the <see cref="TypeCode"/> of the bound source property for <see cref="ValueDp"/>.
+	/// </summary>
+	/// <returns>The resolved source <see cref="TypeCode"/>, or <see cref="TypeCode.Decimal"/> if not yet resolved.</returns>
+	private TypeCode ResolveValueBindingSourceType()
+	{
+		if (this.valueBindingSrcType is TypeCode cached)
+			return cached;
+
+		var binding = this.GetBindingExpression(ValueDp.Property);
+		if (binding?.ResolvedSource != null)
+		{
+			Type? propType = binding.ResolvedSourcePropertyName != null
+				? binding.ResolvedSource.GetType().GetProperty(binding.ResolvedSourcePropertyName)?.PropertyType
+				: null;
+
+			this.valueBindingSrcType = propType != null
+				? Type.GetTypeCode(Nullable.GetUnderlyingType(propType) ?? propType)
+				: TypeCode.Decimal;
+		}
+		else if (binding == null && this.IsLoaded)
+		{
+			this.valueBindingSrcType = TypeCode.Decimal;
+		}
+
+		return this.valueBindingSrcType ?? TypeCode.Decimal;
+	}
+
+	/// <summary>
+	/// Gets the effective number of decimal places based on the bound source type.
+	/// </summary>
+	/// <returns>The effective number of decimal places.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private int GetEffectiveDecimalPlaces()
+	{
+		return this.ResolveValueBindingSourceType() switch
+		{
+			TypeCode.Single or TypeCode.Double => this.DecimalPlaces ?? FLOAT_POINT_ROUNDING,
+			TypeCode.Decimal or TypeCode.Object => this.DecimalPlaces ?? INT_ROUNDING,
+			_ => INT_ROUNDING,
+		};
+	}
+
+	/// <summary>
+	/// Rounds the value to the intrinsic precision of the bound source type so floating-point conversion noise does not affect boundary checks.
 	/// </summary>
 	/// <param name="val">The value to round.</param>
 	/// <returns>The rounded value.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private decimal RoundValue(decimal val)
 	{
-		if (this.valueBindingSrcType == null)
-			return Math.Round(val, this.DecimalPlaces ?? INT_ROUNDING, MidpointRounding.AwayFromZero);
+		if (val == 0m)
+			return 0m;
 
-#pragma warning disable IDE0066
-		switch (this.valueBindingSrcType.Value)
+		int sigDigits = this.ResolveValueBindingSourceType() switch
 		{
-			case TypeCode.Boolean:
-			case TypeCode.Byte:
-			case TypeCode.SByte:
-			case TypeCode.Int16:
-			case TypeCode.UInt16:
-			case TypeCode.Int32:
-			case TypeCode.UInt32:
-			case TypeCode.Int64:
-			case TypeCode.UInt64:
-				return Math.Round(val, INT_ROUNDING, MidpointRounding.AwayFromZero);
-			case TypeCode.Single:
-			case TypeCode.Double:
-				return Math.Round(val, this.DecimalPlaces ?? FLOAT_POINT_ROUNDING, MidpointRounding.AwayFromZero);
-			default:
-				return Math.Round(val, this.DecimalPlaces ?? INT_ROUNDING, MidpointRounding.AwayFromZero);
-		}
-#pragma warning restore IDE0066
+			TypeCode.Single => SINGLE_SIG_DIGITS,
+			TypeCode.Double => DOUBLE_SIG_DIGITS,
+			TypeCode.Decimal or TypeCode.Object => -1,
+			_ => 0,
+		};
+
+		if (sigDigits < 0)
+			return val;
+
+		if (sigDigits == 0)
+			return Math.Round(val, INT_ROUNDING, MidpointRounding.AwayFromZero);
+
+		int intDigits = (int)Math.Floor(Math.Log10((double)decimal.Abs(val))) + 1;
+		int decimals = Math.Clamp(sigDigits - intDigits, 0, MAX_DECIMAL_ROUNDING);
+		return Math.Round(val, decimals, MidpointRounding.AwayFromZero);
 	}
 
 	/// <summary>
-	/// Validates and adjusts the new value based on the overflow behavior and decimal places.
+	/// Validates and adjusts the new value based on the overflow behavior and bounds.
 	/// </summary>
 	/// <param name="val">The new value to validate.</param>
 	/// <returns>The validated value.</returns>
@@ -1163,16 +1214,14 @@ public partial class SliderInputBox : UserControl
 		if (this.OverflowBehavior == OverflowModes.Clamp)
 		{
 			val = Math.Clamp(val, min, max);
-			decimal roundedVal = this.RoundValue(val);
-
-			this.DecreaseButton.IsEnabled = roundedVal > min;
-			this.IncreaseButton.IsEnabled = roundedVal < max;
+			this.RefreshStepButtonState(val);
 		}
 		else if (this.OverflowBehavior == OverflowModes.Loop && this.Minimum != null && this.Maximum != null)
 		{
-			if (val < min)
+			decimal roundedVal = this.RoundValue(val);
+			if (roundedVal < min)
 				val = max;
-			else if (val > max)
+			else if (roundedVal > max)
 				val = min;
 		}
 
@@ -1183,13 +1232,19 @@ public partial class SliderInputBox : UserControl
 	/// Formats the value to a string with the specified number of decimal places.
 	/// </summary>
 	/// <param name="value">The value to format.</param>
-	/// <returns>The the formatted value as string.</returns>
+	/// <returns>The formatted value as string.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private string FormatValue(decimal value)
 	{
-		int decimalPlaces = this.DecimalPlaces ?? INT_ROUNDING;
-		string format = $"0.{new string('#', decimalPlaces)}";
-		return value.ToString(format, CultureInfo.InvariantCulture);
+		int decimalPlaces = this.GetEffectiveDecimalPlaces();
+		decimal rounded = Math.Round(value, decimalPlaces, MidpointRounding.AwayFromZero);
+		if (rounded == 0m)
+			return "0";
+
+		string format = (uint)decimalPlaces < (uint)s_decimalFormats.Length
+			? s_decimalFormats[decimalPlaces]
+			: $"0.{new string('#', decimalPlaces)}";
+		return rounded.ToString(format, CultureInfo.InvariantCulture);
 	}
 
 	/// <summary>
@@ -1249,6 +1304,9 @@ public partial class SliderInputBox : UserControl
 	/// </summary>
 	private void ParseInputField()
 	{
+		if (!this.hasInputTextChanged)
+			return;
+
 		string inputText = this.InputField.Text;
 
 		if (decimal.TryParse(inputText, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal newValue))
@@ -1259,8 +1317,8 @@ public partial class SliderInputBox : UserControl
 		{
 			try
 			{
-				double result = Convert.ToDouble(new DataTable().Compute(inputText.Replace(',', '.'), null));
-				this.Value = (decimal)result;
+				if (new DataTable().Compute(inputText.Replace(',', '.'), null) is IConvertible computed and not DBNull)
+					this.Value = computed.ToDecimal(CultureInfo.InvariantCulture);
 			}
 			catch (Exception)
 			{
@@ -1268,18 +1326,38 @@ public partial class SliderInputBox : UserControl
 			}
 		}
 
-		this.InputField.Text = this.Value.ToString(CultureInfo.InvariantCulture);
+		this.SyncInputFieldText();
 	}
+
+	/// <summary>
+	/// Synchronizes the input field text with the formatted value without marking it as edited.
+	/// </summary>
+	/// <param name="onlyIfUnedited">If set to <c>true</c>, skips updating when the user has already modified the text.</param>
+	private void SyncInputFieldText(bool onlyIfUnedited = false)
+	{
+		if (!this.IsInputFieldActive || (onlyIfUnedited && this.hasInputTextChanged))
+			return;
+
+		this.InputField.Text = this.FormatValue(this.Value);
+		this.hasInputTextChanged = false;
+	}
+
+	/// <summary>Handles the input field text changed event.</summary>
+	/// <param name="sender">The sender.</param>
+	/// <param name="e">The event arguments.</param>
+	private void OnInputFieldTextChanged(object sender, TextChangedEventArgs e) => this.hasInputTextChanged = true;
 
 	/// <summary>
 	/// Enables or disables the step buttons based on the overflow behavior.
 	/// </summary>
-	private void RefreshStepButtonState()
+	/// <param name="value">Optional value to evaluate against bounds; defaults to <see cref="Value"/>.</param>
+	private void RefreshStepButtonState(decimal? value = null)
 	{
 		if (this.OverflowBehavior == OverflowModes.Clamp)
 		{
-			this.DecreaseButton.IsEnabled = this.Value > this.EffectiveMinimum;
-			this.IncreaseButton.IsEnabled = this.Value < this.EffectiveMaximum;
+			decimal roundedVal = this.RoundValue(value ?? this.Value);
+			this.DecreaseButton.IsEnabled = roundedVal > this.EffectiveMinimum;
+			this.IncreaseButton.IsEnabled = roundedVal < this.EffectiveMaximum;
 		}
 		else
 		{
